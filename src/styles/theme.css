@@ -1,0 +1,887 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+  /* Light Mode - Clean, professional, high contrast */
+  --background: rgba(250, 250, 250, 1.00);
+  --foreground: rgba(22, 22, 22, 1.00);
+  /* RGB triplets for use inside rgba() with var() — theme-aware foreground tints
+     (e.g. rgba(var(--foreground-rgb), 0.45) for muted text/borders/overlays). */
+  --foreground-rgb: 22, 22, 22;
+  --background-rgb: 250, 250, 250;
+  --card: rgba(255, 255, 255, 1.00);
+  --card-foreground: rgba(22, 22, 22, 1.00);
+  --popover: rgba(255, 255, 255, 1.00);
+  --popover-foreground: rgba(22, 22, 22, 1.00);
+  --primary: rgba(220, 20, 20, 1.00);
+  --primary-foreground: rgba(255, 255, 255, 1.00);
+  --secondary: rgba(245, 245, 245, 1.00);
+  --secondary-foreground: rgba(22, 22, 22, 1.00);
+  --muted: rgba(140, 140, 140, 1.00);
+  --muted-foreground: rgba(100, 100, 100, 1.00);
+  --accent: rgba(220, 20, 20, 1.00);
+  --accent-foreground: rgba(255, 255, 255, 1.00);
+  --destructive: rgba(220, 50, 50, 1.00);
+  --destructive-foreground: rgba(255, 255, 255, 1.00);
+  --border: rgba(220, 220, 220, 1.00);
+  --input: rgba(255, 255, 255, 1.00);
+  --input-background: rgba(255, 255, 255, 1.00);
+  --ring: rgba(220, 20, 20, 1.00);
+  --elevation-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --chart-1: rgba(220, 20, 20, 1.00);
+  --chart-2: rgba(240, 60, 60, 1.00);
+  --chart-3: rgba(180, 15, 15, 1.00);
+  --chart-4: rgba(150, 10, 10, 1.00);
+  --chart-5: rgba(120, 5, 5, 1.00);
+  --radius: 4px;
+  --radius-button: 4px;
+  --radius-card: 8px;
+  --sidebar: rgba(255, 255, 255, 1.00);
+  --sidebar-foreground: rgba(22, 22, 22, 1.00);
+  --sidebar-primary: rgba(220, 20, 20, 1.00);
+  --sidebar-primary-foreground: rgba(255, 255, 255, 1.00);
+  --sidebar-accent: rgba(220, 20, 20, 1.00);
+  --sidebar-accent-foreground: rgba(255, 255, 255, 1.00);
+  --sidebar-border: rgba(220, 220, 220, 1.00);
+  --sidebar-ring: rgba(220, 20, 20, 1.00);
+  /* Typography variables for different text sizes */
+  /* Rampa tipografica — grid 4px no ritmo (line-height), font-size em rampa limpa.
+     UI: caption 12 / sm 14 / base 16. Heading: lg 20 / xl 24 / 2xl=h4 32 / h3 40 / h2 48.
+     Valores impares (10.5/11.5/12.5/13.5) e 9/10/13/15 foram absorvidos no vizinho. */
+  --text-h1: 80px;
+  --text-h2: 48px;
+  --text-h3: 40px;
+  --text-h4: 32px;
+  --text-2xl: 32px;
+  --text-xl: 24px;
+  --text-lg: 20px;
+  --text-base: 16px;
+  --text-sm: 14px;
+  --text-xs: 14px;
+  --text-label: 14px;
+  --text-caption: 12px;
+  --text-micro: 12px;
+  /* Font weight variables */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  /* Font family variables */
+  --font-family-figtree: 'Figtree', sans-serif;
+  --font-family-inter: 'Inter', sans-serif;
+  /* Layout */
+  --container-max: 1760px;
+  --space-section-sm: 56px;
+  --space-section-md: 88px;
+  --space-section-lg: 128px;
+  --space-section-xl: 168px;
+  /* AnnouncementBar height (set/updated by AnnouncementBar.tsx).
+     Pages that sit below the fixed header should clear by combining
+     a base navbar offset with this variable, so dismissing the bar
+     reflows the layout cleanly instead of leaving a 40px gap. */
+  --announce-h: 40px;
+
+  /* ===================================================================
+     CARD RADIUS FAMILY
+     Existing --radius (4px) and --radius-card (8px) cover form controls
+     and small cards. v3 also uses 18 / 22 / 26 px for large "premium"
+     cards. Promoting these to tokens so designers (and Figma) have
+     a finite scale instead of magic numbers.
+     =================================================================== */
+  --radius-card-sm: 12px;   /* modais centralizados, search box, countdown cells */
+  --radius-card-md: 18px;   /* brinde card, cards intermediários */
+  --radius-card-lg: 22px;   /* product card image well, cart drawer corner, welcome popup */
+  --radius-card-xl: 26px;   /* category showcase, drop-do-dia, mega-menu showcase */
+  --radius-pill: 9999px;    /* CTAs principais, pills, search input, badges circulares */
+
+  /* ===================================================================
+     BRAND GRADIENTS
+     Os vermelhos do v3 são SEMPRE em gradient diagonal 135deg.
+     Tokenizar evita drift (todo lugar copiando hex levemente diferente).
+     =================================================================== */
+  --gradient-brand:           linear-gradient(135deg, var(--primary) 0%, #ff2419 100%);
+  --gradient-discount:        linear-gradient(135deg, #ff3b3e 0%, #d31417 100%);
+  --gradient-buy:             linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  --gradient-preorder-orange: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  --gradient-preorder-red:    linear-gradient(135deg, #ff2419 0%, #b91c1c 100%);
+  --gradient-hero-stroke:     linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.08) 100%);
+  --gradient-hero-stroke-hover: linear-gradient(135deg, var(--primary) 0%, #ff2419 35%, rgba(225,6,0,0.55) 65%, rgba(225,6,0,0.15) 100%);
+  --gradient-category-grid:   linear-gradient(72.85deg, #000000 44.62%, #0f0f0f 100.35%);
+
+  /* ===================================================================
+     SHADOW FAMILY — 13 famílias catalogadas
+     Famílias "-hover" assumem que o componente já paga a transição
+     (transition: box-shadow 320ms ease-out, easing house [0.16,1,0.3,1]).
+     =================================================================== */
+  --shadow-neon-red:
+    0 0 0 1px rgba(225, 6, 0, 0.55),
+    0 0 0 4px rgba(225, 6, 0, 0.10),
+    0 0 22px -2px rgba(225, 6, 0, 0.45),
+    0 0 60px -8px rgba(225, 6, 0, 0.25),
+    0 16px 44px -16px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 40px 35px -24px rgba(255, 255, 255, 0.05);
+  --shadow-neon-glow-deepen:
+    inset 0 0 80px -16px rgba(225, 6, 0, 0.18);
+  --shadow-hero-card-hover:
+    0 30px 80px -24px rgba(0, 0, 0, 0.75),
+    0 0 50px -10px rgba(225, 6, 0, 0.35);
+  --shadow-category-active:
+    0 0 0 1px rgba(225, 6, 0, 0.45),
+    0 30px 80px -20px rgba(0, 0, 0, 0.7),
+    0 0 32px -4px rgba(225, 6, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-essential-hover:
+    0 0 0 1px rgba(225, 6, 0, 0.18),
+    0 24px 60px -28px rgba(225, 6, 0, 0.5);
+  --shadow-deal-hover:
+    0 0 0 1px rgba(225, 6, 0, 0.15),
+    0 22px 50px -28px rgba(225, 6, 0, 0.45);
+  --shadow-profile-hover:
+    0 0 0 1px rgba(225, 6, 0, 0.12),
+    0 18px 40px -22px rgba(225, 6, 0, 0.35);
+  --shadow-order-hover:
+    0 0 0 1px rgba(225, 6, 0, 0.08),
+    0 14px 30px -20px rgba(0, 0, 0, 0.5);
+  --shadow-buy-cta:        0 14px 32px -8px rgba(34,197,94,0.55);
+  --shadow-buy-cta-sm:     0 10px 26px -6px rgba(34,197,94,0.55);
+  --shadow-brand-cta:      0 14px 32px -8px rgba(225,6,0,0.55);
+  --shadow-brand-cta-sm:   0 8px 22px -8px rgba(225,6,0,0.55);
+  --shadow-brand-pill:     0 8px 22px -6px rgba(225, 6, 0, 0.55);
+  --shadow-discount-badge: 0 12px 28px -8px rgba(255,43,46,0.55);
+  --shadow-discount-sm:    0 4px 14px -4px rgba(255,43,46,0.6);
+  --shadow-preorder-cta:   0 14px 32px -8px rgba(249,115,22,0.55);
+  --shadow-preorder-pill:  0 6px 16px -4px rgba(249,115,22,0.6);
+  --shadow-drawer-side:    -24px 0 60px -12px rgba(0, 0, 0, 0.55);
+  --shadow-search-open:    0 10px 32px rgba(0, 0, 0, 0.55);
+
+  /* Top inner highlight used as a hairline on every dark card to lift it
+     from the surface. 43 inline copies of this recipe before tokenising. */
+  --shadow-card-hairline:  inset 0 1px 0 rgba(var(--foreground-rgb), 0.05);
+
+  /* Compact red glow used on the ranking medallion in shelves and on a
+     handful of brand circular badges. 5 inline copies before tokenising. */
+  --shadow-medallion:      0 6px 18px -4px rgba(225, 6, 0, 0.5);
+
+  /* ===================================================================
+     SEMANTIC TOKENS (papel, nao valor) — base aqui sao valores LIGHT.
+     Os valores DARK (modo padrao da home) vivem em .dark abaixo.
+     surface = fundo, ink = texto, edge = borda. Migracao em Fase 6.
+     Light ainda e rascunho (milestone proprio); dark e o que vale hoje.
+     =================================================================== */
+  --surface-0: #fafafa;
+  --surface-1: #ffffff;
+  --surface-2: #f5f5f5;
+  --surface-3: #e5e5e5;
+  --surface-glass: rgba(0, 0, 0, 0.04);
+  --ink-strong: #161616;
+  --ink: rgba(22, 22, 22, 0.95);
+  --ink-muted: rgba(22, 22, 22, 0.65);
+  --ink-subtle: rgba(22, 22, 22, 0.45);
+  --edge-subtle: rgba(0, 0, 0, 0.06);
+  --edge: rgba(0, 0, 0, 0.12);
+  --edge-strong: rgba(0, 0, 0, 0.22);
+}
+
+/* Mobile: compress section spacing — desktop tokens leave ~256px dead space */
+@media (max-width: 767px) {
+  :root {
+    --space-section-sm: 40px;
+    --space-section-md: 56px;
+    --space-section-lg: 72px;
+    --space-section-xl: 96px;
+  }
+}
+
+/* Checkout form fields — responsive touch targets and font size */
+.checkout-field { font-size: 13.5px; }
+@media (max-width: 767px) {
+  .checkout-field { min-height: 44px; font-size: 16px; }
+}
+
+/* Cart form fields — mobile touch targets and prevent iOS zoom (font-size < 16px triggers zoom) */
+@media (max-width: 767px) {
+  .cart-field { min-height: 44px; font-size: 16px !important; }
+}
+
+/* Profile personal-data form fields — prevent iOS zoom on focus (font-size < 16px triggers zoom) */
+@media (max-width: 767px) {
+  .profile-field { min-height: 44px; font-size: 16px !important; }
+}
+
+/* PreOrder filter bar — prevent iOS zoom on focus (font-size < 16px triggers zoom) */
+@media (max-width: 767px) {
+  .preorder-field { font-size: 16px !important; }
+}
+
+/* MonteSeuPc builder search field — prevent iOS zoom on focus (font-size < 16px triggers zoom) */
+@media (max-width: 767px) {
+  .msp-field { font-size: 16px !important; }
+}
+
+/* Homepage shelves — hide scrollbars on horizontal carousels */
+.shelf-track::-webkit-scrollbar,
+.deals-track::-webkit-scrollbar,
+.essentials-track::-webkit-scrollbar,
+.category-track::-webkit-scrollbar,
+.profile-tabs::-webkit-scrollbar { display: none; }
+
+/* Card hover treatments — see --shadow-{essential,profile,order,deal}-hover tokens.
+   Border alphas tuned per card family; shared transition curve = 300ms ease.
+   Adicione um destes selectors no card pra ativar hover red.            */
+.essential-card { transition: border-color 300ms ease, box-shadow 300ms ease; }
+.essential-card:hover {
+  border-color: rgba(225, 6, 0, 0.45);
+  box-shadow: var(--shadow-essential-hover);
+}
+.essential-card-glow { transition: opacity 500ms ease; }
+.essential-card:hover .essential-card-glow { opacity: 1; }
+
+.profile-card { transition: border-color 300ms ease, box-shadow 300ms ease, transform 300ms ease; }
+.profile-card:hover {
+  border-color: rgba(225, 6, 0, 0.28) !important;
+  box-shadow: var(--shadow-profile-hover);
+}
+
+.order-card { transition: border-color 250ms ease, box-shadow 250ms ease, transform 250ms ease; }
+.order-card:hover {
+  border-color: rgba(225, 6, 0, 0.22) !important;
+  box-shadow: var(--shadow-order-hover);
+  transform: translateY(-1px);
+}
+
+/* Kill browser autofill yellow/blue background while keeping value */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: var(--foreground) !important;
+  transition: background-color 600000s 0s, color 600000s 0s;
+  caret-color: var(--foreground);
+}
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+  -webkit-text-fill-color: rgba(255,255,255,0.95) !important;
+  caret-color: rgba(255,255,255,0.95);
+}
+
+.deal-card-img { transition: border-color 300ms ease, box-shadow 300ms ease; }
+.deal-card-img:hover {
+  border-color: rgba(225, 6, 0, 0.4);
+  box-shadow: var(--shadow-deal-hover);
+}
+
+/* Glitch word — matrix/hack aesthetic */
+.glitch-word {
+  position: relative;
+  display: inline-block;
+  color: white;
+  padding-right: 8px;
+  animation: glitch-flicker 1500ms steps(1, end);
+  text-shadow: 0 0 6px rgba(255, 36, 25, 0.25);
+}
+.glitch-word-base {
+  position: relative;
+  z-index: 2;
+  animation: glitch-clip 1500ms steps(1, end);
+}
+.glitch-word-r {
+  position: absolute;
+  inset: 0;
+  color: #ff2419;
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: glitch-shift-r 1500ms steps(1, end);
+  text-shadow: 0 0 12px rgba(255, 36, 25, 0.85);
+}
+@keyframes glitch-flicker {
+  0%   { transform: none; filter: none; }
+  18%  { transform: translateX(2px) skewX(-2deg); filter: blur(0.4px); }
+  20%  { transform: none; filter: none; }
+  32%  { transform: translateX(-3px) skewX(3deg); filter: brightness(1.2); }
+  34%  { transform: none; filter: none; }
+  48%  { transform: translateX(4px); }
+  52%  { transform: translateX(-2px); }
+  56%  { transform: none; }
+  62%  { transform: translateX(-6px) skewX(-6deg); filter: brightness(1.4); }
+  66%  { transform: translateX(5px) skewX(4deg); }
+  70%  { transform: translateX(-3px) skewY(2deg); }
+  72%  { transform: translateX(2px); }
+  76%  { transform: translateX(-1px) skewX(-1deg); }
+  78%  { transform: none; }
+  84%  { transform: translateX(4px) skewX(2deg); filter: brightness(1.3); }
+  86%  { transform: translateX(-2px); }
+  88%  { transform: none; }
+  94%  { transform: translateX(1px); }
+  100% { transform: none; filter: none; }
+}
+@keyframes glitch-shift-r {
+  0%   { transform: none; opacity: 0; }
+  16%  { transform: translate(-3px, 0); opacity: 0.6; }
+  20%  { transform: none; opacity: 0; }
+  30%  { transform: translate(4px, 1px); opacity: 0.75; }
+  34%  { transform: none; opacity: 0; }
+  48%  { transform: translate(-5px, -2px); opacity: 0.85; }
+  52%  { transform: translate(3px, 2px); opacity: 0.7; }
+  56%  { transform: none; opacity: 0; }
+  62%  { transform: translate(-8px, -2px); opacity: 0.95; }
+  66%  { transform: translate(7px, 2px); opacity: 0.9; }
+  70%  { transform: translate(-4px, 1px); opacity: 0.8; }
+  72%  { transform: translate(3px, -1px); opacity: 0.7; }
+  76%  { transform: translate(-2px, 0); opacity: 0.55; }
+  78%  { transform: none; opacity: 0; }
+  84%  { transform: translate(6px, -2px); opacity: 0.85; }
+  86%  { transform: translate(-3px, 1px); opacity: 0.7; }
+  88%  { transform: none; opacity: 0; }
+  94%  { transform: translate(2px, 0); opacity: 0.4; }
+  100% { transform: none; opacity: 0; }
+}
+@keyframes glitch-clip {
+  0%   { clip-path: none; }
+  62%  { clip-path: none; }
+  64%  { clip-path: polygon(0 12%, 100% 12%, 100% 32%, 0 32%); }
+  66%  { clip-path: none; }
+  70%  { clip-path: polygon(0 55%, 100% 55%, 100% 75%, 0 75%); }
+  72%  { clip-path: none; }
+  76%  { clip-path: polygon(0 5%, 100% 5%, 100% 18%, 0 18%); }
+  78%  { clip-path: none; }
+  84%  { clip-path: polygon(0 40%, 100% 40%, 100% 60%, 0 60%); }
+  86%  { clip-path: none; }
+  100% { clip-path: none; }
+}
+
+.dark {
+  --background: rgba(18, 18, 18, 1.00);
+  --foreground: rgba(255, 255, 255, 1.00);
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 18, 18, 18;
+  --card: rgba(26, 26, 26, 0.90);
+  --card-foreground: rgba(255, 255, 255, 1.00);
+  --popover: rgba(22, 22, 22, 0.95);
+  --popover-foreground: rgba(255, 255, 255, 1.00);
+  --primary: rgba(255, 43, 46, 1.00);
+  --primary-foreground: rgba(255, 255, 255, 1.00);
+  --secondary: rgba(206, 206, 206, 1.00);
+  --secondary-foreground: rgba(36, 36, 36, 1.00);
+  --muted: rgba(128, 128, 128, 1.00);
+  --muted-foreground: rgba(255, 255, 255, 1.00);
+  --accent: rgba(255, 85, 88, 1.00);
+  --accent-foreground: rgba(255, 255, 255, 1.00);
+  --destructive: rgba(246, 76, 76, 1.00);
+  --destructive-foreground: rgba(255, 255, 255, 1.00);
+  --border: rgba(128, 128, 128, 1.00);
+  --input: rgba(0, 0, 0, 0.50);
+  --ring: rgba(255, 85, 88, 1.00);
+  --sidebar: rgba(14, 14, 14, 1.00);
+  --sidebar-foreground: rgba(255, 255, 255, 1.00);
+  --sidebar-primary: rgba(255, 43, 46, 1.00);
+  --sidebar-primary-foreground: rgba(255, 255, 255, 1.00);
+  --sidebar-accent: rgba(255, 85, 88, 1.00);
+  --sidebar-accent-foreground: rgba(255, 255, 255, 1.00);
+  --sidebar-border: rgba(128, 128, 128, 1.00);
+  --sidebar-ring: rgba(255, 85, 88, 1.00);
+
+  /* Semantic tokens — valores DARK (modo padrao da home). */
+  --surface-0: #0a0a0a;
+  --surface-1: #1a1a1a;
+  --surface-2: #1f1c1c;
+  --surface-3: #323232;
+  --surface-glass: rgba(255, 255, 255, 0.05);
+  --ink-strong: #ffffff;
+  --ink: rgba(255, 255, 255, 0.85);
+  --ink-muted: rgba(255, 255, 255, 0.55);
+  --ink-subtle: rgba(255, 255, 255, 0.35);
+  --edge-subtle: rgba(255, 255, 255, 0.06);
+  --edge: rgba(255, 255, 255, 0.12);
+  --edge-strong: rgba(255, 255, 255, 0.22);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius-card);
+  --radius-xl: calc(var(--radius-card) + 4px);
+  /* Card radius family — generates rounded-card-sm/md/lg/xl + rounded-pill utilities */
+  --radius-card-sm: var(--radius-card-sm);
+  --radius-card-md: var(--radius-card-md);
+  --radius-card-lg: var(--radius-card-lg);
+  --radius-card-xl: var(--radius-card-xl);
+  --radius-pill: var(--radius-pill);
+  /* Shadow family — generates shadow-neon-red, shadow-hero-card-hover, etc */
+  --shadow-neon-red: var(--shadow-neon-red);
+  --shadow-neon-glow-deepen: var(--shadow-neon-glow-deepen);
+  --shadow-hero-card-hover: var(--shadow-hero-card-hover);
+  --shadow-category-active: var(--shadow-category-active);
+  --shadow-essential-hover: var(--shadow-essential-hover);
+  --shadow-deal-hover: var(--shadow-deal-hover);
+  --shadow-profile-hover: var(--shadow-profile-hover);
+  --shadow-order-hover: var(--shadow-order-hover);
+  --shadow-buy-cta: var(--shadow-buy-cta);
+  --shadow-buy-cta-sm: var(--shadow-buy-cta-sm);
+  --shadow-brand-cta: var(--shadow-brand-cta);
+  --shadow-brand-cta-sm: var(--shadow-brand-cta-sm);
+  --shadow-brand-pill: var(--shadow-brand-pill);
+  --shadow-discount-badge: var(--shadow-discount-badge);
+  --shadow-discount-sm: var(--shadow-discount-sm);
+  --shadow-preorder-cta: var(--shadow-preorder-cta);
+  --shadow-preorder-pill: var(--shadow-preorder-pill);
+  --shadow-drawer-side: var(--shadow-drawer-side);
+  --shadow-search-open: var(--shadow-search-open);
+  --shadow-card-hairline: var(--shadow-card-hairline);
+  --shadow-medallion: var(--shadow-medallion);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Semantic tokens expostos como utilitarios Tailwind:
+     bg-surface-0..3, bg-surface-glass · text-ink/-strong/-muted/-subtle ·
+     border-edge/-subtle/-strong */
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-glass: var(--surface-glass);
+  --color-ink-strong: var(--ink-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-edge-subtle: var(--edge-subtle);
+  --color-edge: var(--edge);
+  --color-edge-strong: var(--edge-strong);
+}
+
+/* === Custom Tailwind variants ===
+   `notebook:` targets small laptops where the viewport is wide enough
+   to switch to the desktop layout, but the available height is short
+   (≈720-820px). Used to compress fixed header padding so the first
+   fold of the home, ProductsPage and ProductPage stays visible.
+   Usage: notebook:pt-[148px]. */
+@custom-variant notebook (@media (min-width: 1024px) and (max-height: 820px));
+
+/* `short:` is the more general "any viewport with limited height"
+   helper — useful for modals and hero overlays that should not lock
+   themselves to 100vh when the browser chrome is tall. */
+@custom-variant short (@media (max-height: 720px));
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-family-inter);
+  }
+}
+
+/**
+ * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
+ */
+@layer base {
+  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+    h1 {
+      font-family: var(--font-family-figtree);
+      font-size: var(--text-h1);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.11;
+    }
+
+    h2 {
+      font-family: var(--font-family-figtree);
+      font-size: var(--text-h2);
+      font-weight: var(--font-weight-light);
+      line-height: 1.0;
+    }
+
+    h3 {
+      font-family: var(--font-family-figtree);
+      font-size: var(--text-h3);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.0;
+    }
+
+    h4 {
+      font-family: var(--font-family-figtree);
+      font-size: var(--text-h4);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.2;
+    }
+
+    p {
+      font-family: var(--font-family-inter);
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+
+    label {
+      font-family: var(--font-family-inter);
+      font-size: var(--text-label);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.21;
+    }
+
+    button {
+      font-family: var(--font-family-inter);
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    input {
+      font-family: var(--font-family-inter);
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* === WCAG 2.3.3 — respect user motion preference ===
+   Animation-heavy carousels, scroll-reveal and hover effects opt out
+   when the OS reports reduce. We still keep functional transitions
+   (opacity, color) extremely short instead of zero so focus rings still
+   give feedback. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Hero carousel card — stroke gray default, brand-gradient on hover.
+   Shadows in var(--shadow-hero-card-hover); stroke gradient in
+   var(--gradient-hero-stroke) / var(--gradient-hero-stroke-hover).      */
+.hero-card-stroke { background: var(--gradient-hero-stroke); }
+.hero-card { transition: box-shadow 320ms ease; }
+.hero-card:hover .hero-card-stroke { background: var(--gradient-hero-stroke-hover); }
+.hero-card:hover { box-shadow: var(--shadow-hero-card-hover); }
+
+/* Mobile has no hover — the centered (active) banner always wears the
+   hover aspect (red stroke + glow) as it lands in the middle.            */
+@media (max-width: 767px) {
+  .hero-card--active .hero-card-stroke { background: var(--gradient-hero-stroke-hover); }
+  .hero-card--active { box-shadow: var(--shadow-hero-card-hover); }
+}
+
+/* Category showcase active card hover — see --shadow-category-active.  */
+.category-active:hover {
+  border-color: rgba(225, 6, 0, 0.55) !important;
+  box-shadow: var(--shadow-category-active) !important;
+}
+
+/* V3 Neon hover — canonical gamer hover. Opt in via className="neon-hover-red".
+   Box-shadow recipe lives in --shadow-neon-red token.                  */
+.neon-hover-red { transition: box-shadow 320ms ease-out, transform 320ms ease-out; }
+.neon-hover-red:hover { box-shadow: var(--shadow-neon-red); }
+.neon-hover-red:hover .neon-glow-deepen { box-shadow: var(--shadow-neon-glow-deepen); }
+
+/* V3 Stroke hover — afordancia de superficie "banner": contorno vermelho firme.
+   Duas linguagens de hover por tipo de superficie:
+     - cards de PRODUTO usam o halo (.deal-card-img: glow + profundidade)
+     - BANNERS / CATEGORIAS usam este stroke (.stroke-hover-red: contorno).
+   Reusa o token --shadow-category-active (ring vermelho + sombra).            */
+.stroke-hover-red { transition: box-shadow 320ms ease-out, border-color 320ms ease-out, transform 320ms ease-out; }
+.stroke-hover-red:hover { box-shadow: var(--shadow-category-active); }
+
+/* === Monte seu PC — Quiz scroll area: unbounded on mobile, capped on desktop === */
+.quiz-scroll-area { height: auto; max-height: none; }
+@media (min-width: 768px) { .quiz-scroll-area { height: min(420px, 55vh); } }
+
+/* === Monte seu PC — product image bg (mesmo padrão FlashDealsStrip) === */
+.deal-image-bg {
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.06) 0%, transparent 55%),
+    linear-gradient(140deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+/* ============================================================
+   LIGHT THEME OVERRIDES — non-default, opt-in via header toggle
+   Scope: only descendants of [data-page-light-scope] (set in
+   RootLayout). AnnouncementBar + Navbar live outside this scope
+   on purpose, so the header keeps its dark surface and white
+   typography regardless of theme.
+   ============================================================ */
+
+html.light [data-page-light-scope] {
+  color-scheme: light;
+}
+
+/* Opaque dark backgrounds → light surfaces */
+html.light [data-page-light-scope] .bg-black,
+html.light [data-page-light-scope] .bg-neutral-950,
+html.light [data-page-light-scope] .bg-zinc-950,
+html.light [data-page-light-scope] .bg-stone-950,
+html.light [data-page-light-scope] .bg-gray-950,
+html.light [data-page-light-scope] .bg-\[\#040404\],
+html.light [data-page-light-scope] .bg-\[\#070708\],
+html.light [data-page-light-scope] .bg-\[\#0a0a0a\],
+html.light [data-page-light-scope] .bg-\[\#0f0f10\],
+html.light [data-page-light-scope] .bg-\[\#0f1011\],
+html.light [data-page-light-scope] .bg-\[\#111\],
+html.light [data-page-light-scope] .bg-\[\#121214\] {
+  background-color: #fafafa !important;
+}
+
+html.light [data-page-light-scope] .bg-neutral-900,
+html.light [data-page-light-scope] .bg-zinc-900,
+html.light [data-page-light-scope] .bg-gray-900,
+html.light [data-page-light-scope] .bg-\[\#1a1a1a\],
+html.light [data-page-light-scope] .bg-\[\#1d1d1d\],
+html.light [data-page-light-scope] .bg-\[\#1f1c1c\] {
+  background-color: #ffffff !important;
+}
+
+html.light [data-page-light-scope] .bg-neutral-800,
+html.light [data-page-light-scope] .bg-zinc-800,
+html.light [data-page-light-scope] .bg-gray-800,
+html.light [data-page-light-scope] .bg-\[\#323232\] {
+  background-color: #f0f0f0 !important;
+}
+
+html.light [data-page-light-scope] .bg-neutral-700,
+html.light [data-page-light-scope] .bg-zinc-700,
+html.light [data-page-light-scope] .bg-gray-700 {
+  background-color: #e5e5e5 !important;
+}
+
+/* Translucent white panels (glassy on dark) → dark panels (glassy on light) */
+html.light [data-page-light-scope] .bg-white\/5  { background-color: rgba(0,0,0,0.04) !important; }
+html.light [data-page-light-scope] .bg-white\/8  { background-color: rgba(0,0,0,0.05) !important; }
+html.light [data-page-light-scope] .bg-white\/10 { background-color: rgba(0,0,0,0.06) !important; }
+html.light [data-page-light-scope] .bg-white\/15 { background-color: rgba(0,0,0,0.08) !important; }
+html.light [data-page-light-scope] .bg-white\/20 { background-color: rgba(0,0,0,0.10) !important; }
+
+/* Pure white text → dark text (inverted) */
+html.light [data-page-light-scope] .text-white     { color: rgb(22, 22, 22) !important; }
+html.light [data-page-light-scope] .text-white\/95 { color: rgba(22, 22, 22, 0.95) !important; }
+html.light [data-page-light-scope] .text-white\/90 { color: rgba(22, 22, 22, 0.90) !important; }
+html.light [data-page-light-scope] .text-white\/85 { color: rgba(22, 22, 22, 0.88) !important; }
+html.light [data-page-light-scope] .text-white\/80 { color: rgba(22, 22, 22, 0.82) !important; }
+html.light [data-page-light-scope] .text-white\/75 { color: rgba(22, 22, 22, 0.78) !important; }
+html.light [data-page-light-scope] .text-white\/70 { color: rgba(22, 22, 22, 0.72) !important; }
+html.light [data-page-light-scope] .text-white\/65 { color: rgba(22, 22, 22, 0.68) !important; }
+html.light [data-page-light-scope] .text-white\/60 { color: rgba(22, 22, 22, 0.65) !important; }
+html.light [data-page-light-scope] .text-white\/55 { color: rgba(22, 22, 22, 0.60) !important; }
+html.light [data-page-light-scope] .text-white\/50 { color: rgba(22, 22, 22, 0.55) !important; }
+html.light [data-page-light-scope] .text-white\/45 { color: rgba(22, 22, 22, 0.50) !important; }
+html.light [data-page-light-scope] .text-white\/40 { color: rgba(22, 22, 22, 0.48) !important; }
+html.light [data-page-light-scope] .text-white\/35 { color: rgba(22, 22, 22, 0.45) !important; }
+html.light [data-page-light-scope] .text-white\/30 { color: rgba(22, 22, 22, 0.42) !important; }
+html.light [data-page-light-scope] .text-white\/25 { color: rgba(22, 22, 22, 0.38) !important; }
+html.light [data-page-light-scope] .text-white\/20 { color: rgba(22, 22, 22, 0.32) !important; }
+
+/* Light-gray neutrals (used for muted/body text on dark) → darker grays on light */
+html.light [data-page-light-scope] .text-neutral-100,
+html.light [data-page-light-scope] .text-neutral-200,
+html.light [data-page-light-scope] .text-neutral-300 { color: rgb(38, 38, 38) !important; }
+html.light [data-page-light-scope] .text-neutral-400 { color: rgb(82, 82, 82) !important; }
+html.light [data-page-light-scope] .text-neutral-500 { color: rgb(115, 115, 115) !important; }
+html.light [data-page-light-scope] .text-zinc-300,
+html.light [data-page-light-scope] .text-zinc-400 { color: rgb(82, 82, 82) !important; }
+
+/* White-tinted borders → black-tinted borders */
+html.light [data-page-light-scope] .border-white\/5  { border-color: rgba(0,0,0,0.06) !important; }
+html.light [data-page-light-scope] .border-white\/8  { border-color: rgba(0,0,0,0.08) !important; }
+html.light [data-page-light-scope] .border-white\/10 { border-color: rgba(0,0,0,0.10) !important; }
+html.light [data-page-light-scope] .border-white\/15 { border-color: rgba(0,0,0,0.12) !important; }
+html.light [data-page-light-scope] .border-white\/20 { border-color: rgba(0,0,0,0.14) !important; }
+html.light [data-page-light-scope] .border-white\/25 { border-color: rgba(0,0,0,0.16) !important; }
+html.light [data-page-light-scope] .border-white\/30 { border-color: rgba(0,0,0,0.18) !important; }
+html.light [data-page-light-scope] .border-neutral-900,
+html.light [data-page-light-scope] .border-neutral-800 { border-color: rgb(229, 229, 229) !important; }
+html.light [data-page-light-scope] .border-neutral-700 { border-color: rgb(212, 212, 212) !important; }
+html.light [data-page-light-scope] .border-zinc-800,
+html.light [data-page-light-scope] .border-zinc-900 { border-color: rgb(229, 229, 229) !important; }
+
+/* Ring/divide colors */
+html.light [data-page-light-scope] .ring-white\/10 { --tw-ring-color: rgba(0,0,0,0.10) !important; }
+html.light [data-page-light-scope] .ring-white\/20 { --tw-ring-color: rgba(0,0,0,0.14) !important; }
+html.light [data-page-light-scope] .divide-white\/10 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(0,0,0,0.10) !important; }
+
+/* Placeholders */
+html.light [data-page-light-scope] .placeholder\:text-white\/48::placeholder,
+html.light [data-page-light-scope] .placeholder\:text-white\/50::placeholder,
+html.light [data-page-light-scope] .placeholder\:text-white\/60::placeholder {
+  color: rgba(22, 22, 22, 0.55) !important;
+}
+
+/* Body background under page scope follows :root token already; ensure
+   transparent gradients above pure black inherit a light base. */
+html.light [data-page-light-scope] {
+  background-color: var(--background);
+}
+
+/* Inline-style dark backgrounds → light surfaces.
+   Many v3 sections set `style={{ background: "#0a0a0a" }}` etc. directly.
+   Inline styles beat class selectors on specificity, but a CSS rule with
+   !important still wins over an inline style without !important.
+   Browsers normalize hex to rgb() when serializing the style attribute,
+   so we match on the rgb() form (both spaced and non-spaced variants). */
+
+/* Near-black inline backgrounds → page bg */
+html.light [data-page-light-scope] [style*="rgb(8, 8, 8)"],
+html.light [data-page-light-scope] [style*="rgb(8,8,8)"],
+html.light [data-page-light-scope] [style*="rgb(10, 10, 10)"],
+html.light [data-page-light-scope] [style*="rgb(10,10,10)"],
+html.light [data-page-light-scope] [style*="rgb(10, 10, 12)"],
+html.light [data-page-light-scope] [style*="rgb(10,10,12)"],
+html.light [data-page-light-scope] [style*="rgb(13, 13, 14)"],
+html.light [data-page-light-scope] [style*="rgb(13,13,14)"],
+html.light [data-page-light-scope] [style*="rgb(14, 14, 14)"],
+html.light [data-page-light-scope] [style*="rgb(14,14,14)"],
+html.light [data-page-light-scope] [style*="rgb(15, 15, 15)"],
+html.light [data-page-light-scope] [style*="rgb(15,15,15)"],
+html.light [data-page-light-scope] [style*="rgb(15, 15, 16)"],
+html.light [data-page-light-scope] [style*="rgb(15,15,16)"],
+html.light [data-page-light-scope] [style*="rgb(7, 7, 8)"],
+html.light [data-page-light-scope] [style*="rgb(7,7,8)"],
+html.light [data-page-light-scope] [style*="rgb(4, 4, 4)"],
+html.light [data-page-light-scope] [style*="rgb(4,4,4)"] {
+  background: #fafafa !important;
+  background-color: #fafafa !important;
+}
+
+/* Dark-gray inline backgrounds → white cards */
+html.light [data-page-light-scope] [style*="rgb(22, 22, 23)"],
+html.light [data-page-light-scope] [style*="rgb(22,22,23)"],
+html.light [data-page-light-scope] [style*="rgb(26, 26, 28)"],
+html.light [data-page-light-scope] [style*="rgb(26,26,28)"],
+html.light [data-page-light-scope] [style*="rgb(26, 26, 26)"],
+html.light [data-page-light-scope] [style*="rgb(26,26,26)"],
+html.light [data-page-light-scope] [style*="rgb(30, 30, 32)"],
+html.light [data-page-light-scope] [style*="rgb(30,30,32)"],
+html.light [data-page-light-scope] [style*="rgb(31, 28, 28)"],
+html.light [data-page-light-scope] [style*="rgb(31,28,28)"],
+html.light [data-page-light-scope] [style*="rgb(29, 29, 29)"],
+html.light [data-page-light-scope] [style*="rgb(29,29,29)"],
+html.light [data-page-light-scope] [style*="rgb(18, 18, 20)"],
+html.light [data-page-light-scope] [style*="rgb(18,18,20)"],
+html.light [data-page-light-scope] [style*="rgb(21, 21, 23)"],
+html.light [data-page-light-scope] [style*="rgb(21,21,23)"],
+html.light [data-page-light-scope] [style*="rgb(29, 29, 31)"],
+html.light [data-page-light-scope] [style*="rgb(29,29,31)"] {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+html.light [data-page-light-scope] [style*="rgb(50, 50, 50)"],
+html.light [data-page-light-scope] [style*="rgb(50,50,50)"] {
+  background: #f0f0f0 !important;
+  background-color: #f0f0f0 !important;
+}
+
+/* Light mode contrast — Tailwind's text-foreground/X under .light resolves
+   foreground to (22,22,22); low alpha values render as near-invisible
+   light gray on a white page. Bump the effective opacity so muted text
+   remains legible (~AA contrast) while keeping the visual hierarchy. */
+html.light [data-page-light-scope] .text-foreground\/15 { color: rgba(22,22,22,0.50) !important; }
+html.light [data-page-light-scope] .text-foreground\/20 { color: rgba(22,22,22,0.55) !important; }
+html.light [data-page-light-scope] .text-foreground\/25 { color: rgba(22,22,22,0.58) !important; }
+html.light [data-page-light-scope] .text-foreground\/30 { color: rgba(22,22,22,0.60) !important; }
+html.light [data-page-light-scope] .text-foreground\/35 { color: rgba(22,22,22,0.62) !important; }
+html.light [data-page-light-scope] .text-foreground\/40 { color: rgba(22,22,22,0.65) !important; }
+html.light [data-page-light-scope] .text-foreground\/45 { color: rgba(22,22,22,0.68) !important; }
+html.light [data-page-light-scope] .text-foreground\/50 { color: rgba(22,22,22,0.72) !important; }
+html.light [data-page-light-scope] .text-foreground\/55 { color: rgba(22,22,22,0.75) !important; }
+html.light [data-page-light-scope] .text-foreground\/60 { color: rgba(22,22,22,0.78) !important; }
+html.light [data-page-light-scope] .text-foreground\/65 { color: rgba(22,22,22,0.80) !important; }
+html.light [data-page-light-scope] .text-foreground\/70 { color: rgba(22,22,22,0.85) !important; }
+html.light [data-page-light-scope] .text-foreground\/75 { color: rgba(22,22,22,0.88) !important; }
+html.light [data-page-light-scope] .text-foreground\/80 { color: rgba(22,22,22,0.92) !important; }
+html.light [data-page-light-scope] .text-foreground\/85 { color: rgba(22,22,22,0.95) !important; }
+
+/* Same treatment for text-white/X (when text-white is used directly with alpha) */
+html.light [data-page-light-scope] .text-white\/20 { color: rgba(22,22,22,0.55) !important; }
+html.light [data-page-light-scope] .text-white\/25 { color: rgba(22,22,22,0.58) !important; }
+html.light [data-page-light-scope] .text-white\/30 { color: rgba(22,22,22,0.60) !important; }
+html.light [data-page-light-scope] .text-white\/35 { color: rgba(22,22,22,0.62) !important; }
+html.light [data-page-light-scope] .text-white\/40 { color: rgba(22,22,22,0.65) !important; }
+html.light [data-page-light-scope] .text-white\/45 { color: rgba(22,22,22,0.68) !important; }
+html.light [data-page-light-scope] .text-white\/50 { color: rgba(22,22,22,0.72) !important; }
+html.light [data-page-light-scope] .text-white\/55 { color: rgba(22,22,22,0.75) !important; }
+html.light [data-page-light-scope] .text-white\/60 { color: rgba(22,22,22,0.78) !important; }
+html.light [data-page-light-scope] .text-white\/65 { color: rgba(22,22,22,0.80) !important; }
+html.light [data-page-light-scope] .text-white\/70 { color: rgba(22,22,22,0.85) !important; }
+html.light [data-page-light-scope] .text-white\/75 { color: rgba(22,22,22,0.88) !important; }
+html.light [data-page-light-scope] .text-white\/80 { color: rgba(22,22,22,0.92) !important; }
+html.light [data-page-light-scope] .text-white\/85 { color: rgba(22,22,22,0.95) !important; }
+
+/* GlitchWord (IntelligentDevices animated word) hardcodes color:white in CSS.
+   Flip to foreground when in light mode + within page scope. */
+html.light [data-page-light-scope] .glitch-word { color: rgb(22, 22, 22); }
+html.light [data-page-light-scope] .glitch-word-r { color: var(--primary); }
+
+/* ============================================================
+   [data-keep-dark] — opt-out subtree for surfaces designed as
+   "always dark" (red promo panels, dark glass pills, video
+   overlays, etc.). When inside this subtree under light theme,
+   restore the dark-mode foreground triplet and the original
+   white/alpha text utilities so the design reads correctly.
+   ============================================================ */
+html.light [data-page-light-scope] [data-keep-dark],
+html.light [data-page-light-scope] [data-keep-dark] * {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 18, 18, 18;
+}
+
+html.light [data-page-light-scope] [data-keep-dark] .text-white,
+html.light [data-page-light-scope] [data-keep-dark].text-white { color: #ffffff !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/95 { color: rgba(255,255,255,0.95) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/90 { color: rgba(255,255,255,0.90) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/85 { color: rgba(255,255,255,0.85) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/80 { color: rgba(255,255,255,0.80) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/75 { color: rgba(255,255,255,0.75) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/70 { color: rgba(255,255,255,0.70) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/65 { color: rgba(255,255,255,0.65) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/60 { color: rgba(255,255,255,0.60) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/55 { color: rgba(255,255,255,0.55) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/50 { color: rgba(255,255,255,0.50) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/45 { color: rgba(255,255,255,0.45) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/40 { color: rgba(255,255,255,0.40) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/35 { color: rgba(255,255,255,0.35) !important; }
+html.light [data-page-light-scope] [data-keep-dark] .text-white\/30 { color: rgba(255,255,255,0.30) !important; }
+
+/* Reset the bg/foreground-token classes inside the subtree too */
+html.light [data-page-light-scope] [data-keep-dark].bg-black,
+html.light [data-page-light-scope] [data-keep-dark] .bg-black { background-color: #000 !important; }

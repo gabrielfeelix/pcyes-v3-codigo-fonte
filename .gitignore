@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Secrets / environment
+.env
+.env.*
+.vercel/
+*.pem
+*.key
+*.crt
+
+# Editor / OS junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+
+# Logs
+*.log
+npm-debug.log*
