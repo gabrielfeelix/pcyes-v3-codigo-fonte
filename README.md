@@ -9,6 +9,8 @@ Serve como **referência para a versão oficial da v3**: está publicado na
 consultar como cada tela, componente e token foi montado antes de levar
 para o ambiente de produção definitivo.
 
+**🔗 Protótipo online:** <https://pcyes-v3-codigo-fonte.vercel.app>
+
 > Não é a loja de produção. É um protótipo de alta fidelidade — toda a UI,
 > as telas e o design system estão prontos e funcionais, mas o catálogo é
 > estático (sem API/backend ligado).
