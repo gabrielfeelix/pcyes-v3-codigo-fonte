@@ -25,16 +25,14 @@ import { PreOrderBanner, useCountdown } from "./PreOrderBanner";
 import { CTAButton, DiscountBadge, QtyStepper } from "./section";
 import { SEO } from "./SEO";
 import { getProductSlug, getProductUrl } from "../lib/slug";
+import { formatCep } from "../../utils/format";
 
 /* ── helpers ─────────────────────────────────────────── */
 
+// NOTE: uses toLocaleString (outputs R$ 1.234,56 with NBSP) — intentionally kept local
+// to preserve existing display; canonical formatBRL in utils/format uses regex (R$ 1.234,56)
 function formatBRL(v: number) {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-function formatCep(value: string) {
-  const digits = value.replace(/\D/g, "").slice(0, 8);
-  return digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");

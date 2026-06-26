@@ -1,4 +1,5 @@
 import type { Product } from "./productsData";
+export { formatBRL } from "../../utils/format";
 
 /** Discount % from oldPriceNum (real or synthetic). */
 export function getDiscountPct(p: Product): number {
@@ -15,11 +16,6 @@ export function getEconomy(p: Product): number {
 /** PIX price = priceNum with 10% extra discount. */
 export function getPixPrice(p: Product): number {
   return Math.round(p.priceNum * 0.9 * 100) / 100;
-}
-
-/** Format BRL "R$ 1.234,56". */
-export function formatBRL(n: number): string {
-  return `R$ ${n.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
 }
 
 /** 10x installment. */

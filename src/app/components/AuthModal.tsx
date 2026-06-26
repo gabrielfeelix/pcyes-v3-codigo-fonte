@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
 import { X, Mail, Lock, User, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
@@ -40,7 +41,8 @@ function FacebookIcon() {
 }
 
 export function AuthModal() {
-  const { authModalOpen, setAuthModalOpen, authModalTab, setAuthModalTab, login, socialLogin, register } = useAuth();
+  const { authModalOpen, setAuthModalOpen, authModalTab, setAuthModalTab, login, socialLogin, register, authRedirect, setAuthRedirect } = useAuth();
+  const navigate = useNavigate();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
   const [email, setEmail] = useState("");
@@ -67,12 +69,16 @@ export function AuthModal() {
     try {
       if (authModalTab === "login") await login(email, password);
       else await register(name, email, password);
+      if (authRedirect) { const dest = authRedirect; setAuthRedirect(null); navigate(dest); }
     } finally { setLoading(false); }
   };
 
   const handleSocial = async (provider: string) => {
     setSocialLoading(provider);
-    try { await socialLogin(provider); }
+    try {
+      await socialLogin(provider);
+      if (authRedirect) { const dest = authRedirect; setAuthRedirect(null); navigate(dest); }
+    }
     finally { setSocialLoading(null); }
   };
 
@@ -83,7 +89,7 @@ export function AuthModal() {
       {authModalOpen && (
         <>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[70] bg-black/70 backdrop-blur-md" onClick={() => { setAuthModalOpen(false); reset(); }} />
+            className="fixed inset-0 z-[70] bg-black/70 backdrop-blur-md" onClick={() => { setAuthModalOpen(false); setAuthRedirect(null); reset(); }} />
 
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -93,7 +99,7 @@ export function AuthModal() {
             <div className="w-full max-w-[420px] overflow-hidden" style={{ borderRadius: "var(--radius-card-md)", background: isDark ? "#161617" : "white", border: isDark ? "1px solid rgba(var(--foreground-rgb), 0.06)" : "1px solid rgba(0,0,0,0.08)" }}>
               {/* Header */}
               <div className="relative px-8 pt-8 pb-6 text-center">
-                <button onClick={() => { setAuthModalOpen(false); reset(); }}
+                <button onClick={() => { setAuthModalOpen(false); setAuthRedirect(null); reset(); }}
                   className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-foreground/30 hover:text-foreground hover:bg-foreground/5 transition-all cursor-pointer"
                 ><X size={16} /></button>
 

@@ -86,6 +86,9 @@ interface AuthContextType {
   setAuthModalOpen: (open: boolean) => void;
   authModalTab: "login" | "register";
   setAuthModalTab: (tab: "login" | "register") => void;
+  authRedirect: string | null;
+  setAuthRedirect: (path: string | null) => void;
+  promptLogin: (redirectTo?: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -177,6 +180,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserData | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"login" | "register">("login");
+  const [authRedirect, setAuthRedirect] = useState<string | null>(null);
+
+  const promptLogin = useCallback((redirectTo?: string) => {
+    setAuthModalTab("login");
+    setAuthRedirect(redirectTo ?? null);
+    setAuthModalOpen(true);
+  }, []);
 
   const login = useCallback(async (_email: string, _password: string) => {
     await new Promise((r) => setTimeout(r, 800));
@@ -196,7 +206,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthModalOpen(false);
   }, []);
 
-  const logout = useCallback(() => setUser(null), []);
+  const logout = useCallback(() => { setUser(null); setAuthRedirect(null); }, []);
 
   const updateUser = useCallback((data: Partial<UserData>) => {
     setUser((prev) => prev ? { ...prev, ...data } : null);
@@ -290,6 +300,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       addAddress, updateAddress, removeAddress, setDefaultAddress,
       addCard, updateCard, removeCard, setDefaultCard,
       authModalOpen, setAuthModalOpen, authModalTab, setAuthModalTab,
+      authRedirect, setAuthRedirect, promptLogin,
     }}>
       {children}
     </AuthContext.Provider>

@@ -51,6 +51,7 @@ import {
 } from "../components/ui/sheet";
 import { cn } from "../components/ui/utils";
 import { ScrollArea } from "../components/ui/scroll-area";
+import { formatCep } from "../../utils/format";
 
 const LOGO_URL =
   "https://pcyes-cdn.oderco.com.br/Logotipos/PCYES/Simbolo-Logo-Horiz-Vermelho.png";
@@ -4029,11 +4030,6 @@ function computeCompat(
   });
 
   return { checks, estimatedWatt, psuWatt };
-}
-
-function formatCep(input: string): string {
-  const digits = input.replace(/\D/g, "").slice(0, 8);
-  return digits.length <= 5 ? digits : `${digits.slice(0, 5)}-${digits.slice(5)}`;
 }
 
 function calculateFreight(cep: string, total: number): Freight | null {

@@ -21,9 +21,9 @@ interface Slide {
  * would 404 on small viewports.
  */
 const slides: Slide[] = [
-  { src: "/assets/banner-1.png", href: "/produtos", alt: "Nova Coleção Performance 2026" },
-  { src: "/assets/banner-2.png", href: "/produtos?category=Periféricos", alt: "Equipamentos para streamers" },
-  { src: "/assets/banner-3.png", href: "/monte-seu-pc", alt: "Builds prontas pra dominar" },
+  { src: "/assets/banner-1.webp", href: "/produtos", alt: "Nova Coleção Performance 2026" },
+  { src: "/assets/banner-2.webp", href: "/produtos?category=Periféricos", alt: "Equipamentos para streamers" },
+  { src: "/assets/banner-3.webp", href: "/monte-seu-pc", alt: "Builds prontas pra dominar" },
 ];
 
 const SLIDE_DURATION = 6500;
@@ -174,6 +174,8 @@ export function HeroSection() {
                         src={slide.src}
                         alt={slide.alt}
                         draggable={false}
+                        loading={i === 0 ? "eager" : "lazy"}
+                        fetchPriority={i === 0 ? "high" : "auto"}
                         className="h-full w-full object-cover pointer-events-none select-none"
                         style={{
                           WebkitUserDrag: "none",

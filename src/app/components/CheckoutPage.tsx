@@ -30,6 +30,8 @@ import { useAuth } from "./AuthContext";
 import { AddressFormModal } from "./AddressFormModal";
 import { CardFormModal } from "./CardFormModal";
 import { Footer } from "./Footer";
+import { formatBRL, parseBRL, formatCep } from "../../utils/format";
+import { COUPONS } from "../../utils/commerce";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -39,20 +41,6 @@ const STEPS = [
   { key: 2, label: "Pagamento", icon: CreditCard },
   { key: 3, label: "Revisão", icon: ShieldCheck },
 ] as const;
-
-const COUPONS: Record<string, number> = {
-  PCYES10: 10,
-  PROMO20: 20,
-  BEMVINDO: 15,
-};
-
-function parseBRL(s: string): number {
-  return Number(s.replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".")) || 0;
-}
-
-function formatBRL(n: number): string {
-  return `R$ ${n.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
-}
 
 const cardBg = "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.06) 0%, rgba(var(--foreground-rgb), 0.02) 100%)";
 const cardBorder = "1px solid rgba(var(--foreground-rgb), 0.08)";
@@ -316,7 +304,16 @@ function Line({ label, value, positive }: { label: string; value: string; positi
 export function CheckoutPage() {
   const { items, clearCart } = useCart();
   const navigate = useNavigate();
-  const { user, isLoggedIn, addAddress, addCard } = useAuth();
+  const { user, isLoggedIn, addAddress, addCard, promptLogin } = useAuth();
+  /* Guard: checkout exige login. Deslogado (URL/refresh) → carrinho + abre login.
+     Após logar, authRedirect("/checkout") traz o usuário de volta. */
+  useEffect(() => {
+    if (!isLoggedIn) {
+      promptLogin("/checkout");
+      navigate("/carrinho", { replace: true });
+    }
+  }, [isLoggedIn, promptLogin, navigate]);
+
   const [step, setStep] = useState<Step>(0);
   /* Picker state — quando logged in c/ endereços/cartões salvos, preenche o form
      da etapa correspondente automaticamente quando o usuário seleciona um. */
@@ -426,10 +423,6 @@ export function CheckoutPage() {
 
   const canAdvance = step === 0 ? step0Valid : step === 1 ? step1Valid : step === 2 ? step2Valid : true;
 
-  const formatCep = (v: string) => {
-    const d = v.replace(/\D/g, "").slice(0, 8);
-    return d.length > 5 ? `${d.slice(0, 5)}-${d.slice(5)}` : d;
-  };
   const formatCardNumber = (v: string) =>
     v.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
   const formatExp = (v: string) => {

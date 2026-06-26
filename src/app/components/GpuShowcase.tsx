@@ -27,7 +27,7 @@ const COMPARISONS: Comparison[] = [
     previousName: "RTX 2060",
     tagline: "Ray Tracing + DLSS 3 em 4K",
     metric: "+85% FPS",
-    scene: "/assets/cod.png",
+    scene: "/assets/cod.webp",
   },
   {
     id: "rtx-3060",
@@ -36,7 +36,7 @@ const COMPARISONS: Comparison[] = [
     previousName: "GTX 1660",
     tagline: "12GB GDDR6 + Ampere Cores",
     metric: "+60% FPS",
-    scene: "/assets/god-of-war.png",
+    scene: "/assets/god-of-war.webp",
   },
   {
     id: "rtx-3050",
@@ -45,7 +45,7 @@ const COMPARISONS: Comparison[] = [
     previousName: "GTX 1050 Ti",
     tagline: "Ray Tracing acessível em Full HD",
     metric: "+72% FPS",
-    scene: "/assets/mario.png",
+    scene: "/assets/mario.webp",
   },
   {
     id: "rtx-3060-w",
@@ -54,7 +54,7 @@ const COMPARISONS: Comparison[] = [
     previousName: "RTX 2060",
     tagline: "Build clean + Ray Tracing",
     metric: "+45% FPS",
-    scene: "/assets/rdr2.png",
+    scene: "/assets/rdr2.webp",
   },
 ];
 

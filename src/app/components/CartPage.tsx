@@ -22,31 +22,21 @@ import {
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
+import { useAuth } from "./AuthContext";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
 import { Footer } from "./Footer";
 import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getVisibleCatalogProducts } from "./productPresentation";
-
-const COUPONS: Record<string, number> = {
-  PCYES10: 10,
-  PROMO20: 20,
-  BEMVINDO: 15,
-};
-
-const GIFT_THRESHOLD = 950;
-
-function parseBRL(s: string): number {
-  return Number(s.replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".")) || 0;
-}
-
-function formatBRL(n: number): string {
-  return `R$ ${n.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
-}
+import { formatBRL, parseBRL, formatCep } from "../../utils/format";
+import { COUPONS, GIFT_THRESHOLD } from "../../utils/commerce";
 
 export function CartPage() {
   const { items, removeItem, updateQuantity, clearCart, setGiftItem } = useCart();
   const navigate = useNavigate();
   const { appliedCoupon, setAppliedCoupon, pointsApplied, setPointsApplied, pointsToUse, setPointsToUse } = useCheckoutPrefs();
+  const { isLoggedIn, promptLogin } = useAuth();
+  const handleFinalize = () =>
+    isLoggedIn ? navigate("/checkout") : promptLogin("/checkout");
   const [coupon, setCoupon] = useState("");
   const [couponError, setCouponError] = useState("");
   const [couponOpen, setCouponOpen] = useState(false);
@@ -167,11 +157,6 @@ export function CartPage() {
       setCouponError("Cupom inválido");
       setAppliedCoupon(null);
     }
-  };
-
-  const formatCep = (v: string) => {
-    const digits = v.replace(/\D/g, "").slice(0, 8);
-    return digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
   };
 
   const cardBg = "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.06) 0%, rgba(var(--foreground-rgb), 0.02) 100%)";
@@ -956,7 +941,7 @@ export function CartPage() {
 
                 {/* CTA */}
                 <button
-                  onClick={() => navigate("/checkout")}
+                  onClick={handleFinalize}
                   className="mb-3 hidden w-full cursor-pointer items-center justify-center gap-2 rounded-full px-6 py-3.5 text-ink-strong transition-transform hover:scale-[1.02] active:scale-[0.98] lg:inline-flex"
                   style={{
                     background: "var(--gradient-buy)",
@@ -1162,7 +1147,7 @@ export function CartPage() {
             </p>
           </div>
           <button
-            onClick={() => navigate("/checkout")}
+            onClick={handleFinalize}
             className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-full px-6 text-ink-strong transition-transform active:scale-[0.97]"
             style={{
               minHeight: 46,
