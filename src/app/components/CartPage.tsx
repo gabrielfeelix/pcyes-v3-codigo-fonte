@@ -27,6 +27,8 @@ import { useCheckoutPrefs } from "./CheckoutPrefsContext";
 import { Footer } from "./Footer";
 import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getVisibleCatalogProducts } from "./productPresentation";
+import { getPreOrderInfo } from "./PreOrderData";
+import { PreOrderPill } from "./section";
 import { formatBRL, parseBRL, formatCep } from "../../utils/format";
 import { COUPONS, GIFT_THRESHOLD } from "../../utils/commerce";
 
@@ -103,9 +105,8 @@ export function CartPage() {
       setGiftModalOpen(false);
       return;
     }
-    if (giftUnlocked && !giftItem && !giftDismissed && paidItems.length > 0) {
-      setGiftModalOpen(true);
-    }
+    // Na CartPage o modal de brinde NÃO abre sozinho: se o brinde já está no
+    // carrinho mostra só o item; senão mostra o CTA pra escolher (abre no clique).
   }, [giftDismissed, giftItem, giftUnlocked, paidItems.length, setGiftItem]);
 
   const confirmGift = () => {
@@ -472,6 +473,12 @@ export function CartPage() {
                             <Trash2 size={14} strokeWidth={1.8} />
                           </button>
                         </div>
+
+                        {!item.isGift && getPreOrderInfo(item.id) && (
+                          <div className="mt-1.5">
+                            <PreOrderPill info={getPreOrderInfo(item.id)!} compact />
+                          </div>
+                        )}
 
                         <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-3">
                           {/* Qty */}

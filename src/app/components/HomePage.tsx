@@ -43,8 +43,12 @@ export function HomePage() {
       {/* ── BLOCO 1.5: Benefícios (frete grátis, compra segura, etc.) ── */}
       <TrustStrip />
 
-      {/* ── BLOCO 2: Drop do dia (3 deals selecionados) ── */}
-      <DropDoDiaSection />
+      {/* ── BLOCO 2: Drops mais cobiçados (Hall da meta) ── */}
+      <DealsHighlight
+        label="// HALL DA META"
+        title="Drops mais cobiçados"
+        productIds={dealIds}
+      />
 
       {/* ── BLOCO 3: Promoções da semana ──────────────── */}
       <FlashDealsStrip />
@@ -52,12 +56,8 @@ export function HomePage() {
       {/* ── BLOCO 4: Banner de categorias ──────────────── */}
       <CategoryShowcase />
 
-      {/* ── BLOCO 5: Hall da meta ─────────────────────── */}
-      <DealsHighlight
-        label="// HALL DA META"
-        title="Drops mais cobiçados"
-        productIds={dealIds}
-      />
+      {/* ── BLOCO 5: Drop do dia (3 deals selecionados) ── */}
+      <DropDoDiaSection />
 
       {/* ── BLOCO 5: Mais vendidos + essentials + smart ── */}
       <ProductShelf

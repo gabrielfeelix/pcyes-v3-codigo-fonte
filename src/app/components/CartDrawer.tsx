@@ -9,7 +9,8 @@ import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getVisibleCatalogProducts } from "./productPresentation";
 import { PcyesCoin } from "./PcyesCoin";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
-import { BrindePill, QtyStepper } from "./section";
+import { BrindePill, PreOrderPill, QtyStepper } from "./section";
+import { getPreOrderInfo } from "./PreOrderData";
 import { formatCep } from "../../utils/format";
 import { COUPONS, GIFT_THRESHOLD } from "../../utils/commerce";
 
@@ -263,6 +264,7 @@ export function CartDrawer() {
                             <div className="flex items-center gap-2">
                               <p className="truncate text-foreground mb-0.5" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-sm)", fontWeight: "var(--font-weight-medium)" }}>{item.name}</p>
                               {item.isGift && <BrindePill />}
+                              {!item.isGift && getPreOrderInfo(item.id) && <PreOrderPill info={getPreOrderInfo(item.id)!} compact />}
                             </div>
                             <div className="flex items-center gap-2">
                               {item.isGift && item.originalPrice && (

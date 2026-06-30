@@ -51,9 +51,9 @@ export function isLowStock(p: Product): boolean {
   return hash < 18;
 }
 
-/** Stock count for "Últimas X". */
+/** Stock count for "Últimas X". Nunca exibe mais de 27 unidades. */
 export function getStockCount(p: Product): number {
-  return ((p.id * 13) % 5) + 2;
+  return Math.min(27, ((p.id * 13) % 5) + 2);
 }
 
 /** Heat level for discount badge color. */

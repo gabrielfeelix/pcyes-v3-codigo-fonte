@@ -6,4 +6,4 @@ export const COUPONS: Record<string, number> = {
 };
 
 /** Cart total threshold (R$) above which a free gift is offered. */
-export const GIFT_THRESHOLD = 950;
+export const GIFT_THRESHOLD = 1500;

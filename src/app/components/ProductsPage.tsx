@@ -1830,7 +1830,7 @@ export function ProductsPage() {
                   </div>
 
                   {(() => {
-                    const stockLeft = ((quickViewProduct.id * 7) % 13) + 2;
+                    const stockLeft = Math.min(27, ((quickViewProduct.id * 7) % 13) + 2);
                     const urgent = stockLeft <= 5;
                     return (
                       <div className="mb-5 flex items-center gap-2">

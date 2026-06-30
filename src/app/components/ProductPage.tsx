@@ -42,7 +42,8 @@ function getRemainingUnits(product: { id: number; inStock?: boolean; reviews?: n
 
   const reviewSeed = product.reviews ?? 0;
   const ratingSeed = Math.round((product.rating ?? 0) * 10);
-  return 4 + ((product.id * 7 + reviewSeed + ratingSeed) % 9);
+  // Regra: nunca exibir mais de 27 unidades restantes.
+  return Math.min(27, 4 + ((product.id * 7 + reviewSeed + ratingSeed) % 9));
 }
 
 function getStockLabel(product: { id: number; inStock?: boolean; reviews?: number; rating?: number }) {
