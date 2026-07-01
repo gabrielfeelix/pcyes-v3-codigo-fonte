@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { motion } from "motion/react";
 import { Search, ChevronLeft, ChevronRight, Download, FileText, ArrowUpRight } from "lucide-react";
 import { Footer } from "../components/Footer";
+import { SEO } from "../components/SEO";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import {
   Select,
@@ -139,6 +140,7 @@ export function DriversManuaisPage() {
 
   return (
     <>
+      <SEO title="Drivers e Manuais" description="Baixe drivers, firmwares e manuais oficiais dos produtos PCYES. Central de downloads atualizada para mouses, teclados, headsets e mais." canonicalPath="/drivers-e-manuais/" />
       {/* ── Hero ── */}
       <section className="pt-[152px] md:pt-[182px]" style={{ background: "var(--surface-0)" }}>
         <div className="mx-auto max-w-[1434px] px-5 pb-12 md:px-12 md:pb-16">

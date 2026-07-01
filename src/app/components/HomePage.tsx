@@ -37,6 +37,8 @@ export function HomePage() {
           ],
         }}
       />
+      {/* H1 semântico único da home (hero é banner em imagem, sem texto) */}
+      <h1 className="sr-only">PCYES — Hardware, periféricos e setups gamer com identidade própria</h1>
       {/* ── BLOCO 1: Hero ─────────────────────────────── */}
       <HeroSection />
 

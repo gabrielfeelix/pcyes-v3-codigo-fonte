@@ -4,9 +4,17 @@
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      /* Critical: pinta o fundo base antes do bundle CSS (que é carregado non-blocking) — evita flash */
+      html { background: #121212; }
+      html.light { background: #fafafa; }
+      body { margin: 0; background: #121212; }
+      html.light body { background: #fafafa; }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" /></noscript>
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
     <link rel="preload" as="image" href="/assets/banner-1.webp" fetchpriority="high" />
       <title>PCYES — Hardware, Periféricos & Setup Gamer</title>

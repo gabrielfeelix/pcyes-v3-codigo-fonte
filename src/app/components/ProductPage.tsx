@@ -5,7 +5,7 @@ import {
   ShoppingBag, Heart, Star, ChevronLeft, ChevronRight, ChevronDown, Truck,
   Check, Share2, MapPin, CreditCard, Banknote, QrCode,
   Loader2, ArrowUpRight, Zap, X, Clock, Info,
-  Rocket, CalendarDays, ShieldCheck,
+  Rocket, CalendarDays, ShieldCheck, ZoomIn,
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
@@ -103,6 +103,8 @@ function calcShipping(digits: string, productPrice: number): ShippingOption[] {
 function ProductGallery({ images, name, isDark }: { images: string[]; name: string; isDark: boolean }) {
   const [active, setActive] = useState(0);
   const [zoomed, setZoomed] = useState(false);
+  const [lbZoom, setLbZoom] = useState(false);
+  const [lbOrigin, setLbOrigin] = useState({ x: 50, y: 50 });
 
   const prev = () => setActive((i) => (i - 1 + images.length) % images.length);
   const next = () => setActive((i) => (i + 1) % images.length);
@@ -145,7 +147,7 @@ function ProductGallery({ images, name, isDark }: { images: string[]; name: stri
             ? "inset 0 1px 0 rgba(var(--foreground-rgb), 0.05), 0 24px 60px -20px rgba(0,0,0,0.4)"
             : "inset 0 1px 0 rgba(var(--foreground-rgb), 0.6), 0 24px 60px -20px rgba(0,0,0,0.08)",
         }}
-        onClick={() => setZoomed(true)}
+        onClick={() => { setZoomed(true); setLbZoom(false); }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -156,6 +158,13 @@ function ProductGallery({ images, name, isDark }: { images: string[]; name: stri
             borderRadius: "var(--radius-card-lg)",
           }}
         />
+        {/* Affordance de zoom — sempre visível pra sinalizar que a imagem amplia */}
+        <span
+          className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-2.5 py-1 bg-black/30 backdrop-blur-md text-ink pointer-events-none transition-opacity group-hover:bg-black/45"
+          style={{ borderRadius: "var(--radius-pill)", fontSize: "var(--text-caption)", fontFamily: "var(--font-family-inter)", fontWeight: 600 }}
+        >
+          <ZoomIn size={13} /> Ampliar
+        </span>
         <AnimatePresence mode="wait">
           <motion.div
             key={active}
@@ -267,9 +276,22 @@ function ProductGallery({ images, name, isDark }: { images: string[]; name: stri
               <img
                 src={images[active]}
                 alt={name}
-                className="max-h-full max-w-full object-contain"
-                style={{ borderRadius: "var(--radius-card)" }}
-                onClick={(e) => e.stopPropagation()}
+                className="max-h-full max-w-full object-contain transition-transform duration-300 ease-out select-none"
+                style={{
+                  borderRadius: "var(--radius-card)",
+                  transform: lbZoom ? "scale(2.2)" : "scale(1)",
+                  transformOrigin: `${lbOrigin.x}% ${lbOrigin.y}%`,
+                  cursor: lbZoom ? "zoom-out" : "zoom-in",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  setLbOrigin({
+                    x: ((e.clientX - rect.left) / rect.width) * 100,
+                    y: ((e.clientY - rect.top) / rect.height) * 100,
+                  });
+                  setLbZoom((z) => !z);
+                }}
               />
 
               {images.length > 1 && (
@@ -2315,7 +2337,7 @@ export function ProductPage() {
         ]}
       />
       {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="px-5 md:px-8 pt-2 pb-2 lg:pt-6 lg:pb-2">
+      <nav aria-label="Breadcrumb" className="px-5 md:px-8 pt-2 pb-2 lg:pt-4 lg:pb-2">
         <ol className="max-w-[1760px] mx-auto flex items-center gap-1.5 flex-wrap">
           {[
             { label: "Home", to: "/" },
@@ -2347,7 +2369,7 @@ export function ProductPage() {
       </nav>
 
       {/* Main PDP */}
-      <div className="px-5 md:px-8 pt-2 pb-24 lg:pt-6">
+      <div className="px-5 md:px-8 pt-2 pb-24 lg:pt-3">
         <div className="max-w-[1760px] mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_400px] items-start gap-6 xl:gap-8">
           <div className="min-w-0 lg:col-start-1 lg:row-start-1">
             <div className="flex flex-col lg:flex-row items-start gap-6 xl:gap-8">

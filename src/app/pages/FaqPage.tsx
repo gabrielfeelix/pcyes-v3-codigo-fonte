@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { motion } from "motion/react";
 import { LifeBuoy, Search, MessageCircle, ArrowRight } from "lucide-react";
 import { Footer } from "../components/Footer";
+import { SEO } from "../components/SEO";
 import {
   Accordion,
   AccordionItem,
@@ -182,6 +183,11 @@ export function FaqPage() {
 
   return (
     <>
+      <SEO
+        title="Perguntas Frequentes"
+        description="Tire dúvidas sobre pedidos, entrega, trocas, garantia e pagamento na PCYES. Central de ajuda com as perguntas mais frequentes."
+        canonicalPath="/faq/"
+      />
       {/* ── Hero ── */}
       <section
         className="relative overflow-hidden border-b border-edge-subtle pt-[152px] md:pt-[182px]"

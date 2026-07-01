@@ -39,6 +39,23 @@ function prototypePublicAssetBase() {
 
 const publicAssetBasePlugin = prototypePublicAssetBase()
 
+// Tira o bundle CSS local (index-*.css) do caminho crítico de renderização:
+// carrega via preload+swap (non-blocking) e mantém <noscript> como fallback.
+// O fundo base é pintado por CSS crítico inline em index.html, evitando FOUC.
+function deferMainCss() {
+  return {
+    name: 'defer-main-css',
+    enforce: 'post' as const,
+    transformIndexHtml(html: string) {
+      return html.replace(
+        /<link rel="stylesheet"([^>]*?)href="(\/assets\/[^"]+\.css)"([^>]*)>/g,
+        (match: string, pre: string, href: string, post: string) =>
+          `<link rel="preload" as="style"${pre}href="${href}"${post} onload="this.onload=null;this.rel='stylesheet'"><noscript>${match}</noscript>`,
+      )
+    },
+  }
+}
+
 export default defineConfig({
   base: prototypeBasePath,
   build: {
@@ -51,6 +68,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     publicAssetBasePlugin,
+    deferMainCss(),
   ].filter(Boolean),
   resolve: {
     alias: {

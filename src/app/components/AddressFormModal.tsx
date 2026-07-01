@@ -34,6 +34,31 @@ export function AddressFormModal({ open, onClose, initial, onSubmit }: Props) {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
   const [data, setData] = useState<Omit<UserAddress, "id">>(EMPTY);
+  const [loadingCep, setLoadingCep] = useState(false);
+
+  // Busca endereço no ViaCEP e auto-preenche rua/bairro/cidade/UF.
+  async function lookupCep(cep: string) {
+    const digits = cep.replace(/\D/g, "");
+    if (digits.length !== 8) return;
+    setLoadingCep(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
+      const via = await res.json();
+      if (via && !via.erro) {
+        setData((d) => ({
+          ...d,
+          street: via.logradouro || d.street,
+          neighborhood: via.bairro || d.neighborhood,
+          city: via.localidade || d.city,
+          state: via.uf || d.state,
+        }));
+      }
+    } catch {
+      // Erro de rede ou CEP inválido — mantém os valores atuais.
+    } finally {
+      setLoadingCep(false);
+    }
+  }
 
   useEffect(() => {
     if (open) {
@@ -91,9 +116,19 @@ export function AddressFormModal({ open, onClose, initial, onSubmit }: Props) {
             <FieldInput
               placeholder="00000-000"
               value={data.cep}
-              onChange={(e) => setData((d) => ({ ...d, cep: maskCep(e.target.value) }))}
+              onChange={(e) => {
+                const masked = maskCep(e.target.value);
+                setData((d) => ({ ...d, cep: masked }));
+                if (masked.replace(/\D/g, "").length === 8) lookupCep(masked);
+              }}
+              onBlur={(e) => lookupCep(e.target.value)}
               inputMode="numeric"
             />
+            {loadingCep && (
+              <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", color: "rgba(var(--foreground-rgb), 0.5)" }}>
+                Buscando endereço…
+              </span>
+            )}
           </div>
           <div className="col-span-12 sm:col-span-9">
             <FieldLabel required>Logradouro</FieldLabel>

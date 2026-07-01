@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Footer } from "../components/Footer";
+import { SEO } from "../components/SEO";
 
 type LegalSection = {
   id: string;
@@ -70,6 +71,7 @@ export function LegalPageLayout({
 
   return (
     <>
+      <SEO title={title} description={`${title} — PCYES. Informações oficiais.`} />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden pt-[152px] md:pt-[182px]">
         {/* Subtle red radial glow */}

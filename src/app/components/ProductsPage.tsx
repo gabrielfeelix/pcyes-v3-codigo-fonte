@@ -1183,12 +1183,12 @@ export function ProductsPage() {
                 : activeCategoryLabel || "Todos os produtos"}
             </h1>
             <p
-              className="mt-2 text-foreground/55"
+              className="mt-3 text-foreground/75"
               style={{
                 fontFamily: "var(--font-family-inter)",
-                fontSize: "var(--text-sm)",
-                lineHeight: 1.5,
-                maxWidth: "640px",
+                fontSize: "var(--text-base)",
+                lineHeight: 1.6,
+                maxWidth: "720px",
               }}
             >
               {activeCategoryLabel

@@ -22,6 +22,7 @@ import { allProducts } from "./productsData";
 import { getPrimaryProductImage } from "./productPresentation";
 import { PRE_ORDER_ITEMS } from "./PreOrderData";
 import type { PreOrderInfo } from "./PreOrderData";
+import { SEO } from "./SEO";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -985,6 +986,7 @@ export function PreOrderPage() {
 
   return (
     <div className="pt-[calc(80px+var(--announce-h))] md:pt-[calc(110px+var(--announce-h))] min-h-screen bg-background">
+      <SEO title="Pré-venda" description="Garanta em primeira mão os lançamentos PCYES. Reserve na pré-venda com condições exclusivas, frete grátis acima de R$ 299 e até 12x sem juros." canonicalPath="/pre-venda/" />
       <HeroSection featured={featured} />
 
       <FiltersBar

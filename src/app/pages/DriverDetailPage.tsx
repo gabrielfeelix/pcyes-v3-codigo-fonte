@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router";
 import { motion } from "motion/react";
 import { Download, ArrowUpRight, ArrowLeft, ShieldCheck, FileBox } from "lucide-react";
 import { Footer } from "../components/Footer";
+import { SEO } from "../components/SEO";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { getDriverBySlug, type DriverFile } from "../components/driversData";
 
@@ -183,6 +184,7 @@ export function DriverDetailPage() {
 
   return (
     <>
+      <SEO title={entry.name || "Drivers e Manuais"} description="Baixe o driver e o manual oficial na central de downloads PCYES." />
       {/* ── Breadcrumb ── */}
       <section className="pt-[152px] md:pt-[182px]" style={{ background: "var(--surface-0)" }}>
         <div className="mx-auto max-w-[1434px] px-5 md:px-12">

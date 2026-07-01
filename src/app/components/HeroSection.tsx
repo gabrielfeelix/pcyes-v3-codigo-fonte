@@ -120,7 +120,7 @@ export function HeroSection() {
       }}
       onMouseEnter={() => setHasFocus(true)}
       onMouseLeave={() => setHasFocus(false)}
-      className="relative overflow-x-hidden pb-4 md:pb-8 pt-[calc(80px+var(--announce-h))] md:pt-[calc(170px+var(--announce-h))] notebook:pt-[calc(108px+var(--announce-h))]"
+      className="relative overflow-x-hidden pb-4 md:pb-8 pt-[calc(80px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))] notebook:pt-[calc(100px+var(--announce-h))]"
       style={{ background: "var(--surface-0)" }}
     >
       {/* Carousel track. Heights:

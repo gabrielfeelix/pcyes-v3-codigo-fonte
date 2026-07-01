@@ -10,6 +10,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { Footer } from "../components/Footer";
+import { SEO } from "../components/SEO";
 
 const FIGTREE = "var(--font-family-figtree)";
 const INTER = "var(--font-family-inter)";
@@ -141,6 +142,11 @@ export function QuemSomosPage() {
 
   return (
     <>
+      <SEO
+        title="Quem Somos"
+        description="Conheça a PCYES: marca brasileira de hardware, periféricos e setups gamer feita para quem joga, cria e edita sem travar."
+        canonicalPath="/quem-somos/"
+      />
       {/* ============================== HERO ============================== */}
       <section
         ref={heroRef}
