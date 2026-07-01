@@ -48,7 +48,9 @@ function deferMainCss() {
     enforce: 'post' as const,
     transformIndexHtml(html: string) {
       return html.replace(
-        /<link rel="stylesheet"([^>]*?)href="(\/assets\/[^"]+\.css)"([^>]*)>/g,
+        // Casa o bundle CSS local sob .../assets/*.css (com ou sem PROTOTYPE_BASE_PATH
+        // prefixado, ex. /pcyes/pcyes-v2/v3/assets/). Não casa fonts (https, sem /assets/).
+        /<link rel="stylesheet"([^>]*?)href="([^"]*assets\/[^"]+\.css)"([^>]*)>/g,
         (match: string, pre: string, href: string, post: string) =>
           `<link rel="preload" as="style"${pre}href="${href}"${post} onload="this.onload=null;this.rel='stylesheet'"><noscript>${match}</noscript>`,
       )
