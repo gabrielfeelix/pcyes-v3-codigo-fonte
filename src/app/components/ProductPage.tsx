@@ -1999,9 +1999,9 @@ function ProductStandardDescription({ product, images }: { product: any; images:
             <p className="mb-4 text-primary tracking-[0.24em]" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800 }}>
               // {product.category}
             </p>
-            <h3 className="mx-auto max-w-[820px] text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(24px, 5vw, 52px)", lineHeight: 1.02, fontWeight: 700, letterSpacing: "-0.04em" }}>
+            <h2 className="mx-auto max-w-[820px] text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(24px, 5vw, 52px)", lineHeight: 1.02, fontWeight: 700, letterSpacing: "-0.04em" }}>
               Sobre o produto
-            </h3>
+            </h2>
             <p className="mx-auto mt-5 max-w-[820px] text-foreground/65" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-base)", lineHeight: 1.65 }}>
               {lead}
             </p>
