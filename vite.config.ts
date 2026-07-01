@@ -65,7 +65,7 @@ function deferMainCss() {
 // As tags têm data-rh, então o helmet reconcilia em runtime sem duplicar.
 // Só mexe no <head> — body segue sendo o #root vazio → ZERO mudança de UI/UX.
 function prerenderSeoHtml() {
-  const SITE = 'https://pcyes.com.br'
+  const SITE = 'https://www.pcyes.com.br'
   // Título/descrição por rota estática conhecida (canonical é feito pra TODAS).
   const META: Record<string, [string, string]> = {
     '/pre-venda/': ['Pré-venda', 'Garanta em primeira mão os lançamentos PCYES. Reserve na pré-venda com condições exclusivas, frete grátis acima de R$ 299 e até 12x sem juros.'],

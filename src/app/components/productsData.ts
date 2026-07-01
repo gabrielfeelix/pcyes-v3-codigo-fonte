@@ -72,7 +72,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-0-4k-2m-pcyes-cobre-puro",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-0-4k-2m-pcyes-cobre-puro",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-0-4k-2m-pcyes-cobre-puro",
     "inStock": true,
     "badge": "4K"
   },
@@ -122,7 +122,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-0-4k-5m-pcyes-cobre-puro",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-0-4k-5m-pcyes-cobre-puro",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-0-4k-5m-pcyes-cobre-puro",
     "inStock": true,
     "badge": "4K"
   },
@@ -172,7 +172,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-0-4k-10m-pcyes-cobre-puro",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-0-4k-10m-pcyes-cobre-puro",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-0-4k-10m-pcyes-cobre-puro",
     "inStock": true,
     "badge": "4K"
   },
@@ -222,7 +222,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-0-4k-15m-pcyes-cobre-puro",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-0-4k-15m-pcyes-cobre-puro",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-0-4k-15m-pcyes-cobre-puro",
     "inStock": true,
     "badge": "4K"
   },
@@ -272,7 +272,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-0-4k-20m-pcyes-cobre-puro",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-0-4k-20m-pcyes-cobre-puro",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-0-4k-20m-pcyes-cobre-puro",
     "inStock": true,
     "badge": "4K",
     "oldPrice": "R$ 70,68",
@@ -324,7 +324,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-displayport-1-2-4k-2m-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-displayport-1-2-4k-2m-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-displayport-1-2-4k-2m-pcyes",
     "inStock": true,
     "badge": "4K"
   },
@@ -374,7 +374,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-2-0-a-para-a-2m-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-usb-2-0-a-para-a-2m-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-2-0-a-para-a-2m-pcyes",
     "inStock": true
   },
   {
@@ -423,7 +423,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-extensor-usb-3-0-1m-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-extensor-usb-3-0-1m-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-extensor-usb-3-0-1m-pcyes",
     "inStock": true
   },
   {
@@ -472,7 +472,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-extensor-usb-3-0-2m-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-extensor-usb-3-0-2m-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-extensor-usb-3-0-2m-pcyes",
     "inStock": true
   },
   {
@@ -521,7 +521,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-b-2m-impressora-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-b-2m-impressora-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-b-2m-impressora-pcyes",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -572,7 +572,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-b-3m-impressora-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-b-3m-impressora-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-b-3m-impressora-pcyes",
     "inStock": true,
     "oldPrice": "R$ 67,09",
     "oldPriceNum": 67.09
@@ -623,7 +623,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-micro-usb-para-usb-a-2m-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-micro-usb-para-usb-a-2m-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-micro-usb-para-usb-a-2m-pcyes",
     "inStock": true
   },
   {
@@ -672,7 +672,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-micro-usb-para-usb-a-3m-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-micro-usb-para-usb-a-3m-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-micro-usb-para-usb-a-3m-pcyes",
     "inStock": true
   },
   {
@@ -721,7 +721,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-micro-usb-2m-laranja-nylon-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-micro-usb-2m-laranja-nylon-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-micro-usb-2m-laranja-nylon-pcyes",
     "inStock": true
   },
   {
@@ -770,7 +770,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-usb-c-1m-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-usb-c-1m-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-usb-c-1m-pcyes",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -821,7 +821,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-usb-c-1m-pvc-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-usb-c-1m-pvc-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-usb-c-1m-pvc-pcyes",
     "inStock": true
   },
   {
@@ -870,7 +870,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-usb-c-1m-nylon-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-usb-c-1m-nylon-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-usb-c-1m-nylon-pcyes",
     "inStock": true
   },
   {
@@ -919,7 +919,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-usb-c-2m-pvc-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-usb-c-2m-pvc-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-usb-c-2m-pvc-pcyes",
     "inStock": true
   },
   {
@@ -968,7 +968,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-usb-c-2m-laranja-nylon-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-usb-c-2m-laranja-nylon-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-usb-c-2m-laranja-nylon-pcyes",
     "inStock": true
   },
   {
@@ -1017,7 +1017,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-usb-c-1m-branco-pvc-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-usb-c-1m-branco-pvc-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-usb-c-1m-branco-pvc-pcyes",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -1068,7 +1068,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-usb-c-2m-branco-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-usb-c-2m-branco-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-usb-c-2m-branco-pcyes",
     "inStock": true
   },
   {
@@ -1117,7 +1117,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-micro-usb-1m-pcyes",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-micro-usb-1m-pcyes",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-micro-usb-1m-pcyes",
     "inStock": true,
     "oldPrice": "R$ 67,09",
     "oldPriceNum": 67.09
@@ -1166,7 +1166,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-mini-usb-b-2-0-1m-480mbps-3a-pucmbp-1",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-mini-usb-b-2-0-1m-480mbps-3a-pucmbp-1",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-mini-usb-b-2-0-1m-480mbps-3a-pucmbp-1",
     "inStock": true
   },
   {
@@ -1213,7 +1213,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-adaptador-otg-usb-c-para-usb-a-3-0-15cm-5gbps-p3amup-15",
-    "productUrl": "https://pcyes.com.br/cabo-adaptador-otg-usb-c-para-usb-a-3-0-15cm-5gbps-p3amup-15",
+    "productUrl": "https://www.pcyes.com.br/cabo-adaptador-otg-usb-c-para-usb-a-3-0-15cm-5gbps-p3amup-15",
     "inStock": true
   },
   {
@@ -1260,7 +1260,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-displayport-para-dvi-d-2m-4k-10bits-pdvi-2",
-    "productUrl": "https://pcyes.com.br/cabo-displayport-para-dvi-d-2m-4k-10bits-pdvi-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-displayport-para-dvi-d-2m-4k-10bits-pdvi-2",
     "inStock": true,
     "badge": "4K",
     "oldPrice": "R$ 70,68",
@@ -1311,7 +1311,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-vga-3-6-15-pinos-30m-1280x1024-pvm36-30",
-    "productUrl": "https://pcyes.com.br/cabo-vga-3-6-15-pinos-30m-1280x1024-pvm36-30",
+    "productUrl": "https://www.pcyes.com.br/cabo-vga-3-6-15-pinos-30m-1280x1024-pvm36-30",
     "inStock": true
   },
   {
@@ -1358,7 +1358,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "pasta-termica-nitrogen-basic-1-5g-5-5wmk-pcynb1555",
-    "productUrl": "https://pcyes.com.br/pasta-termica-nitrogen-basic-1-5g-5-5wmk-pcynb1555",
+    "productUrl": "https://www.pcyes.com.br/pasta-termica-nitrogen-basic-1-5g-5-5wmk-pcynb1555",
     "inStock": true
   },
   {
@@ -1407,7 +1407,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "pasta-termica-nitrogen-pro-15g-85wmk-pcynp1585",
-    "productUrl": "https://pcyes.com.br/pasta-termica-nitrogen-pro-15g-85wmk-pcynp1585",
+    "productUrl": "https://www.pcyes.com.br/pasta-termica-nitrogen-pro-15g-85wmk-pcynp1585",
     "inStock": true
   },
   {
@@ -1456,7 +1456,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "pasta-termica-nitrogen-basic-4g-55wmk-pcynb0455",
-    "productUrl": "https://pcyes.com.br/pasta-termica-nitrogen-basic-4g-55wmk-pcynb0455",
+    "productUrl": "https://www.pcyes.com.br/pasta-termica-nitrogen-basic-4g-55wmk-pcynb0455",
     "inStock": true
   },
   {
@@ -1507,7 +1507,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b300-i5-1235u-16gb-512gb-nvme-linux-white",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b300-i5-1235u-16gb-512gb-nvme-linux-white",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b300-i5-1235u-16gb-512gb-nvme-linux-white",
     "inStock": true,
     "badge": "NVME",
     "oldPrice": "R$ 2241,88",
@@ -1561,7 +1561,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b300-i3-1215u-16gb-512gb-nvme-linux",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-16gb-512gb-nvme-linux",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-16gb-512gb-nvme-linux",
     "inStock": true,
     "badge": "NVME"
   },
@@ -1613,7 +1613,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b300-i3-1215u-16gb-512gb-nvme-white",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-16gb-512gb-nvme-white",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-16gb-512gb-nvme-white",
     "inStock": true,
     "badge": "NVME"
   },
@@ -1665,7 +1665,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b300-i3-1215u-16gb-1tb-nvme-linux",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-16gb-1tb-nvme-linux",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-16gb-1tb-nvme-linux",
     "inStock": true,
     "badge": "NVME",
     "oldPrice": "R$ 2127,89",
@@ -1720,7 +1720,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b300-i3-1215u-16gb-512gb-nvme-linux-white",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-16gb-512gb-nvme-linux-white",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-16gb-512gb-nvme-linux-white",
     "inStock": true,
     "badge": "NVME"
   },
@@ -1772,7 +1772,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "computador-pcyes-one-b500-i5-3470-8gb-256gb-ssd-linux",
-    "productUrl": "https://pcyes.com.br/computador-pcyes-one-b500-i5-3470-8gb-256gb-ssd-linux",
+    "productUrl": "https://www.pcyes.com.br/computador-pcyes-one-b500-i5-3470-8gb-256gb-ssd-linux",
     "inStock": true,
     "oldPrice": "R$ 2241,88",
     "oldPriceNum": 2241.88
@@ -1825,7 +1825,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "computador-pcyes-one-b300-i3-3220-8gb-512gb-ssd-windows",
-    "productUrl": "https://pcyes.com.br/computador-pcyes-one-b300-i3-3220-8gb-512gb-ssd-windows",
+    "productUrl": "https://www.pcyes.com.br/computador-pcyes-one-b300-i3-3220-8gb-512gb-ssd-windows",
     "inStock": true
   },
   {
@@ -1876,7 +1876,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "computador-pcyes-one-b500-i5-3470-8gb-512gb-ssd-windows",
-    "productUrl": "https://pcyes.com.br/computador-pcyes-one-b500-i5-3470-8gb-512gb-ssd-windows",
+    "productUrl": "https://www.pcyes.com.br/computador-pcyes-one-b500-i5-3470-8gb-512gb-ssd-windows",
     "inStock": true
   },
   {
@@ -1927,7 +1927,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "computador-pcyes-one-b300-i3-3220-8gb-512gb-ssd-linux",
-    "productUrl": "https://pcyes.com.br/computador-pcyes-one-b300-i3-3220-8gb-512gb-ssd-linux",
+    "productUrl": "https://www.pcyes.com.br/computador-pcyes-one-b300-i3-3220-8gb-512gb-ssd-linux",
     "inStock": true
   },
   {
@@ -1978,7 +1978,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "computador-pcyes-one-b500-i5-3470-8gb-512gb-ssd-linux",
-    "productUrl": "https://pcyes.com.br/computador-pcyes-one-b500-i5-3470-8gb-512gb-ssd-linux",
+    "productUrl": "https://www.pcyes.com.br/computador-pcyes-one-b500-i5-3470-8gb-512gb-ssd-linux",
     "inStock": true
   },
   {
@@ -2029,7 +2029,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-3-0-a-para-b-3m-pcyes-cobre-puro",
-    "productUrl": "https://pcyes.com.br/cabo-usb-3-0-a-para-b-3m-pcyes-cobre-puro",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-3-0-a-para-b-3m-pcyes-cobre-puro",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -2082,7 +2082,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-vga-3-6-15-pinos-40m-pcyes-cobre-puro",
-    "productUrl": "https://pcyes.com.br/cabo-vga-3-6-15-pinos-40m-pcyes-cobre-puro",
+    "productUrl": "https://www.pcyes.com.br/cabo-vga-3-6-15-pinos-40m-pcyes-cobre-puro",
     "inStock": true
   },
   {
@@ -2133,7 +2133,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-audio-2-rca-2m-pcyes-cobre-puro",
-    "productUrl": "https://pcyes.com.br/cabo-audio-2-rca-2m-pcyes-cobre-puro",
+    "productUrl": "https://www.pcyes.com.br/cabo-audio-2-rca-2m-pcyes-cobre-puro",
     "inStock": true
   },
   {
@@ -2185,7 +2185,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b300-i3-1215u-8gb-256gb-nvme",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-8gb-256gb-nvme",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-8gb-256gb-nvme",
     "inStock": true,
     "badge": "NVME"
   },
@@ -2238,7 +2238,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b300-i5-1235u-16gb-512gb-nvme-white",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b300-i5-1235u-16gb-512gb-nvme-white",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b300-i5-1235u-16gb-512gb-nvme-white",
     "inStock": true,
     "badge": "NVME",
     "oldPrice": "R$ 2127,89",
@@ -2292,7 +2292,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b500-i5-1235u-16gb-1tb-nvme-linux",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-16gb-1tb-nvme-linux",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-16gb-1tb-nvme-linux",
     "inStock": true,
     "badge": "NVME",
     "oldPrice": "R$ 2241,88",
@@ -2345,7 +2345,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-sodimm-16gb-ddr4-3200mhz-pcyes-pm163200d4so",
-    "productUrl": "https://pcyes.com.br/memoria-sodimm-16gb-ddr4-3200mhz-pcyes-pm163200d4so",
+    "productUrl": "https://www.pcyes.com.br/memoria-sodimm-16gb-ddr4-3200mhz-pcyes-pm163200d4so",
     "inStock": true
   },
   {
@@ -2395,7 +2395,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-udimm-16gb-ddr4-3200mhz-pcyes-pm163200d4",
-    "productUrl": "https://pcyes.com.br/memoria-udimm-16gb-ddr4-3200mhz-pcyes-pm163200d4",
+    "productUrl": "https://www.pcyes.com.br/memoria-udimm-16gb-ddr4-3200mhz-pcyes-pm163200d4",
     "inStock": true
   },
   {
@@ -2446,7 +2446,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-500w-80plus-pcyes-shocker-white-ghost-pf500shwg",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-500w-80plus-pcyes-shocker-white-ghost-pf500shwg",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-500w-80plus-pcyes-shocker-white-ghost-pf500shwg",
     "inStock": true
   },
   {
@@ -2497,7 +2497,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-500w-80plus-pcyes-shocker-pf500shw",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-500w-80plus-pcyes-shocker-pf500shw",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-500w-80plus-pcyes-shocker-pf500shw",
     "inStock": true
   },
   {
@@ -2548,7 +2548,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-550w-80plus-bronze-pcyes-electro-v2-white-ghost-elecv2wg550w",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-550w-80plus-bronze-pcyes-electro-v2-white-ghost-elecv2wg550w",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-550w-80plus-bronze-pcyes-electro-v2-white-ghost-elecv2wg550w",
     "inStock": true,
     "oldPrice": "R$ 530,88",
     "oldPriceNum": 530.88
@@ -2601,7 +2601,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-650w-80plus-bronze-pcyes-electro-v2-white-ghost-elecv2wg650w",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-650w-80plus-bronze-pcyes-electro-v2-white-ghost-elecv2wg650w",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-650w-80plus-bronze-pcyes-electro-v2-white-ghost-elecv2wg650w",
     "inStock": true
   },
   {
@@ -2653,7 +2653,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-pcyes-electro-v2-750w-80-plus-bronze",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-pcyes-electro-v2-750w-80-plus-bronze",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-pcyes-electro-v2-750w-80-plus-bronze",
     "inStock": true
   },
   {
@@ -2704,7 +2704,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b300-i3-1215u-8gb-512gb-nvme",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-8gb-512gb-nvme",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-8gb-512gb-nvme",
     "inStock": true,
     "badge": "NVME"
   },
@@ -2755,7 +2755,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-b500-i5-1235u-16gb-1tb-windows",
-    "productUrl": "https://pcyes.com.br/mini-computador-b500-i5-1235u-16gb-1tb-windows",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-b500-i5-1235u-16gb-1tb-windows",
     "inStock": true,
     "badge": "NVME"
   },
@@ -2806,7 +2806,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-b300-i3-1215u-8gb-512gb-linux",
-    "productUrl": "https://pcyes.com.br/mini-computador-b300-i3-1215u-8gb-512gb-linux",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-b300-i3-1215u-8gb-512gb-linux",
     "inStock": true,
     "badge": "NVME",
     "oldPrice": "R$ 2241,88",
@@ -2858,7 +2858,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-b300-white-hexa-core-i3-1215u-16gb-512gb-nvme-windows-11-pro",
-    "productUrl": "https://pcyes.com.br/mini-computador-b300-white-hexa-core-i3-1215u-16gb-512gb-nvme-windows-11-pro",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-b300-white-hexa-core-i3-1215u-16gb-512gb-nvme-windows-11-pro",
     "inStock": true,
     "badge": "NVME"
   },
@@ -2909,7 +2909,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-b300-white-hexa-core-i3-1215u-8gb-512gb-nvme-windows-11-pro",
-    "productUrl": "https://pcyes.com.br/mini-computador-b300-white-hexa-core-i3-1215u-8gb-512gb-nvme-windows-11-pro",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-b300-white-hexa-core-i3-1215u-8gb-512gb-nvme-windows-11-pro",
     "inStock": true,
     "badge": "NVME"
   },
@@ -2959,7 +2959,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-b500-white-i5-1235u-8gb-512gb-nvme-linux-ubuntu",
-    "productUrl": "https://pcyes.com.br/mini-computador-b500-white-i5-1235u-8gb-512gb-nvme-linux-ubuntu",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-b500-white-i5-1235u-8gb-512gb-nvme-linux-ubuntu",
     "inStock": true,
     "badge": "NVME"
   },
@@ -3009,7 +3009,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-b300-white-i5-1235u-8gb-256gb-nvme-windows-11-pro",
-    "productUrl": "https://pcyes.com.br/mini-computador-b300-white-i5-1235u-8gb-256gb-nvme-windows-11-pro",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-b300-white-i5-1235u-8gb-256gb-nvme-windows-11-pro",
     "inStock": true,
     "badge": "NVME"
   },
@@ -3060,7 +3060,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b300-i5-1235u-8gb-ssd-256gb-linux",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b300-i5-1235u-8gb-ssd-256gb-linux",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b300-i5-1235u-8gb-ssd-256gb-linux",
     "inStock": true,
     "badge": "NVME",
     "oldPrice": "R$ 2241,88",
@@ -3113,7 +3113,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b300-i5-1235u-8gb-ssd-512gb-windows",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b300-i5-1235u-8gb-ssd-512gb-windows",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b300-i5-1235u-8gb-ssd-512gb-windows",
     "inStock": true,
     "badge": "NVME"
   },
@@ -3164,7 +3164,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b500-i5-1235u-16gb-ssd-512gb-linux",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-16gb-ssd-512gb-linux",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-16gb-ssd-512gb-linux",
     "inStock": true,
     "badge": "NVME"
   },
@@ -3215,7 +3215,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b500-i5-1235u-16gb-ssd-512gb-windows",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-16gb-ssd-512gb-windows",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-16gb-ssd-512gb-windows",
     "inStock": true,
     "badge": "NVME"
   },
@@ -3266,7 +3266,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b300-i3-1215u-8gb-ssd-256gb-windows",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-8gb-ssd-256gb-windows",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b300-i3-1215u-8gb-ssd-256gb-windows",
     "inStock": true,
     "badge": "NVME"
   },
@@ -3317,7 +3317,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b500-i5-1235u-8gb-ssd-512gb-linux",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-8gb-ssd-512gb-linux",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-8gb-ssd-512gb-linux",
     "inStock": true,
     "badge": "NVME",
     "oldPrice": "R$ 2241,88",
@@ -3370,7 +3370,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b500-i5-1235u-8gb-ssd-512gb-windows",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-8gb-ssd-512gb-windows",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-8gb-ssd-512gb-windows",
     "inStock": true,
     "badge": "NVME",
     "oldPrice": "R$ 2127,89",
@@ -3423,7 +3423,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b500-i5-1235u-8gb-ssd-256gb-windows",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-8gb-ssd-256gb-windows",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-8gb-ssd-256gb-windows",
     "inStock": true,
     "badge": "NVME"
   },
@@ -3475,7 +3475,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mini-computador-pcyes-b500-i5-1235u-8gb-ssd-256gb",
-    "productUrl": "https://pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-8gb-ssd-256gb",
+    "productUrl": "https://www.pcyes.com.br/mini-computador-pcyes-b500-i5-1235u-8gb-ssd-256gb",
     "inStock": true,
     "badge": "NVME"
   },
@@ -3526,7 +3526,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "computador-pcyes-one-b300-i3-8gb-ssd-256gb-linux",
-    "productUrl": "https://pcyes.com.br/computador-pcyes-one-b300-i3-8gb-ssd-256gb-linux",
+    "productUrl": "https://www.pcyes.com.br/computador-pcyes-one-b300-i3-8gb-ssd-256gb-linux",
     "inStock": true
   },
   {
@@ -3576,7 +3576,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "computador-pcyes-one-b300-i3-8gb-ssd-256gb",
-    "productUrl": "https://pcyes.com.br/computador-pcyes-one-b300-i3-8gb-ssd-256gb",
+    "productUrl": "https://www.pcyes.com.br/computador-pcyes-one-b300-i3-8gb-ssd-256gb",
     "inStock": true,
     "oldPrice": "R$ 2241,88",
     "oldPriceNum": 2241.88
@@ -3628,7 +3628,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-2-rca-para-p2-3-5mm-2m",
-    "productUrl": "https://pcyes.com.br/cabo-2-rca-para-p2-3-5mm-2m",
+    "productUrl": "https://www.pcyes.com.br/cabo-2-rca-para-p2-3-5mm-2m",
     "inStock": true
   },
   {
@@ -3679,7 +3679,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-arkeum-pcyes-black-vulcan-blue-switch-akbv75bbr",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-arkeum-pcyes-black-vulcan-blue-switch-akbv75bbr",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-arkeum-pcyes-black-vulcan-blue-switch-akbv75bbr",
     "inStock": true,
     "badge": "BLUE SWITCH"
   },
@@ -3731,7 +3731,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-arkeum-pcyes-white-ghost-red-switch-akwg75rbr",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-arkeum-pcyes-white-ghost-red-switch-akwg75rbr",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-arkeum-pcyes-white-ghost-red-switch-akwg75rbr",
     "inStock": true,
     "badge": "RED SWITCH"
   },
@@ -3783,7 +3783,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-arkeum-pcyes-black-vulcan-red-switch-akbv75rbr",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-arkeum-pcyes-black-vulcan-red-switch-akbv75rbr",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-arkeum-pcyes-black-vulcan-red-switch-akbv75rbr",
     "inStock": true,
     "badge": "RED SWITCH"
   },
@@ -3835,7 +3835,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-arkeum-pcyes-white-ghost-blue-switch-akwg75bbr",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-arkeum-pcyes-white-ghost-blue-switch-akwg75bbr",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-arkeum-pcyes-white-ghost-blue-switch-akwg75bbr",
     "inStock": true,
     "badge": "BLUE SWITCH",
     "oldPrice": "R$ 471,88",
@@ -3891,7 +3891,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-zecky-black-vulcan-100-red",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-zecky-black-vulcan-100-red",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-zecky-black-vulcan-100-red",
     "inStock": true
   },
   {
@@ -3944,7 +3944,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-zecky-black-vulcan-100-blue",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-zecky-black-vulcan-100-blue",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-zecky-black-vulcan-100-blue",
     "inStock": true,
     "oldPrice": "R$ 447,89",
     "oldPriceNum": 447.89
@@ -3997,7 +3997,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-arkeum-summit-75-abnt2-switch-red",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-arkeum-summit-75-abnt2-switch-red",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-arkeum-summit-75-abnt2-switch-red",
     "inStock": true
   },
   {
@@ -4047,7 +4047,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-arkeum-cammo-75-abnt2-switch-blue",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-arkeum-cammo-75-abnt2-switch-blue",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-arkeum-cammo-75-abnt2-switch-blue",
     "inStock": true
   },
   {
@@ -4098,7 +4098,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-arkeum-summit-75-abnt2-switch-blue",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-arkeum-summit-75-abnt2-switch-blue",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-arkeum-summit-75-abnt2-switch-blue",
     "inStock": true,
     "oldPrice": "R$ 471,88",
     "oldPriceNum": 471.88
@@ -4151,7 +4151,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-arkeum-cammo-75-abnt2-switch-red",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-arkeum-cammo-75-abnt2-switch-red",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-arkeum-cammo-75-abnt2-switch-red",
     "inStock": true
   },
   {
@@ -4201,7 +4201,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-vga-15-pinos-5m-1280x1024",
-    "productUrl": "https://pcyes.com.br/cabo-vga-15-pinos-5m-1280x1024",
+    "productUrl": "https://www.pcyes.com.br/cabo-vga-15-pinos-5m-1280x1024",
     "inStock": true
   },
   {
@@ -4251,7 +4251,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-adaptador-otg-micro-usb-para-usb-a-15cm",
-    "productUrl": "https://pcyes.com.br/cabo-adaptador-otg-micro-usb-para-usb-a-15cm",
+    "productUrl": "https://www.pcyes.com.br/cabo-adaptador-otg-micro-usb-para-usb-a-15cm",
     "inStock": true
   },
   {
@@ -4301,7 +4301,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-mini-displayport-para-hdmi-2m-pmdph-2",
-    "productUrl": "https://pcyes.com.br/cabo-mini-displayport-para-hdmi-2m-pmdph-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-mini-displayport-para-hdmi-2m-pmdph-2",
     "inStock": true
   },
   {
@@ -4351,7 +4351,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-usb-c-2m-3a",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-usb-c-2m-3a",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-usb-c-2m-3a",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -4403,7 +4403,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-usb-c-1m-65w",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-usb-c-1m-65w",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-usb-c-1m-65w",
     "inStock": true
   },
   {
@@ -4454,7 +4454,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-vga-3m-1280x1024",
-    "productUrl": "https://pcyes.com.br/cabo-vga-3m-1280x1024",
+    "productUrl": "https://www.pcyes.com.br/cabo-vga-3m-1280x1024",
     "inStock": true
   },
   {
@@ -4504,7 +4504,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-0-3m-4k-60hz",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-0-3m-4k-60hz",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-0-3m-4k-60hz",
     "inStock": true,
     "badge": "4K",
     "oldPrice": "R$ 67,09",
@@ -4557,7 +4557,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-2-rca-para-p2-3-5mm-1m",
-    "productUrl": "https://pcyes.com.br/cabo-2-rca-para-p2-3-5mm-1m",
+    "productUrl": "https://www.pcyes.com.br/cabo-2-rca-para-p2-3-5mm-1m",
     "inStock": true
   },
   {
@@ -4607,7 +4607,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-3-0-para-micro-usb-3-0-5m",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-3-0-para-micro-usb-3-0-5m",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-3-0-para-micro-usb-3-0-5m",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -4659,7 +4659,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-3-0-para-micro-usb-3-0-1m",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-3-0-para-micro-usb-3-0-1m",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-3-0-para-micro-usb-3-0-1m",
     "inStock": true
   },
   {
@@ -4709,7 +4709,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-3-0-para-micro-usb-3-0-3m",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-3-0-para-micro-usb-3-0-3m",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-3-0-para-micro-usb-3-0-3m",
     "inStock": true
   },
   {
@@ -4759,7 +4759,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-micro-usb-3-0-1m",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-micro-usb-3-0-1m",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-micro-usb-3-0-1m",
     "inStock": true
   },
   {
@@ -4809,7 +4809,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-usb-c-50cm-branco",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-usb-c-50cm-branco",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-usb-c-50cm-branco",
     "inStock": true
   },
   {
@@ -4860,7 +4860,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-dvi-i-24-5-para-vga-2m",
-    "productUrl": "https://pcyes.com.br/cabo-dvi-i-24-5-para-vga-2m",
+    "productUrl": "https://www.pcyes.com.br/cabo-dvi-i-24-5-para-vga-2m",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -4913,7 +4913,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-1-1m-8k-48gbps",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-1-1m-8k-48gbps",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-1-1m-8k-48gbps",
     "inStock": true
   },
   {
@@ -4963,7 +4963,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-dvi-d-24-1-2m-1080p",
-    "productUrl": "https://pcyes.com.br/cabo-dvi-d-24-1-2m-1080p",
+    "productUrl": "https://www.pcyes.com.br/cabo-dvi-d-24-1-2m-1080p",
     "inStock": true
   },
   {
@@ -5013,7 +5013,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-5-rca-2m-audio-video",
-    "productUrl": "https://pcyes.com.br/cabo-5-rca-2m-audio-video",
+    "productUrl": "https://www.pcyes.com.br/cabo-5-rca-2m-audio-video",
     "inStock": true
   },
   {
@@ -5063,7 +5063,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-3-0-para-usb-c-1m",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-3-0-para-usb-c-1m",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-3-0-para-usb-c-1m",
     "inStock": true,
     "oldPrice": "R$ 67,09",
     "oldPriceNum": 67.09
@@ -5115,7 +5115,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-2-0-para-usb-a-3-0-2m",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-2-0-para-usb-a-3-0-2m",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-2-0-para-usb-a-3-0-2m",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -5167,7 +5167,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-optico-digital-1m-audio-7-1",
-    "productUrl": "https://pcyes.com.br/cabo-optico-digital-1m-audio-7-1",
+    "productUrl": "https://www.pcyes.com.br/cabo-optico-digital-1m-audio-7-1",
     "inStock": true
   },
   {
@@ -5217,7 +5217,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-mini-usb-b-2m",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-mini-usb-b-2m",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-mini-usb-b-2m",
     "inStock": true
   },
   {
@@ -5267,7 +5267,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-p3-femea-15cm",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-p3-femea-15cm",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-p3-femea-15cm",
     "inStock": true
   },
   {
@@ -5317,7 +5317,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-p2-3-5mm-90-graus-2m",
-    "productUrl": "https://pcyes.com.br/cabo-p2-3-5mm-90-graus-2m",
+    "productUrl": "https://www.pcyes.com.br/cabo-p2-3-5mm-90-graus-2m",
     "inStock": true
   },
   {
@@ -5367,7 +5367,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-p2-3-5mm-90-graus-1m",
-    "productUrl": "https://pcyes.com.br/cabo-p2-3-5mm-90-graus-1m",
+    "productUrl": "https://www.pcyes.com.br/cabo-p2-3-5mm-90-graus-1m",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -5419,7 +5419,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-usb-c-3m-nylon-3a",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-usb-c-3m-nylon-3a",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-usb-c-3m-nylon-3a",
     "inStock": true
   },
   {
@@ -5469,7 +5469,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-1-90-graus-vertical-2m-pvc",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-1-90-graus-vertical-2m-pvc",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-1-90-graus-vertical-2m-pvc",
     "inStock": true
   },
   {
@@ -5519,7 +5519,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-usb-c-3m-nylon-3a",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-usb-c-3m-nylon-3a",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-usb-c-3m-nylon-3a",
     "inStock": true
   },
   {
@@ -5569,7 +5569,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-usb-b-3-0-1m",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-usb-b-3-0-1m",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-usb-b-3-0-1m",
     "inStock": true
   },
   {
@@ -5619,7 +5619,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-2-rca-2m-audio-estereo",
-    "productUrl": "https://pcyes.com.br/cabo-2-rca-2m-audio-estereo",
+    "productUrl": "https://www.pcyes.com.br/cabo-2-rca-2m-audio-estereo",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -5671,7 +5671,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-micro-usb-3m-nylon-3a",
-    "productUrl": "https://pcyes.com.br/cabo-micro-usb-3m-nylon-3a",
+    "productUrl": "https://www.pcyes.com.br/cabo-micro-usb-3m-nylon-3a",
     "inStock": true
   },
   {
@@ -5720,7 +5720,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-video-3-rca-2m",
-    "productUrl": "https://pcyes.com.br/cabo-video-3-rca-2m",
+    "productUrl": "https://www.pcyes.com.br/cabo-video-3-rca-2m",
     "inStock": true
   },
   {
@@ -5770,7 +5770,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-1-90-graus-vertical-3m-nylon",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-1-90-graus-vertical-3m-nylon",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-1-90-graus-vertical-3m-nylon",
     "inStock": true
   },
   {
@@ -5822,7 +5822,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-arkeum-sunset-75-red",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-arkeum-sunset-75-red",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-arkeum-sunset-75-red",
     "inStock": true
   },
   {
@@ -5874,7 +5874,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-arkeum-sunset-75-blue",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-arkeum-sunset-75-blue",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-arkeum-sunset-75-blue",
     "inStock": true,
     "oldPrice": "R$ 471,88",
     "oldPriceNum": 471.88
@@ -5929,7 +5929,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-shiyan-white-ghost-60-red",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-shiyan-white-ghost-60-red",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-shiyan-white-ghost-60-red",
     "inStock": true
   },
   {
@@ -5982,7 +5982,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-shiyan-white-ghost-60-blue",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-shiyan-white-ghost-60-blue",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-shiyan-white-ghost-60-blue",
     "inStock": true
   },
   {
@@ -6035,7 +6035,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-shiyan-black-vulcan-60-red",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-shiyan-black-vulcan-60-red",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-shiyan-black-vulcan-60-red",
     "inStock": true
   },
   {
@@ -6088,7 +6088,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-shiyan-black-vulcan-60-blue",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-shiyan-black-vulcan-60-blue",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-shiyan-black-vulcan-60-blue",
     "inStock": true
   },
   {
@@ -6141,7 +6141,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-mecka-white-ghost-65-red",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-mecka-white-ghost-65-red",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-mecka-white-ghost-65-red",
     "inStock": true,
     "oldPrice": "R$ 471,88",
     "oldPriceNum": 471.88
@@ -6196,7 +6196,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-mecka-65-abnt2-outemu-blue",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-mecka-65-abnt2-outemu-blue",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-mecka-65-abnt2-outemu-blue",
     "inStock": true,
     "oldPrice": "R$ 447,89",
     "oldPriceNum": 447.89
@@ -6251,7 +6251,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-mecka-65-abnt2-outemu-red",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-mecka-65-abnt2-outemu-red",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-mecka-65-abnt2-outemu-red",
     "inStock": true
   },
   {
@@ -6304,7 +6304,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-mecka-65-abnt2-outemu-blue",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-mecka-65-abnt2-outemu-blue",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-mecka-65-abnt2-outemu-blue",
     "inStock": true
   },
   {
@@ -6354,7 +6354,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-1-90-graus-horizontal-1m-pvc",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-1-90-graus-horizontal-1m-pvc",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-1-90-graus-horizontal-1m-pvc",
     "inStock": true
   },
   {
@@ -6407,7 +6407,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-duley-240mm-argb-display-285w",
-    "productUrl": "https://pcyes.com.br/water-cooler-duley-240mm-argb-display-285w",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-duley-240mm-argb-display-285w",
     "inStock": true,
     "oldPrice": "R$ 412,88",
     "oldPriceNum": 412.88
@@ -6462,7 +6462,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-duley-120mm-argb-display-200w",
-    "productUrl": "https://pcyes.com.br/water-cooler-duley-120mm-argb-display-200w",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-duley-120mm-argb-display-200w",
     "inStock": true
   },
   {
@@ -6512,7 +6512,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-processador-duley-black-vulcan-argb-display-180w",
-    "productUrl": "https://pcyes.com.br/cooler-processador-duley-black-vulcan-argb-display-180w",
+    "productUrl": "https://www.pcyes.com.br/cooler-processador-duley-black-vulcan-argb-display-180w",
     "inStock": true
   },
   {
@@ -6563,7 +6563,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-vertical-ergonomico-rest-mrsc01",
-    "productUrl": "https://pcyes.com.br/mouse-vertical-ergonomico-rest-mrsc01",
+    "productUrl": "https://www.pcyes.com.br/mouse-vertical-ergonomico-rest-mrsc01",
     "inStock": true
   },
   {
@@ -6617,7 +6617,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "microfone-gamer-hylia-usb-rgb",
-    "productUrl": "https://pcyes.com.br/microfone-gamer-hylia-usb-rgb",
+    "productUrl": "https://www.pcyes.com.br/microfone-gamer-hylia-usb-rgb",
     "inStock": true
   },
   {
@@ -6671,7 +6671,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "microfone-gamer-volini-usb-rgb",
-    "productUrl": "https://pcyes.com.br/microfone-gamer-volini-usb-rgb",
+    "productUrl": "https://www.pcyes.com.br/microfone-gamer-volini-usb-rgb",
     "inStock": true,
     "oldPrice": "R$ 330,28",
     "oldPriceNum": 330.28
@@ -6727,7 +6727,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "microfone-gamer-volini-usb-cardioide-rgb",
-    "productUrl": "https://pcyes.com.br/microfone-gamer-volini-usb-cardioide-rgb",
+    "productUrl": "https://www.pcyes.com.br/microfone-gamer-volini-usb-cardioide-rgb",
     "inStock": true
   },
   {
@@ -6779,7 +6779,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "luminaria-modular-y-link-neon-core-rgb",
-    "productUrl": "https://pcyes.com.br/luminaria-modular-y-link-neon-core-rgb",
+    "productUrl": "https://www.pcyes.com.br/luminaria-modular-y-link-neon-core-rgb",
     "inStock": true,
     "oldPrice": "R$ 223,89",
     "oldPriceNum": 223.89
@@ -6831,7 +6831,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-1-pcyes-90-horizontal-8k-60hz-nylon-preto-3-metros-phm21-3hnp",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-1-pcyes-90-horizontal-8k-60hz-nylon-preto-3-metros-phm21-3hnp",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-1-pcyes-90-horizontal-8k-60hz-nylon-preto-3-metros-phm21-3hnp",
     "inStock": true
   },
   {
@@ -6881,7 +6881,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-p3-femea-pcyes-hifi-dac-24-96-nylon-preto-15cm-p3ucp-15p",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-p3-femea-pcyes-hifi-dac-24-96-nylon-preto-15cm-p3ucp-15p",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-p3-femea-pcyes-hifi-dac-24-96-nylon-preto-15cm-p3ucp-15p",
     "inStock": true
   },
   {
@@ -6931,7 +6931,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-2-0-pcyes-15w-480mbps-nylon-branco-3-metros-pucc2-3b",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-2-0-pcyes-15w-480mbps-nylon-branco-3-metros-pucc2-3b",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-2-0-pcyes-15w-480mbps-nylon-branco-3-metros-pucc2-3b",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -6984,7 +6984,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-0-pcyes-90-horizontal-4k-60hz-preto-3-metros-phm20-3h-001",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-0-pcyes-90-horizontal-4k-60hz-preto-3-metros-phm20-3h-001",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-0-pcyes-90-horizontal-4k-60hz-preto-3-metros-phm20-3h-001",
     "inStock": true,
     "badge": "4K"
   },
@@ -7035,7 +7035,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-3-1-pcyes-100w-4k-60hz-preto-2-metros-pucp2p",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-3-1-pcyes-100w-4k-60hz-preto-2-metros-pucp2p",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-3-1-pcyes-100w-4k-60hz-preto-2-metros-pucp2p",
     "inStock": true,
     "badge": "4K"
   },
@@ -7086,7 +7086,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-branco-2-metros-pucap3-2b",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-branco-2-metros-pucap3-2b",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-branco-2-metros-pucap3-2b",
     "inStock": true
   },
   {
@@ -7136,7 +7136,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-preto-2-metros-pucap3-2",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-preto-2-metros-pucap3-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-preto-2-metros-pucap3-2",
     "inStock": true
   },
   {
@@ -7186,7 +7186,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-branco-1-metro-pucap3-1b",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-branco-1-metro-pucap3-1b",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-branco-1-metro-pucap3-1b",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -7238,7 +7238,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-preto-3-metros-pucap3-3",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-preto-3-metros-pucap3-3",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-3-0-para-usb-c-pcyes-5gbps-15w-preto-3-metros-pucap3-3",
     "inStock": true
   },
   {
@@ -7288,7 +7288,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-3-1-pcyes-100w-4k-60hz-preto-1-metro-pucp1p",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-3-1-pcyes-100w-4k-60hz-preto-1-metro-pucp1p",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-3-1-pcyes-100w-4k-60hz-preto-1-metro-pucp1p",
     "inStock": true,
     "badge": "4K"
   },
@@ -7339,7 +7339,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-p3-pcyes-hifi-dac-24-96khz-branco-15cm-p3ucp-15b",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-p3-pcyes-hifi-dac-24-96khz-branco-15cm-p3ucp-15b",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-p3-pcyes-hifi-dac-24-96khz-branco-15cm-p3ucp-15b",
     "inStock": true,
     "oldPrice": "R$ 67,09",
     "oldPriceNum": 67.09
@@ -7392,7 +7392,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-hdmi-pcyes-20-4k-60hz-nylon-15cm-pucf-15p",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-hdmi-pcyes-20-4k-60hz-nylon-15cm-pucf-15p",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-hdmi-pcyes-20-4k-60hz-nylon-15cm-pucf-15p",
     "inStock": true,
     "badge": "4K"
   },
@@ -7443,7 +7443,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-usb-c-pcyes-30-5gbps-nylon-preto-3m-cbpy003p",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-usb-c-pcyes-30-5gbps-nylon-preto-3m-cbpy003p",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-usb-c-pcyes-30-5gbps-nylon-preto-3m-cbpy003p",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -7495,7 +7495,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-para-usb-c-pcyes-20-480mbps-nylon-vermelho-3m-cbpy03v",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-para-usb-c-pcyes-20-480mbps-nylon-vermelho-3m-cbpy03v",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-para-usb-c-pcyes-20-480mbps-nylon-vermelho-3m-cbpy03v",
     "inStock": true
   },
   {
@@ -7545,7 +7545,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-hdmi-pcyes-20-4k-60hz-nylon-2m-puch2",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-hdmi-pcyes-20-4k-60hz-nylon-2m-puch2",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-hdmi-pcyes-20-4k-60hz-nylon-2m-puch2",
     "inStock": true,
     "badge": "4K"
   },
@@ -7596,7 +7596,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-pcyes-21-8k-60hz-vertical-preto-3m-ph21-3v-e",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-pcyes-21-8k-60hz-vertical-preto-3m-ph21-3v-e",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-pcyes-21-8k-60hz-vertical-preto-3m-ph21-3v-e",
     "inStock": true
   },
   {
@@ -7646,7 +7646,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-pcyes-20-4k-60hz-vertical-preto-3m-ph20-3v-c",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-pcyes-20-4k-60hz-vertical-preto-3m-ph20-3v-c",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-pcyes-20-4k-60hz-vertical-preto-3m-ph20-3v-c",
     "inStock": true,
     "badge": "4K"
   },
@@ -7698,7 +7698,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-pcyes-21-8k-60hz-preto-2m-phm21-2h-pvc01",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-pcyes-21-8k-60hz-preto-2m-phm21-2h-pvc01",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-pcyes-21-8k-60hz-preto-2m-phm21-2h-pvc01",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -7749,7 +7749,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-p3-femea-15cm-p3ucp-15hfb",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-p3-femea-15cm-p3ucp-15hfb",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-p3-femea-15cm-p3ucp-15hfb",
     "inStock": true
   },
   {
@@ -7798,7 +7798,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-3-1-para-usb-c-3-1-2m-pucp2b",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-3-1-para-usb-c-3-1-2m-pucp2b",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-3-1-para-usb-c-3-1-2m-pucp2b",
     "inStock": true
   },
   {
@@ -7847,7 +7847,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-3-0-para-usb-c-3m-pucap3-3b",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-3-0-para-usb-c-3m-pucap3-3b",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-3-0-para-usb-c-3m-pucap3-3b",
     "inStock": true
   },
   {
@@ -7896,7 +7896,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-3-1-para-usb-c-3-1-3m-pucp3b",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-3-1-para-usb-c-3-1-3m-pucp3b",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-3-1-para-usb-c-3-1-3m-pucp3b",
     "inStock": true,
     "oldPrice": "R$ 67,09",
     "oldPriceNum": 67.09
@@ -7947,7 +7947,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-3-1-para-usb-c-3-1-1m-pucp1b",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-3-1-para-usb-c-3-1-1m-pucp1b",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-3-1-para-usb-c-3-1-1m-pucp1b",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -7998,7 +7998,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-2-0-para-usb-c-2m-cbpy03b",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-2-0-para-usb-c-2m-cbpy03b",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-2-0-para-usb-c-2m-cbpy03b",
     "inStock": true
   },
   {
@@ -8047,7 +8047,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-hdmi-2-1-8k-15cm-pucf-15-2-1",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-hdmi-2-1-8k-15cm-pucf-15-2-1",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-hdmi-2-1-8k-15cm-pucf-15-2-1",
     "inStock": true,
     "badge": "4K"
   },
@@ -8097,7 +8097,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-hdmi-2-1-8k-2m-puch2p",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-hdmi-2-1-8k-2m-puch2p",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-hdmi-2-1-8k-2m-puch2p",
     "inStock": true,
     "badge": "4K"
   },
@@ -8147,7 +8147,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-3-1-para-usb-c-3-1-100w-3m-pucp3p",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-3-1-para-usb-c-3-1-100w-3m-pucp3p",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-3-1-para-usb-c-3-1-100w-3m-pucp3p",
     "inStock": true,
     "badge": "4K"
   },
@@ -8197,7 +8197,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-1-8k-60hz-conector-90-horizontal-3m-ph21-3h-a",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-1-8k-60hz-conector-90-horizontal-3m-ph21-3h-a",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-1-8k-60hz-conector-90-horizontal-3m-ph21-3h-a",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -8248,7 +8248,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-hdmi-2-0-femea-4k-60hz-15cm-pucf-15",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-hdmi-2-0-femea-4k-60hz-15cm-pucf-15",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-hdmi-2-0-femea-4k-60hz-15cm-pucf-15",
     "inStock": true,
     "badge": "4K"
   },
@@ -8298,7 +8298,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-hdmi-2-1-femea-8k-60hz-15cm-pucm-15p",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-hdmi-2-1-femea-8k-60hz-15cm-pucm-15p",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-hdmi-2-1-femea-8k-60hz-15cm-pucm-15p",
     "inStock": true
   },
   {
@@ -8347,7 +8347,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-c-para-usb-b-2-0-1m-pucbp-1",
-    "productUrl": "https://pcyes.com.br/cabo-usb-c-para-usb-b-2-0-1m-pucbp-1",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-c-para-usb-b-2-0-1m-pucbp-1",
     "inStock": true
   },
   {
@@ -8397,7 +8397,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-vga-para-monitor-2m-pvga-2",
-    "productUrl": "https://pcyes.com.br/cabo-vga-para-monitor-2m-pvga-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-vga-para-monitor-2m-pvga-2",
     "inStock": true
   },
   {
@@ -8446,7 +8446,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-para-impressora-usb-a-3-0-para-usb-b-3-0-2m-puabm3-2",
-    "productUrl": "https://pcyes.com.br/cabo-para-impressora-usb-a-3-0-para-usb-b-3-0-2m-puabm3-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-para-impressora-usb-a-3-0-para-usb-b-3-0-2m-puabm3-2",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -8497,7 +8497,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-2-0-para-usb-c-50cm-puacp-05",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-2-0-para-usb-c-50cm-puacp-05",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-2-0-para-usb-c-50cm-puacp-05",
     "inStock": true
   },
   {
@@ -8546,7 +8546,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-micro-usb-para-usb-a-2-0-50cm-pmuap-05",
-    "productUrl": "https://pcyes.com.br/cabo-micro-usb-para-usb-a-2-0-50cm-pmuap-05",
+    "productUrl": "https://www.pcyes.com.br/cabo-micro-usb-para-usb-a-2-0-50cm-pmuap-05",
     "inStock": true
   },
   {
@@ -8595,7 +8595,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-2-0-para-mini-usb-b-2-0-3m-puanm2-3",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-2-0-para-mini-usb-b-2-0-3m-puanm2-3",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-2-0-para-mini-usb-b-2-0-3m-puanm2-3",
     "inStock": true
   },
   {
@@ -8644,7 +8644,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-2-0-para-mini-usb-b-2-0-1m-puanm2-1",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-2-0-para-mini-usb-b-2-0-1m-puanm2-1",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-2-0-para-mini-usb-b-2-0-1m-puanm2-1",
     "inStock": true
   },
   {
@@ -8695,7 +8695,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-ultra-2-1-8k-144hz-1m-nylon-phu21p",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-ultra-2-1-8k-144hz-1m-nylon-phu21p",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-ultra-2-1-8k-144hz-1m-nylon-phu21p",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -8749,7 +8749,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-2-1-pcyes-ultra-nylon-8k-60hz-4k-144hz-1m-phu21p",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-2-1-pcyes-ultra-nylon-8k-60hz-4k-144hz-1m-phu21p",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-2-1-pcyes-ultra-nylon-8k-60hz-4k-144hz-1m-phu21p",
     "inStock": true,
     "badge": "4K"
   },
@@ -8799,7 +8799,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-video-gt730-pcyes-2gb-ddr5-64bits-edge-low-profile",
-    "productUrl": "https://pcyes.com.br/placa-de-video-gt730-pcyes-2gb-ddr5-64bits-edge-low-profile",
+    "productUrl": "https://www.pcyes.com.br/placa-de-video-gt730-pcyes-2gb-ddr5-64bits-edge-low-profile",
     "inStock": true
   },
   {
@@ -8850,7 +8850,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "headset-comfort-cm300-pcyes-p2-35mm-40mm-cm300p2",
-    "productUrl": "https://pcyes.com.br/headset-comfort-cm300-pcyes-p2-35mm-40mm-cm300p2",
+    "productUrl": "https://www.pcyes.com.br/headset-comfort-cm300-pcyes-p2-35mm-40mm-cm300p2",
     "inStock": true
   },
   {
@@ -8902,7 +8902,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-sem-fio-soft-pcyes-24ghz-abnt2-ptosfwab",
-    "productUrl": "https://pcyes.com.br/teclado-sem-fio-soft-pcyes-24ghz-abnt2-ptosfwab",
+    "productUrl": "https://www.pcyes.com.br/teclado-sem-fio-soft-pcyes-24ghz-abnt2-ptosfwab",
     "inStock": true
   },
   {
@@ -8954,7 +8954,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "kit-teclado-mouse-sem-fio-soft-pcyes-24ghz-1200dpi-pcosfwab",
-    "productUrl": "https://pcyes.com.br/kit-teclado-mouse-sem-fio-soft-pcyes-24ghz-1200dpi-pcosfwab",
+    "productUrl": "https://www.pcyes.com.br/kit-teclado-mouse-sem-fio-soft-pcyes-24ghz-1200dpi-pcosfwab",
     "inStock": true,
     "oldPrice": "R$ 471,88",
     "oldPriceNum": 471.88
@@ -9009,7 +9009,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "kit-teclado-mouse-sem-fio-comfort-pcyes-24ghz-1200dpi-pcocwab",
-    "productUrl": "https://pcyes.com.br/kit-teclado-mouse-sem-fio-comfort-pcyes-24ghz-1200dpi-pcocwab",
+    "productUrl": "https://www.pcyes.com.br/kit-teclado-mouse-sem-fio-comfort-pcyes-24ghz-1200dpi-pcocwab",
     "inStock": true,
     "oldPrice": "R$ 447,89",
     "oldPriceNum": 447.89
@@ -9062,7 +9062,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "kit-teclado-mouse-usb-classic-pcyes-abnt2-1000dpi-kcbk",
-    "productUrl": "https://pcyes.com.br/kit-teclado-mouse-usb-classic-pcyes-abnt2-1000dpi-kcbk",
+    "productUrl": "https://www.pcyes.com.br/kit-teclado-mouse-usb-classic-pcyes-abnt2-1000dpi-kcbk",
     "inStock": true
   },
   {
@@ -9115,7 +9115,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-75-rasec-pcyes-gasket-gateron-brown-rgb-twgbrrgb",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-75-rasec-pcyes-gasket-gateron-brown-rgb-twgbrrgb",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-75-rasec-pcyes-gasket-gateron-brown-rgb-twgbrrgb",
     "inStock": true
   },
   {
@@ -9166,7 +9166,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-75-kirin-pcyes-black-vulcan-red-switch-ptkr75rd",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-75-kirin-pcyes-black-vulcan-red-switch-ptkr75rd",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-75-kirin-pcyes-black-vulcan-red-switch-ptkr75rd",
     "inStock": true,
     "badge": "RED SWITCH"
   },
@@ -9218,7 +9218,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-kirin-pcyes-black-vulcan-blue-switch-ptkr75bl",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-kirin-pcyes-black-vulcan-blue-switch-ptkr75bl",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-kirin-pcyes-black-vulcan-blue-switch-ptkr75bl",
     "inStock": true,
     "badge": "BLUE SWITCH",
     "oldPrice": "R$ 471,88",
@@ -9272,7 +9272,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "headset-comfort-cm500-pcyes-usb-40mm-cm500",
-    "productUrl": "https://pcyes.com.br/headset-comfort-cm500-pcyes-usb-40mm-cm500",
+    "productUrl": "https://www.pcyes.com.br/headset-comfort-cm500-pcyes-usb-40mm-cm500",
     "inStock": true
   },
   {
@@ -9323,7 +9323,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-usb-a-3-0-para-micro-usb-b-3-0-pcyes-2m-puamcm3-2",
-    "productUrl": "https://pcyes.com.br/cabo-usb-a-3-0-para-micro-usb-b-3-0-pcyes-2m-puamcm3-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-usb-a-3-0-para-micro-usb-b-3-0-pcyes-2m-puamcm3-2",
     "inStock": true
   },
   {
@@ -9374,7 +9374,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-micro-usb-para-usb-a-2-0-pcyes-1m-pmuap-1",
-    "productUrl": "https://pcyes.com.br/cabo-micro-usb-para-usb-a-2-0-pcyes-1m-pmuap-1",
+    "productUrl": "https://www.pcyes.com.br/cabo-micro-usb-para-usb-a-2-0-pcyes-1m-pmuap-1",
     "inStock": true
   },
   {
@@ -9425,7 +9425,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-extensor-usb-a-2-0-macho-para-femea-pcyes-2m-puamf2-2",
-    "productUrl": "https://pcyes.com.br/cabo-extensor-usb-a-2-0-macho-para-femea-pcyes-2m-puamf2-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-extensor-usb-a-2-0-macho-para-femea-pcyes-2m-puamf2-2",
     "inStock": true
   },
   {
@@ -9476,7 +9476,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-extensor-usb-a-2-0-macho-para-femea-pcyes-1m-puamf2-1",
-    "productUrl": "https://pcyes.com.br/cabo-extensor-usb-a-2-0-macho-para-femea-pcyes-1m-puamf2-1",
+    "productUrl": "https://www.pcyes.com.br/cabo-extensor-usb-a-2-0-macho-para-femea-pcyes-1m-puamf2-1",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -9530,7 +9530,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-displayport-2-1-pcyes-nylon-8k-60hz-2m-pdpn2-2",
-    "productUrl": "https://pcyes.com.br/cabo-displayport-2-1-pcyes-nylon-8k-60hz-2m-pdpn2-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-displayport-2-1-pcyes-nylon-8k-60hz-2m-pdpn2-2",
     "inStock": true
   },
   {
@@ -9581,7 +9581,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-displayport-1-4-para-hdmi-2-0-pcyes-2m-pdphm-2",
-    "productUrl": "https://pcyes.com.br/cabo-displayport-1-4-para-hdmi-2-0-pcyes-2m-pdphm-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-displayport-1-4-para-hdmi-2-0-pcyes-2m-pdphm-2",
     "inStock": true,
     "oldPrice": "R$ 67,09",
     "oldPriceNum": 67.09
@@ -9634,7 +9634,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-p2-3-5mm-macho-para-p2-3-5mm-macho-pcyes-60cm-p35m-06",
-    "productUrl": "https://pcyes.com.br/cabo-p2-3-5mm-macho-para-p2-3-5mm-macho-pcyes-60cm-p35m-06",
+    "productUrl": "https://www.pcyes.com.br/cabo-p2-3-5mm-macho-para-p2-3-5mm-macho-pcyes-60cm-p35m-06",
     "inStock": true
   },
   {
@@ -9685,7 +9685,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-adaptador-y-p3-femea-para-p2-macho-pcyes-15cm-p3y-15",
-    "productUrl": "https://pcyes.com.br/cabo-adaptador-y-p3-femea-para-p2-macho-pcyes-15cm-p3y-15",
+    "productUrl": "https://www.pcyes.com.br/cabo-adaptador-y-p3-femea-para-p2-macho-pcyes-15cm-p3y-15",
     "inStock": true
   },
   {
@@ -9737,7 +9737,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-21-pcyes-ultra-8k-60hz-4k-144hz-3m-phu21-3",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-21-pcyes-ultra-8k-60hz-4k-144hz-3m-phu21-3",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-21-pcyes-ultra-8k-60hz-4k-144hz-3m-phu21-3",
     "inStock": true,
     "badge": "4K",
     "oldPrice": "R$ 70,68",
@@ -9791,7 +9791,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-20-pcyes-conector-90-vertical-4k-60hz-2m-ph20-2v-b",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-20-pcyes-conector-90-vertical-4k-60hz-2m-ph20-2v-b",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-20-pcyes-conector-90-vertical-4k-60hz-2m-ph20-2v-b",
     "inStock": true,
     "badge": "4K"
   },
@@ -9843,7 +9843,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-20-pcyes-conector-90-horizontal-4k-60hz-2m-ph90h-2",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-20-pcyes-conector-90-horizontal-4k-60hz-2m-ph90h-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-20-pcyes-conector-90-horizontal-4k-60hz-2m-ph90h-2",
     "inStock": true,
     "badge": "4K"
   },
@@ -9895,7 +9895,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-20-pcyes-nylon-4k-60hz-3m-phm20-3nz",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-20-pcyes-nylon-4k-60hz-3m-phm20-3nz",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-20-pcyes-nylon-4k-60hz-3m-phm20-3nz",
     "inStock": true,
     "badge": "4K"
   },
@@ -9947,7 +9947,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-audio-p2-35mm-pcyes-estereo-2m-p35m-2",
-    "productUrl": "https://pcyes.com.br/cabo-audio-p2-35mm-pcyes-estereo-2m-p35m-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-audio-p2-35mm-pcyes-estereo-2m-p35m-2",
     "inStock": true
   },
   {
@@ -9998,7 +9998,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-20-pcyes-nylon-4k-60hz-3m-phm3p-2",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-20-pcyes-nylon-4k-60hz-3m-phm3p-2",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-20-pcyes-nylon-4k-60hz-3m-phm3p-2",
     "inStock": true,
     "badge": "4K",
     "oldPrice": "R$ 70,68",
@@ -10052,7 +10052,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-20-pcyes-4k-60hz-50cm-phm20-05",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-20-pcyes-4k-60hz-50cm-phm20-05",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-20-pcyes-4k-60hz-50cm-phm20-05",
     "inStock": true,
     "badge": "4K"
   },
@@ -10104,7 +10104,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-20-pcyes-4k-60hz-1m-phm20-1",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-20-pcyes-4k-60hz-1m-phm20-1",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-20-pcyes-4k-60hz-1m-phm20-1",
     "inStock": true,
     "badge": "4K"
   },
@@ -10156,7 +10156,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-hdmi-20-pcyes-4k-60hz-2m-phm20-2nz",
-    "productUrl": "https://pcyes.com.br/cabo-hdmi-20-pcyes-4k-60hz-2m-phm20-2nz",
+    "productUrl": "https://www.pcyes.com.br/cabo-hdmi-20-pcyes-4k-60hz-2m-phm20-2nz",
     "inStock": true,
     "badge": "4K",
     "oldPrice": "R$ 67,09",
@@ -10211,7 +10211,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-aether-pcyes-1000w-full-modular-gold-pcie5-atx31-1000wfmg",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-aether-pcyes-1000w-full-modular-gold-pcie5-atx31-1000wfmg",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-aether-pcyes-1000w-full-modular-gold-pcie5-atx31-1000wfmg",
     "inStock": true
   },
   {
@@ -10263,7 +10263,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-aether-pcyes-850w-full-modular-gold-pcie5-atx31-850wfmg",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-aether-pcyes-850w-full-modular-gold-pcie5-atx31-850wfmg",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-aether-pcyes-850w-full-modular-gold-pcie5-atx31-850wfmg",
     "inStock": true,
     "oldPrice": "R$ 530,88",
     "oldPriceNum": 530.88
@@ -10317,7 +10317,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-aether-pcyes-750w-full-modular-gold-pcie5-atx31-750wfmg",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-aether-pcyes-750w-full-modular-gold-pcie5-atx31-750wfmg",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-aether-pcyes-750w-full-modular-gold-pcie5-atx31-750wfmg",
     "inStock": true
   },
   {
@@ -10369,7 +10369,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-electro-v2-pcyes-650w-80plus-bronze-elecv2pto650w",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-electro-v2-pcyes-650w-80plus-bronze-elecv2pto650w",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-electro-v2-pcyes-650w-80plus-bronze-elecv2pto650w",
     "inStock": true
   },
   {
@@ -10421,7 +10421,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-electro-v2-pcyes-650w-80plus-bronze-elecv2pto650w",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-electro-v2-pcyes-650w-80plus-bronze-elecv2pto650w",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-electro-v2-pcyes-650w-80plus-bronze-elecv2pto650w",
     "inStock": true
   },
   {
@@ -10473,7 +10473,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-electro-v2-pcyes-550w-80plus-bronze-elecv2pto550w",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-electro-v2-pcyes-550w-80plus-bronze-elecv2pto550w",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-electro-v2-pcyes-550w-80plus-bronze-elecv2pto550w",
     "inStock": true
   },
   {
@@ -10525,7 +10525,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-shocker-pcyes-600w-full-modular-80plus-white-ghost-fm600wwg",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-shocker-pcyes-600w-full-modular-80plus-white-ghost-fm600wwg",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-shocker-pcyes-600w-full-modular-80plus-white-ghost-fm600wwg",
     "inStock": true,
     "oldPrice": "R$ 530,88",
     "oldPriceNum": 530.88
@@ -10579,7 +10579,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-shocker-pcyes-600w-80plus-pfc-ativo-pf600shw",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-shocker-pcyes-600w-80plus-pfc-ativo-pf600shw",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-shocker-pcyes-600w-80plus-pfc-ativo-pf600shw",
     "inStock": true
   },
   {
@@ -10631,7 +10631,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-shocker-pcyes-500w-80plus-pfc-ativo-pf500shw",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-shocker-pcyes-500w-80plus-pfc-ativo-pf500shw",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-shocker-pcyes-500w-80plus-pfc-ativo-pf500shw",
     "inStock": true
   },
   {
@@ -10683,7 +10683,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-shocker-pcyes-400w-80plus-pfc-ativo-pf400shw",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-shocker-pcyes-400w-80plus-pfc-ativo-pf400shw",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-shocker-pcyes-400w-80plus-pfc-ativo-pf400shw",
     "inStock": true
   },
   {
@@ -10735,7 +10735,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-atx-electra-pcyes-600w-pfc-ativo-elec600w",
-    "productUrl": "https://pcyes.com.br/fonte-atx-electra-pcyes-600w-pfc-ativo-elec600w",
+    "productUrl": "https://www.pcyes.com.br/fonte-atx-electra-pcyes-600w-pfc-ativo-elec600w",
     "inStock": true,
     "oldPrice": "R$ 503,89",
     "oldPriceNum": 503.89
@@ -10788,7 +10788,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-atx-electra-pcyes-500w-pfc-ativo-elec500w",
-    "productUrl": "https://pcyes.com.br/fonte-atx-electra-pcyes-500w-pfc-ativo-elec500w",
+    "productUrl": "https://www.pcyes.com.br/fonte-atx-electra-pcyes-500w-pfc-ativo-elec500w",
     "inStock": true,
     "oldPrice": "R$ 530,88",
     "oldPriceNum": 530.88
@@ -10842,7 +10842,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-shocker-pcyes-500w-full-modular-80plus-white-ghost-fm500wwg",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-shocker-pcyes-500w-full-modular-80plus-white-ghost-fm500wwg",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-shocker-pcyes-500w-full-modular-80plus-white-ghost-fm500wwg",
     "inStock": true
   },
   {
@@ -10894,7 +10894,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-shocker-pcyes-600w-full-modular-80plus-black-vulcan-fm600wbv",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-shocker-pcyes-600w-full-modular-80plus-black-vulcan-fm600wbv",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-shocker-pcyes-600w-full-modular-80plus-black-vulcan-fm600wbv",
     "inStock": true
   },
   {
@@ -10946,7 +10946,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-atx-electra-pcyes-400w-pfc-ativo-elec400w",
-    "productUrl": "https://pcyes.com.br/fonte-atx-electra-pcyes-400w-pfc-ativo-elec400w",
+    "productUrl": "https://www.pcyes.com.br/fonte-atx-electra-pcyes-400w-pfc-ativo-elec400w",
     "inStock": true
   },
   {
@@ -10998,7 +10998,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-gamer-shocker-pcyes-500w-full-modular-80plus-black-vulcan-fm500wbv",
-    "productUrl": "https://pcyes.com.br/fonte-gamer-shocker-pcyes-500w-full-modular-80plus-black-vulcan-fm500wbv",
+    "productUrl": "https://www.pcyes.com.br/fonte-gamer-shocker-pcyes-500w-full-modular-80plus-black-vulcan-fm500wbv",
     "inStock": true
   },
   {
@@ -11049,7 +11049,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fonte-atx-electra-pcyes-300w-pfc-ativo-elec300w",
-    "productUrl": "https://pcyes.com.br/fonte-atx-electra-pcyes-300w-pfc-ativo-elec300w",
+    "productUrl": "https://www.pcyes.com.br/fonte-atx-electra-pcyes-300w-pfc-ativo-elec300w",
     "inStock": true,
     "oldPrice": "R$ 530,88",
     "oldPriceNum": 530.88
@@ -11102,7 +11102,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-tablet-pcyes-7-9-10-5-plmsa01a",
-    "productUrl": "https://pcyes.com.br/suporte-tablet-pcyes-7-9-10-5-plmsa01a",
+    "productUrl": "https://www.pcyes.com.br/suporte-tablet-pcyes-7-9-10-5-plmsa01a",
     "inStock": true
   },
   {
@@ -11153,7 +11153,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-gabinete-cpu-pcyes-suspenso-plmsc03",
-    "productUrl": "https://pcyes.com.br/suporte-gabinete-cpu-pcyes-suspenso-plmsc03",
+    "productUrl": "https://www.pcyes.com.br/suporte-gabinete-cpu-pcyes-suspenso-plmsc03",
     "inStock": true
   },
   {
@@ -11205,7 +11205,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-monitor-organizador-pcyes-sm15p",
-    "productUrl": "https://pcyes.com.br/suporte-monitor-organizador-pcyes-sm15p",
+    "productUrl": "https://www.pcyes.com.br/suporte-monitor-organizador-pcyes-sm15p",
     "inStock": true
   },
   {
@@ -11257,7 +11257,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-organizador-mesa-pcyes-so-da07m",
-    "productUrl": "https://pcyes.com.br/suporte-organizador-mesa-pcyes-so-da07m",
+    "productUrl": "https://www.pcyes.com.br/suporte-organizador-mesa-pcyes-so-da07m",
     "inStock": true
   },
   {
@@ -11307,7 +11307,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-parede-tv-samsung-qled-75-pcyes-psptv75",
-    "productUrl": "https://pcyes.com.br/suporte-parede-tv-samsung-qled-75-pcyes-psptv75",
+    "productUrl": "https://www.pcyes.com.br/suporte-parede-tv-samsung-qled-75-pcyes-psptv75",
     "inStock": true,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
@@ -11360,7 +11360,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-motorizado-teto-tv-pcyes-43-86-plmstm02b",
-    "productUrl": "https://pcyes.com.br/suporte-motorizado-teto-tv-pcyes-43-86-plmstm02b",
+    "productUrl": "https://www.pcyes.com.br/suporte-motorizado-teto-tv-pcyes-43-86-plmstm02b",
     "inStock": true
   },
   {
@@ -11410,7 +11410,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-parede-tv-pcyes-23-43-st-lda33gt",
-    "productUrl": "https://pcyes.com.br/suporte-parede-tv-pcyes-23-43-st-lda33gt",
+    "productUrl": "https://www.pcyes.com.br/suporte-parede-tv-pcyes-23-43-st-lda33gt",
     "inStock": true
   },
   {
@@ -11460,7 +11460,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-parede-monitor-pcyes-17-32-sm-350c",
-    "productUrl": "https://pcyes.com.br/suporte-parede-monitor-pcyes-17-32-sm-350c",
+    "productUrl": "https://www.pcyes.com.br/suporte-parede-monitor-pcyes-17-32-sm-350c",
     "inStock": true
   },
   {
@@ -11510,7 +11510,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-parede-2-monitores-pcyes-17-32-plmsm05a",
-    "productUrl": "https://pcyes.com.br/suporte-parede-2-monitores-pcyes-17-32-plmsm05a",
+    "productUrl": "https://www.pcyes.com.br/suporte-parede-2-monitores-pcyes-17-32-plmsm05a",
     "inStock": true
   },
   {
@@ -11561,7 +11561,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-monitor-pcyes-17-32-usb-audio-sm-046usb",
-    "productUrl": "https://pcyes.com.br/suporte-monitor-pcyes-17-32-usb-audio-sm-046usb",
+    "productUrl": "https://www.pcyes.com.br/suporte-monitor-pcyes-17-32-usb-audio-sm-046usb",
     "inStock": true,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
@@ -11613,7 +11613,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-parede-monitor-pcyes-13-27-pivotante-smp-001",
-    "productUrl": "https://pcyes.com.br/suporte-parede-monitor-pcyes-13-27-pivotante-smp-001",
+    "productUrl": "https://www.pcyes.com.br/suporte-parede-monitor-pcyes-13-27-pivotante-smp-001",
     "inStock": true
   },
   {
@@ -11664,7 +11664,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-fixo-monitor-pcyes-regulagem-altura-plmsm01f",
-    "productUrl": "https://pcyes.com.br/suporte-fixo-monitor-pcyes-regulagem-altura-plmsm01f",
+    "productUrl": "https://www.pcyes.com.br/suporte-fixo-monitor-pcyes-regulagem-altura-plmsm01f",
     "inStock": true
   },
   {
@@ -11714,7 +11714,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-monitor-notebook-pcyes-articulacao-dupla-plmsmn1a",
-    "productUrl": "https://pcyes.com.br/suporte-monitor-notebook-pcyes-articulacao-dupla-plmsmn1a",
+    "productUrl": "https://www.pcyes.com.br/suporte-monitor-notebook-pcyes-articulacao-dupla-plmsmn1a",
     "inStock": true
   },
   {
@@ -11765,7 +11765,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-2-monitores-pcyes-17-32-usb-sm-015gd",
-    "productUrl": "https://pcyes.com.br/suporte-2-monitores-pcyes-17-32-usb-sm-015gd",
+    "productUrl": "https://www.pcyes.com.br/suporte-2-monitores-pcyes-17-32-usb-sm-015gd",
     "inStock": true
   },
   {
@@ -11816,7 +11816,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-monitor-pcyes-17-32-pistao-gas-usb-psgam1732",
-    "productUrl": "https://pcyes.com.br/suporte-monitor-pcyes-17-32-pistao-gas-usb-psgam1732",
+    "productUrl": "https://www.pcyes.com.br/suporte-monitor-pcyes-17-32-pistao-gas-usb-psgam1732",
     "inStock": true,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
@@ -11869,7 +11869,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-microfone-pcyes-streaming-podcast-plmsmic01",
-    "productUrl": "https://pcyes.com.br/suporte-microfone-pcyes-streaming-podcast-plmsmic01",
+    "productUrl": "https://www.pcyes.com.br/suporte-microfone-pcyes-streaming-podcast-plmsmic01",
     "inStock": true,
     "oldPrice": "R$ 313,49",
     "oldPriceNum": 313.49
@@ -11923,7 +11923,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-setup-studio-pcyes-4-em-1-se-mds1041",
-    "productUrl": "https://pcyes.com.br/suporte-setup-studio-pcyes-4-em-1-se-mds1041",
+    "productUrl": "https://www.pcyes.com.br/suporte-setup-studio-pcyes-4-em-1-se-mds1041",
     "inStock": true
   },
   {
@@ -11972,7 +11972,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-mini-computador-pcyes-adaptador-vesa-plmsn01",
-    "productUrl": "https://pcyes.com.br/suporte-mini-computador-pcyes-adaptador-vesa-plmsn01",
+    "productUrl": "https://www.pcyes.com.br/suporte-mini-computador-pcyes-adaptador-vesa-plmsn01",
     "inStock": true
   },
   {
@@ -12023,7 +12023,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-articulado-monitor-17-32-mola-cinza-branco-pcyes-sm051cb",
-    "productUrl": "https://pcyes.com.br/suporte-articulado-monitor-17-32-mola-cinza-branco-pcyes-sm051cb",
+    "productUrl": "https://www.pcyes.com.br/suporte-articulado-monitor-17-32-mola-cinza-branco-pcyes-sm051cb",
     "inStock": true
   },
   {
@@ -12073,7 +12073,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-rack-tv-37-75-bandeja-rodas-pcyes-sr160p",
-    "productUrl": "https://pcyes.com.br/suporte-rack-tv-37-75-bandeja-rodas-pcyes-sr160p",
+    "productUrl": "https://www.pcyes.com.br/suporte-rack-tv-37-75-bandeja-rodas-pcyes-sr160p",
     "inStock": true,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
@@ -12125,7 +12125,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-notebook-vesa-10-15-pcyes-stnk01",
-    "productUrl": "https://pcyes.com.br/suporte-notebook-vesa-10-15-pcyes-stnk01",
+    "productUrl": "https://www.pcyes.com.br/suporte-notebook-vesa-10-15-pcyes-stnk01",
     "inStock": true
   },
   {
@@ -12174,7 +12174,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-parede-monitor-13-27-articulado-pcyes-smp002b",
-    "productUrl": "https://pcyes.com.br/suporte-parede-monitor-13-27-articulado-pcyes-smp002b",
+    "productUrl": "https://www.pcyes.com.br/suporte-parede-monitor-13-27-articulado-pcyes-smp002b",
     "inStock": true
   },
   {
@@ -12223,7 +12223,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-cpu-ajustavel-rodas-pcyes-plmsc02",
-    "productUrl": "https://pcyes.com.br/suporte-cpu-ajustavel-rodas-pcyes-plmsc02",
+    "productUrl": "https://www.pcyes.com.br/suporte-cpu-ajustavel-rodas-pcyes-plmsc02",
     "inStock": true
   },
   {
@@ -12274,7 +12274,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-articulado-monitor-17-32-usb3-cinza-pcyes-sm049c",
-    "productUrl": "https://pcyes.com.br/suporte-articulado-monitor-17-32-usb3-cinza-pcyes-sm049c",
+    "productUrl": "https://www.pcyes.com.br/suporte-articulado-monitor-17-32-usb3-cinza-pcyes-sm049c",
     "inStock": true
   },
   {
@@ -12322,7 +12322,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fita-organizadora-cabos-preta-velcro-pcyes-sc47c",
-    "productUrl": "https://pcyes.com.br/fita-organizadora-cabos-preta-velcro-pcyes-sc47c",
+    "productUrl": "https://www.pcyes.com.br/fita-organizadora-cabos-preta-velcro-pcyes-sc47c",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -12373,7 +12373,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-organizador-cabos-trava-pcyes-sc75b",
-    "productUrl": "https://pcyes.com.br/suporte-organizador-cabos-trava-pcyes-sc75b",
+    "productUrl": "https://www.pcyes.com.br/suporte-organizador-cabos-trava-pcyes-sc75b",
     "inStock": true
   },
   {
@@ -12424,7 +12424,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-parede-monitor-17-32-pistao-gas-pcyes-pw01a",
-    "productUrl": "https://pcyes.com.br/suporte-parede-monitor-17-32-pistao-gas-pcyes-pw01a",
+    "productUrl": "https://www.pcyes.com.br/suporte-parede-monitor-17-32-pistao-gas-pcyes-pw01a",
     "inStock": true,
     "oldPrice": "R$ 223,89",
     "oldPriceNum": 223.89
@@ -12477,7 +12477,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-articulado-monitor-17-32-usb3-branco-pcyes-sm049b",
-    "productUrl": "https://pcyes.com.br/suporte-articulado-monitor-17-32-usb3-branco-pcyes-sm049b",
+    "productUrl": "https://www.pcyes.com.br/suporte-articulado-monitor-17-32-usb3-branco-pcyes-sm049b",
     "inStock": true
   },
   {
@@ -12526,7 +12526,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-organizador-cabos-pcyes-preto-sc44f",
-    "productUrl": "https://pcyes.com.br/suporte-organizador-cabos-pcyes-preto-sc44f",
+    "productUrl": "https://www.pcyes.com.br/suporte-organizador-cabos-pcyes-preto-sc44f",
     "inStock": true
   },
   {
@@ -12579,7 +12579,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-headset-organizador-mesa-pcyes-preto-so-da06p",
-    "productUrl": "https://pcyes.com.br/suporte-headset-organizador-mesa-pcyes-preto-so-da06p",
+    "productUrl": "https://www.pcyes.com.br/suporte-headset-organizador-mesa-pcyes-preto-so-da06p",
     "inStock": true,
     "oldPrice": "R$ 330,28",
     "oldPriceNum": 330.28
@@ -12633,7 +12633,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-articulado-2-monitores-pcyes-17-32-mola-mecanica-ps-024n",
-    "productUrl": "https://pcyes.com.br/suporte-articulado-2-monitores-pcyes-17-32-mola-mecanica-ps-024n",
+    "productUrl": "https://www.pcyes.com.br/suporte-articulado-2-monitores-pcyes-17-32-mola-mecanica-ps-024n",
     "inStock": true
   },
   {
@@ -12685,7 +12685,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-mesa-2-monitores-pcyes-13-32-ajuste-altura-plmsm02a",
-    "productUrl": "https://pcyes.com.br/suporte-mesa-2-monitores-pcyes-13-32-ajuste-altura-plmsm02a",
+    "productUrl": "https://www.pcyes.com.br/suporte-mesa-2-monitores-pcyes-13-32-ajuste-altura-plmsm02a",
     "inStock": true
   },
   {
@@ -12736,7 +12736,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-motorizado-teto-tv-pcyes-32-70-alexa-tuya-plmstm01a",
-    "productUrl": "https://pcyes.com.br/suporte-motorizado-teto-tv-pcyes-32-70-alexa-tuya-plmstm01a",
+    "productUrl": "https://www.pcyes.com.br/suporte-motorizado-teto-tv-pcyes-32-70-alexa-tuya-plmstm01a",
     "inStock": true
   },
   {
@@ -12788,7 +12788,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-articulado-2-monitores-pcyes-17-32-pistao-gas-sm-012gd",
-    "productUrl": "https://pcyes.com.br/suporte-articulado-2-monitores-pcyes-17-32-pistao-gas-sm-012gd",
+    "productUrl": "https://www.pcyes.com.br/suporte-articulado-2-monitores-pcyes-17-32-pistao-gas-sm-012gd",
     "inStock": true
   },
   {
@@ -12840,7 +12840,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-monitor-pcyes-17-32-mini-pc-regulagem-altura-smd-100",
-    "productUrl": "https://pcyes.com.br/suporte-monitor-pcyes-17-32-mini-pc-regulagem-altura-smd-100",
+    "productUrl": "https://www.pcyes.com.br/suporte-monitor-pcyes-17-32-mini-pc-regulagem-altura-smd-100",
     "inStock": true,
     "oldPrice": "R$ 2241,88",
     "oldPriceNum": 2241.88
@@ -12894,7 +12894,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-mesa-retratil-teclado-pcyes-apoio-gel-plmst01a",
-    "productUrl": "https://pcyes.com.br/suporte-mesa-retratil-teclado-pcyes-apoio-gel-plmst01a",
+    "productUrl": "https://www.pcyes.com.br/suporte-mesa-retratil-teclado-pcyes-apoio-gel-plmst01a",
     "inStock": true
   },
   {
@@ -12945,7 +12945,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-mini-pc-pcyes-nuc-thin-client-vesa-universal-plmsc01",
-    "productUrl": "https://pcyes.com.br/suporte-mini-pc-pcyes-nuc-thin-client-vesa-universal-plmsc01",
+    "productUrl": "https://www.pcyes.com.br/suporte-mini-pc-pcyes-nuc-thin-client-vesa-universal-plmsc01",
     "inStock": true
   },
   {
@@ -12997,7 +12997,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "suporte-articulado-monitor-pcyes-17-32-pistao-gas-sm-010g",
-    "productUrl": "https://pcyes.com.br/suporte-articulado-monitor-pcyes-17-32-pistao-gas-sm-010g",
+    "productUrl": "https://www.pcyes.com.br/suporte-articulado-monitor-pcyes-17-32-pistao-gas-sm-010g",
     "inStock": true,
     "oldPrice": "R$ 223,89",
     "oldPriceNum": 223.89
@@ -13049,7 +13049,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-mae-h610-pcyes-ddr4-m2-nvme-lga1700-m-atx-pcyh610-14g64",
-    "productUrl": "https://pcyes.com.br/placa-mae-h610-pcyes-ddr4-m2-nvme-lga1700-m-atx-pcyh610-14g64",
+    "productUrl": "https://www.pcyes.com.br/placa-mae-h610-pcyes-ddr4-m2-nvme-lga1700-m-atx-pcyh610-14g64",
     "inStock": true,
     "badge": "NVME"
   },
@@ -13100,7 +13100,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-mae-b760-pcyes-ddr5-m2-nvme-lga1700-m-atx-pcyb760-14g64",
-    "productUrl": "https://pcyes.com.br/placa-mae-b760-pcyes-ddr5-m2-nvme-lga1700-m-atx-pcyb760-14g64",
+    "productUrl": "https://www.pcyes.com.br/placa-mae-b760-pcyes-ddr5-m2-nvme-lga1700-m-atx-pcyb760-14g64",
     "inStock": true,
     "badge": "NVME",
     "oldPrice": "R$ 235,88",
@@ -13153,7 +13153,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-mae-b250-pcyes-lga1151-ddr4-m2-nvme-pcyb250-9g64",
-    "productUrl": "https://pcyes.com.br/placa-mae-b250-pcyes-lga1151-ddr4-m2-nvme-pcyb250-9g64",
+    "productUrl": "https://www.pcyes.com.br/placa-mae-b250-pcyes-lga1151-ddr4-m2-nvme-pcyb250-9g64",
     "inStock": true,
     "badge": "NVME"
   },
@@ -13204,7 +13204,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-mae-h470-pcyes-lga1200-ddr4-m2-nvme-pcyh470-10g64",
-    "productUrl": "https://pcyes.com.br/placa-mae-h470-pcyes-lga1200-ddr4-m2-nvme-pcyh470-10g64",
+    "productUrl": "https://www.pcyes.com.br/placa-mae-h470-pcyes-lga1200-ddr4-m2-nvme-pcyh470-10g64",
     "inStock": true,
     "badge": "NVME"
   },
@@ -13255,7 +13255,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-mae-h81-pcyes-lga1150-ddr3-m2-nvme-pcyh81-4g16",
-    "productUrl": "https://pcyes.com.br/placa-mae-h81-pcyes-lga1150-ddr3-m2-nvme-pcyh81-4g16",
+    "productUrl": "https://www.pcyes.com.br/placa-mae-h81-pcyes-lga1150-ddr3-m2-nvme-pcyh81-4g16",
     "inStock": true,
     "badge": "NVME"
   },
@@ -13306,7 +13306,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-mae-b75-pcyes-lga1155-ddr3-m2-nvme-pcyb75-3g16",
-    "productUrl": "https://pcyes.com.br/placa-mae-b75-pcyes-lga1155-ddr3-m2-nvme-pcyb75-3g16",
+    "productUrl": "https://www.pcyes.com.br/placa-mae-b75-pcyes-lga1155-ddr3-m2-nvme-pcyb75-3g16",
     "inStock": true,
     "badge": "NVME"
   },
@@ -13360,7 +13360,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "monitor-gamer-zmax-z10-pcyes-31-5-fhd-240hz-pmg320fd240",
-    "productUrl": "https://pcyes.com.br/monitor-gamer-zmax-z10-pcyes-31-5-fhd-240hz-pmg320fd240",
+    "productUrl": "https://www.pcyes.com.br/monitor-gamer-zmax-z10-pcyes-31-5-fhd-240hz-pmg320fd240",
     "inStock": true,
     "oldPrice": "R$ 1061,88",
     "oldPriceNum": 1061.88
@@ -13413,7 +13413,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "ssd-1tb-pcyes-sata-iii-2-5-ssd25py1024",
-    "productUrl": "https://pcyes.com.br/ssd-1tb-pcyes-sata-iii-2-5-ssd25py1024",
+    "productUrl": "https://www.pcyes.com.br/ssd-1tb-pcyes-sata-iii-2-5-ssd25py1024",
     "inStock": true
   },
   {
@@ -13466,7 +13466,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "monitor-gamer-quartzo-q10-pcyes-23-8-fhd-75hz-pmg238fd75",
-    "productUrl": "https://pcyes.com.br/monitor-gamer-quartzo-q10-pcyes-23-8-fhd-75hz-pmg238fd75",
+    "productUrl": "https://www.pcyes.com.br/monitor-gamer-quartzo-q10-pcyes-23-8-fhd-75hz-pmg238fd75",
     "inStock": true
   },
   {
@@ -13514,7 +13514,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "ssd-128gb-pcyes-m2-nvme-pcie3x4-ssdnvmeg3py128",
-    "productUrl": "https://pcyes.com.br/ssd-128gb-pcyes-m2-nvme-pcie3x4-ssdnvmeg3py128",
+    "productUrl": "https://www.pcyes.com.br/ssd-128gb-pcyes-m2-nvme-pcie3x4-ssdnvmeg3py128",
     "inStock": true,
     "badge": "NVME"
   },
@@ -13563,7 +13563,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-udimm-8gb-pcyes-ddr5-5600mhz-desktop-pm085600d5",
-    "productUrl": "https://pcyes.com.br/memoria-udimm-8gb-pcyes-ddr5-5600mhz-desktop-pm085600d5",
+    "productUrl": "https://www.pcyes.com.br/memoria-udimm-8gb-pcyes-ddr5-5600mhz-desktop-pm085600d5",
     "inStock": true,
     "oldPrice": "R$ 223,89",
     "oldPriceNum": 223.89
@@ -13613,7 +13613,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-udimm-8gb-pcyes-ddr4-2666mhz-desktop-pm082666d4",
-    "productUrl": "https://pcyes.com.br/memoria-udimm-8gb-pcyes-ddr4-2666mhz-desktop-pm082666d4",
+    "productUrl": "https://www.pcyes.com.br/memoria-udimm-8gb-pcyes-ddr4-2666mhz-desktop-pm082666d4",
     "inStock": true,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
@@ -13663,7 +13663,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-udimm-4gb-pcyes-ddr3-1600mhz-desktop-pm041600d3",
-    "productUrl": "https://pcyes.com.br/memoria-udimm-4gb-pcyes-ddr3-1600mhz-desktop-pm041600d3",
+    "productUrl": "https://www.pcyes.com.br/memoria-udimm-4gb-pcyes-ddr3-1600mhz-desktop-pm041600d3",
     "inStock": true
   },
   {
@@ -13711,7 +13711,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-udimm-32gb-pcyes-ddr4-3200mhz-desktop-pm323200d4",
-    "productUrl": "https://pcyes.com.br/memoria-udimm-32gb-pcyes-ddr4-3200mhz-desktop-pm323200d4",
+    "productUrl": "https://www.pcyes.com.br/memoria-udimm-32gb-pcyes-ddr4-3200mhz-desktop-pm323200d4",
     "inStock": true
   },
   {
@@ -13760,7 +13760,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-udimm-16gb-pcyes-ddr5-5600mhz-desktop-pm165600d5",
-    "productUrl": "https://pcyes.com.br/memoria-udimm-16gb-pcyes-ddr5-5600mhz-desktop-pm165600d5",
+    "productUrl": "https://www.pcyes.com.br/memoria-udimm-16gb-pcyes-ddr5-5600mhz-desktop-pm165600d5",
     "inStock": true
   },
   {
@@ -13809,7 +13809,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-udimm-16gb-pcyes-ddr4-2666mhz-desktop-pm162666d4",
-    "productUrl": "https://pcyes.com.br/memoria-udimm-16gb-pcyes-ddr4-2666mhz-desktop-pm162666d4",
+    "productUrl": "https://www.pcyes.com.br/memoria-udimm-16gb-pcyes-ddr4-2666mhz-desktop-pm162666d4",
     "inStock": true
   },
   {
@@ -13858,7 +13858,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-sodimm-4gb-pcyes-ddr3-1600mhz-notebook-pm041600d3so",
-    "productUrl": "https://pcyes.com.br/memoria-sodimm-4gb-pcyes-ddr3-1600mhz-notebook-pm041600d3so",
+    "productUrl": "https://www.pcyes.com.br/memoria-sodimm-4gb-pcyes-ddr3-1600mhz-notebook-pm041600d3so",
     "inStock": true,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
@@ -13911,7 +13911,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-gamer-8gb-pcyes-ddr4-3200mhz-branca-argb-pm083200d4wr",
-    "productUrl": "https://pcyes.com.br/memoria-gamer-8gb-pcyes-ddr4-3200mhz-branca-argb-pm083200d4wr",
+    "productUrl": "https://www.pcyes.com.br/memoria-gamer-8gb-pcyes-ddr4-3200mhz-branca-argb-pm083200d4wr",
     "inStock": true
   },
   {
@@ -13961,7 +13961,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-gamer-8gb-pcyes-ddr4-3200mhz-branca-pm083200d4w",
-    "productUrl": "https://pcyes.com.br/memoria-gamer-8gb-pcyes-ddr4-3200mhz-branca-pm083200d4w",
+    "productUrl": "https://www.pcyes.com.br/memoria-gamer-8gb-pcyes-ddr4-3200mhz-branca-pm083200d4w",
     "inStock": true
   },
   {
@@ -14012,7 +14012,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-gamer-8gb-ddr4-3200mhz-argb-preta-pm083200d4br",
-    "productUrl": "https://pcyes.com.br/memoria-gamer-8gb-ddr4-3200mhz-argb-preta-pm083200d4br",
+    "productUrl": "https://www.pcyes.com.br/memoria-gamer-8gb-ddr4-3200mhz-argb-preta-pm083200d4br",
     "inStock": true
   },
   {
@@ -14062,7 +14062,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-gamer-8gb-ddr4-3200mhz-preta-udimm-pcyes-pm083200d4b",
-    "productUrl": "https://pcyes.com.br/memoria-gamer-8gb-ddr4-3200mhz-preta-udimm-pcyes-pm083200d4b",
+    "productUrl": "https://www.pcyes.com.br/memoria-gamer-8gb-ddr4-3200mhz-preta-udimm-pcyes-pm083200d4b",
     "inStock": true
   },
   {
@@ -14113,7 +14113,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-gamer-32gb-ddr4-3200mhz-branca-rgb-udimm-pcyes-pm323200d4wr",
-    "productUrl": "https://pcyes.com.br/memoria-gamer-32gb-ddr4-3200mhz-branca-rgb-udimm-pcyes-pm323200d4wr",
+    "productUrl": "https://www.pcyes.com.br/memoria-gamer-32gb-ddr4-3200mhz-branca-rgb-udimm-pcyes-pm323200d4wr",
     "inStock": true,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
@@ -14166,7 +14166,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-gamer-32gb-ddr4-3200mhz-preta-rgb-udimm-pcyes-pm323200d4br",
-    "productUrl": "https://pcyes.com.br/memoria-gamer-32gb-ddr4-3200mhz-preta-rgb-udimm-pcyes-pm323200d4br",
+    "productUrl": "https://www.pcyes.com.br/memoria-gamer-32gb-ddr4-3200mhz-preta-rgb-udimm-pcyes-pm323200d4br",
     "inStock": true
   },
   {
@@ -14216,7 +14216,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-gamer-32gb-ddr4-3200mhz-preta-udimm-pcyes-pm323200d4b",
-    "productUrl": "https://pcyes.com.br/memoria-gamer-32gb-ddr4-3200mhz-preta-udimm-pcyes-pm323200d4b",
+    "productUrl": "https://www.pcyes.com.br/memoria-gamer-32gb-ddr4-3200mhz-preta-udimm-pcyes-pm323200d4b",
     "inStock": true
   },
   {
@@ -14266,7 +14266,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-gamer-16gb-ddr5-5600mhz-preta-udimm-pcyes-pm165600d5b",
-    "productUrl": "https://pcyes.com.br/memoria-gamer-16gb-ddr5-5600mhz-preta-udimm-pcyes-pm165600d5b",
+    "productUrl": "https://www.pcyes.com.br/memoria-gamer-16gb-ddr5-5600mhz-preta-udimm-pcyes-pm165600d5b",
     "inStock": true
   },
   {
@@ -14317,7 +14317,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-gamer-16gb-ddr4-3200mhz-branca-rgb-udimm-pcyes-pm163200d4wr",
-    "productUrl": "https://pcyes.com.br/memoria-gamer-16gb-ddr4-3200mhz-branca-rgb-udimm-pcyes-pm163200d4wr",
+    "productUrl": "https://www.pcyes.com.br/memoria-gamer-16gb-ddr4-3200mhz-branca-rgb-udimm-pcyes-pm163200d4wr",
     "inStock": true
   },
   {
@@ -14368,7 +14368,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-gamer-16gb-ddr4-3200mhz-rgb-udimm-pcyes-pm163200d4br",
-    "productUrl": "https://pcyes.com.br/memoria-gamer-16gb-ddr4-3200mhz-rgb-udimm-pcyes-pm163200d4br",
+    "productUrl": "https://www.pcyes.com.br/memoria-gamer-16gb-ddr4-3200mhz-rgb-udimm-pcyes-pm163200d4br",
     "inStock": true,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
@@ -14421,7 +14421,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "ssd-512gb-pcyes-sata-iii-2-5-ssd25py512",
-    "productUrl": "https://pcyes.com.br/ssd-512gb-pcyes-sata-iii-2-5-ssd25py512",
+    "productUrl": "https://www.pcyes.com.br/ssd-512gb-pcyes-sata-iii-2-5-ssd25py512",
     "inStock": true
   },
   {
@@ -14469,7 +14469,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "ssd-512gb-pcyes-m2-nvme-2200mb-s-ssdnvmeg3py512",
-    "productUrl": "https://pcyes.com.br/ssd-512gb-pcyes-m2-nvme-2200mb-s-ssdnvmeg3py512",
+    "productUrl": "https://www.pcyes.com.br/ssd-512gb-pcyes-m2-nvme-2200mb-s-ssdnvmeg3py512",
     "inStock": true,
     "badge": "NVME"
   },
@@ -14517,7 +14517,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-sodimm-8gb-ddr5-5600mhz-notebook-pcyes-pm085600d5so",
-    "productUrl": "https://pcyes.com.br/memoria-sodimm-8gb-ddr5-5600mhz-notebook-pcyes-pm085600d5so",
+    "productUrl": "https://www.pcyes.com.br/memoria-sodimm-8gb-ddr5-5600mhz-notebook-pcyes-pm085600d5so",
     "inStock": true
   },
   {
@@ -14565,7 +14565,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "ssd-1tb-pcyes-m2-nvme-2289mb-s-ssdnvmegen3py1t",
-    "productUrl": "https://pcyes.com.br/ssd-1tb-pcyes-m2-nvme-2289mb-s-ssdnvmegen3py1t",
+    "productUrl": "https://www.pcyes.com.br/ssd-1tb-pcyes-m2-nvme-2289mb-s-ssdnvmegen3py1t",
     "inStock": true,
     "badge": "NVME"
   },
@@ -14616,7 +14616,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "ssd-128gb-pcyes-sata-iii-550mb-s-ssd25py128",
-    "productUrl": "https://pcyes.com.br/ssd-128gb-pcyes-sata-iii-550mb-s-ssd25py128",
+    "productUrl": "https://www.pcyes.com.br/ssd-128gb-pcyes-sata-iii-550mb-s-ssd25py128",
     "inStock": true,
     "oldPrice": "R$ 353,88",
     "oldPriceNum": 353.88
@@ -14666,7 +14666,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "ssd-256gb-pcyes-m2-nvme-1700mb-s-ssdnvmeg3py256gb",
-    "productUrl": "https://pcyes.com.br/ssd-256gb-pcyes-m2-nvme-1700mb-s-ssdnvmeg3py256gb",
+    "productUrl": "https://www.pcyes.com.br/ssd-256gb-pcyes-m2-nvme-1700mb-s-ssdnvmeg3py256gb",
     "inStock": true,
     "badge": "NVME",
     "oldPrice": "R$ 335,89",
@@ -14719,7 +14719,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "ssd-256gb-pcyes-sata-iii-550mb-s-ssd25py256",
-    "productUrl": "https://pcyes.com.br/ssd-256gb-pcyes-sata-iii-550mb-s-ssd25py256",
+    "productUrl": "https://www.pcyes.com.br/ssd-256gb-pcyes-sata-iii-550mb-s-ssd25py256",
     "inStock": true
   },
   {
@@ -14767,7 +14767,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "ssd-256gb-pcyes-m2-nvme-pcie-3-0x4-ssdnvmeg3py256",
-    "productUrl": "https://pcyes.com.br/ssd-256gb-pcyes-m2-nvme-pcie-3-0x4-ssdnvmeg3py256",
+    "productUrl": "https://www.pcyes.com.br/ssd-256gb-pcyes-m2-nvme-pcie-3-0x4-ssdnvmeg3py256",
     "inStock": true,
     "badge": "NVME"
   },
@@ -14816,7 +14816,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "memoria-8gb-pcyes-ddr3-1600mhz-pm081600d3",
-    "productUrl": "https://pcyes.com.br/memoria-8gb-pcyes-ddr3-1600mhz-pm081600d3",
+    "productUrl": "https://www.pcyes.com.br/memoria-8gb-pcyes-ddr3-1600mhz-pm081600d3",
     "inStock": true
   },
   {
@@ -14865,7 +14865,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "ssd-128gb-pcyes-sata-iii-ssd25py128gb",
-    "productUrl": "https://pcyes.com.br/ssd-128gb-pcyes-sata-iii-ssd25py128gb",
+    "productUrl": "https://www.pcyes.com.br/ssd-128gb-pcyes-sata-iii-ssd25py128gb",
     "inStock": true,
     "oldPrice": "R$ 353,88",
     "oldPriceNum": 353.88
@@ -14916,7 +14916,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "ssd-256gb-py256-pcyes-sata-iii-ssd25py256gb",
-    "productUrl": "https://pcyes.com.br/ssd-256gb-py256-pcyes-sata-iii-ssd25py256gb",
+    "productUrl": "https://www.pcyes.com.br/ssd-256gb-py256-pcyes-sata-iii-ssd25py256gb",
     "inStock": true
   },
   {
@@ -14966,7 +14966,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cartao-micro-sd-32gb-pcyes-c10-u3-v30-py32gbsdhc",
-    "productUrl": "https://pcyes.com.br/cartao-micro-sd-32gb-pcyes-c10-u3-v30-py32gbsdhc",
+    "productUrl": "https://www.pcyes.com.br/cartao-micro-sd-32gb-pcyes-c10-u3-v30-py32gbsdhc",
     "inStock": true
   },
   {
@@ -15016,7 +15016,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cartao-micro-sd-64gb-pcyes-c10-u3-v30-py64gbsdxc",
-    "productUrl": "https://pcyes.com.br/cartao-micro-sd-64gb-pcyes-c10-u3-v30-py64gbsdxc",
+    "productUrl": "https://www.pcyes.com.br/cartao-micro-sd-64gb-pcyes-c10-u3-v30-py64gbsdxc",
     "inStock": true
   },
   {
@@ -15066,7 +15066,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cartao-micro-sd-128gb-pcyes-c10-u3-v30-py128gbsdxc",
-    "productUrl": "https://pcyes.com.br/cartao-micro-sd-128gb-pcyes-c10-u3-v30-py128gbsdxc",
+    "productUrl": "https://www.pcyes.com.br/cartao-micro-sd-128gb-pcyes-c10-u3-v30-py128gbsdxc",
     "inStock": true
   },
   {
@@ -15116,7 +15116,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-gamer-obsidian-g3d-pcyes-500x400-vidro-pempg3d",
-    "productUrl": "https://pcyes.com.br/mouse-pad-gamer-obsidian-g3d-pcyes-500x400-vidro-pempg3d",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-gamer-obsidian-g3d-pcyes-500x400-vidro-pempg3d",
     "inStock": true,
     "oldPrice": "R$ 176,88",
     "oldPriceNum": 176.88
@@ -15170,7 +15170,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-gamer-dragon-medium-pcyes-500x400-pmd50x40",
-    "productUrl": "https://pcyes.com.br/mouse-pad-gamer-dragon-medium-pcyes-500x400-pmd50x40",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-gamer-dragon-medium-pcyes-500x400-pmd50x40",
     "inStock": true
   },
   {
@@ -15222,7 +15222,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-gamer-maze-extended-pcyes-black-vulcan-pmm90x42bv",
-    "productUrl": "https://pcyes.com.br/mouse-pad-gamer-maze-extended-pcyes-black-vulcan-pmm90x42bv",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-gamer-maze-extended-pcyes-black-vulcan-pmm90x42bv",
     "inStock": true,
     "oldPrice": "R$ 167,89",
     "oldPriceNum": 167.89
@@ -15276,7 +15276,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "apoio-de-pulso-signature-pcyes-red-magma-wrsrm",
-    "productUrl": "https://pcyes.com.br/apoio-de-pulso-signature-pcyes-red-magma-wrsrm",
+    "productUrl": "https://www.pcyes.com.br/apoio-de-pulso-signature-pcyes-red-magma-wrsrm",
     "inStock": true
   },
   {
@@ -15328,7 +15328,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "apoio-de-pulso-signature-pcyes-white-ghost-wrswg",
-    "productUrl": "https://pcyes.com.br/apoio-de-pulso-signature-pcyes-white-ghost-wrswg",
+    "productUrl": "https://www.pcyes.com.br/apoio-de-pulso-signature-pcyes-white-ghost-wrswg",
     "inStock": true
   },
   {
@@ -15379,7 +15379,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-obsidian-g4d-extended-pcyes-purple-900x420",
-    "productUrl": "https://pcyes.com.br/mouse-pad-obsidian-g4d-extended-pcyes-purple-900x420",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-obsidian-g4d-extended-pcyes-purple-900x420",
     "inStock": true,
     "oldPrice": "R$ 176,88",
     "oldPriceNum": 176.88
@@ -15432,7 +15432,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-obsidian-g2d-extended-pcyes-900x420-infusao-vidro",
-    "productUrl": "https://pcyes.com.br/mouse-pad-obsidian-g2d-extended-pcyes-900x420-infusao-vidro",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-obsidian-g2d-extended-pcyes-900x420-infusao-vidro",
     "inStock": true
   },
   {
@@ -15483,7 +15483,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-ancient-dragon-medium-pcyes-500x400mm-pma50x40",
-    "productUrl": "https://pcyes.com.br/mouse-pad-ancient-dragon-medium-pcyes-500x400mm-pma50x40",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-ancient-dragon-medium-pcyes-500x400mm-pma50x40",
     "inStock": true
   },
   {
@@ -15535,7 +15535,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-maze-pcyes-white-ghost-900x420-pmm90x42wg",
-    "productUrl": "https://pcyes.com.br/mouse-pad-maze-pcyes-white-ghost-900x420-pmm90x42wg",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-maze-pcyes-white-ghost-900x420-pmm90x42wg",
     "inStock": true
   },
   {
@@ -15587,7 +15587,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-signature-pcyes-white-ghost-900x420-pms90x42wg",
-    "productUrl": "https://pcyes.com.br/mouse-pad-signature-pcyes-white-ghost-900x420-pms90x42wg",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-signature-pcyes-white-ghost-900x420-pms90x42wg",
     "inStock": true
   },
   {
@@ -15638,7 +15638,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-dr-kepler-extended-pcyes-900x420mm-drk90x42",
-    "productUrl": "https://pcyes.com.br/mouse-pad-dr-kepler-extended-pcyes-900x420mm-drk90x42",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-dr-kepler-extended-pcyes-900x420mm-drk90x42",
     "inStock": true,
     "oldPrice": "R$ 176,88",
     "oldPriceNum": 176.88
@@ -15691,7 +15691,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-obsidian-g2d-pcyes-500x400-infusao-vidro",
-    "productUrl": "https://pcyes.com.br/mouse-pad-obsidian-g2d-pcyes-500x400-infusao-vidro",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-obsidian-g2d-pcyes-500x400-infusao-vidro",
     "inStock": true
   },
   {
@@ -15743,7 +15743,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "apoio-de-pulso-signature-pcyes-black-vulcan-wrsbv",
-    "productUrl": "https://pcyes.com.br/apoio-de-pulso-signature-pcyes-black-vulcan-wrsbv",
+    "productUrl": "https://www.pcyes.com.br/apoio-de-pulso-signature-pcyes-black-vulcan-wrsbv",
     "inStock": true
   },
   {
@@ -15795,7 +15795,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "apoio-de-pulso-ergonomico-pcyes-450x93mm-pas01",
-    "productUrl": "https://pcyes.com.br/apoio-de-pulso-ergonomico-pcyes-450x93mm-pas01",
+    "productUrl": "https://www.pcyes.com.br/apoio-de-pulso-ergonomico-pcyes-450x93mm-pas01",
     "inStock": true,
     "oldPrice": "R$ 447,89",
     "oldPriceNum": 447.89
@@ -15848,7 +15848,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-tiger-medium-pcyes-500x400mm-speed-pmt50x40",
-    "productUrl": "https://pcyes.com.br/mouse-pad-tiger-medium-pcyes-500x400mm-speed-pmt50x40",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-tiger-medium-pcyes-500x400mm-speed-pmt50x40",
     "inStock": true
   },
   {
@@ -15899,7 +15899,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-agata-extended-pcyes-900x420mm-speed-agt90x42",
-    "productUrl": "https://pcyes.com.br/mouse-pad-agata-extended-pcyes-900x420mm-speed-agt90x42",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-agata-extended-pcyes-900x420mm-speed-agt90x42",
     "inStock": true,
     "oldPrice": "R$ 176,88",
     "oldPriceNum": 176.88
@@ -15953,7 +15953,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "apoio-de-pulso-ergonomico-pcyes-com-organizador-aporg01",
-    "productUrl": "https://pcyes.com.br/apoio-de-pulso-ergonomico-pcyes-com-organizador-aporg01",
+    "productUrl": "https://www.pcyes.com.br/apoio-de-pulso-ergonomico-pcyes-com-organizador-aporg01",
     "inStock": true
   },
   {
@@ -16004,7 +16004,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-apollo-extended-pcyes-900x420mm-speed-apl90x42",
-    "productUrl": "https://pcyes.com.br/mouse-pad-apollo-extended-pcyes-900x420mm-speed-apl90x42",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-apollo-extended-pcyes-900x420mm-speed-apl90x42",
     "inStock": true
   },
   {
@@ -16055,7 +16055,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-obsidian-g4d-pcyes-purple-500x400-infusao-vidro",
-    "productUrl": "https://pcyes.com.br/mouse-pad-obsidian-g4d-pcyes-purple-500x400-infusao-vidro",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-obsidian-g4d-pcyes-purple-500x400-infusao-vidro",
     "inStock": true
   },
   {
@@ -16107,7 +16107,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-signature-pcyes-red-magma-900x420-pms90x42rm",
-    "productUrl": "https://pcyes.com.br/mouse-pad-signature-pcyes-red-magma-900x420-pms90x42rm",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-signature-pcyes-red-magma-900x420-pms90x42rm",
     "inStock": true
   },
   {
@@ -16159,7 +16159,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-signature-pcyes-black-vulcan-900x420-pms90x42bv",
-    "productUrl": "https://pcyes.com.br/mouse-pad-signature-pcyes-black-vulcan-900x420-pms90x42bv",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-signature-pcyes-black-vulcan-900x420-pms90x42bv",
     "inStock": true,
     "oldPrice": "R$ 176,88",
     "oldPriceNum": 176.88
@@ -16212,7 +16212,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-agata-pcyes-500x400mm-speed-agt50x40",
-    "productUrl": "https://pcyes.com.br/mouse-pad-agata-pcyes-500x400mm-speed-agt50x40",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-agata-pcyes-500x400mm-speed-agt50x40",
     "inStock": true
   },
   {
@@ -16263,7 +16263,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-dr-kepler-pcyes-500x400mm-speed-drk50x40",
-    "productUrl": "https://pcyes.com.br/mouse-pad-dr-kepler-pcyes-500x400mm-speed-drk50x40",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-dr-kepler-pcyes-500x400mm-speed-drk50x40",
     "inStock": true
   },
   {
@@ -16314,7 +16314,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-apollo-pcyes-500x400mm-speed-apl50x40",
-    "productUrl": "https://pcyes.com.br/mouse-pad-apollo-pcyes-500x400mm-speed-apl50x40",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-apollo-pcyes-500x400mm-speed-apl50x40",
     "inStock": true
   },
   {
@@ -16364,7 +16364,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-ancient-dragon-extended-pcyes-900x420mm-speed-pma90x42",
-    "productUrl": "https://pcyes.com.br/mouse-pad-ancient-dragon-extended-pcyes-900x420mm-speed-pma90x42",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-ancient-dragon-extended-pcyes-900x420mm-speed-pma90x42",
     "inStock": true,
     "oldPrice": "R$ 167,89",
     "oldPriceNum": 167.89
@@ -16416,7 +16416,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-dragon-extended-pcyes-900x420mm-speed-pmd90x42",
-    "productUrl": "https://pcyes.com.br/mouse-pad-dragon-extended-pcyes-900x420mm-speed-pmd90x42",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-dragon-extended-pcyes-900x420mm-speed-pmd90x42",
     "inStock": true,
     "oldPrice": "R$ 176,88",
     "oldPriceNum": 176.88
@@ -16468,7 +16468,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-tiger-extended-pcyes-900x420mm-speed-pmt90x42",
-    "productUrl": "https://pcyes.com.br/mouse-pad-tiger-extended-pcyes-900x420mm-speed-pmt90x42",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-tiger-extended-pcyes-900x420mm-speed-pmt90x42",
     "inStock": true
   },
   {
@@ -16519,7 +16519,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fone-gamer-nebulla-pcyes-intra-auricular-10mm-p3-35mm-fpn1dd",
-    "productUrl": "https://pcyes.com.br/fone-gamer-nebulla-pcyes-intra-auricular-10mm-p3-35mm-fpn1dd",
+    "productUrl": "https://www.pcyes.com.br/fone-gamer-nebulla-pcyes-intra-auricular-10mm-p3-35mm-fpn1dd",
     "inStock": true
   },
   {
@@ -16571,7 +16571,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "headset-office-hb500-pcyes-30mm-usb-phb500",
-    "productUrl": "https://pcyes.com.br/headset-office-hb500-pcyes-30mm-usb-phb500",
+    "productUrl": "https://www.pcyes.com.br/headset-office-hb500-pcyes-30mm-usb-phb500",
     "inStock": true
   },
   {
@@ -16623,7 +16623,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "headset-office-hb300-pcyes-30mm-p2-p3-35mm-phb300",
-    "productUrl": "https://pcyes.com.br/headset-office-hb300-pcyes-30mm-p2-p3-35mm-phb300",
+    "productUrl": "https://www.pcyes.com.br/headset-office-hb300-pcyes-30mm-p2-p3-35mm-phb300",
     "inStock": true
   },
   {
@@ -16674,7 +16674,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fone-gamer-opala-pcyes-intra-auricular-10mm-p3-35mm-fpo1dd",
-    "productUrl": "https://pcyes.com.br/fone-gamer-opala-pcyes-intra-auricular-10mm-p3-35mm-fpo1dd",
+    "productUrl": "https://www.pcyes.com.br/fone-gamer-opala-pcyes-intra-auricular-10mm-p3-35mm-fpo1dd",
     "inStock": true,
     "oldPrice": "R$ 330,28",
     "oldPriceNum": 330.28
@@ -16727,7 +16727,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fone-gamer-tyet-pcyes-intra-auricular-10mm-p3-35mm-fpty1dd",
-    "productUrl": "https://pcyes.com.br/fone-gamer-tyet-pcyes-intra-auricular-10mm-p3-35mm-fpty1dd",
+    "productUrl": "https://www.pcyes.com.br/fone-gamer-tyet-pcyes-intra-auricular-10mm-p3-35mm-fpty1dd",
     "inStock": true
   },
   {
@@ -16778,7 +16778,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fone-gamer-kheper-pcyes-duplo-driver-intra-auricular-35mm-fpkh2dd",
-    "productUrl": "https://pcyes.com.br/fone-gamer-kheper-pcyes-duplo-driver-intra-auricular-35mm-fpkh2dd",
+    "productUrl": "https://www.pcyes.com.br/fone-gamer-kheper-pcyes-duplo-driver-intra-auricular-35mm-fpkh2dd",
     "inStock": true
   },
   {
@@ -16829,7 +16829,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "fone-gamer-myria-pcyes-intra-auricular-10mm-p3-35mm-fpmy1dd",
-    "productUrl": "https://pcyes.com.br/fone-gamer-myria-pcyes-intra-auricular-10mm-p3-35mm-fpmy1dd",
+    "productUrl": "https://www.pcyes.com.br/fone-gamer-myria-pcyes-intra-auricular-10mm-p3-35mm-fpmy1dd",
     "inStock": true
   },
   {
@@ -16880,7 +16880,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "headset-gamer-kamar-pcyes-black-vulcan-usb-50mm-hgkm50bv",
-    "productUrl": "https://pcyes.com.br/headset-gamer-kamar-pcyes-black-vulcan-usb-50mm-hgkm50bv",
+    "productUrl": "https://www.pcyes.com.br/headset-gamer-kamar-pcyes-black-vulcan-usb-50mm-hgkm50bv",
     "inStock": true
   },
   {
@@ -16932,7 +16932,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "headset-gamer-deffy-pcyes-black-vulcan-usb-50mm-rgb-hgdf50bv",
-    "productUrl": "https://pcyes.com.br/headset-gamer-deffy-pcyes-black-vulcan-usb-50mm-rgb-hgdf50bv",
+    "productUrl": "https://www.pcyes.com.br/headset-gamer-deffy-pcyes-black-vulcan-usb-50mm-rgb-hgdf50bv",
     "inStock": true,
     "oldPrice": "R$ 330,28",
     "oldPriceNum": 330.28
@@ -16986,7 +16986,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "headset-gamer-nowy-pcyes-white-ghost-usb-surround-40mm-rgb-hgnw40wg",
-    "productUrl": "https://pcyes.com.br/headset-gamer-nowy-pcyes-white-ghost-usb-surround-40mm-rgb-hgnw40wg",
+    "productUrl": "https://www.pcyes.com.br/headset-gamer-nowy-pcyes-white-ghost-usb-surround-40mm-rgb-hgnw40wg",
     "inStock": true
   },
   {
@@ -17038,7 +17038,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "headset-gamer-nowy-pcyes-black-vulcan-usb-surround-40mm-rgb-hgnw40bv",
-    "productUrl": "https://pcyes.com.br/headset-gamer-nowy-pcyes-black-vulcan-usb-surround-40mm-rgb-hgnw40bv",
+    "productUrl": "https://www.pcyes.com.br/headset-gamer-nowy-pcyes-black-vulcan-usb-surround-40mm-rgb-hgnw40bv",
     "inStock": true
   },
   {
@@ -17091,7 +17091,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-basaran-pcyes-white-ghost-12400dpi-rgb-6-botoes-pmgbrwg",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-basaran-pcyes-white-ghost-12400dpi-rgb-6-botoes-pmgbrwg",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-basaran-pcyes-white-ghost-12400dpi-rgb-6-botoes-pmgbrwg",
     "inStock": true
   },
   {
@@ -17141,7 +17141,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-usb-comfort-pcyes-1000dpi-cabo-2m-pmoc1u",
-    "productUrl": "https://pcyes.com.br/mouse-usb-comfort-pcyes-1000dpi-cabo-2m-pmoc1u",
+    "productUrl": "https://www.pcyes.com.br/mouse-usb-comfort-pcyes-1000dpi-cabo-2m-pmoc1u",
     "inStock": true
   },
   {
@@ -17191,7 +17191,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-desk-mat-exclusive-pcyes-caramelo-800x400mm-2mm-pmpexbw",
-    "productUrl": "https://pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-caramelo-800x400mm-2mm-pmpexbw",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-caramelo-800x400mm-2mm-pmpexbw",
     "inStock": true,
     "oldPrice": "R$ 176,88",
     "oldPriceNum": 176.88
@@ -17243,7 +17243,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-desk-mat-exclusive-pcyes-indigo-blue-800x400mm-2mm-pmpexib",
-    "productUrl": "https://pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-indigo-blue-800x400mm-2mm-pmpexib",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-indigo-blue-800x400mm-2mm-pmpexib",
     "inStock": true
   },
   {
@@ -17293,7 +17293,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-desk-mat-exclusive-pcyes-bordo-800x400mm-2mm-pmpexdr",
-    "productUrl": "https://pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-bordo-800x400mm-2mm-pmpexdr",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-bordo-800x400mm-2mm-pmpexdr",
     "inStock": true
   },
   {
@@ -17343,7 +17343,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-desk-mat-exclusive-pro-pcyes-gray-900x420mm-pmpexppg",
-    "productUrl": "https://pcyes.com.br/mouse-pad-desk-mat-exclusive-pro-pcyes-gray-900x420mm-pmpexppg",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-desk-mat-exclusive-pro-pcyes-gray-900x420mm-pmpexppg",
     "inStock": true
   },
   {
@@ -17396,7 +17396,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-gaius-pcyes-rgb-12400dpi-6-botoes-pmggbv",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-gaius-pcyes-rgb-12400dpi-6-botoes-pmggbv",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-gaius-pcyes-rgb-12400dpi-6-botoes-pmggbv",
     "inStock": true
   },
   {
@@ -17446,7 +17446,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-desk-mat-exclusive-pro-pcyes-dark-gray-900x420mm-pmpexpdg",
-    "productUrl": "https://pcyes.com.br/mouse-pad-desk-mat-exclusive-pro-pcyes-dark-gray-900x420mm-pmpexpdg",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-desk-mat-exclusive-pro-pcyes-dark-gray-900x420mm-pmpexpdg",
     "inStock": true,
     "oldPrice": "R$ 176,88",
     "oldPriceNum": 176.88
@@ -17501,7 +17501,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-fenner-pcyes-white-ghost-wireless-26000dpi-8k-pmgfwg8k",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-fenner-pcyes-white-ghost-wireless-26000dpi-8k-pmgfwg8k",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-fenner-pcyes-white-ghost-wireless-26000dpi-8k-pmgfwg8k",
     "inStock": true,
     "oldPrice": "R$ 279,89",
     "oldPriceNum": 279.89
@@ -17555,7 +17555,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-sem-fio-dash-lite-pcyes-black-1600dpi-silent-click-pmdv2bk",
-    "productUrl": "https://pcyes.com.br/mouse-sem-fio-dash-lite-pcyes-black-1600dpi-silent-click-pmdv2bk",
+    "productUrl": "https://www.pcyes.com.br/mouse-sem-fio-dash-lite-pcyes-black-1600dpi-silent-click-pmdv2bk",
     "inStock": true
   },
   {
@@ -17604,7 +17604,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-desk-mat-exclusive-pcyes-rosa-800x400mm-pmpexp",
-    "productUrl": "https://pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-rosa-800x400mm-pmpexp",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-rosa-800x400mm-pmpexp",
     "inStock": true
   },
   {
@@ -17657,7 +17657,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-basaran-pcyes-black-vulcan-rgb-12400dpi-pmgbrbv",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-basaran-pcyes-black-vulcan-rgb-12400dpi-pmgbrbv",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-basaran-pcyes-black-vulcan-rgb-12400dpi-pmgbrbv",
     "inStock": true
   },
   {
@@ -17710,7 +17710,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-malus-pcyes-white-ghost-rgb-12400dpi-pmgmwg",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-malus-pcyes-white-ghost-rgb-12400dpi-pmgmwg",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-malus-pcyes-white-ghost-rgb-12400dpi-pmgmwg",
     "inStock": true,
     "oldPrice": "R$ 294,88",
     "oldPriceNum": 294.88
@@ -17765,7 +17765,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-argus-pcyes-rgb-12400dpi-8-botoes-pmgabv",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-argus-pcyes-rgb-12400dpi-8-botoes-pmgabv",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-argus-pcyes-rgb-12400dpi-8-botoes-pmgabv",
     "inStock": true
   },
   {
@@ -17818,7 +17818,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-valus-pcyes-rgb-12400dpi-8-botoes-pmgvlbv",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-valus-pcyes-rgb-12400dpi-8-botoes-pmgvlbv",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-valus-pcyes-rgb-12400dpi-8-botoes-pmgvlbv",
     "inStock": true
   },
   {
@@ -17871,7 +17871,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-malus-pcyes-black-vulcan-rgb-12400dpi-pmgmbv",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-malus-pcyes-black-vulcan-rgb-12400dpi-pmgmbv",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-malus-pcyes-black-vulcan-rgb-12400dpi-pmgmbv",
     "inStock": true
   },
   {
@@ -17924,7 +17924,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-hydrus-pcyes-black-vulcan-rgb-12400dpi-pmghbv",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-hydrus-pcyes-black-vulcan-rgb-12400dpi-pmghbv",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-hydrus-pcyes-black-vulcan-rgb-12400dpi-pmghbv",
     "inStock": true
   },
   {
@@ -17975,7 +17975,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-sem-fio-mover-pcyes-purple-1600dpi-silent-click-pmmwscpp",
-    "productUrl": "https://pcyes.com.br/mouse-sem-fio-mover-pcyes-purple-1600dpi-silent-click-pmmwscpp",
+    "productUrl": "https://www.pcyes.com.br/mouse-sem-fio-mover-pcyes-purple-1600dpi-silent-click-pmmwscpp",
     "inStock": true,
     "oldPrice": "R$ 294,88",
     "oldPriceNum": 294.88
@@ -18030,7 +18030,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-wireless-fenner-pcyes-montain-gray-26000dpi-8k-pmgfbv8k",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-wireless-fenner-pcyes-montain-gray-26000dpi-8k-pmgfbv8k",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-wireless-fenner-pcyes-montain-gray-26000dpi-8k-pmgfbv8k",
     "inStock": true
   },
   {
@@ -18083,7 +18083,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-hydrus-pcyes-white-ghost-12400dpi-rgb-pmghwg",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-hydrus-pcyes-white-ghost-12400dpi-rgb-pmghwg",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-hydrus-pcyes-white-ghost-12400dpi-rgb-pmghwg",
     "inStock": true,
     "oldPrice": "R$ 279,89",
     "oldPriceNum": 279.89
@@ -18136,7 +18136,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-sem-fio-mover-pcyes-pink-1600dpi-silent-click-pmmwscpk",
-    "productUrl": "https://pcyes.com.br/mouse-sem-fio-mover-pcyes-pink-1600dpi-silent-click-pmmwscpk",
+    "productUrl": "https://www.pcyes.com.br/mouse-sem-fio-mover-pcyes-pink-1600dpi-silent-click-pmmwscpk",
     "inStock": true
   },
   {
@@ -18187,7 +18187,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-sem-fio-mover-pcyes-white-1600dpi-silent-click-pmmwscw",
-    "productUrl": "https://pcyes.com.br/mouse-sem-fio-mover-pcyes-white-1600dpi-silent-click-pmmwscw",
+    "productUrl": "https://www.pcyes.com.br/mouse-sem-fio-mover-pcyes-white-1600dpi-silent-click-pmmwscw",
     "inStock": true
   },
   {
@@ -18235,7 +18235,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-desk-mat-exclusive-pcyes-preto-800x400-pmpex",
-    "productUrl": "https://pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-preto-800x400-pmpex",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-preto-800x400-pmpex",
     "inStock": true,
     "oldPrice": "R$ 176,88",
     "oldPriceNum": 176.88
@@ -18291,7 +18291,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-basaran-stealth-pcyes-white-ghost-10000dpi-rgb-pmgbrstwg",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-basaran-stealth-pcyes-white-ghost-10000dpi-rgb-pmgbrstwg",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-basaran-stealth-pcyes-white-ghost-10000dpi-rgb-pmgbrstwg",
     "inStock": true
   },
   {
@@ -18339,7 +18339,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-desk-mat-exclusive-pcyes-branco-800x400-pmpexw",
-    "productUrl": "https://pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-branco-800x400-pmpexw",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-desk-mat-exclusive-pcyes-branco-800x400-pmpexw",
     "inStock": true
   },
   {
@@ -18387,7 +18387,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-usb-soft-pcyes-1200dpi-silent-click-2m-mssc01",
-    "productUrl": "https://pcyes.com.br/mouse-usb-soft-pcyes-1200dpi-silent-click-2m-mssc01",
+    "productUrl": "https://www.pcyes.com.br/mouse-usb-soft-pcyes-1200dpi-silent-click-2m-mssc01",
     "inStock": true
   },
   {
@@ -18435,7 +18435,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-black-extended-pcyes-900x420mm-pmc90x42b",
-    "productUrl": "https://pcyes.com.br/mouse-pad-black-extended-pcyes-900x420mm-pmc90x42b",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-black-extended-pcyes-900x420mm-pmc90x42b",
     "inStock": true
   },
   {
@@ -18487,7 +18487,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "volante-gamer-w270-pcyes-force-feedback-32nm-1080",
-    "productUrl": "https://pcyes.com.br/volante-gamer-w270-pcyes-force-feedback-32nm-1080",
+    "productUrl": "https://www.pcyes.com.br/volante-gamer-w270-pcyes-force-feedback-32nm-1080",
     "inStock": true,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
@@ -18539,7 +18539,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-sem-fio-mover-pcyes-gray-1600dpi-silent-pmmwscgy",
-    "productUrl": "https://pcyes.com.br/mouse-sem-fio-mover-pcyes-gray-1600dpi-silent-pmmwscgy",
+    "productUrl": "https://www.pcyes.com.br/mouse-sem-fio-mover-pcyes-gray-1600dpi-silent-pmmwscgy",
     "inStock": true
   },
   {
@@ -18589,7 +18589,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-sem-fio-dash-lite-pcyes-gray-1600dpi-pmdv2gy",
-    "productUrl": "https://pcyes.com.br/mouse-sem-fio-dash-lite-pcyes-gray-1600dpi-pmdv2gy",
+    "productUrl": "https://www.pcyes.com.br/mouse-sem-fio-dash-lite-pcyes-gray-1600dpi-pmdv2gy",
     "inStock": true
   },
   {
@@ -18643,7 +18643,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-gamer-sem-fio-basaran-stealth-pcyes-10000dpi-rgb-pmgbrstbv",
-    "productUrl": "https://pcyes.com.br/mouse-gamer-sem-fio-basaran-stealth-pcyes-10000dpi-rgb-pmgbrstbv",
+    "productUrl": "https://www.pcyes.com.br/mouse-gamer-sem-fio-basaran-stealth-pcyes-10000dpi-rgb-pmgbrstbv",
     "inStock": true,
     "oldPrice": "R$ 279,89",
     "oldPriceNum": 279.89
@@ -18695,7 +18695,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-sem-fio-mover-pcyes-green-1600dpi-silent-pmmwscg",
-    "productUrl": "https://pcyes.com.br/mouse-sem-fio-mover-pcyes-green-1600dpi-silent-pmmwscg",
+    "productUrl": "https://www.pcyes.com.br/mouse-sem-fio-mover-pcyes-green-1600dpi-silent-pmmwscg",
     "inStock": true
   },
   {
@@ -18743,7 +18743,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-pad-black-standard-pcyes-360x300mm-pmc36x30b",
-    "productUrl": "https://pcyes.com.br/mouse-pad-black-standard-pcyes-360x300mm-pmc36x30b",
+    "productUrl": "https://www.pcyes.com.br/mouse-pad-black-standard-pcyes-360x300mm-pmc36x30b",
     "inStock": true,
     "oldPrice": "R$ 176,88",
     "oldPriceNum": 176.88
@@ -18795,7 +18795,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-sem-fio-soft-pcyes-1200dpi-silent-click-mssc12w",
-    "productUrl": "https://pcyes.com.br/mouse-sem-fio-soft-pcyes-1200dpi-silent-click-mssc12w",
+    "productUrl": "https://www.pcyes.com.br/mouse-sem-fio-soft-pcyes-1200dpi-silent-click-mssc12w",
     "inStock": true
   },
   {
@@ -18845,7 +18845,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-sem-fio-comfort-pcyes-1200dpi-24ghz-pmoc12w",
-    "productUrl": "https://pcyes.com.br/mouse-sem-fio-comfort-pcyes-1200dpi-24ghz-pmoc12w",
+    "productUrl": "https://www.pcyes.com.br/mouse-sem-fio-comfort-pcyes-1200dpi-24ghz-pmoc12w",
     "inStock": true
   },
   {
@@ -18896,7 +18896,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "headset-gamer-nyra-pcyes-black-vulcan-40mm-p2-hgnybv",
-    "productUrl": "https://pcyes.com.br/headset-gamer-nyra-pcyes-black-vulcan-40mm-p2-hgnybv",
+    "productUrl": "https://www.pcyes.com.br/headset-gamer-nyra-pcyes-black-vulcan-40mm-p2-hgnybv",
     "inStock": true
   },
   {
@@ -18947,7 +18947,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "headset-gamer-nyra-pcyes-white-ghost-40mm-p2-hgnywg",
-    "productUrl": "https://pcyes.com.br/headset-gamer-nyra-pcyes-white-ghost-40mm-p2-hgnywg",
+    "productUrl": "https://www.pcyes.com.br/headset-gamer-nyra-pcyes-white-ghost-40mm-p2-hgnywg",
     "inStock": true
   },
   {
@@ -18997,7 +18997,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "mouse-sem-fio-mover-pcyes-1600dpi-silent-click-pmmwscb",
-    "productUrl": "https://pcyes.com.br/mouse-sem-fio-mover-pcyes-1600dpi-silent-click-pmmwscb",
+    "productUrl": "https://www.pcyes.com.br/mouse-sem-fio-mover-pcyes-1600dpi-silent-click-pmmwscb",
     "inStock": true,
     "oldPrice": "R$ 294,88",
     "oldPriceNum": 294.88
@@ -19052,7 +19052,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-75-rasec-pcyes-gasket-gateron-blue-rgb-twgblrgb",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-75-rasec-pcyes-gasket-gateron-blue-rgb-twgblrgb",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-75-rasec-pcyes-gasket-gateron-blue-rgb-twgblrgb",
     "inStock": true
   },
   {
@@ -19103,7 +19103,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-75-kirin-pcyes-white-ghost-blue-switch-ptkrwg75bl",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-75-kirin-pcyes-white-ghost-blue-switch-ptkrwg75bl",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-75-kirin-pcyes-white-ghost-blue-switch-ptkrwg75bl",
     "inStock": true,
     "badge": "BLUE SWITCH"
   },
@@ -19155,7 +19155,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-75-kirin-pcyes-white-ghost-red-switch-ptkrwg75rd",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-75-kirin-pcyes-white-ghost-red-switch-ptkrwg75rd",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-75-kirin-pcyes-white-ghost-red-switch-ptkrwg75rd",
     "inStock": true,
     "badge": "RED SWITCH"
   },
@@ -19207,7 +19207,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "combo-teclado-mouse-soft-pcyes-branco-pcosf2w",
-    "productUrl": "https://pcyes.com.br/combo-teclado-mouse-soft-pcyes-branco-pcosf2w",
+    "productUrl": "https://www.pcyes.com.br/combo-teclado-mouse-soft-pcyes-branco-pcosf2w",
     "inStock": true,
     "oldPrice": "R$ 447,89",
     "oldPriceNum": 447.89
@@ -19259,7 +19259,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-vision-360mm-white-ghost-pcyes-lcd-21-vs360wg",
-    "productUrl": "https://pcyes.com.br/water-cooler-vision-360mm-white-ghost-pcyes-lcd-21-vs360wg",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-vision-360mm-white-ghost-pcyes-lcd-21-vs360wg",
     "inStock": true,
     "oldPrice": "R$ 412,88",
     "oldPriceNum": 412.88
@@ -19309,7 +19309,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-rede-10g-sfp-dual-port-pcie-x4",
-    "productUrl": "https://pcyes.com.br/placa-rede-10g-sfp-dual-port-pcie-x4",
+    "productUrl": "https://www.pcyes.com.br/placa-rede-10g-sfp-dual-port-pcie-x4",
     "inStock": true
   },
   {
@@ -19357,7 +19357,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-rede-2-5g-dual-port-rj45-intel-lc2500-2pit",
-    "productUrl": "https://pcyes.com.br/placa-rede-2-5g-dual-port-rj45-intel-lc2500-2pit",
+    "productUrl": "https://www.pcyes.com.br/placa-rede-2-5g-dual-port-rj45-intel-lc2500-2pit",
     "inStock": true
   },
   {
@@ -19408,7 +19408,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-kuromori-voyager-edition-pcyes-red-switch-kmvy60rd",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-kuromori-voyager-edition-pcyes-red-switch-kmvy60rd",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-kuromori-voyager-edition-pcyes-red-switch-kmvy60rd",
     "inStock": true,
     "badge": "RED SWITCH"
   },
@@ -19460,7 +19460,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-kuromori-voyager-edition-pcyes-blue-switch-kmvy60bl",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-kuromori-voyager-edition-pcyes-blue-switch-kmvy60bl",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-kuromori-voyager-edition-pcyes-blue-switch-kmvy60bl",
     "inStock": true,
     "badge": "BLUE SWITCH"
   },
@@ -19512,7 +19512,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-kuromori-white-ghost-pcyes-red-switch-ptkmwg60rd",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-kuromori-white-ghost-pcyes-red-switch-ptkmwg60rd",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-kuromori-white-ghost-pcyes-red-switch-ptkmwg60rd",
     "inStock": true,
     "badge": "RED SWITCH",
     "oldPrice": "R$ 471,88",
@@ -19566,7 +19566,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-kuromori-white-ghost-pcyes-blue-switch-ptkmwg60bl",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-kuromori-white-ghost-pcyes-blue-switch-ptkmwg60bl",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-kuromori-white-ghost-pcyes-blue-switch-ptkmwg60bl",
     "inStock": true,
     "badge": "BLUE SWITCH"
   },
@@ -19618,7 +19618,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-kuromori-black-vulcan-pcyes-red-switch-ptkm60rd",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-kuromori-black-vulcan-pcyes-red-switch-ptkm60rd",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-kuromori-black-vulcan-pcyes-red-switch-ptkm60rd",
     "inStock": true,
     "badge": "RED SWITCH"
   },
@@ -19670,7 +19670,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "teclado-mecanico-kuromori-black-vulcan-pcyes-blue-switch-ptkm60bl",
-    "productUrl": "https://pcyes.com.br/teclado-mecanico-kuromori-black-vulcan-pcyes-blue-switch-ptkm60bl",
+    "productUrl": "https://www.pcyes.com.br/teclado-mecanico-kuromori-black-vulcan-pcyes-blue-switch-ptkm60bl",
     "inStock": true,
     "badge": "BLUE SWITCH"
   },
@@ -19722,7 +19722,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-tundra-black-vulcan-argb-240mm-pcyes-wctbv240",
-    "productUrl": "https://pcyes.com.br/water-cooler-tundra-black-vulcan-argb-240mm-pcyes-wctbv240",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-tundra-black-vulcan-argb-240mm-pcyes-wctbv240",
     "inStock": true
   },
   {
@@ -19773,7 +19773,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-tundra-black-vulcan-argb-120mm-pcyes-wctbk120",
-    "productUrl": "https://pcyes.com.br/water-cooler-tundra-black-vulcan-argb-120mm-pcyes-wctbk120",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-tundra-black-vulcan-argb-120mm-pcyes-wctbk120",
     "inStock": true,
     "oldPrice": "R$ 412,88",
     "oldPriceNum": 412.88
@@ -19824,7 +19824,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-vision-360mm-black-vulcan-pcyes-lcd-21-vs360bv",
-    "productUrl": "https://pcyes.com.br/water-cooler-vision-360mm-black-vulcan-pcyes-lcd-21-vs360bv",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-vision-360mm-black-vulcan-pcyes-lcd-21-vs360bv",
     "inStock": true
   },
   {
@@ -19873,7 +19873,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-vision-240mm-black-vulcan-pcyes-lcd-21-vs240bv",
-    "productUrl": "https://pcyes.com.br/water-cooler-vision-240mm-black-vulcan-pcyes-lcd-21-vs240bv",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-vision-240mm-black-vulcan-pcyes-lcd-21-vs240bv",
     "inStock": true
   },
   {
@@ -19925,7 +19925,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-argb-white-ghost-360mm-pcyes-tdp350w-argbsf3360wgbr",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-argb-white-ghost-360mm-pcyes-tdp350w-argbsf3360wgbr",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-argb-white-ghost-360mm-pcyes-tdp350w-argbsf3360wgbr",
     "inStock": true
   },
   {
@@ -19977,7 +19977,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-argb-white-ghost-240mm-pcyes-tdp250w-argbsf3240wgbr",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-argb-white-ghost-240mm-pcyes-tdp250w-argbsf3240wgbr",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-argb-white-ghost-240mm-pcyes-tdp250w-argbsf3240wgbr",
     "inStock": true
   },
   {
@@ -20029,7 +20029,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-argb-black-vulcan-360mm-pcyes-tdp350w-argbsf3360br",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-argb-black-vulcan-360mm-pcyes-tdp350w-argbsf3360br",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-argb-black-vulcan-360mm-pcyes-tdp350w-argbsf3360br",
     "inStock": true,
     "oldPrice": "R$ 412,88",
     "oldPriceNum": 412.88
@@ -20080,7 +20080,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-white-ghost-360mm-pcyes-tdp350w-wcsf3360wgbr",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-white-ghost-360mm-pcyes-tdp350w-wcsf3360wgbr",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-white-ghost-360mm-pcyes-tdp350w-wcsf3360wgbr",
     "inStock": true
   },
   {
@@ -20129,7 +20129,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-white-ghost-240mm-pcyes-tdp250w-wcsf3240wgbr",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-white-ghost-240mm-pcyes-tdp250w-wcsf3240wgbr",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-white-ghost-240mm-pcyes-tdp250w-wcsf3240wgbr",
     "inStock": true
   },
   {
@@ -20178,7 +20178,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-black-vulcan-360mm-pcyes-tdp350w-wcsf3360br",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-black-vulcan-360mm-pcyes-tdp350w-wcsf3360br",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-black-vulcan-360mm-pcyes-tdp350w-wcsf3360br",
     "inStock": true
   },
   {
@@ -20229,7 +20229,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-para-processador-frost-pulse-argb-white-ghost-pcyes-tdp180w-pefpargbwg",
-    "productUrl": "https://pcyes.com.br/cooler-para-processador-frost-pulse-argb-white-ghost-pcyes-tdp180w-pefpargbwg",
+    "productUrl": "https://www.pcyes.com.br/cooler-para-processador-frost-pulse-argb-white-ghost-pcyes-tdp180w-pefpargbwg",
     "inStock": true
   },
   {
@@ -20280,7 +20280,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-para-processador-frost-pulse-argb-black-vulcan-pcyes-tdp180w-pefpargbbv",
-    "productUrl": "https://pcyes.com.br/cooler-para-processador-frost-pulse-argb-black-vulcan-pcyes-tdp180w-pefpargbbv",
+    "productUrl": "https://www.pcyes.com.br/cooler-para-processador-frost-pulse-argb-black-vulcan-pcyes-tdp180w-pefpargbbv",
     "inStock": true,
     "oldPrice": "R$ 153,28",
     "oldPriceNum": 153.28
@@ -20331,7 +20331,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-para-processador-frost-pulse-white-ghost-pcyes-tdp180w-pefpwg",
-    "productUrl": "https://pcyes.com.br/cooler-para-processador-frost-pulse-white-ghost-pcyes-tdp180w-pefpwg",
+    "productUrl": "https://www.pcyes.com.br/cooler-para-processador-frost-pulse-white-ghost-pcyes-tdp180w-pefpwg",
     "inStock": true,
     "oldPrice": "R$ 145,49",
     "oldPriceNum": 145.49
@@ -20382,7 +20382,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-para-processador-frost-pulse-black-vulcan-pcyes-tdp180w-pefpbv",
-    "productUrl": "https://pcyes.com.br/cooler-para-processador-frost-pulse-black-vulcan-pcyes-tdp180w-pefpbv",
+    "productUrl": "https://www.pcyes.com.br/cooler-para-processador-frost-pulse-black-vulcan-pcyes-tdp180w-pefpbv",
     "inStock": true
   },
   {
@@ -20431,7 +20431,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-para-processador-lorx-rainbow-v2-92mm-pcyes-tdp100w-aclx92rbv2",
-    "productUrl": "https://pcyes.com.br/cooler-para-processador-lorx-rainbow-v2-92mm-pcyes-tdp100w-aclx92rbv2",
+    "productUrl": "https://www.pcyes.com.br/cooler-para-processador-lorx-rainbow-v2-92mm-pcyes-tdp100w-aclx92rbv2",
     "inStock": true
   },
   {
@@ -20480,7 +20480,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-para-processador-notus-st-pcyes-intel-tdp65w-pac95prsl",
-    "productUrl": "https://pcyes.com.br/cooler-para-processador-notus-st-pcyes-intel-tdp65w-pac95prsl",
+    "productUrl": "https://www.pcyes.com.br/cooler-para-processador-notus-st-pcyes-intel-tdp65w-pac95prsl",
     "inStock": true
   },
   {
@@ -20529,7 +20529,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "dissipador-heatsink-ssd-m2-nvme-2280-pcyes-heat-shield-phs2280bk",
-    "productUrl": "https://pcyes.com.br/dissipador-heatsink-ssd-m2-nvme-2280-pcyes-heat-shield-phs2280bk",
+    "productUrl": "https://www.pcyes.com.br/dissipador-heatsink-ssd-m2-nvme-2280-pcyes-heat-shield-phs2280bk",
     "inStock": true,
     "badge": "NVME",
     "oldPrice": "R$ 353,88",
@@ -20583,7 +20583,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "controlador-de-led-pcyes-light-beam-argb-plb1argb",
-    "productUrl": "https://pcyes.com.br/controlador-de-led-pcyes-light-beam-argb-plb1argb",
+    "productUrl": "https://www.pcyes.com.br/controlador-de-led-pcyes-light-beam-argb-plb1argb",
     "inStock": true
   },
   {
@@ -20634,7 +20634,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "kit-cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-reverse-120mm-k3argbsf3rvbr",
-    "productUrl": "https://pcyes.com.br/kit-cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-reverse-120mm-k3argbsf3rvbr",
+    "productUrl": "https://www.pcyes.com.br/kit-cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-reverse-120mm-k3argbsf3rvbr",
     "inStock": true
   },
   {
@@ -20685,7 +20685,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "kit-cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-120mm-k3argbsf3br",
-    "productUrl": "https://pcyes.com.br/kit-cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-120mm-k3argbsf3br",
+    "productUrl": "https://www.pcyes.com.br/kit-cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-120mm-k3argbsf3br",
     "inStock": true
   },
   {
@@ -20733,7 +20733,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-fan-vision-pcyes-white-ghost-120mm-fvwg120",
-    "productUrl": "https://pcyes.com.br/cooler-fan-vision-pcyes-white-ghost-120mm-fvwg120",
+    "productUrl": "https://www.pcyes.com.br/cooler-fan-vision-pcyes-white-ghost-120mm-fvwg120",
     "inStock": true
   },
   {
@@ -20784,7 +20784,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-reverse-120mm-argbrvsf3br",
-    "productUrl": "https://pcyes.com.br/cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-reverse-120mm-argbrvsf3br",
+    "productUrl": "https://www.pcyes.com.br/cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-reverse-120mm-argbrvsf3br",
     "inStock": true,
     "oldPrice": "R$ 153,28",
     "oldPriceNum": 153.28
@@ -20837,7 +20837,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-120mm-argbsf3br",
-    "productUrl": "https://pcyes.com.br/cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-120mm-argbsf3br",
+    "productUrl": "https://www.pcyes.com.br/cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-120mm-argbsf3br",
     "inStock": true
   },
   {
@@ -20886,7 +20886,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-vision-pcyes-white-ghost-240mm-lcd-21-vs240wg",
-    "productUrl": "https://pcyes.com.br/water-cooler-vision-pcyes-white-ghost-240mm-lcd-21-vs240wg",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-vision-pcyes-white-ghost-240mm-lcd-21-vs240wg",
     "inStock": true,
     "oldPrice": "R$ 391,89",
     "oldPriceNum": 391.89
@@ -20939,7 +20939,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-pcyes-argb-black-vulcan-240mm-tdp-250w-argbsf3240br",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-pcyes-argb-black-vulcan-240mm-tdp-250w-argbsf3240br",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-pcyes-argb-black-vulcan-240mm-tdp-250w-argbsf3240br",
     "inStock": true
   },
   {
@@ -20989,7 +20989,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "controlador-fan-light-core-pcyes-black-9x-pwm-argb-pelc9pvbr",
-    "productUrl": "https://pcyes.com.br/controlador-fan-light-core-pcyes-black-9x-pwm-argb-pelc9pvbr",
+    "productUrl": "https://www.pcyes.com.br/controlador-fan-light-core-pcyes-black-9x-pwm-argb-pelc9pvbr",
     "inStock": true
   },
   {
@@ -21037,7 +21037,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-para-processador-tundra-90-pcyes-black-vulcan-tdp-115w-actbk90",
-    "productUrl": "https://pcyes.com.br/cooler-para-processador-tundra-90-pcyes-black-vulcan-tdp-115w-actbk90",
+    "productUrl": "https://www.pcyes.com.br/cooler-para-processador-tundra-90-pcyes-black-vulcan-tdp-115w-actbk90",
     "inStock": true,
     "oldPrice": "R$ 153,28",
     "oldPriceNum": 153.28
@@ -21089,7 +21089,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-black-vulcan-240mm-tdp-250w-wcsf3240br",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-black-vulcan-240mm-tdp-250w-wcsf3240br",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-black-vulcan-240mm-tdp-250w-wcsf3240br",
     "inStock": true
   },
   {
@@ -21142,7 +21142,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-argb-black-vulcan-120mm-tdp-200w-argbsf3120br",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-argb-black-vulcan-120mm-tdp-200w-argbsf3120br",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-argb-black-vulcan-120mm-tdp-200w-argbsf3120br",
     "inStock": true
   },
   {
@@ -21195,7 +21195,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "kit-cooler-fan-sangue-frio-3-argb-white-ghost-reverse-120mm-2200rpm-60cfm-k3argbsf3wgrvbr",
-    "productUrl": "https://pcyes.com.br/kit-cooler-fan-sangue-frio-3-argb-white-ghost-reverse-120mm-2200rpm-60cfm-k3argbsf3wgrvbr",
+    "productUrl": "https://www.pcyes.com.br/kit-cooler-fan-sangue-frio-3-argb-white-ghost-reverse-120mm-2200rpm-60cfm-k3argbsf3wgrvbr",
     "inStock": true
   },
   {
@@ -21246,7 +21246,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-fan-vision-black-vulcan-120mm-2000rpm-78cfm-fvbv120",
-    "productUrl": "https://pcyes.com.br/cooler-fan-vision-black-vulcan-120mm-2000rpm-78cfm-fvbv120",
+    "productUrl": "https://www.pcyes.com.br/cooler-fan-vision-black-vulcan-120mm-2000rpm-78cfm-fvbv120",
     "inStock": true
   },
   {
@@ -21299,7 +21299,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-argb-white-ghost-120mm-tdp-200w-argbsf3120wgbr",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-argb-white-ghost-120mm-tdp-200w-argbsf3120wgbr",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-argb-white-ghost-120mm-tdp-200w-argbsf3120wgbr",
     "inStock": true,
     "oldPrice": "R$ 412,88",
     "oldPriceNum": 412.88
@@ -21354,7 +21354,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-fan-sangue-frio-3-argb-white-ghost-reverse-120mm-2200rpm-60cfm-argbsf3wgrvbr",
-    "productUrl": "https://pcyes.com.br/cooler-fan-sangue-frio-3-argb-white-ghost-reverse-120mm-2200rpm-60cfm-argbsf3wgrvbr",
+    "productUrl": "https://www.pcyes.com.br/cooler-fan-sangue-frio-3-argb-white-ghost-reverse-120mm-2200rpm-60cfm-argbsf3wgrvbr",
     "inStock": true
   },
   {
@@ -21405,7 +21405,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-white-ghost-120mm-tdp-200w-wcsf3120wgbr",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-white-ghost-120mm-tdp-200w-wcsf3120wgbr",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-white-ghost-120mm-tdp-200w-wcsf3120wgbr",
     "inStock": true
   },
   {
@@ -21458,7 +21458,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "kit-cooler-fan-sangue-frio-3-argb-white-ghost-120mm-k3argbsf3wgbr",
-    "productUrl": "https://pcyes.com.br/kit-cooler-fan-sangue-frio-3-argb-white-ghost-120mm-k3argbsf3wgbr",
+    "productUrl": "https://www.pcyes.com.br/kit-cooler-fan-sangue-frio-3-argb-white-ghost-120mm-k3argbsf3wgbr",
     "inStock": true,
     "oldPrice": "R$ 145,49",
     "oldPriceNum": 145.49
@@ -21511,7 +21511,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-fan-sangue-frio-3-black-vulcan-120mm-pwm-2200rpm-60cfm-fsf3br",
-    "productUrl": "https://pcyes.com.br/cooler-fan-sangue-frio-3-black-vulcan-120mm-pwm-2200rpm-60cfm-fsf3br",
+    "productUrl": "https://www.pcyes.com.br/cooler-fan-sangue-frio-3-black-vulcan-120mm-pwm-2200rpm-60cfm-fsf3br",
     "inStock": true
   },
   {
@@ -21560,7 +21560,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-adaptador-splitter-pwm-1x4-4-pinos-sptpwm4pcy",
-    "productUrl": "https://pcyes.com.br/cabo-adaptador-splitter-pwm-1x4-4-pinos-sptpwm4pcy",
+    "productUrl": "https://www.pcyes.com.br/cabo-adaptador-splitter-pwm-1x4-4-pinos-sptpwm4pcy",
     "inStock": true,
     "oldPrice": "R$ 70,68",
     "oldPriceNum": 70.68
@@ -21612,7 +21612,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "contact-frame-abf-17-moldura-anti-empenamento-lga-1700",
-    "productUrl": "https://pcyes.com.br/contact-frame-abf-17-moldura-anti-empenamento-lga-1700",
+    "productUrl": "https://www.pcyes.com.br/contact-frame-abf-17-moldura-anti-empenamento-lga-1700",
     "inStock": true
   },
   {
@@ -21664,7 +21664,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cabo-adaptador-splitter-argb-1x4-3-pinos-35cm-sptargb4pcy",
-    "productUrl": "https://pcyes.com.br/cabo-adaptador-splitter-argb-1x4-3-pinos-35cm-sptargb4pcy",
+    "productUrl": "https://www.pcyes.com.br/cabo-adaptador-splitter-argb-1x4-3-pinos-35cm-sptargb4pcy",
     "inStock": true
   },
   {
@@ -21717,7 +21717,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "controlador-fan-light-core-white-9x-pwm-argb-pelc9pgbr",
-    "productUrl": "https://pcyes.com.br/controlador-fan-light-core-white-9x-pwm-argb-pelc9pgbr",
+    "productUrl": "https://www.pcyes.com.br/controlador-fan-light-core-white-9x-pwm-argb-pelc9pgbr",
     "inStock": true
   },
   {
@@ -21768,7 +21768,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-fan-sangue-frio-3-white-ghost-120mm-pwm-fsf3wgbr",
-    "productUrl": "https://pcyes.com.br/cooler-fan-sangue-frio-3-white-ghost-120mm-pwm-fsf3wgbr",
+    "productUrl": "https://www.pcyes.com.br/cooler-fan-sangue-frio-3-white-ghost-120mm-pwm-fsf3wgbr",
     "inStock": true
   },
   {
@@ -21818,7 +21818,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-sangue-frio-3-black-vulcan-120mm-tdp-200w-wcsf3120br",
-    "productUrl": "https://pcyes.com.br/water-cooler-sangue-frio-3-black-vulcan-120mm-tdp-200w-wcsf3120br",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-sangue-frio-3-black-vulcan-120mm-tdp-200w-wcsf3120br",
     "inStock": true,
     "oldPrice": "R$ 412,88",
     "oldPriceNum": 412.88
@@ -21873,7 +21873,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-tundra-white-ghost-argb-120mm-tdp-150w-wctwg120",
-    "productUrl": "https://pcyes.com.br/water-cooler-tundra-white-ghost-argb-120mm-tdp-150w-wctwg120",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-tundra-white-ghost-argb-120mm-tdp-150w-wctwg120",
     "inStock": true
   },
   {
@@ -21926,7 +21926,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "water-cooler-tundra-white-ghost-argb-240mm-tdp-250w-wctwg240",
-    "productUrl": "https://pcyes.com.br/water-cooler-tundra-white-ghost-argb-240mm-tdp-250w-wctwg240",
+    "productUrl": "https://www.pcyes.com.br/water-cooler-tundra-white-ghost-argb-240mm-tdp-250w-wctwg240",
     "inStock": true
   },
   {
@@ -21976,7 +21976,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-para-processador-notus-st17-lga-1700-tdp-65w-st1765w",
-    "productUrl": "https://pcyes.com.br/cooler-para-processador-notus-st17-lga-1700-tdp-65w-st1765w",
+    "productUrl": "https://www.pcyes.com.br/cooler-para-processador-notus-st17-lga-1700-tdp-65w-st1765w",
     "inStock": true
   },
   {
@@ -22027,7 +22027,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-para-processador-tundra-120-black-vulcan-led-rainbow-tdp-160w-actbka120",
-    "productUrl": "https://pcyes.com.br/cooler-para-processador-tundra-120-black-vulcan-led-rainbow-tdp-160w-actbka120",
+    "productUrl": "https://www.pcyes.com.br/cooler-para-processador-tundra-120-black-vulcan-led-rainbow-tdp-160w-actbka120",
     "inStock": true,
     "oldPrice": "R$ 145,49",
     "oldPriceNum": 145.49
@@ -22080,7 +22080,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-para-processador-tundra-120-black-vulcan-tdp-160w-actbk120",
-    "productUrl": "https://pcyes.com.br/cooler-para-processador-tundra-120-black-vulcan-tdp-160w-actbk120",
+    "productUrl": "https://www.pcyes.com.br/cooler-para-processador-tundra-120-black-vulcan-tdp-160w-actbk120",
     "inStock": true,
     "oldPrice": "R$ 153,28",
     "oldPriceNum": 153.28
@@ -22135,7 +22135,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-fan-sangue-frio-3-argb-white-ghost-120mm-argbsf3wgbr",
-    "productUrl": "https://pcyes.com.br/cooler-fan-sangue-frio-3-argb-white-ghost-120mm-argbsf3wgbr",
+    "productUrl": "https://www.pcyes.com.br/cooler-fan-sangue-frio-3-argb-white-ghost-120mm-argbsf3wgbr",
     "inStock": true
   },
   {
@@ -22186,7 +22186,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cooler-para-processador-tundra-90-black-vulcan-led-rainbow-tdp-115w-actbka90",
-    "productUrl": "https://pcyes.com.br/cooler-para-processador-tundra-90-black-vulcan-led-rainbow-tdp-115w-actbka90",
+    "productUrl": "https://www.pcyes.com.br/cooler-para-processador-tundra-90-black-vulcan-led-rainbow-tdp-115w-actbka90",
     "inStock": true
   },
   {
@@ -22236,7 +22236,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-video-rtx-3060-12gb-gddr6-192bit",
-    "productUrl": "https://pcyes.com.br/placa-de-video-rtx-3060-12gb-gddr6-192bit",
+    "productUrl": "https://www.pcyes.com.br/placa-de-video-rtx-3060-12gb-gddr6-192bit",
     "inStock": true
   },
   {
@@ -22286,7 +22286,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-video-rtx-3050-6gb-96bit-pcyes",
-    "productUrl": "https://pcyes.com.br/placa-de-video-rtx-3050-6gb-96bit-pcyes",
+    "productUrl": "https://www.pcyes.com.br/placa-de-video-rtx-3050-6gb-96bit-pcyes",
     "inStock": true
   },
   {
@@ -22336,7 +22336,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-video-rtx-3060-12gb-192bit-pcyes-wt2f",
-    "productUrl": "https://pcyes.com.br/placa-de-video-rtx-3060-12gb-192bit-pcyes-wt2f",
+    "productUrl": "https://www.pcyes.com.br/placa-de-video-rtx-3060-12gb-192bit-pcyes-wt2f",
     "inStock": true,
     "oldPrice": "R$ 707,88",
     "oldPriceNum": 707.88
@@ -22389,7 +22389,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-dome-white-ghost-gffdwg",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-dome-white-ghost-gffdwg",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-dome-white-ghost-gffdwg",
     "inStock": true
   },
   {
@@ -22440,7 +22440,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-flow-white-ghost",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-flow-white-ghost",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-flow-white-ghost",
     "inStock": true
   },
   {
@@ -22491,7 +22491,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-flow-black-vulcan",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-flow-black-vulcan",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-flow-black-vulcan",
     "inStock": true
   },
   {
@@ -22542,7 +22542,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-max-white-ghost",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-max-white-ghost",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-max-white-ghost",
     "inStock": true
   },
   {
@@ -22593,7 +22593,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-bolter-white-ghost-vidro-lateral",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-bolter-white-ghost-vidro-lateral",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-bolter-white-ghost-vidro-lateral",
     "inStock": true,
     "oldPrice": "R$ 707,88",
     "oldPriceNum": 707.88
@@ -22646,7 +22646,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-dome-black-vulcan",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-dome-black-vulcan",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-dome-black-vulcan",
     "inStock": true
   },
   {
@@ -22697,7 +22697,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-set-white-ghost-vidro-lateral",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-set-white-ghost-vidro-lateral",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-set-white-ghost-vidro-lateral",
     "inStock": true
   },
   {
@@ -22748,7 +22748,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-twr-white-ghost",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-twr-white-ghost",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-twr-white-ghost",
     "inStock": true
   },
   {
@@ -22799,7 +22799,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-v2-white-ghost",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-v2-white-ghost",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-v2-white-ghost",
     "inStock": true
   },
   {
@@ -22850,7 +22850,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-mini-white-ghost",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-mini-white-ghost",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-mini-white-ghost",
     "inStock": true,
     "oldPrice": "R$ 707,88",
     "oldPriceNum": 707.88
@@ -22905,7 +22905,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-ergonomica-maringa-fc-limited-edition-pcmgafc",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-ergonomica-maringa-fc-limited-edition-pcmgafc",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-ergonomica-maringa-fc-limited-edition-pcmgafc",
     "inStock": true
   },
   {
@@ -22958,7 +22958,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-ergonomica-ultimate-jade-fire-pcgu-jf",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-ergonomica-ultimate-jade-fire-pcgu-jf",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-ergonomica-ultimate-jade-fire-pcgu-jf",
     "inStock": true
   },
   {
@@ -23011,7 +23011,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-ergonomica-ultimate-dawn-knight-pcgu-dk",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-ergonomica-ultimate-dawn-knight-pcgu-dk",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-ergonomica-ultimate-dawn-knight-pcgu-dk",
     "inStock": true
   },
   {
@@ -23064,7 +23064,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-ergonomica-prime-red-magma-pcgp-rd",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-ergonomica-prime-red-magma-pcgp-rd",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-ergonomica-prime-red-magma-pcgp-rd",
     "inStock": true
   },
   {
@@ -23117,7 +23117,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-ergonomica-sentinel-sahara-pcstl-sh",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-ergonomica-sentinel-sahara-pcstl-sh",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-ergonomica-sentinel-sahara-pcstl-sh",
     "inStock": true,
     "oldPrice": "R$ 1533,88",
     "oldPriceNum": 1533.88
@@ -23172,7 +23172,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-ergonomica-sentinel-indigo-pcstl-id",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-ergonomica-sentinel-indigo-pcstl-id",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-ergonomica-sentinel-indigo-pcstl-id",
     "inStock": true,
     "oldPrice": "R$ 1455,89",
     "oldPriceNum": 1455.89
@@ -23227,7 +23227,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-ergonomica-sentinel-first-blood-pcstl-fb",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-ergonomica-sentinel-first-blood-pcstl-fb",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-ergonomica-sentinel-first-blood-pcstl-fb",
     "inStock": true
   },
   {
@@ -23280,7 +23280,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-ergonomica-sentinel-carbon-pcstl-cb",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-ergonomica-sentinel-carbon-pcstl-cb",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-ergonomica-sentinel-carbon-pcstl-cb",
     "inStock": true
   },
   {
@@ -23332,7 +23332,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-ergonomica-sentinel-mint-green-pcstl-vd",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-ergonomica-sentinel-mint-green-pcstl-vd",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-ergonomica-sentinel-mint-green-pcstl-vd",
     "inStock": true
   },
   {
@@ -23383,7 +23383,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-max-black-vulcan",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-max-black-vulcan",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-max-black-vulcan",
     "inStock": true,
     "oldPrice": "R$ 707,88",
     "oldPriceNum": 707.88
@@ -23436,7 +23436,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-mad-racer-v8-turbo-amarela-v8tbmadam",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-mad-racer-v8-turbo-amarela-v8tbmadam",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-mad-racer-v8-turbo-amarela-v8tbmadam",
     "inStock": true
   },
   {
@@ -23487,7 +23487,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-white-ghost",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-white-ghost",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-white-ghost",
     "inStock": true
   },
   {
@@ -23537,7 +23537,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-mad-racer-v8-turbo-azul-v8tbmadaz",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-mad-racer-v8-turbo-azul-v8tbmadaz",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-mad-racer-v8-turbo-azul-v8tbmadaz",
     "inStock": true
   },
   {
@@ -23588,7 +23588,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-velyr-black-vulcan",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-velyr-black-vulcan",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-velyr-black-vulcan",
     "inStock": true
   },
   {
@@ -23640,7 +23640,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-mad-racer-v8-turbo-branca-v8tbmadbc",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-mad-racer-v8-turbo-branca-v8tbmadbc",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-mad-racer-v8-turbo-branca-v8tbmadbc",
     "inStock": true,
     "oldPrice": "R$ 1533,88",
     "oldPriceNum": 1533.88
@@ -23693,7 +23693,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-black-vulcan",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-black-vulcan",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-black-vulcan",
     "inStock": true
   },
   {
@@ -23744,7 +23744,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-mad-racer-sti-comfort-lotus-pcsti-lt",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-mad-racer-sti-comfort-lotus-pcsti-lt",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-mad-racer-sti-comfort-lotus-pcsti-lt",
     "inStock": true,
     "oldPrice": "R$ 1455,89",
     "oldPriceNum": 1455.89
@@ -23797,7 +23797,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-v2-black-vulcan",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-v2-black-vulcan",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-v2-black-vulcan",
     "inStock": true
   },
   {
@@ -23848,7 +23848,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-mad-racer-sti-comfort-kalahari-pcsti-kr",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-mad-racer-sti-comfort-kalahari-pcsti-kr",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-mad-racer-sti-comfort-kalahari-pcsti-kr",
     "inStock": true
   },
   {
@@ -23899,7 +23899,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-set-black-vulcan-vidro-temperado",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-set-black-vulcan-vidro-temperado",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-set-black-vulcan-vidro-temperado",
     "inStock": true,
     "oldPrice": "R$ 707,88",
     "oldPriceNum": 707.88
@@ -23952,7 +23952,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-mad-racer-sti-comfort-first-blood-pcsti-fb",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-mad-racer-sti-comfort-first-blood-pcsti-fb",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-mad-racer-sti-comfort-first-blood-pcsti-fb",
     "inStock": true
   },
   {
@@ -24004,7 +24004,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-bolter-black-vulcan-vidro-lateral",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-bolter-black-vulcan-vidro-lateral",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-bolter-black-vulcan-vidro-lateral",
     "inStock": true
   },
   {
@@ -24055,7 +24055,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-mad-racer-sti-turbo-black-vulcan-mrstir10pt",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-mad-racer-sti-turbo-black-vulcan-mrstir10pt",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-mad-racer-sti-turbo-black-vulcan-mrstir10pt",
     "inStock": true
   },
   {
@@ -24107,7 +24107,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-twr-black-vulcan",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-twr-black-vulcan",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-twr-black-vulcan",
     "inStock": true
   },
   {
@@ -24159,7 +24159,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-escritorio-ergonomica-magnus-marrom-pcemagma",
-    "productUrl": "https://pcyes.com.br/cadeira-escritorio-ergonomica-magnus-marrom-pcemagma",
+    "productUrl": "https://www.pcyes.com.br/cadeira-escritorio-ergonomica-magnus-marrom-pcemagma",
     "inStock": true,
     "oldPrice": "R$ 1533,88",
     "oldPriceNum": 1533.88
@@ -24213,7 +24213,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-forcefield-mini-black-vulcan",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-forcefield-mini-black-vulcan",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-mini-black-vulcan",
     "inStock": true
   },
   {
@@ -24265,7 +24265,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-escritorio-ergonomica-magnus-cinza-pcemagcz",
-    "productUrl": "https://pcyes.com.br/cadeira-escritorio-ergonomica-magnus-cinza-pcemagcz",
+    "productUrl": "https://www.pcyes.com.br/cadeira-escritorio-ergonomica-magnus-cinza-pcemagcz",
     "inStock": true
   },
   {
@@ -24317,7 +24317,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-mid-tower-ozara-black-vulcan",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-mid-tower-ozara-black-vulcan",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-mid-tower-ozara-black-vulcan",
     "inStock": true,
     "oldPrice": "R$ 671,89",
     "oldPriceNum": 671.89
@@ -24371,7 +24371,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-escritorio-ergonomica-magnus-preta-pceemagpt",
-    "productUrl": "https://pcyes.com.br/cadeira-escritorio-ergonomica-magnus-preta-pceemagpt",
+    "productUrl": "https://www.pcyes.com.br/cadeira-escritorio-ergonomica-magnus-preta-pceemagpt",
     "inStock": true
   },
   {
@@ -24423,7 +24423,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "gabinete-gamer-mid-tower-kauri-black-vulcan",
-    "productUrl": "https://pcyes.com.br/gabinete-gamer-mid-tower-kauri-black-vulcan",
+    "productUrl": "https://www.pcyes.com.br/gabinete-gamer-mid-tower-kauri-black-vulcan",
     "inStock": true,
     "oldPrice": "R$ 707,88",
     "oldPriceNum": 707.88
@@ -24477,7 +24477,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-office-ergonomica-ms5-cinza-pcoms5g",
-    "productUrl": "https://pcyes.com.br/cadeira-office-ergonomica-ms5-cinza-pcoms5g",
+    "productUrl": "https://www.pcyes.com.br/cadeira-office-ergonomica-ms5-cinza-pcoms5g",
     "inStock": true
   },
   {
@@ -24529,7 +24529,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-office-ergonomica-ms5-preta-pcoms5b",
-    "productUrl": "https://pcyes.com.br/cadeira-office-ergonomica-ms5-preta-pcoms5b",
+    "productUrl": "https://www.pcyes.com.br/cadeira-office-ergonomica-ms5-preta-pcoms5b",
     "inStock": true
   },
   {
@@ -24581,7 +24581,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-ergonomica-massagem-sublime-backrobo-branca-pcybrwt",
-    "productUrl": "https://pcyes.com.br/cadeira-ergonomica-massagem-sublime-backrobo-branca-pcybrwt",
+    "productUrl": "https://www.pcyes.com.br/cadeira-ergonomica-massagem-sublime-backrobo-branca-pcybrwt",
     "inStock": true
   },
   {
@@ -24633,7 +24633,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-ergonomica-massagem-sublime-backrobo-preta-pcybrbl",
-    "productUrl": "https://pcyes.com.br/cadeira-ergonomica-massagem-sublime-backrobo-preta-pcybrbl",
+    "productUrl": "https://www.pcyes.com.br/cadeira-ergonomica-massagem-sublime-backrobo-preta-pcybrbl",
     "inStock": true
   },
   {
@@ -24685,7 +24685,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-escritorio-ergonomica-office-b7-preta-pcob7pt",
-    "productUrl": "https://pcyes.com.br/cadeira-escritorio-ergonomica-office-b7-preta-pcob7pt",
+    "productUrl": "https://www.pcyes.com.br/cadeira-escritorio-ergonomica-office-b7-preta-pcob7pt",
     "inStock": true,
     "oldPrice": "R$ 1533,88",
     "oldPriceNum": 1533.88
@@ -24740,7 +24740,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-ultimate-sunset-hill",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-ultimate-sunset-hill",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-ultimate-sunset-hill",
     "inStock": true
   },
   {
@@ -24793,7 +24793,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-mad-racer-v8-turbo-vermelha",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-mad-racer-v8-turbo-vermelha",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-mad-racer-v8-turbo-vermelha",
     "inStock": true
   },
   {
@@ -24845,7 +24845,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-sti-comfort-indigo-pcsti-id",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-sti-comfort-indigo-pcsti-id",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-sti-comfort-indigo-pcsti-id",
     "inStock": true
   },
   {
@@ -24898,7 +24898,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-sentinel-colbat-blue-pcstl-az",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-sentinel-colbat-blue-pcstl-az",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-sentinel-colbat-blue-pcstl-az",
     "inStock": true,
     "oldPrice": "R$ 1455,89",
     "oldPriceNum": 1455.89
@@ -24952,7 +24952,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-mad-racer-v8-turbo-preta",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-mad-racer-v8-turbo-preta",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-mad-racer-v8-turbo-preta",
     "inStock": true,
     "oldPrice": "R$ 1533,88",
     "oldPriceNum": 1533.88
@@ -25006,7 +25006,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-sti-turbo-red-magma",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-sti-turbo-red-magma",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-sti-turbo-red-magma",
     "inStock": true
   },
   {
@@ -25059,7 +25059,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-sentinel-red-magma-pcstl-vm",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-sentinel-red-magma-pcstl-vm",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-sentinel-red-magma-pcstl-vm",
     "inStock": true
   },
   {
@@ -25112,7 +25112,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-sentinel-black-vulcan-pcstl-pt",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-sentinel-black-vulcan-pcstl-pt",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-sentinel-black-vulcan-pcstl-pt",
     "inStock": true
   },
   {
@@ -25162,7 +25162,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-gamer-sti-comfort-shadow-preta",
-    "productUrl": "https://pcyes.com.br/cadeira-gamer-sti-comfort-shadow-preta",
+    "productUrl": "https://www.pcyes.com.br/cadeira-gamer-sti-comfort-shadow-preta",
     "inStock": true
   },
   {
@@ -25211,7 +25211,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-rede-2-5g-quad-port-rj45-intel-lc2500-4pit",
-    "productUrl": "https://pcyes.com.br/placa-rede-2-5g-quad-port-rj45-intel-lc2500-4pit",
+    "productUrl": "https://www.pcyes.com.br/placa-rede-2-5g-quad-port-rj45-intel-lc2500-4pit",
     "inStock": true,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
@@ -25263,7 +25263,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "cadeira-ergonomica-office-pcyes-b3-preta-tela-mesh",
-    "productUrl": "https://pcyes.com.br/cadeira-ergonomica-office-pcyes-b3-preta-tela-mesh",
+    "productUrl": "https://www.pcyes.com.br/cadeira-ergonomica-office-pcyes-b3-preta-tela-mesh",
     "inStock": true
   },
   {
@@ -25312,7 +25312,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-rede-10g-sfp-single-port-pcie-x4",
-    "productUrl": "https://pcyes.com.br/placa-rede-10g-sfp-single-port-pcie-x4",
+    "productUrl": "https://www.pcyes.com.br/placa-rede-10g-sfp-single-port-pcie-x4",
     "inStock": true
   },
   {
@@ -25362,7 +25362,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-rede-2-5g-quad-port-rj45-pcie-x4-lc2500-it4p",
-    "productUrl": "https://pcyes.com.br/placa-rede-2-5g-quad-port-rj45-pcie-x4-lc2500-it4p",
+    "productUrl": "https://www.pcyes.com.br/placa-rede-2-5g-quad-port-rj45-pcie-x4-lc2500-it4p",
     "inStock": true
   },
   {
@@ -25414,7 +25414,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-rede-2-5g-dual-port-x1-lc2500-2p",
-    "productUrl": "https://pcyes.com.br/placa-de-rede-2-5g-dual-port-x1-lc2500-2p",
+    "productUrl": "https://www.pcyes.com.br/placa-de-rede-2-5g-dual-port-x1-lc2500-2p",
     "inStock": true
   },
   {
@@ -25466,7 +25466,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-rede-gigabit-quad-port-intel-chipset-lc1000-it4p",
-    "productUrl": "https://pcyes.com.br/placa-de-rede-gigabit-quad-port-intel-chipset-lc1000-it4p",
+    "productUrl": "https://www.pcyes.com.br/placa-de-rede-gigabit-quad-port-intel-chipset-lc1000-it4p",
     "inStock": true,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
@@ -25520,7 +25520,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-rede-gigabit-quad-port-lc1000-4p",
-    "productUrl": "https://pcyes.com.br/placa-de-rede-gigabit-quad-port-lc1000-4p",
+    "productUrl": "https://www.pcyes.com.br/placa-de-rede-gigabit-quad-port-lc1000-4p",
     "inStock": true
   },
   {
@@ -25573,7 +25573,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-captura-pcyes-lynx-uhd-03-dual",
-    "productUrl": "https://pcyes.com.br/placa-de-captura-pcyes-lynx-uhd-03-dual",
+    "productUrl": "https://www.pcyes.com.br/placa-de-captura-pcyes-lynx-uhd-03-dual",
     "inStock": true,
     "badge": "4K"
   },
@@ -25625,7 +25625,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-video-radeon-r5-230-2gb-ddr3",
-    "productUrl": "https://pcyes.com.br/placa-de-video-radeon-r5-230-2gb-ddr3",
+    "productUrl": "https://www.pcyes.com.br/placa-de-video-radeon-r5-230-2gb-ddr3",
     "inStock": true
   },
   {
@@ -25676,7 +25676,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-video-nvidia-gt-610-2gb-ddr3",
-    "productUrl": "https://pcyes.com.br/placa-de-video-nvidia-gt-610-2gb-ddr3",
+    "productUrl": "https://www.pcyes.com.br/placa-de-video-nvidia-gt-610-2gb-ddr3",
     "inStock": true
   },
   {
@@ -25729,7 +25729,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-video-rtx-3070-8gb-gddr6-gaming-pro",
-    "productUrl": "https://pcyes.com.br/gamers/placa-video-rtx-3070-8gb-gddr6-gaming-pro",
+    "productUrl": "https://www.pcyes.com.br/gamers/placa-video-rtx-3070-8gb-gddr6-gaming-pro",
     "inStock": true,
     "oldPrice": "R$ 707,88",
     "oldPriceNum": 707.88
@@ -25783,7 +25783,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-video-rtx-2060-6gb-gddr6-dual-fan",
-    "productUrl": "https://pcyes.com.br/gamers/placa-de-video-gpu-rtx-2060-gddr6-6gb-192-dual-fan-full-size-graffiti-series-pa2060rtx6gdf",
+    "productUrl": "https://www.pcyes.com.br/gamers/placa-de-video-gpu-rtx-2060-gddr6-6gb-192-dual-fan-full-size-graffiti-series-pa2060rtx6gdf",
     "inStock": true
   },
   {
@@ -25834,7 +25834,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-video-nvidia-gt-730-4gb-gddr5-low-profile",
-    "productUrl": "https://pcyes.com.br/gamers/placa-video-nvidia-gt-730-4gb-gddr5-low-profile",
+    "productUrl": "https://www.pcyes.com.br/gamers/placa-video-nvidia-gt-730-4gb-gddr5-low-profile",
     "inStock": true
   },
   {
@@ -25886,7 +25886,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-rede-25g-rj45-pci-e-x1-lc2500-1p",
-    "productUrl": "https://pcyes.com.br/escritorios/placa-rede-25g-rj45-pci-e-x1-lc2500-1p",
+    "productUrl": "https://www.pcyes.com.br/escritorios/placa-rede-25g-rj45-pci-e-x1-lc2500-1p",
     "inStock": true
   },
   {
@@ -25939,7 +25939,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-rede-gigabit-dual-port-rj45-pci-e-x1-lc1000-2p",
-    "productUrl": "https://pcyes.com.br/gamers/placa-rede-gigabit-dual-port-rj45-pci-e-x1-lc1000-2p",
+    "productUrl": "https://www.pcyes.com.br/gamers/placa-rede-gigabit-dual-port-rj45-pci-e-x1-lc1000-2p",
     "inStock": true
   },
   {
@@ -25992,7 +25992,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-video-nvidia-geforce-gt-740-2gb-gddr5-128-bits",
-    "productUrl": "https://pcyes.com.br/gamers/placa-video-nvidia-geforce-gt-740-2gb-gddr5-128-bits",
+    "productUrl": "https://www.pcyes.com.br/gamers/placa-video-nvidia-geforce-gt-740-2gb-gddr5-128-bits",
     "inStock": true,
     "oldPrice": "R$ 707,88",
     "oldPriceNum": 707.88
@@ -26046,7 +26046,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-rede-gigabit-pci-express-x1-realtek-rtl8111f",
-    "productUrl": "https://pcyes.com.br/gamers/placa-de-rede-gigabit-pci-express-x1-realtek-rtl8111f",
+    "productUrl": "https://www.pcyes.com.br/gamers/placa-de-rede-gigabit-pci-express-x1-realtek-rtl8111f",
     "inStock": true,
     "oldPrice": "R$ 223,89",
     "oldPriceNum": 223.89
@@ -26099,7 +26099,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-de-video-nvidia-geforce-gt-710-2gb-ddr3-low-profile",
-    "productUrl": "https://pcyes.com.br/gamers/placa-de-video-nvidia-geforce-gt-710-2gb-ddr3-low-profile",
+    "productUrl": "https://www.pcyes.com.br/gamers/placa-de-video-nvidia-geforce-gt-710-2gb-ddr3-low-profile",
     "inStock": true
   },
   {
@@ -26150,7 +26150,7 @@ const rawProducts: Product[] = [
       }
     ],
     "seoSlug": "placa-video-amd-radeon-r5-220-2gb-ddr3-low-profile",
-    "productUrl": "https://pcyes.com.br/gamers/placa-video-amd-radeon-r5-220-2gb-ddr3-low-profile",
+    "productUrl": "https://www.pcyes.com.br/gamers/placa-video-amd-radeon-r5-220-2gb-ddr3-low-profile",
     "inStock": true
   },
   {

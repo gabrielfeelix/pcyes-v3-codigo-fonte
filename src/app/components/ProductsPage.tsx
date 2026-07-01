@@ -1124,10 +1124,10 @@ export function ProductsPage() {
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://pcyes.com.br/" },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.pcyes.com.br/" },
             ...(activeCategoryLabel
-              ? [{ "@type": "ListItem", position: 2, name: activeCategoryLabel, item: `https://pcyes.com.br${getCategoryUrl(activeCategoryLabel)}` }]
-              : [{ "@type": "ListItem", position: 2, name: "Produtos", item: "https://pcyes.com.br/produtos" }]),
+              ? [{ "@type": "ListItem", position: 2, name: activeCategoryLabel, item: `https://www.pcyes.com.br${getCategoryUrl(activeCategoryLabel)}` }]
+              : [{ "@type": "ListItem", position: 2, name: "Produtos", item: "https://www.pcyes.com.br/produtos" }]),
             ...(initialSubcategory
               ? [{ "@type": "ListItem", position: 3, name: initialSubcategory }]
               : []),

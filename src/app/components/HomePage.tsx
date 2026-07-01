@@ -29,7 +29,7 @@ export function HomePage() {
           "@context": "https://schema.org",
           "@type": "Organization",
           name: "PCYES",
-          url: "https://pcyes.com.br",
+          url: "https://www.pcyes.com.br",
           logo: "https://pcyes-cdn.oderco.com.br/Logotipos/PCYES/Simbolo-Logo-Horiz-Vermelho.png",
           sameAs: [
             "https://www.instagram.com/pcyesoficial",

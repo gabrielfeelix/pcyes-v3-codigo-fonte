@@ -2321,16 +2321,16 @@ export function ProductPage() {
                 product.inStock === false
                   ? "https://schema.org/OutOfStock"
                   : "https://schema.org/InStock",
-              url: `https://pcyes.com.br${getProductUrl(product)}`,
+              url: `https://www.pcyes.com.br${getProductUrl(product)}`,
             },
           },
           {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: "https://pcyes.com.br/" },
-              { "@type": "ListItem", position: 2, name: product.category, item: `https://pcyes.com.br${getCatalogHref({ category: product.category })}` },
-              { "@type": "ListItem", position: 3, name: productSubcategory, item: `https://pcyes.com.br${getCatalogHref({ category: product.category, subcategory: productSubcategory })}` },
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://www.pcyes.com.br/" },
+              { "@type": "ListItem", position: 2, name: product.category, item: `https://www.pcyes.com.br${getCatalogHref({ category: product.category })}` },
+              { "@type": "ListItem", position: 3, name: productSubcategory, item: `https://www.pcyes.com.br${getCatalogHref({ category: product.category, subcategory: productSubcategory })}` },
               { "@type": "ListItem", position: 4, name: product.name },
             ],
           },
