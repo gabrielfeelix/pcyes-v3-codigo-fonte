@@ -63,7 +63,7 @@ export function AnnouncementBar() {
       <div className="relative mx-auto flex max-w-[1760px] items-center justify-between gap-3 px-5 py-[10px] md:px-8">
         <button
           onClick={() => setIdx((i) => (i - 1 + MESSAGES.length) % MESSAGES.length)}
-          className="hidden text-ink-muted transition-colors hover:text-ink-strong md:inline"
+          className="hidden h-6 w-6 items-center justify-center text-ink-muted transition-colors hover:text-ink-strong md:inline-flex"
           aria-label="Anúncio anterior"
           style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
         >
@@ -107,7 +107,7 @@ export function AnnouncementBar() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIdx((i) => (i + 1) % MESSAGES.length)}
-            className="hidden text-ink-muted transition-colors hover:text-ink-strong md:inline"
+            className="hidden h-6 w-6 items-center justify-center text-ink-muted transition-colors hover:text-ink-strong md:inline-flex"
             aria-label="Próximo anúncio"
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
           >
@@ -116,7 +116,7 @@ export function AnnouncementBar() {
           <button
             onClick={() => setDismissed(true)}
             aria-label="Fechar aviso"
-            className="flex h-5 w-5 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/10 hover:text-ink-strong"
+            className="flex h-6 w-6 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/10 hover:text-ink-strong"
           >
             <X size={11} strokeWidth={2.2} />
           </button>

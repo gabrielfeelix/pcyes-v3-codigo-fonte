@@ -222,19 +222,24 @@ export function InRealLifeSection() {
         <div className="relative group/carousel">
         <button
           onClick={() => scroll("left")}
+          aria-label="Ver fotos anteriores"
           className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/60 backdrop-blur-sm border border-edge flex items-center justify-center text-ink hover:text-ink-strong hover:bg-black/80 transition-all duration-300 opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100 cursor-pointer"
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={18} aria-hidden="true" />
         </button>
         <button
           onClick={() => scroll("right")}
+          aria-label="Ver próximas fotos"
           className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/60 backdrop-blur-sm border border-edge flex items-center justify-center text-ink hover:text-ink-strong hover:bg-black/80 transition-all duration-300 opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100 cursor-pointer"
         >
-          <ChevronRight size={18} />
+          <ChevronRight size={18} aria-hidden="true" />
         </button>
 
         <div
           ref={scrollRef}
+          tabIndex={0}
+          role="group"
+          aria-label="Galeria de fotos — role horizontalmente"
           className="flex overflow-x-auto scrollbar-hide gap-4"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >

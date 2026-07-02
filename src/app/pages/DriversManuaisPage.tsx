@@ -216,6 +216,7 @@ export function DriversManuaisPage() {
                 <span className="hidden sm:inline">Categoria:</span>
                 <Select value={category} onValueChange={setCategory}>
                   <SelectTrigger
+                    aria-label="Filtrar por categoria"
                     className="h-11 min-w-[170px] rounded-[var(--radius-card-sm)] border-foreground/10 bg-white/[0.03] text-foreground"
                     style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
                   >
@@ -242,6 +243,7 @@ export function DriversManuaisPage() {
                   onValueChange={(value) => setPageSize(Number(value) as PageSize)}
                 >
                   <SelectTrigger
+                    aria-label="Itens por página"
                     className="h-11 min-w-[78px] rounded-[var(--radius-card-sm)] border-foreground/10 bg-white/[0.03] text-foreground"
                     style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
                   >

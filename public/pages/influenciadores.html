@@ -370,16 +370,24 @@
 
 #pcyes-influencers .carousel-dots { display: flex; align-items: center; gap: 8px; z-index: 10; }
 
+/* WCAG 2.5.8: 6px dots had <24px hit area. Button is now a 24px target;
+   the small visible dot renders via ::before so the look is unchanged. */
 #pcyes-influencers .pcyes-dot {
+  position: relative;
+  width: 24px; height: 24px;
+  background: transparent;
+  border: none; cursor: pointer; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+#pcyes-influencers .pcyes-dot::before {
+  content: ''; display: block;
   width: 6px; height: 6px;
   border-radius: 9999px;
   background: rgba(255,255,255,0.15);
-  border: none; cursor: pointer; padding: 0;
   transition: background .25s, width .25s;
 }
-
-#pcyes-influencers .dot--active { background: var(--red); width: 24px; }
-#pcyes-influencers .pcyes-dot:hover:not(.dot--active) { background: rgba(255,255,255,0.3); }
+#pcyes-influencers .dot--active::before { background: var(--red); width: 24px; }
+#pcyes-influencers .pcyes-dot:hover:not(.dot--active)::before { background: rgba(255,255,255,0.3); }
 
 #pcyes-influencers .hero-cta-wrap { z-index: 10; }
 
@@ -387,7 +395,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: var(--red);
+  background: #d21d23; /* WCAG 1.4.3: var(--red) #ff2b2e gave #fff 3.72:1 → #d21d23 ≈5:1 */
   color: #fff;
   font-family: 'Figtree', sans-serif;
   font-weight: 600;
@@ -643,7 +651,7 @@
   margin-bottom: 8px;
 }
 
-#pcyes-influencers .landing-form-subtitle { font-size: 16px; color: #787878; text-align: center; }
+#pcyes-influencers .landing-form-subtitle { font-size: 16px; color: rgba(255,255,255,0.72); text-align: center; } /* WCAG 1.4.3: #787878 gave 4.24:1 → 0.72 (≥4.5:1) */
 
 #pcyes-influencers .steps-row {
   display: flex;
@@ -695,7 +703,7 @@
 #pcyes-influencers .step-circle--done     { background: rgba(255,0,4,0.12); color: var(--red); border: 1px solid rgba(255,0,4,0.4); }
 
 #pcyes-influencers .pcyes-step-label { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; color: #fff; white-space: nowrap; transition: color .3s; }
-#pcyes-influencers .step-label--inactive { color: #4a4a4a; font-weight: 400; }
+#pcyes-influencers .step-label--inactive { color: #808080; font-weight: 400; } /* WCAG 1.4.3: #4a4a4a gave 2.11:1 → #808080 ≈4.75:1 */
 #pcyes-influencers .step-label--done { color: rgba(255,43,46,0.7); }
 
 #pcyes-influencers .step-connector {
@@ -1030,7 +1038,7 @@
 .light #pcyes-influencers .step-circle--inactive { background: #e0e0e0; border-color: rgba(0,0,0,0.08); color: rgba(22,22,22,0.35); }
 .light #pcyes-influencers .step-connector { background: rgba(0,0,0,0.08); }
 .light #pcyes-influencers .btn-voltar { background: #f0f0f0; border-color: rgba(0,0,0,0.08); color: #161616; }
-.light #pcyes-influencers .pcyes-dot { background: rgba(0,0,0,0.1); }
+.light #pcyes-influencers .pcyes-dot::before { background: rgba(0,0,0,0.1); }
 .light #pcyes-influencers .noise-overlay { opacity: 0; }
 
 /* ===== RESPONSIVE ===== */
@@ -1085,7 +1093,7 @@
       </svg>
     </div>
 
-    <main id="top">
+    <div id="top" class="landing-root">
       <!-- HERO SECTION -->
       <section class="creator-hero">
         <div class="hero-bg-gradient" aria-hidden="true"></div>
@@ -1229,7 +1237,7 @@
           </button>
         </div>
 
-        <div class="carousel-dots" role="tablist" aria-label="Slides do carrossel">
+        <div class="carousel-dots" role="group" aria-label="Slides do carrossel">
           <button class="pcyes-dot dot--active" aria-label="Creator 1"></button>
           <button class="pcyes-dot" aria-label="Creator 2"></button>
           <button class="pcyes-dot" aria-label="Creator 3"></button>
@@ -1447,7 +1455,7 @@
           </div>
         </div>
       </section>
-    </main>
+    </div>
 
     <script>
 (function () {

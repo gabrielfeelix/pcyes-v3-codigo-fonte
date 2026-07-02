@@ -124,7 +124,7 @@ function EssentialCard({ product }: EssentialCardProps) {
                 key={s.productId}
                 type="button"
                 onClick={() => setSelectedSwatchId(s.productId === selectedSwatchId ? null : s.productId)}
-                className="p-3 md:p-0 -m-3 md:m-0 cursor-pointer"
+                className="p-3 md:p-1.5 -m-3 md:-m-1.5 cursor-pointer"
                 aria-label={s.label}
               >
                 <span

@@ -779,6 +779,7 @@ function FiltersBar({
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
+              aria-label="Ordenar pré-vendas"
               className="preorder-field appearance-none h-11 md:h-10 pl-9 pr-9 rounded-full text-ink cursor-pointer hover:text-ink-strong transition-colors"
               style={{
                 background: "rgba(var(--foreground-rgb), 0.025)",

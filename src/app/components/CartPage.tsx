@@ -31,9 +31,17 @@ import { getPreOrderInfo } from "./PreOrderData";
 import { PreOrderPill } from "./section";
 import { formatBRL, parseBRL, formatCep } from "../../utils/format";
 import { COUPONS, GIFT_THRESHOLD } from "../../utils/commerce";
+import { toast } from "sonner";
 
 export function CartPage() {
-  const { items, removeItem, updateQuantity, clearCart, setGiftItem } = useCart();
+  const { items, removeItem, restoreItem, updateQuantity, clearCart, setGiftItem } = useCart();
+  const removeWithUndo = (item: (typeof items)[number]) => {
+    const idx = items.findIndex((i) => i.cartKey === item.cartKey);
+    removeItem(item.cartKey);
+    toast(`${item.name.split(" ").slice(0, 4).join(" ")}… removido`, {
+      action: { label: "Desfazer", onClick: () => restoreItem(item, idx) },
+    });
+  };
   const navigate = useNavigate();
   const { appliedCoupon, setAppliedCoupon, pointsApplied, setPointsApplied, pointsToUse, setPointsToUse } = useCheckoutPrefs();
   const { isLoggedIn, promptLogin } = useAuth();
@@ -155,7 +163,7 @@ export function CartPage() {
       setCouponError("");
       setCouponOpen(false);
     } else {
-      setCouponError("Cupom inválido");
+      setCouponError(`Cupom inválido. Tente: ${Object.keys(COUPONS).join(", ")}`);
       setAppliedCoupon(null);
     }
   };
@@ -232,7 +240,7 @@ export function CartPage() {
           {/* Breadcrumb */}
           <Link
             to="/produtos"
-            className="mb-6 inline-flex items-center gap-1.5 text-ink-muted transition-colors hover:text-ink min-h-[44px] md:min-h-0"
+            className="mb-6 inline-flex items-center gap-1.5 text-ink-muted transition-colors hover:text-ink min-h-[44px] md:min-h-[24px]"
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
           >
             <ChevronLeft size={14} strokeWidth={2} />
@@ -262,9 +270,12 @@ export function CartPage() {
               </h1>
             </div>
             <button
-              onClick={clearCart}
-              className="inline-flex items-center gap-1.5 cursor-pointer text-ink-subtle transition-colors hover:text-ink min-h-[44px] md:min-h-0"
+              onClick={() => toast("Limpar todo o carrinho?", {
+                action: { label: "Limpar", onClick: () => clearCart() },
+              })}
+              className="inline-flex items-center gap-1.5 cursor-pointer text-ink-subtle transition-colors hover:text-ink min-h-[44px] md:min-h-[24px]"
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
+              aria-label="Limpar carrinho"
             >
               <Trash2 size={13} strokeWidth={2} />
               Limpar
@@ -303,7 +314,7 @@ export function CartPage() {
               </div>
               <button
                 onClick={() => { setGiftDismissed(false); setGiftModalOpen(true); }}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-full px-5 py-2.5 text-ink-strong transition-transform hover:scale-[1.03] active:scale-[0.98] min-h-[44px] md:min-h-0"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-full px-5 py-2.5 text-ink-strong transition-transform hover:scale-[1.03] active:scale-[0.98] min-h-[44px] md:min-h-[24px]"
                 style={{
                   background: "var(--gradient-brand)",
                   fontFamily: "var(--font-family-inter)",
@@ -347,7 +358,7 @@ export function CartPage() {
               </div>
               <button
                 onClick={() => { setGiftItem(null); setGiftDismissed(false); setGiftModalOpen(true); }}
-                className="inline-flex items-center cursor-pointer text-ink-muted transition-colors hover:text-ink-strong min-h-[44px] px-3 md:min-h-0 md:px-0"
+                className="inline-flex items-center cursor-pointer text-ink-muted transition-colors hover:text-ink-strong min-h-[44px] px-3 md:min-h-[24px] md:px-0"
                 style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
               >
                 Trocar
@@ -466,7 +477,7 @@ export function CartPage() {
                             {item.name}
                           </Link>
                           <button
-                            onClick={() => removeItem(item.cartKey)}
+                            onClick={() => removeWithUndo(item)}
                             className="flex h-11 w-11 md:h-8 md:w-8 flex-shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-subtle transition-colors hover:bg-white/[0.06] hover:text-primary"
                             aria-label="Remover item"
                           >
@@ -667,7 +678,7 @@ export function CartPage() {
                               <button
                                 key={opt.id}
                                 onClick={() => setSelectedShipping(opt.id)}
-                                className="flex w-full items-center gap-2.5 rounded-[var(--radius-card-sm)] px-3 py-2 text-left transition-colors min-h-[44px] md:min-h-0"
+                                className="flex w-full items-center gap-2.5 rounded-[var(--radius-card-sm)] px-3 py-2 text-left transition-colors min-h-[44px] md:min-h-[24px]"
                                 style={{
                                   background: active ? "rgba(34,197,94,0.06)" : "rgba(var(--foreground-rgb), 0.02)",
                                   border: active ? "1.5px solid rgba(34,197,94,0.5)" : "1px solid rgba(var(--foreground-rgb), 0.06)",
@@ -767,7 +778,7 @@ export function CartPage() {
                         <button
                           onClick={handleApplyCoupon}
                           disabled={!coupon.trim()}
-                          className="cursor-pointer rounded-[var(--radius-card-sm)] px-4 py-2.5 text-ink-strong transition-transform hover:scale-[1.02] active:scale-[0.97] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 min-h-[44px] md:min-h-0"
+                          className="cursor-pointer rounded-[var(--radius-card-sm)] px-4 py-2.5 text-ink-strong transition-transform hover:scale-[1.02] active:scale-[0.97] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 min-h-[44px] md:min-h-[24px]"
                           style={{
                             background: "var(--gradient-brand)",
                             fontFamily: "var(--font-family-inter)",
@@ -1080,7 +1091,7 @@ export function CartPage() {
                             {product.name}
                           </p>
                           <div className="mt-3 flex items-baseline gap-2 md:mt-4">
-                            <span className="line-through" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", color: "rgba(var(--foreground-rgb), 0.32)" }}>
+                            <span className="line-through" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", color: "rgba(var(--foreground-rgb), 0.62)" }}>
                               {product.price}
                             </span>
                             <span
@@ -1107,7 +1118,7 @@ export function CartPage() {
               <div className="flex items-center justify-between border-t border-edge-subtle px-6 py-5 md:px-9 md:py-6">
                 <button
                   onClick={() => { setGiftModalOpen(false); setGiftDismissed(true); setSelectedGiftId(null); }}
-                  className="inline-flex items-center cursor-pointer text-ink-muted transition-colors hover:text-ink min-h-[44px] px-3 md:min-h-0 md:px-0"
+                  className="inline-flex items-center cursor-pointer text-ink-muted transition-colors hover:text-ink min-h-[44px] px-3 md:min-h-[24px] md:px-0"
                   style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, letterSpacing: "0.06em" }}
                 >
                   Agora não
@@ -1115,7 +1126,7 @@ export function CartPage() {
                 <button
                   onClick={confirmGift}
                   disabled={!selectedGiftId}
-                  className="cursor-pointer rounded-full px-7 py-3 text-ink-strong transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:scale-100 min-h-[44px] md:min-h-0"
+                  className="cursor-pointer rounded-full px-7 py-3 text-ink-strong transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:scale-100 min-h-[44px] md:min-h-[24px]"
                   style={{
                     background: "var(--gradient-brand)",
                     fontFamily: "var(--font-family-inter)",

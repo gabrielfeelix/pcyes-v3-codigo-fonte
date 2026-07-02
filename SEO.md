@@ -91,6 +91,13 @@ Todas as páginas definem og:title, og:description, og:url (self-referring), og:
 - `vite.config.ts`: plugins de build. `deferMainCss` tira o CSS do caminho crítico. `prerenderSeoHtml` gera um HTML por rota com canonical e og:url self-referring no HTML cru, lendo as URLs do sitemap.
 - `public/sitemap.xml` e `public/robots.txt`: arquivos estáticos servidos na raiz.
 
-## 10. Limitação conhecida (SPA)
+## 10. Conteúdo no HTML cru (SSG data-driven)
 
-O conteúdo do corpo da página é renderizado por JavaScript. O prerender aplicado aqui cobre apenas as tags de `<head>` (canonical, robots, título, descrição, Open Graph), que é o suficiente para o SEO técnico dos pontos acima. Ter o conteúdo textual completo já no HTML cru exigiria renderização no servidor (SSR ou SSG), fora do escopo deste protótipo. Em produção, avaliar SSR ou geração estática para o conteúdo do corpo.
+O corpo da página é renderizado por JavaScript (SPA), mas o conteúdo-chave de cada rota **também** é emitido no HTML cru pelo build, sem depender de servidor:
+
+- **JSON-LD por rota** (`prerenderSeoHtml` em `vite.config.ts`): Organization na home, Product + `aggregateRating` + BreadcrumbList em produto, CollectionPage + BreadcrumbList em categoria. Emitido no `<head>` estático — crawlers que não executam JS (Bing, scrapers sociais, LLMs) leem o schema. 586/596 rotas.
+- **Bloco de conteúdo** (`#seo-prerender`): `<div>` sr-only montado a partir do catálogo estático com h1, nome, preço, descrição, breadcrumb e links internos da rota. Injetado antes do `#root`. `main.tsx` **remove esse bloco antes do React montar** — o app renderiza no `#root` vazio exatamente como antes (zero mudança de UI, zero hidratação, zero flash). Crawlers sem JS leem o corpo textual + links.
+
+Isso entrega o benefício de SSG (corpo crawlável) sem migrar de framework nem rodar servidor. Verificado em Chrome headless (`scripts/verify-prerender.mjs`): bloco removido após JS, app idêntico.
+
+Em produção com preço/estoque dinâmicos, avaliar SSR/ISR (Next.js) para manter o corpo sempre fresco — aqui os dados são estáticos, então a geração no build basta.

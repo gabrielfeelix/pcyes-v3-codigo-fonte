@@ -47,7 +47,7 @@ function DownloadCard({
             letterSpacing: "0.1em",
             ...(isPdf
               ? {
-                  background: "rgba(255,43,46,0.14)",
+                  background: "rgba(255,43,46,0.08)", /* WCAG 1.4.3: red text on 0.14 tint = 4.49:1; darker 0.08 tint ≈4.8:1 */
                   color: "var(--primary)",
                   border: "1px solid rgba(255,43,46,0.32)",
                 }

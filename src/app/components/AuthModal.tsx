@@ -100,8 +100,9 @@ export function AuthModal() {
               {/* Header */}
               <div className="relative px-8 pt-8 pb-6 text-center">
                 <button onClick={() => { setAuthModalOpen(false); setAuthRedirect(null); reset(); }}
+                  aria-label="Fechar"
                   className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-foreground/30 hover:text-foreground hover:bg-foreground/5 transition-all cursor-pointer"
-                ><X size={16} /></button>
+                ><X size={16} aria-hidden="true" /></button>
 
                 <div className="mb-5">
                   <img src="https://pcyes-cdn.oderco.com.br/Logotipos/PCYES/Simbolo-Logo-Horiz-Vermelho.png" alt="PCYES" className="h-[28px] w-auto mx-auto object-contain" />
@@ -168,7 +169,8 @@ export function AuthModal() {
                     className="w-full pl-10 pr-10 py-3 bg-foreground/[0.03] border border-foreground/8 text-foreground placeholder:text-foreground/20 focus:border-foreground/20 focus:outline-none transition-colors"
                     style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }} />
                   <button type="button" onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-foreground/20 hover:text-foreground/50 transition-colors cursor-pointer"
+                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                    className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-foreground/20 hover:text-foreground/50 transition-colors cursor-pointer"
                   >{showPassword ? <EyeOff size={15} /> : <Eye size={15} />}</button>
                 </div>
 

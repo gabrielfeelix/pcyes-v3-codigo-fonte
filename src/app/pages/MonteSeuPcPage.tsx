@@ -1512,7 +1512,7 @@ function QuizHeader({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 min-h-[44px] md:min-h-0 text-zinc-400 transition-colors hover:text-ink-strong cursor-pointer"
+          className="inline-flex items-center gap-1.5 min-h-[44px] md:min-h-[24px] text-zinc-400 transition-colors hover:text-ink-strong cursor-pointer"
           style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}
         >
           <ArrowLeft size={13} /> Voltar
@@ -2953,7 +2953,7 @@ function PresetCard({
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}
-            className="mt-3 flex min-h-[44px] w-full cursor-pointer items-center justify-between gap-2 rounded-[var(--radius-card-sm)] border border-edge-subtle bg-white/[0.015] px-3 py-2.5 text-left transition-all hover:border-primary/40 hover:bg-primary/[0.04] md:min-h-0"
+            className="mt-3 flex min-h-[44px] w-full cursor-pointer items-center justify-between gap-2 rounded-[var(--radius-card-sm)] border border-edge-subtle bg-white/[0.015] px-3 py-2.5 text-left transition-all hover:border-primary/40 hover:bg-primary/[0.04] md:min-h-[24px]"
           >
             <span
               className="flex items-center gap-2 text-ink-strong"
@@ -3580,7 +3580,7 @@ function PresetGallery({
                 aria-selected={active}
                 onClick={() => setFilter(c.id)}
                 className={cn(
-                  "group inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 rounded-full border px-3.5 py-2 transition-all md:min-h-0",
+                  "group inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 rounded-full border px-3.5 py-2 transition-all md:min-h-[24px]",
                   active
                     ? "border-primary/60 bg-primary/[0.1] text-ink-strong"
                     : "border-edge-subtle bg-white/[0.015] text-zinc-300 hover:border-edge-strong hover:bg-white/[0.05] hover:text-ink-strong",
@@ -6194,7 +6194,7 @@ export function MonteSeuPcPage() {
                     }}
                   />
 
-                  <main className="mx-auto grid max-w-[1520px] grid-cols-1 gap-6 px-5 py-6 pb-28 md:px-8 lg:grid-cols-[1fr_380px] lg:pb-6">
+                  <div className="mx-auto grid max-w-[1520px] grid-cols-1 gap-6 px-5 py-6 pb-28 md:px-8 lg:grid-cols-[1fr_380px] lg:pb-6">
                     <section className="min-w-0">
                       <div className="mb-4 hidden flex-col gap-3 lg:flex lg:flex-row lg:items-end lg:justify-between">
                         <div>
@@ -6506,7 +6506,7 @@ export function MonteSeuPcPage() {
                         }}
                       />
                     </aside>
-                  </main>
+                  </div>
 
                   {/* Mobile fixed action bar */}
                   <div

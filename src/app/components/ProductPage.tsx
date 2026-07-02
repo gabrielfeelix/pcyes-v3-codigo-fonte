@@ -26,6 +26,7 @@ import { CTAButton, DiscountBadge, QtyStepper } from "./section";
 import { SEO } from "./SEO";
 import { getProductSlug, getProductUrl } from "../lib/slug";
 import { formatCep } from "../../utils/format";
+import { trackViewItem } from "../../utils/analytics";
 
 /* ── helpers ─────────────────────────────────────────── */
 
@@ -1702,7 +1703,7 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
                     </div>
                   )}
 
-                  <button className="inline-flex items-center gap-2 min-h-[44px] md:min-h-0 text-foreground/30 hover:text-foreground transition-colors" style={{ fontSize: "var(--text-caption)" }}>
+                  <button className="inline-flex items-center gap-2 min-h-[44px] md:min-h-[24px] text-foreground/30 hover:text-foreground transition-colors" style={{ fontSize: "var(--text-caption)" }}>
                     Útil? ({rev.likes})
                   </button>
                 </div>
@@ -2160,6 +2161,20 @@ export function ProductPage() {
   const [addedToCart, setAddedToCart] = useState(false);
   const [showMobileStickyCta, setShowMobileStickyCta] = useState(false);
 
+  // GA4 view_item ao abrir/trocar de produto.
+  useEffect(() => {
+    if (product) {
+      trackViewItem({
+        id: product.id,
+        name: product.name,
+        priceNum: product.priceNum,
+        brand: product.brand,
+        category: product.category,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.id]);
+
   const relatedRef = useRef<HTMLDivElement>(null);
   const reviewsRef = useRef<HTMLDivElement>(null);
   const descriptionRef = useRef<HTMLDivElement>(null);
@@ -2296,6 +2311,12 @@ export function ProductPage() {
 
   const liked = isFavorite(product.id);
 
+  // JSON-LD exige image absoluta (crawler não resolve caminho relativo).
+  const productImageRaw = getPrimaryProductImage(product);
+  const productImageAbs = /^https?:\/\//.test(productImageRaw)
+    ? productImageRaw
+    : `https://www.pcyes.com.br${productImageRaw}`;
+
   return (
     <div className="pt-[calc(56px+var(--announce-h))] lg:pt-[calc(180px+var(--announce-h))] notebook:pt-[calc(120px+var(--announce-h))]">
       <SEO
@@ -2309,10 +2330,20 @@ export function ProductPage() {
             "@context": "https://schema.org",
             "@type": "Product",
             name: product.name,
-            image: getPrimaryProductImage(product),
+            image: productImageAbs,
             sku: product.sku ? String(product.sku) : undefined,
             brand: { "@type": "Brand", name: "PCYES" },
             category: product.category,
+            aggregateRating:
+              product.reviews > 0
+                ? {
+                    "@type": "AggregateRating",
+                    ratingValue: product.rating,
+                    reviewCount: product.reviews,
+                    bestRating: 5,
+                    worstRating: 1,
+                  }
+                : undefined,
             offers: {
               "@type": "Offer",
               priceCurrency: "BRL",
@@ -2494,7 +2525,7 @@ export function ProductPage() {
             {/* Rating */}
             <div className="flex items-center gap-2.5 mb-6 flex-wrap">
               <div
-                className="inline-flex items-center gap-0.5 cursor-pointer group min-h-[44px] md:min-h-0"
+                className="inline-flex items-center gap-0.5 cursor-pointer group min-h-[44px] md:min-h-[24px]"
                 onClick={scrollToReviews}
               >
                 {[...Array(5)].map((_, i) => (
@@ -2507,7 +2538,7 @@ export function ProductPage() {
                 ))}
               </div>
               <span
-                className="inline-flex items-center min-h-[44px] md:min-h-0 text-foreground/70 font-semibold tabular-nums cursor-pointer hover:text-[#FFB800] transition-colors"
+                className="inline-flex items-center min-h-[44px] md:min-h-[24px] text-foreground/70 font-semibold tabular-nums cursor-pointer hover:text-[#FFB800] transition-colors"
                 style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
                 onClick={scrollToReviews}
               >
@@ -2515,7 +2546,7 @@ export function ProductPage() {
               </span>
               <span className="text-foreground/15">·</span>
               <span
-                className="inline-flex items-center min-h-[44px] md:min-h-0 text-foreground/45 hover:text-foreground/65 cursor-pointer transition-colors"
+                className="inline-flex items-center min-h-[44px] md:min-h-[24px] text-foreground/45 hover:text-foreground/65 cursor-pointer transition-colors"
                 style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
                 onClick={scrollToReviews}
               >
@@ -2724,7 +2755,7 @@ export function ProductPage() {
                       </h3>
                       <div className="mt-3">
                         {rProduct.oldPrice && (
-                          <p className="line-through leading-none mb-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "rgba(var(--foreground-rgb), 0.38)" }}>
+                          <p className="line-through leading-none mb-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "rgba(var(--foreground-rgb), 0.62)" }}>
                             {rProduct.oldPrice}
                           </p>
                         )}

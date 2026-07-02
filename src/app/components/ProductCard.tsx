@@ -200,6 +200,11 @@ export function ProductCard({
             fontWeight: 600,
             lineHeight: 1.25,
             letterSpacing: "-0.01em",
+            // Cap rígido em N×line-height (em) além do -webkit-line-clamp: em zoom
+            // fracionário o clamp pode vazar 1px da linha seguinte; o max-height
+            // em `em` acompanha o zoom e recorta limpo.
+            maxHeight: cfg.clamp === "line-clamp-2" ? "2.5em" : "1.25em",
+            overflow: "hidden",
           }}
         >
           {product.name}
@@ -212,7 +217,7 @@ export function ProductCard({
               style={{
                 fontFamily: "var(--font-family-inter)",
                 fontSize: "var(--text-sm)",
-                color: "rgba(var(--foreground-rgb), 0.38)",
+                color: "rgba(var(--foreground-rgb), 0.62)",
               }}
             >
               {product.oldPrice ?? `R$ ${oldPriceNum.toFixed(2).replace(".", ",")}`}
@@ -260,7 +265,7 @@ export function ProductCard({
                 e.stopPropagation();
                 setSelectedSwatchId(s.productId === selectedSwatchId ? null : s.productId);
               }}
-              className="inline-flex items-center justify-center p-4 -m-4 md:p-0 md:m-0 cursor-pointer transition-all hover:scale-110"
+              className="inline-flex items-center justify-center p-4 -m-4 md:p-1.5 md:-m-1.5 cursor-pointer transition-all hover:scale-110"
               aria-label={s.label}
               type="button"
             >

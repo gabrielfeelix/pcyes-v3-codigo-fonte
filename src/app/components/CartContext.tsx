@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { trackAddToCart } from "../../utils/analytics";
 
 export interface CartItem {
   cartKey: string;
@@ -19,6 +20,7 @@ interface CartContextType {
   items: CartItem[];
   addItem: (item: AddCartItemInput) => void;
   removeItem: (cartKey: string) => void;
+  restoreItem: (item: CartItem, index?: number) => void;
   clearCart: () => void;
   updateQuantity: (cartKey: string, quantity: number) => void;
   setGiftItem: (item: AddCartItemInput | null) => void;
@@ -54,10 +56,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setLastAdded(newItem);
     setIsOpen(true);
     setTimeout(() => setLastAdded(null), 2000);
+    if (!item.isGift) trackAddToCart({ id: item.id, name: item.name, price: item.price });
   }, []);
 
   const removeItem = useCallback((cartKey: string) => {
     setItems((prev) => prev.filter((i) => i.cartKey !== cartKey));
+  }, []);
+
+  // Reinsere um item removido preservando quantidade e posição (undo do toast).
+  const restoreItem = useCallback((item: CartItem, index?: number) => {
+    setItems((prev) => {
+      if (prev.some((i) => i.cartKey === item.cartKey)) return prev;
+      if (index === undefined || index < 0 || index > prev.length) return [...prev, item];
+      const next = [...prev];
+      next.splice(index, 0, item);
+      return next;
+    });
   }, []);
 
   const clearCart = useCallback(() => {
@@ -92,7 +106,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, clearCart, updateQuantity, setGiftItem, totalItems, isOpen, setIsOpen, lastAdded }}>
+    <CartContext.Provider value={{ items, addItem, removeItem, restoreItem, clearCart, updateQuantity, setGiftItem, totalItems, isOpen, setIsOpen, lastAdded }}>
       {children}
     </CartContext.Provider>
   );

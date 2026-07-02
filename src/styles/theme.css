@@ -15,6 +15,9 @@
   --popover-foreground: rgba(22, 22, 22, 1.00);
   --primary: rgba(220, 20, 20, 1.00);
   --primary-foreground: rgba(255, 255, 255, 1.00);
+  /* Darker red for solid fills carrying white text (light #dc1414 already
+     clears 4.5:1, kept slightly deeper for parity with the dark token). */
+  --primary-strong: rgba(200, 18, 18, 1.00);
   --secondary: rgba(245, 245, 245, 1.00);
   --secondary-foreground: rgba(22, 22, 22, 1.00);
   --muted: rgba(140, 140, 140, 1.00);
@@ -176,7 +179,8 @@
   --ink-strong: #161616;
   --ink: rgba(22, 22, 22, 0.95);
   --ink-muted: rgba(22, 22, 22, 0.65);
-  --ink-subtle: rgba(22, 22, 22, 0.45);
+  /* WCAG 1.4.3: 0.45 gave ~3:1 on light surfaces. Raised to 0.60 (≥4.5:1). */
+  --ink-subtle: rgba(22, 22, 22, 0.60);
   --edge-subtle: rgba(0, 0, 0, 0.06);
   --edge: rgba(0, 0, 0, 0.12);
   --edge-strong: rgba(0, 0, 0, 0.22);
@@ -363,6 +367,13 @@ input:-webkit-autofill:active {
   --popover-foreground: rgba(255, 255, 255, 1.00);
   --primary: rgba(255, 43, 46, 1.00);
   --primary-foreground: rgba(255, 255, 255, 1.00);
+  /* WCAG 1.4.3 dual-role split for the brand red:
+     - --primary (#ff2b2e): vivid red used as TEXT/icon on dark (5.3:1 ✓),
+       borders and glows. Kept bright so red-on-dark text stays legible.
+     - --primary-strong (#d21d23, ≈5:1 with #fff): darker red for SOLID
+       FILLS that carry white text (badges/CTAs), where #ff2b2e only
+       reached 3.72:1. Applied via .bg-primary override + inline fills. */
+  --primary-strong: rgba(210, 29, 35, 1.00);
   --secondary: rgba(206, 206, 206, 1.00);
   --secondary-foreground: rgba(36, 36, 36, 1.00);
   --muted: rgba(128, 128, 128, 1.00);
@@ -392,11 +403,49 @@ input:-webkit-autofill:active {
   --ink-strong: #ffffff;
   --ink: rgba(255, 255, 255, 0.85);
   --ink-muted: rgba(255, 255, 255, 0.55);
-  --ink-subtle: rgba(255, 255, 255, 0.35);
+  /* WCAG 1.4.3: 0.35 gave 3.1:1 (#5f5f60) on dark. Raised to 0.62 (≥4.5:1). */
+  --ink-subtle: rgba(255, 255, 255, 0.62);
   --edge-subtle: rgba(255, 255, 255, 0.06);
   --edge: rgba(255, 255, 255, 0.12);
   --edge-strong: rgba(255, 255, 255, 0.22);
 }
+
+/* ============================================================
+   WCAG 1.4.3 — DARK MODE muted-text contrast floor (AA).
+   Mirror of the light-mode block further below. On dark (the
+   default theme) `text-foreground/{15..45}` and `text-white/*`
+   resolve to white at low alpha over dark surfaces, landing at
+   1.9–3.8:1 — below the 4.5:1 minimum for body text. Clamp the
+   effective alpha to the minimum that clears 4.5:1 on every
+   common dark surface (body #121212 through card #1a1a1a and
+   surface-3 #323232) while preserving relative hierarchy.
+   Values verified with axe-core against the live DOM.
+   Header (AnnouncementBar/Navbar) is always dark → intentionally
+   covered by these rules too. Excludes [data-keep-dark] not
+   needed: this only fires under .dark.
+   ============================================================ */
+.dark .text-foreground\/15 { color: rgba(255,255,255,0.60) !important; }
+.dark .text-foreground\/20 { color: rgba(255,255,255,0.62) !important; }
+.dark .text-foreground\/25 { color: rgba(255,255,255,0.64) !important; }
+.dark .text-foreground\/30 { color: rgba(255,255,255,0.66) !important; }
+.dark .text-foreground\/35 { color: rgba(255,255,255,0.68) !important; }
+.dark .text-foreground\/40 { color: rgba(255,255,255,0.70) !important; }
+.dark .text-foreground\/45 { color: rgba(255,255,255,0.72) !important; }
+
+.dark .text-white\/15 { color: rgba(255,255,255,0.60) !important; }
+.dark .text-white\/20 { color: rgba(255,255,255,0.62) !important; }
+.dark .text-white\/25 { color: rgba(255,255,255,0.64) !important; }
+.dark .text-white\/30 { color: rgba(255,255,255,0.66) !important; }
+.dark .text-white\/35 { color: rgba(255,255,255,0.68) !important; }
+.dark .text-white\/40 { color: rgba(255,255,255,0.70) !important; }
+.dark .text-white\/45 { color: rgba(255,255,255,0.72) !important; }
+
+/* WCAG 1.4.3 — solid red fills with white text. .bg-primary (#ff2b2e)
+   gave white text only 3.72:1. Use the deeper --primary-strong (#d21d23,
+   ≈5:1) for filled surfaces. Text/border/glow keep the vivid --primary.
+   Applies in dark (default). Large CTAs on gradients are unaffected
+   (they use --gradient-brand, not .bg-primary). */
+.dark .bg-primary { background-color: var(--primary-strong) !important; }
 
 @theme inline {
   --color-background: var(--background);
@@ -407,6 +456,7 @@ input:-webkit-autofill:active {
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-strong: var(--primary-strong);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -504,6 +554,28 @@ input:-webkit-autofill:active {
     @apply bg-background text-foreground;
     font-family: var(--font-family-inter);
   }
+}
+
+/* === WCAG 2.4.7 (AA) — Focus Visible ===
+   The codebase disables focus outlines in ~65 places (focus:outline-none /
+   outline-none) for a clean mouse UX, but that left KEYBOARD focus invisible.
+   This restores a strong, consistent focus ring for keyboard users only
+   (:focus-visible), overriding those per-component resets. Mouse clicks
+   (:focus without :focus-visible) stay ring-free. Placed outside @layer so
+   the !important reliably wins over component `outline` utilities.
+   The 2px offset puts the ring on the surrounding surface, so it stays
+   visible even on same-color (e.g. red) buttons. WCAG 1.4.11 / 2.4.11 met:
+   --ring clears 3:1 against page surfaces. */
+*:focus-visible {
+  outline: 2px solid var(--ring) !important;
+  outline-offset: 2px !important;
+  border-radius: 2px;
+}
+/* Elements that intentionally scroll into view under a sticky header keep
+   clearance so the focused element is never obscured (2.4.11, new in 2.2). */
+:focus-visible {
+  scroll-margin-top: 96px;
+  scroll-margin-bottom: 24px;
 }
 
 /**

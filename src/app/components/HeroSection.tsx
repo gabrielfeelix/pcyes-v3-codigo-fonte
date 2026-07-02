@@ -175,7 +175,7 @@ export function HeroSection() {
                         alt={slide.alt}
                         draggable={false}
                         loading={i === 0 ? "eager" : "lazy"}
-                        fetchPriority={i === 0 ? "high" : "auto"}
+                        {...{ fetchpriority: i === 0 ? "high" : "auto" }}
                         className="h-full w-full object-cover pointer-events-none select-none"
                         style={{
                           WebkitUserDrag: "none",
@@ -258,7 +258,7 @@ export function HeroSection() {
             <button
               key={i}
               onClick={() => goTo(i)}
-              className="flex h-11 cursor-pointer items-center justify-center px-1.5"
+              className="flex h-11 min-w-[24px] cursor-pointer items-center justify-center px-1.5"
               aria-label={`Banner ${i + 1}`}
             >
               <span

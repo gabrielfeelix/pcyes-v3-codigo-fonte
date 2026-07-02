@@ -184,7 +184,7 @@ export function Footer() {
                 <div className="flex flex-col gap-1 md:gap-4">
                   {col.links.map((link) => (
                     <Link key={link.label} to={link.href}
-                      className={`flex items-center min-h-[44px] md:block md:min-h-0 ${isDark ? "text-foreground/60 hover:text-foreground transition-colors duration-300" : "text-foreground/70 hover:text-foreground transition-colors duration-300"}`}
+                      className={`flex items-center min-h-[44px] md:block md:min-h-[24px] ${isDark ? "text-foreground/60 hover:text-foreground transition-colors duration-300" : "text-foreground/70 hover:text-foreground transition-colors duration-300"}`}
                       style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
                     >{link.label}</Link>
                   ))}

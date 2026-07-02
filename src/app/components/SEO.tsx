@@ -40,6 +40,12 @@ export function SEO({
     (typeof window !== "undefined" ? window.location.pathname : "/");
   const canonical = `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 
+  // OG/Twitter exigem URL absoluta. Imagens do catálogo são relativas (/home/...);
+  // absolutiza pro domínio canônico. URLs já absolutas (https) passam intactas.
+  const absImage = /^https?:\/\//.test(image)
+    ? image
+    : `${SITE_URL}${image.startsWith("/") ? image : `/${image}`}`;
+
   const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
   return (
@@ -55,14 +61,14 @@ export function SEO({
       <meta property="og:title" content={finalTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonical} />
-      <meta property="og:image" content={image} />
+      <meta property="og:image" content={absImage} />
       <meta property="og:locale" content="pt_BR" />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={finalTitle} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
+      <meta name="twitter:image" content={absImage} />
 
       {jsonLdArray.map((blob, i) => (
         <script key={i} type="application/ld+json">

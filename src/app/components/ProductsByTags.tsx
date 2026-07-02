@@ -193,10 +193,7 @@ export function ProductsByTags() {
                       {swatches.map((swatch) => (
                         <button
                           key={`${product.id}-${swatch.label}`}
-                          className={`h-3.5 w-3.5 rounded-full border border-foreground/10 shadow-[0_0_0_1px_rgba(var(--foreground-rgb), 0.04)_inset] transition-transform hover:scale-125 ${
-                            swatch.productId === displayProduct.id ? "ring-2 ring-primary/70 ring-offset-2 ring-offset-background" : ""
-                          }`}
-                          style={{ backgroundColor: swatch.color }}
+                          className="inline-flex items-center justify-center p-1.5 -m-1.5 rounded-full transition-transform hover:scale-125"
                           title={swatch.label}
                           onClick={(e) => {
                             e.preventDefault();
@@ -204,7 +201,14 @@ export function ProductsByTags() {
                             const variant = findProductBySwatch(swatch);
                             if (variant) setSelectedVariants((prev) => ({ ...prev, [product.id]: variant }));
                           }}
-                        />
+                        >
+                          <span
+                            className={`block h-3.5 w-3.5 rounded-full border border-foreground/10 shadow-[0_0_0_1px_rgba(var(--foreground-rgb), 0.04)_inset] ${
+                              swatch.productId === displayProduct.id ? "ring-2 ring-primary/70 ring-offset-2 ring-offset-background" : ""
+                            }`}
+                            style={{ backgroundColor: swatch.color }}
+                          />
+                        </button>
                       ))}
                     </div>
                   )}

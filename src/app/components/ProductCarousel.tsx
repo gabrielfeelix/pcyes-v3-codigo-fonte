@@ -324,7 +324,7 @@ export function ProductCarousel({
                       {swatches.map((swatch) => (
                         <button
                           key={`${product.id}-${swatch.label}`}
-                          className="p-4 md:p-0 -m-4 md:m-0 rounded-full"
+                          className="p-4 md:p-1.5 -m-4 md:-m-1.5 rounded-full"
                           title={swatch.label}
                           onClick={(e) => {
                             e.preventDefault();
@@ -358,7 +358,7 @@ export function ProductCarousel({
                   return (
                     <>
                       {dp.oldPrice && (
-                        <p className="line-through leading-none mb-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "rgba(var(--foreground-rgb), 0.38)" }}>
+                        <p className="line-through leading-none mb-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "rgba(var(--foreground-rgb), 0.62)" }}>
                           {dp.oldPrice}
                         </p>
                       )}

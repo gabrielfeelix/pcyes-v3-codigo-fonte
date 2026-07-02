@@ -1,8 +1,9 @@
 import { lazy } from "react";
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, useParams } from "react-router";
 import { RootLayout } from "./components/RootLayout";
 import { HomePage } from "./components/HomePage";
 import { GlobalErrorBoundary } from "./components/GlobalErrorBoundary";
+import { getCategoryFromSlug } from "./lib/slug";
 
 // Lazy-loaded page components (non-first-paint)
 const ProductsPage = lazy(() => import("./components/ProductsPage").then(m => ({ default: m.ProductsPage })));
@@ -24,6 +25,17 @@ const QuemSomosPage = lazy(() => import("./pages/QuemSomosPage").then(m => ({ de
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage").then(m => ({ default: m.PrivacyPage })));
 const WarrantyPage = lazy(() => import("./pages/WarrantyPage").then(m => ({ default: m.WarrantyPage })));
 const TermsPage = lazy(() => import("./pages/TermsPage").then(m => ({ default: m.TermsPage })));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
+
+/* Rota de categoria: se o slug não corresponde a nenhuma categoria real
+   (URL digitada errada / lixo), mostra o 404 em vez de fingir uma categoria
+   vazia com título sem sentido. Subcategoria inválida sob categoria válida
+   segue no ProductsPage (estado vazio). */
+function CategoryRoute() {
+  const { category } = useParams();
+  if (category && !getCategoryFromSlug(category)) return <NotFoundPage />;
+  return <ProductsPage />;
+}
 
 const basename =
   import.meta.env.BASE_URL === "/"
@@ -66,10 +78,16 @@ export const router = createBrowserRouter([
            /perifericos/mouses             -> ProductsPage (Periféricos / Mouses)
            /perifericos/pcyes/mouse-vert   -> ProductPage  (no subcategory)
            /perifericos/mouses/pcyes/mv01  -> ProductPage  (full slug path)  */
-      { path: ":category", Component: ProductsPage },
-      { path: ":category/:subcategory", Component: ProductsPage },
+      { path: ":category", Component: CategoryRoute },
+      { path: ":category/:subcategory", Component: CategoryRoute },
       { path: ":category/:brand/:slug", Component: ProductPage },
       { path: ":category/:subcategory/:brand/:slug", Component: ProductPage },
+
+      /* Catch-all: URLs sem correspondência (malformadas / profundas demais)
+         caem numa página 404 útil (busca + home + categorias) em vez de tela
+         de erro. Slugs de categoria desconhecidos ainda resolvem no ProductsPage
+         com estado vazio. */
+      { path: "*", Component: NotFoundPage },
     ],
   },
 ], { basename });
