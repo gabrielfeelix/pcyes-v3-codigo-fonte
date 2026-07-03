@@ -10,6 +10,7 @@ import { useAuth } from "./AuthContext";
 import { useFavorites } from "./FavoritesContext";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/tooltip";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "./ui/dropdown-menu";
 import { allProducts, type Product } from "./productsData";
 import { ThemeToggle } from "./ThemeToggle";
 import { getCatalogHref, getPrimaryProductImage, getProductSubcategory, getProductSwatches, getVisibleCatalogProducts } from "./productPresentation";
@@ -456,7 +457,7 @@ export function Navbar() {
   const megaTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { totalItems, setIsOpen: setCartOpen } = useCart();
-  const { isLoggedIn, setAuthModalOpen } = useAuth();
+  const { isLoggedIn, setAuthModalOpen, logout } = useAuth();
   const { count: favCount } = useFavorites();
   const { resolvedTheme } = useTheme();
   const navigate = useNavigate();
@@ -639,7 +640,7 @@ export function Navbar() {
               <Search size={20} strokeWidth={1.5} aria-hidden="true" />
             </button>
           </TooltipTrigger>
-          <TooltipContent sideOffset={6} className={tooltipContentClass}>Buscar</TooltipContent>
+          <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Buscar</TooltipContent>
         </Tooltip>
 
         <Tooltip>
@@ -656,33 +657,52 @@ export function Navbar() {
               </AnimatePresence>
             </button>
           </TooltipTrigger>
-          <TooltipContent sideOffset={6} className={tooltipContentClass}>Favoritos</TooltipContent>
+          <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Favoritos</TooltipContent>
         </Tooltip>
 
         <Tooltip>
           <TooltipTrigger asChild>
             <span className="inline-flex"><ThemeToggle showExpanded={showExpanded} navbarIsDark={isDark} /></span>
           </TooltipTrigger>
-          <TooltipContent sideOffset={6} className={tooltipContentClass}>Tema</TooltipContent>
+          <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Tema</TooltipContent>
         </Tooltip>
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button onClick={handleUserClick} aria-label={isLoggedIn ? "Minha conta" : "Entrar"} className={`relative w-10 h-10 flex items-center justify-center transition-colors cursor-pointer group ${iconColor}`}>
-              {/* Gamer scan-frame corners */}
-              <span className="absolute top-1.5 left-1.5 w-[9px] h-[9px] border-t border-l border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
-              <span className="absolute top-1.5 right-1.5 w-[9px] h-[9px] border-t border-r border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
-              <span className="absolute bottom-1.5 left-1.5 w-[9px] h-[9px] border-b border-l border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
-              <span className="absolute bottom-1.5 right-1.5 w-[9px] h-[9px] border-b border-r border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
-              {isLoggedIn ? (
+        {isLoggedIn ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button aria-label="Minha conta" className={`relative w-10 h-10 flex items-center justify-center transition-colors cursor-pointer group ${iconColor}`}>
+                {/* Gamer scan-frame corners */}
+                <span className="absolute top-1.5 left-1.5 w-[9px] h-[9px] border-t border-l border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
+                <span className="absolute top-1.5 right-1.5 w-[9px] h-[9px] border-t border-r border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
+                <span className="absolute bottom-1.5 left-1.5 w-[9px] h-[9px] border-b border-l border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
+                <span className="absolute bottom-1.5 right-1.5 w-[9px] h-[9px] border-b border-r border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
                 <span className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
                   <span className="text-primary" style={{ fontSize: "var(--text-caption)", fontFamily: "var(--font-family-inter)", fontWeight: "var(--font-weight-medium)" }}>J</span>
                 </span>
-              ) : <User size={20} strokeWidth={1.5} />}
-            </button>
-          </TooltipTrigger>
-          <TooltipContent sideOffset={6} className={tooltipContentClass}>{isLoggedIn ? "Minha conta" : "Entrar"}</TooltipContent>
-        </Tooltip>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" sideOffset={8} className="min-w-[184px]">
+              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/perfil?tab=orders")}>Meus Pedidos</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/perfil?tab=data")}>Meus Dados</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="cursor-pointer" onClick={() => { logout(); navigate("/"); }}>Sair</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button onClick={() => setAuthModalOpen(true)} aria-label="Entrar" className={`relative w-10 h-10 flex items-center justify-center transition-colors cursor-pointer group ${iconColor}`}>
+                {/* Gamer scan-frame corners */}
+                <span className="absolute top-1.5 left-1.5 w-[9px] h-[9px] border-t border-l border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
+                <span className="absolute top-1.5 right-1.5 w-[9px] h-[9px] border-t border-r border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
+                <span className="absolute bottom-1.5 left-1.5 w-[9px] h-[9px] border-b border-l border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
+                <span className="absolute bottom-1.5 right-1.5 w-[9px] h-[9px] border-b border-r border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
+                <User size={20} strokeWidth={1.5} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Entrar</TooltipContent>
+          </Tooltip>
+        )}
 
         <Tooltip>
           <TooltipTrigger asChild>
@@ -698,7 +718,7 @@ export function Navbar() {
               </AnimatePresence>
             </button>
           </TooltipTrigger>
-          <TooltipContent sideOffset={6} className={tooltipContentClass}>Carrinho</TooltipContent>
+          <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Carrinho</TooltipContent>
         </Tooltip>
       </div>
     </TooltipProvider>
@@ -1805,7 +1825,7 @@ export function Navbar() {
                       <HelpCircle size={20} strokeWidth={1.5} />
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent sideOffset={6} className={tooltipContentClass}>Ajuda</TooltipContent>
+                  <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Ajuda</TooltipContent>
                 </Tooltip>
 
                 <Tooltip>
@@ -1831,14 +1851,14 @@ export function Navbar() {
                       </AnimatePresence>
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent sideOffset={6} className={tooltipContentClass}>Favoritos</TooltipContent>
+                  <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Favoritos</TooltipContent>
                 </Tooltip>
 
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <span className="inline-flex"><ThemeToggle showExpanded={showExpanded} navbarIsDark={isDark} /></span>
                   </TooltipTrigger>
-                  <TooltipContent sideOffset={6} className={tooltipContentClass}>Tema</TooltipContent>
+                  <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Tema</TooltipContent>
                 </Tooltip>
 
                 <Tooltip>
@@ -1855,7 +1875,7 @@ export function Navbar() {
                       )}
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent sideOffset={6} className={tooltipContentClass}>{isLoggedIn ? "Minha conta" : "Entrar"}</TooltipContent>
+                  <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>{isLoggedIn ? "Minha conta" : "Entrar"}</TooltipContent>
                 </Tooltip>
 
                 <Tooltip>
@@ -1881,7 +1901,7 @@ export function Navbar() {
                       </AnimatePresence>
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent sideOffset={6} className={tooltipContentClass}>Carrinho</TooltipContent>
+                  <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Carrinho</TooltipContent>
                 </Tooltip>
               </div>
             </TooltipProvider>

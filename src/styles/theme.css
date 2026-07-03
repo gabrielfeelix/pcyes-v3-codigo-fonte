@@ -597,6 +597,34 @@ input:-webkit-autofill:active {
   background: rgba(var(--foreground-rgb), 0.08);
 }
 
+/* Cupom (checkout): input dentro de motion.div com overflow-hidden (animação de
+   altura) — o outline de foco recortado vira borda + box-shadow INSET, ambos
+   dentro do input, então não são cortados. */
+.pcyes-coupon-input:focus-visible {
+  outline: none !important;
+  border-color: var(--ring) !important;
+  box-shadow: inset 0 0 0 1.5px var(--ring);
+}
+
+/* PCYES Points stepper: o container tem overflow-hidden (borda dourada) que
+   recortava o ring de foco vermelho do input. Anel de foco AMARELO na pílula
+   inteira (combina com o tema dos pontos), via :focus-within (não recortado). */
+.pcyes-step-gold:focus-within {
+  border-color: #facc15 !important;
+  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.5);
+}
+.pcyes-step-gold :focus-visible {
+  outline: none !important;
+}
+
+/* Botões são clicáveis → cursor pointer por padrão. Seletor de elemento tem
+   baixa especificidade, então qualquer classe cursor-* explícita (ex.
+   cursor-not-allowed em botões inativos) continua ganhando. :disabled/[disabled]
+   ficam de fora (mantêm o cursor de bloqueado). Cobre checkout, PIX, pedido e app. */
+button:not(:disabled):not([disabled]) {
+  cursor: pointer;
+}
+
 /**
  * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
  */

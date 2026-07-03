@@ -28,7 +28,7 @@ import { Footer } from "./Footer";
 import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getVisibleCatalogProducts } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
-import { PreOrderPill } from "./section";
+import { BrindePill, PreOrderPill } from "./section";
 import { formatBRL, parseBRL, formatCep } from "../../utils/format";
 import { COUPONS, GIFT_THRESHOLD } from "../../utils/commerce";
 import { toast } from "sonner";
@@ -439,25 +439,6 @@ export function CartPage() {
                           alt={item.name}
                           className="h-full w-full object-contain p-2.5 md:p-3"
                         />
-                        {item.isGift && (
-                          <span
-                            className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 text-ink-strong"
-                            style={{
-                              padding: "3px 7px",
-                              borderRadius: "var(--radius-card)",
-                              background: "var(--gradient-brand)",
-                              fontFamily: "var(--font-family-inter)",
-                              fontSize: "var(--text-caption)",
-                              fontWeight: 800,
-                              letterSpacing: "0.08em",
-                              textTransform: "uppercase",
-                              boxShadow: "0 4px 12px -2px rgba(225,6,0,0.5)",
-                            }}
-                          >
-                            <Gift size={9} strokeWidth={2.4} />
-                            Brinde
-                          </span>
-                        )}
                       </div>
 
                       {/* Info */}
@@ -485,6 +466,11 @@ export function CartPage() {
                           </button>
                         </div>
 
+                        {item.isGift && (
+                          <div className="mt-1.5">
+                            <BrindePill />
+                          </div>
+                        )}
                         {!item.isGift && getPreOrderInfo(item.id) && (
                           <div className="mt-1.5">
                             <PreOrderPill info={getPreOrderInfo(item.id)!} compact />

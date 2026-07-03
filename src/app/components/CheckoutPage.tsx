@@ -430,7 +430,9 @@ export function CheckoutPage() {
     payment === "boleto" ||
     payment === "apple" ||
     payment === "google" ||
-    (payment === "credit" && !!cardName && cardNumber.length >= 15 && cardExp.length === 5 && cardCvc.length >= 3);
+    // Cartão salvo selecionado já é válido (CVV é mock, sem campo). Cartão NOVO
+    // exige o formulário completo. Antes o cartão salvo travava o "Continuar".
+    (payment === "credit" && (selectedCardId !== null || (!!cardName && cardNumber.length >= 15 && cardExp.length === 5 && cardCvc.length >= 3)));
 
   const canAdvance = step === 0 ? step0Valid : step === 1 ? step1Valid : step === 2 ? step2Valid : true;
 
@@ -1843,7 +1845,9 @@ export function CheckoutPage() {
                   // RESUMO
                 </p>
 
-                <div className="mb-4 max-h-[280px] space-y-3 overflow-y-auto pr-1">
+                {/* pt/pr dão respiro para o badge de qtd (-top/-right) não ser
+                    cortado pelo overflow do scroll (overflow-y-auto clipa X também). */}
+                <div className="mb-4 max-h-[280px] space-y-3 overflow-y-auto pl-0.5 pr-2 pt-2">
                   {items.map((item) => (
                     <div key={item.cartKey} className="flex items-center gap-3">
                       <div className="relative h-14 w-14 flex-shrink-0">
@@ -1940,7 +1944,7 @@ export function CheckoutPage() {
                             onChange={(e) => { setCoupon(e.target.value.toUpperCase()); setCouponError(""); }}
                             onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
                             aria-label="Código do cupom"
-                            className="flex-1 rounded-[var(--radius-card-sm)] px-3 py-2 text-ink-strong placeholder:text-ink-subtle focus:outline-none"
+                            className="pcyes-coupon-input flex-1 rounded-[var(--radius-card-sm)] px-3 py-2 text-ink-strong placeholder:text-ink-subtle focus:outline-none"
                             style={{
                               background: "rgba(var(--foreground-rgb), 0.03)",
                               border: "1px solid rgba(var(--foreground-rgb), 0.1)",
@@ -2582,7 +2586,7 @@ function NumberStepperRed({
   const clamp = (n: number) => Math.max(min, Math.min(max, n));
   return (
     <div
-      className="inline-flex items-stretch overflow-hidden"
+      className="pcyes-step-gold inline-flex items-stretch overflow-hidden"
       style={{
         borderRadius: "var(--radius-card-sm)",
         background: "rgba(0,0,0,0.3)",
