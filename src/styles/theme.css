@@ -578,6 +578,25 @@ input:-webkit-autofill:active {
   scroll-margin-bottom: 24px;
 }
 
+/* Busca (desktop): a pílula arredondada usa overflow-hidden, que recortava o
+   outline de foco dos filhos e o deixava visível só como dois traços vermelhos
+   nas laterais. Aqui o anel de foco vai na pílula INTEIRA — via box-shadow do
+   próprio container, que NÃO é recortado por overflow-hidden — usando
+   :focus-within (confiável, ao contrário de :has(:focus-visible) neste engine).
+   Os filhos deixam de desenhar o outline recortado; os botões internos (categoria
+   e limpar) ganham realce de fundo para continuarem indicados. Satisfaz WCAG
+   2.4.7 (foco visível) sem o fragmento cortado. */
+.pcyes-search-pill:focus-within {
+  border-color: var(--ring) !important;
+  box-shadow: 0 0 0 2px var(--ring), 0 10px 32px rgba(0, 0, 0, 0.55) !important;
+}
+.pcyes-search-pill :focus-visible {
+  outline: none !important;
+}
+.pcyes-search-pill button:focus-visible {
+  background: rgba(var(--foreground-rgb), 0.08);
+}
+
 /**
  * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
  */

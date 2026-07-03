@@ -27,6 +27,7 @@ import { SEO } from "./SEO";
 import { getProductSlug, getProductUrl } from "../lib/slug";
 import { formatCep } from "../../utils/format";
 import { trackViewItem } from "../../utils/analytics";
+import { productDetails } from "./productDetails";
 
 /* ── helpers ─────────────────────────────────────────── */
 
@@ -2147,11 +2148,16 @@ export function ProductPage() {
    */
   const params = useParams();
   const navigate = useNavigate();
-  const product = params.id
+  const baseProduct = params.id
     ? allProducts.find((p) => p.id === Number(params.id))
     : params.slug
       ? allProducts.find((p) => getProductSlug(p) === params.slug)
       : undefined;
+  // Descrição completa vem do módulo lazy productDetails (fora do bundle inicial).
+  // O catálogo do bundle carrega só um blurb; a PDP hidrata o texto integral aqui.
+  const product = baseProduct
+    ? { ...baseProduct, ...(productDetails[baseProduct.id] ?? {}) }
+    : baseProduct;
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { resolvedTheme } = useTheme();

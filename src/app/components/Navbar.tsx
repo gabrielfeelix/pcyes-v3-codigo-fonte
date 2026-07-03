@@ -1365,7 +1365,7 @@ export function Navbar() {
                 className="relative w-full"
               >
                 <div
-                  className="flex h-[40px] items-center overflow-hidden rounded-full border transition-all"
+                  className="pcyes-search-pill flex h-[40px] items-center overflow-hidden rounded-full border transition-all"
                   style={{
                     background: "var(--surface-2)",
                     borderColor: searchPanelOpen ? "rgba(var(--foreground-rgb), 0.35)" : "rgba(var(--foreground-rgb), 0.08)",

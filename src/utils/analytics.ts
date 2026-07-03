@@ -125,3 +125,30 @@ export function trackPurchase(order: { id: string; value: number; items: ItemLik
     items: order.items.map(mapItem),
   });
 }
+
+/* ── Core Web Vitals (RUM) ──────────────────────────────────── */
+
+/**
+ * Mede LCP, INP, CLS, FCP e TTFB reais e empurra pro dataLayer como
+ * `web_vitals`. `web-vitals` é carregado por import dinâmico (fora do caminho
+ * crítico). GTM decide o que fazer com o evento (consentimento já se aplica).
+ */
+export function reportWebVitals() {
+  if (typeof window === "undefined") return;
+  import("web-vitals")
+    .then(({ onLCP, onINP, onCLS, onFCP, onTTFB }) => {
+      const send = (m: { name: string; value: number; rating: string; id: string }) =>
+        track("web_vitals", {
+          metric: m.name,
+          value: Math.round(m.name === "CLS" ? m.value * 1000 : m.value),
+          rating: m.rating,
+          metric_id: m.id,
+        });
+      onLCP(send);
+      onINP(send);
+      onCLS(send);
+      onFCP(send);
+      onTTFB(send);
+    })
+    .catch(() => {});
+}

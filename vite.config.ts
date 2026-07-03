@@ -4,6 +4,7 @@ import fs from 'fs'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { allProducts, categories } from './src/app/components/productsData'
+import { productDetails } from './src/app/components/productDetails'
 import {
   getProductUrl,
   getCategorySlug,
@@ -220,11 +221,13 @@ function prerenderSeoHtml() {
     const feats = Array.isArray(prod.features) && prod.features.length
       ? `<ul>${prod.features.slice(0, 10).map((f: any) => `<li>${esc(f)}</li>`).join('')}</ul>`
       : ''
+    // Descrição completa (productDetails) para o crawler, não o blurb do bundle.
+    const fullDesc = productDetails[prod.id]?.description ?? prod.description
     return wrapSeo(
       `<nav aria-label="Breadcrumb">${crumbs.join(' / ')}</nav>` +
         `<h1>${esc(prod.name)}</h1>` +
         `<p>${esc(prod.price)}${prod.oldPrice ? ` (de ${esc(prod.oldPrice)})` : ''}</p>` +
-        (prod.description ? `<p>${esc(prod.description).slice(0, 2000)}</p>` : '') +
+        (fullDesc ? `<p>${esc(fullDesc).slice(0, 2000)}</p>` : '') +
         feats,
     )
   }
