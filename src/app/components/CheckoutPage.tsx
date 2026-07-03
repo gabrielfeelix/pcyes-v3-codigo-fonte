@@ -33,7 +33,7 @@ import { CardFormModal } from "./CardFormModal";
 import { Footer } from "./Footer";
 import { formatBRL, parseBRL, formatCep } from "../../utils/format";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
-import { COUPONS } from "../../utils/commerce";
+import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { toast } from "sonner";
 
 type Step = 0 | 1 | 2 | 3;
@@ -405,8 +405,9 @@ export function CheckoutPage() {
   const shippingPrice = shippingOptions.find((o) => o.id === selectedShipping)?.price ?? 0;
   const discountPct = appliedCoupon ? COUPONS[appliedCoupon] || 0 : 0;
   const discountValue = (subtotal * discountPct) / 100;
-  const maxPointsRedeem = Math.min(userPoints, Math.floor((subtotal - discountValue) * 0.3));
-  const pointsValue = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
+  const maxPointsRedeem = maxRedeemablePoints(userPoints, subtotal - discountValue);
+  const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
+  const pointsValue = pointsToBRL(pointsUsed);
   const baseTotal = subtotal - discountValue + shippingPrice - pointsValue;
   const pixDiscount = payment === "pix" ? Math.max(0, (subtotal - discountValue - pointsValue)) * 0.1 : 0;
   const total = baseTotal - pixDiscount;

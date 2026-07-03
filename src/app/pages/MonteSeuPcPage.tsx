@@ -1372,6 +1372,8 @@ const recommendPreset = (a: QuizAnswers): PresetTier => {
 type GamingLevelCard = {
   id: GamingLevel;
   title: string;
+  subtitle: string;
+  spec: string;
   desc: string;
   icon: React.ReactNode;
   accent: string;
@@ -1381,22 +1383,28 @@ const gamingLevelCards: GamingLevelCard[] = [
   {
     id: "casual",
     title: "Casual",
+    subtitle: "Sem stress",
+    spec: "60–120 FPS",
     desc: "Quero jogar bem, sem stress. 60-120 FPS está ótimo.",
-    icon: <Gamepad2 className="h-4 w-4" />,
+    icon: <Gamepad2 className="h-5 w-5" />,
     accent: "#22c55e",
   },
   {
     id: "competitive",
     title: "Competitivo",
+    subtitle: "Ranked sério",
+    spec: "144Hz+ · 1ms",
     desc: "FPS alto importa. 144Hz+, monitor rápido, ranked sério.",
-    icon: <Zap className="h-4 w-4" />,
+    icon: <Zap className="h-5 w-5" />,
     accent: "#ff2b2e",
   },
   {
     id: "pro",
     title: "Pro / Streamer",
+    subtitle: "Esports + live",
+    spec: "240Hz · dual-PC",
     desc: "Esports, live, dual-PC. Sem espaço pra travada.",
-    icon: <Trophy className="h-4 w-4" />,
+    icon: <Trophy className="h-5 w-5" />,
     accent: "#a78bfa",
   },
 ];
@@ -1404,6 +1412,8 @@ const gamingLevelCards: GamingLevelCard[] = [
 type CreatingLevelCard = {
   id: CreatingLevel;
   title: string;
+  subtitle: string;
+  spec: string;
   desc: string;
   icon: React.ReactNode;
   accent: string;
@@ -1413,22 +1423,28 @@ const creatingLevelCards: CreatingLevelCard[] = [
   {
     id: "hobby",
     title: "Hobby / Esporádico",
+    subtitle: "Fim de semana",
+    spec: "Edições leves",
     desc: "Edições leves no fim de semana, projetos pessoais, aprendizado.",
-    icon: <Palette className="h-4 w-4" />,
+    icon: <Palette className="h-5 w-5" />,
     accent: "#06b6d4",
   },
   {
     id: "professional",
     title: "Profissional",
+    subtitle: "Trabalho diário",
+    spec: "Render rápido",
     desc: "Trabalho diário, prazos apertados, render rápido importa.",
-    icon: <Sparkles className="h-4 w-4" />,
+    icon: <Sparkles className="h-5 w-5" />,
     accent: "#ec4899",
   },
   {
     id: "studio",
     title: "Estúdio / Workstation",
+    subtitle: "Sem teto técnico",
+    spec: "8K · 3D · IA",
     desc: "Render 8K, 3D pesado, AI generativa local, sem teto técnico.",
-    icon: <Trophy className="h-4 w-4" />,
+    icon: <Trophy className="h-5 w-5" />,
     accent: "#f59e0b",
   },
 ];
@@ -1436,6 +1452,8 @@ const creatingLevelCards: CreatingLevelCard[] = [
 type GeneralLevelCard = {
   id: GeneralLevel;
   title: string;
+  subtitle: string;
+  spec: string;
   desc: string;
   icon: React.ReactNode;
   accent: string;
@@ -1445,22 +1463,28 @@ const generalLevelCards: GeneralLevelCard[] = [
   {
     id: "basic",
     title: "Básico",
+    subtitle: "Dia a dia",
+    spec: "Web · office · vídeo",
     desc: "Navegar, planilhas, vídeo, videochamada. Roda tudo isso sem suar.",
-    icon: <Briefcase className="h-4 w-4" />,
+    icon: <Briefcase className="h-5 w-5" />,
     accent: "#64748b",
   },
   {
     id: "performance",
     title: "Com desempenho",
+    subtitle: "Multitarefa",
+    spec: "144Hz · home office",
     desc: "Multitarefa pesada, monitor 144Hz, jogos leves, home office sério.",
-    icon: <LayoutGrid className="h-4 w-4" />,
+    icon: <LayoutGrid className="h-5 w-5" />,
     accent: "#0ea5e9",
   },
   {
     id: "power",
     title: "Sem freio",
+    subtitle: "Sem limite",
+    spec: "Triple monitor · dev",
     desc: "Triple monitor, 100+ abas, dev pesado, tudo aberto o tempo todo.",
-    icon: <Layers className="h-4 w-4" />,
+    icon: <Layers className="h-5 w-5" />,
     accent: "#8b5cf6",
   },
 ];
@@ -1915,12 +1939,16 @@ function ProgramTile({
 
 function LevelCard({
   title,
+  subtitle,
+  spec,
   desc,
   icon,
   accent,
   onClick,
 }: {
   title: string;
+  subtitle: string;
+  spec: string;
   desc: string;
   icon: React.ReactNode;
   accent: string;
@@ -1930,47 +1958,120 @@ function LevelCard({
     <button
       type="button"
       onClick={onClick}
-      className="group flex w-full cursor-pointer items-center gap-4 rounded-card-md border border-edge-subtle bg-surface-0 p-5 text-left transition-all hover:-translate-y-0.5 hover:border-edge-strong"
-      style={{ boxShadow: "0 8px 24px -12px rgba(0,0,0,0.5)" }}
+      aria-label={title}
+      className="group relative flex w-full cursor-pointer flex-col overflow-hidden rounded-[var(--radius-card-lg)] border border-edge-subtle bg-surface-0 text-left transition-all duration-300 hover:-translate-y-1 hover:border-edge-strong"
+      style={{ boxShadow: "0 16px 40px -18px rgba(0,0,0,0.55)" }}
     >
+      {/* Hero — accent-tinted, no photo needed */}
       <div
-        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-card-sm transition-all"
+        className="relative aspect-[16/10] w-full overflow-hidden"
         style={{
-          background: `linear-gradient(135deg, ${accent}25 0%, ${accent}08 100%)`,
-          color: accent,
-          boxShadow: `inset 0 0 0 1px ${accent}30`,
+          background: `radial-gradient(120% 130% at 22% 0%, ${accent}26 0%, transparent 55%), linear-gradient(160deg, ${accent}16 0%, rgba(0,0,0,0) 62%)`,
         }}
       >
-        {icon}
-      </div>
-      <div className="min-w-0 flex-1">
-        <p
-          className="text-ink-strong"
+        {/* Blueprint grid */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.18]"
           style={{
-            fontFamily: "var(--font-family-figtree)",
-            fontSize: "var(--text-base)",
-            fontWeight: 700,
-            letterSpacing: "-0.01em",
+            backgroundImage: `linear-gradient(${accent}55 1px, transparent 1px), linear-gradient(90deg, ${accent}55 1px, transparent 1px)`,
+            backgroundSize: "22px 22px",
+            WebkitMaskImage: "radial-gradient(circle at 28% 18%, #000 0%, transparent 78%)",
+            maskImage: "radial-gradient(circle at 28% 18%, #000 0%, transparent 78%)",
           }}
+        />
+        {/* Hover glow */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+          style={{ background: `radial-gradient(circle at 50% 45%, ${accent}33, transparent 60%)` }}
+        />
+        {/* Oversized ghost glyph */}
+        <div
+          className="pointer-events-none absolute -bottom-5 -right-3 origin-bottom-right scale-[5.5] opacity-[0.12] transition-all duration-500 group-hover:scale-[6] group-hover:opacity-[0.2]"
+          style={{ color: accent }}
+          aria-hidden="true"
         >
-          {title}
-        </p>
-        <p
-          className="mt-0.5 text-zinc-400"
+          {icon}
+        </div>
+        {/* Eyebrow */}
+        <span
+          className="absolute left-5 top-5 uppercase"
           style={{
             fontFamily: "var(--font-family-inter)",
             fontSize: "var(--text-caption)",
-            lineHeight: 1.5,
+            letterSpacing: "0.22em",
+            fontWeight: 700,
+            color: accent,
+          }}
+        >
+          {subtitle}
+        </span>
+        {/* Icon tile */}
+        <div
+          className="absolute bottom-5 left-5 flex h-14 w-14 items-center justify-center rounded-card-sm transition-transform duration-500 group-hover:scale-105"
+          style={{
+            background: `linear-gradient(135deg, ${accent}30 0%, ${accent}0a 100%)`,
+            color: accent,
+            boxShadow: `inset 0 0 0 1px ${accent}40`,
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          {icon}
+        </div>
+        {/* Spec chip */}
+        <span
+          className="absolute bottom-5 right-5 inline-flex items-center rounded-full border border-edge bg-black/45 px-3 py-1 text-ink-strong backdrop-blur"
+          style={{
+            fontFamily: "var(--font-family-inter)",
+            fontSize: "var(--text-caption)",
+            fontWeight: 700,
+            letterSpacing: "0.02em",
+          }}
+        >
+          {spec}
+        </span>
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-1 flex-col gap-2.5 p-5">
+        <h3
+          className="text-ink-strong"
+          style={{
+            fontFamily: "var(--font-family-figtree)",
+            fontSize: "clamp(19px, 1.8vw, 22px)",
+            fontWeight: 800,
+            letterSpacing: "-0.02em",
+            lineHeight: 1.1,
+          }}
+        >
+          {title}
+        </h3>
+        <p
+          className="text-zinc-400"
+          style={{
+            fontFamily: "var(--font-family-inter)",
+            fontSize: "var(--text-sm)",
+            lineHeight: 1.55,
           }}
         >
           {desc}
         </p>
+        <div
+          className="mt-auto flex items-center gap-1.5 pt-1 text-ink transition-colors group-hover:text-ink-strong"
+          style={{
+            fontFamily: "var(--font-family-inter)",
+            fontSize: "var(--text-caption)",
+            fontWeight: 700,
+            letterSpacing: "0.02em",
+          }}
+        >
+          <span>Escolher</span>
+          <ArrowRight
+            size={13}
+            className="transition-transform duration-300 group-hover:translate-x-1"
+            style={{ color: accent }}
+          />
+        </div>
       </div>
-      <ArrowRight
-        size={16}
-        className="shrink-0 text-zinc-600 transition-all group-hover:translate-x-1"
-        style={{ color: accent }}
-      />
     </button>
   );
 }
@@ -2232,11 +2333,13 @@ function QuizFlow({
               title="Como você joga?"
               subtitle="Define se vamos priorizar FPS bruto, refresh-rate alto ou estabilidade de live."
             />
-            <div className="mx-auto max-w-[640px] space-y-2.5">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {gamingLevelCards.map((c) => (
                 <LevelCard
                   key={c.id}
                   title={c.title}
+                  subtitle={c.subtitle}
+                  spec={c.spec}
                   desc={c.desc}
                   icon={c.icon}
                   accent={c.accent}
@@ -2342,11 +2445,13 @@ function QuizFlow({
               title="Qual seu nível de uso?"
               subtitle="Hobby pede uma máquina ágil. Profissional pede CPU forte, RAM sobrando e render que respeita prazo."
             />
-            <div className="mx-auto max-w-[640px] space-y-2.5">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {creatingLevelCards.map((c) => (
                 <LevelCard
                   key={c.id}
                   title={c.title}
+                  subtitle={c.subtitle}
+                  spec={c.spec}
                   desc={c.desc}
                   icon={c.icon}
                   accent={c.accent}
@@ -2373,11 +2478,13 @@ function QuizFlow({
               title="Quanto desempenho você quer?"
               subtitle="Pra rodar planilha, navegador e vídeo o básico já entrega. Multitarefa pesada pede outro patamar."
             />
-            <div className="mx-auto max-w-[640px] space-y-2.5">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {generalLevelCards.map((c) => (
                 <LevelCard
                   key={c.id}
                   title={c.title}
+                  subtitle={c.subtitle}
+                  spec={c.spec}
                   desc={c.desc}
                   icon={c.icon}
                   accent={c.accent}

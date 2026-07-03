@@ -30,7 +30,7 @@ import { getPrimaryProductImage, getVisibleCatalogProducts } from "./productPres
 import { getPreOrderInfo } from "./PreOrderData";
 import { BrindePill, PreOrderPill } from "./section";
 import { formatBRL, parseBRL, formatCep } from "../../utils/format";
-import { COUPONS, GIFT_THRESHOLD } from "../../utils/commerce";
+import { COUPONS, GIFT_THRESHOLD, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { toast } from "sonner";
 
 export function CartPage() {
@@ -92,8 +92,9 @@ export function CartPage() {
     : shippingOptions && selectedShipping
     ? shippingOptions.find((o) => o.id === selectedShipping)?.price ?? 0
     : 0;
-  const maxPointsRedeem = Math.min(userPoints, Math.floor((subtotal - discountValue) * 0.3));
-  const pointsValue = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
+  const maxPointsRedeem = maxRedeemablePoints(userPoints, subtotal - discountValue);
+  const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
+  const pointsValue = pointsToBRL(pointsUsed);
   const baseAfterPoints = subtotal - discountValue + shippingPrice - pointsValue;
   const pixDiscount = baseAfterPoints * 0.1;
   const giftProgress = Math.min(100, (subtotal / GIFT_THRESHOLD) * 100);
