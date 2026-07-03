@@ -476,12 +476,11 @@ export function ProductsPage() {
     }
   };
   const toggleFeaturedCategory = (label: string) => {
-    const route = featuredCategoryRoutes[label];
-    if (route) {
-      setSearchParams(new URLSearchParams(getCatalogHref(route).split("?")[1]), { replace: false });
-      return;
-    }
-
+    // Filtra via selectedFeaturedCategories — o filtro (productsWithoutPriceFilter)
+    // casa por featuredCategoryFilters.matches (nome/subcategoria normalizada), sem
+    // depender de slug. Bug corrigido: o branch antigo com route+setSearchParams
+    // usava getCatalogHref(route).split("?")[1] (=undefined, o href é slug sem "?"),
+    // então o filtro de categoria (Teclado/Mouse/Headset) não ia a lugar nenhum.
     toggleSet(setSelectedFeaturedCategories, label);
     setSelectedCategories(new Set());
     setSelectedSubcategories(new Set());
@@ -1427,29 +1426,9 @@ export function ProductsPage() {
                               </button>
                             </div>
 
-                            {/* Carousel arrows (multi-image) */}
-                            {productImages.length > 1 && (
-                              <>
-                                {imgIdx > 0 && (
-                                  <button
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setImageIdx(imageKey, imgIdx - 1, productImages.length); }}
-                                    className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 lg:w-8 lg:h-8 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 text-ink-strong hover:bg-black/50 z-10"
-                                    aria-label="Imagem anterior"
-                                  >
-                                    <ChevronLeft size={18} />
-                                  </button>
-                                )}
-                                {imgIdx < productImages.length - 1 && (
-                                  <button
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setImageIdx(imageKey, imgIdx + 1, productImages.length); }}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 lg:w-8 lg:h-8 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 delay-75 text-ink-strong hover:bg-black/50 z-10"
-                                    aria-label="Próxima imagem"
-                                  >
-                                    <ChevronRight size={18} />
-                                  </button>
-                                )}
-                              </>
-                            )}
+                            {/* Setas de navegação de imagem removidas de propósito:
+                                carregar múltiplas imagens por card pesa (mesmo lazy).
+                                O card mostra só a 1ª imagem (productImages[0]). */}
 
                             {/* Quick add — floating pill on hover (desktop only) */}
                             <button
