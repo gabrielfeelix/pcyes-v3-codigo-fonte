@@ -4,7 +4,7 @@ import { getCategoryFromSlug } from "../lib/slug";
 import { motion, AnimatePresence } from "motion/react";
 import {
   SlidersHorizontal, ArrowUpDown, ChevronDown, Grid3X3, LayoutList,
-  Heart, ShoppingBag, Star, X, ArrowUpRight, ChevronLeft,
+  Heart, ShoppingCart, Star, X, ArrowUpRight, ChevronLeft,
   ChevronRight, Check, Eye, Minus, Plus,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -1336,7 +1336,7 @@ export function ProductsPage() {
               {filtered.length === 0 ? (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
                   <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-foreground/[0.05] flex items-center justify-center">
-                    <ShoppingBag size={24} className="text-foreground/30" />
+                    <ShoppingCart size={24} className="text-foreground/30" />
                   </div>
                   <p className="text-foreground mb-3" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: "var(--font-weight-medium)" }}>Nenhum produto encontrado</p>
                   <p className="text-foreground/50 mb-8" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-base)" }}>Tente ajustar os filtros ou mudar os termos de busca.</p>
@@ -1436,7 +1436,7 @@ export function ProductsPage() {
                               className="hidden lg:flex absolute bottom-4 left-1/2 z-20 -translate-x-1/2 translate-y-2 whitespace-nowrap rounded-full px-10 py-3 text-[var(--text-sm)] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 cursor-pointer"
                               style={{ background: "var(--gradient-buy)", color: "white", fontFamily: "var(--font-family-inter)", fontWeight: 700, letterSpacing: "0.04em", boxShadow: "var(--shadow-buy-cta-sm)" }}
                             >
-                              <span className="inline-flex items-center gap-2"><ShoppingBag size={14} strokeWidth={2} /> Comprar</span>
+                              <span className="inline-flex items-center gap-2"><ShoppingCart size={14} strokeWidth={2} /> Comprar</span>
                             </button>
                           </div>
 
@@ -1499,7 +1499,7 @@ export function ProductsPage() {
                               className="lg:hidden mt-3 flex w-full items-center justify-center gap-2 rounded-full py-2.5 cursor-pointer"
                               style={{ background: "var(--gradient-buy)", color: "white", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700, letterSpacing: "0.04em", boxShadow: "var(--shadow-buy-cta-sm)" }}
                             >
-                              <ShoppingBag size={15} strokeWidth={2} /> Comprar
+                              <ShoppingCart size={15} strokeWidth={2} /> Comprar
                             </button>
                           </div>
                         </motion.div>
@@ -1549,7 +1549,7 @@ export function ProductsPage() {
                             <button onClick={() => handleAddToCart(displayProduct)}
                               className="sm:hidden mt-2.5 flex w-full items-center justify-center gap-2 rounded-full py-2 cursor-pointer"
                               style={{ background: "var(--gradient-buy)", color: "white", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700, letterSpacing: "0.04em", boxShadow: "var(--shadow-buy-cta-sm)" }}
-                            ><ShoppingBag size={14} strokeWidth={2} /> Comprar</button>
+                            ><ShoppingCart size={14} strokeWidth={2} /> Comprar</button>
                           </div>
                           {/* Favorite — absolute top-right on mobile, inline column on desktop */}
                           <button onClick={() => toggleFavorite(displayProduct.id)}
@@ -1573,7 +1573,7 @@ export function ProductsPage() {
                                 letterSpacing: "0.04em",
                                 boxShadow: "var(--shadow-buy-cta-sm)",
                               }}
-                            ><ShoppingBag size={14} strokeWidth={2} /> Comprar</button>
+                            ><ShoppingCart size={14} strokeWidth={2} /> Comprar</button>
                           </div>
                         </motion.div>
                       );
@@ -1897,7 +1897,7 @@ export function ProductsPage() {
                       boxShadow: "var(--shadow-buy-cta)",
                     }}
                   >
-                    <ShoppingBag size={16} strokeWidth={2} /> Comprar
+                    <ShoppingCart size={16} strokeWidth={2} /> Comprar
                   </button>
                 </div>
               </div>

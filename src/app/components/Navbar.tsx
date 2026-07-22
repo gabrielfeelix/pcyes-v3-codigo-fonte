@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef, useMemo, type ReactNode } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
-import { Search, ShoppingBag, User, Menu, X, Clock, TrendingUp, ArrowUpRight, Heart, ChevronRight, ChevronLeft, ChevronDown, Download, FileText, Sparkles, Grid2x2, Box, Monitor, Cpu, Radio, Globe2, MapPin, HelpCircle } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, X, Clock, TrendingUp, ArrowUpRight, Heart, ChevronRight, ChevronLeft, ChevronDown, Download, FileText, Sparkles, Grid2x2, Box, Monitor, Cpu, Radio, Globe2, MapPin, HelpCircle, Hand } from "lucide-react";
+import { openVLibras } from "./VLibras";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
 import { useCart } from "./CartContext";
@@ -12,7 +13,6 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/tooltip";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "./ui/dropdown-menu";
 import { allProducts, type Product } from "./productsData";
-import { ThemeToggle } from "./ThemeToggle";
 import { getCatalogHref, getPrimaryProductImage, getProductSubcategory, getProductSwatches, getVisibleCatalogProducts } from "./productPresentation";
 import { searchProducts } from "../../utils/search";
 
@@ -371,7 +371,7 @@ const megaMenus: Record<string, MegaMenu> = {
 interface NavItem { label: string; href?: string; mega?: string; emphasis?: "green" | "build" }
 
 const navItems: NavItem[] = [
-  { label: "Novidades", href: "/produtos", emphasis: "green" },
+  { label: "Novidades", href: "/produtos" },
   { label: "Hardware", mega: "hardware", href: getCatalogHref({ category: "Hardware" }) },
   { label: "Periféricos", mega: "perifericos", href: getCatalogHref({ category: "Periféricos" }) },
   { label: "Computadores", mega: "computadores", href: getCatalogHref({ category: "Computadores" }) },
@@ -533,6 +533,18 @@ export function Navbar() {
     if (searchPanelOpen) setSearchCategoryOpen(false);
   }, [searchPanelOpen]);
 
+  useEffect(() => {
+    if (!searchCategoryOpen) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (searchPanelRef.current && !searchPanelRef.current.contains(target)) {
+        setSearchCategoryOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [searchCategoryOpen]);
+
   const searchCategoryMatch = useMemo(() => {
     const map: Record<string, string[]> = {
       "Hardware": ["Hardware"],
@@ -660,13 +672,6 @@ export function Navbar() {
           <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Favoritos</TooltipContent>
         </Tooltip>
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="inline-flex"><ThemeToggle showExpanded={showExpanded} navbarIsDark={isDark} /></span>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Tema</TooltipContent>
-        </Tooltip>
-
         {isLoggedIn ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -707,7 +712,7 @@ export function Navbar() {
         <Tooltip>
           <TooltipTrigger asChild>
             <button onClick={() => setCartOpen(true)} aria-label={`Carrinho${totalItems > 0 ? ` (${totalItems} ${totalItems === 1 ? "item" : "itens"})` : ""}`} className={`relative w-10 h-10 flex items-center justify-center transition-colors cursor-pointer ${iconColor}`}>
-              <ShoppingBag size={20} strokeWidth={1.5} aria-hidden="true" />
+              <ShoppingCart size={20} strokeWidth={1.5} aria-hidden="true" />
               <AnimatePresence>
                 {totalItems > 0 && (
                   <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
@@ -1348,7 +1353,7 @@ export function Navbar() {
 	                className={`relative flex h-10 w-10 items-center justify-center transition-colors cursor-pointer ${iconColor}`}
 	                aria-label="Abrir carrinho"
 	              >
-	                <ShoppingBag size={20} strokeWidth={1.6} />
+	                <ShoppingCart size={20} strokeWidth={1.6} />
 	                <AnimatePresence>
 	                  {totalItems > 0 && (
 	                    <motion.span
@@ -1368,9 +1373,10 @@ export function Navbar() {
 
           {/* Top row — desktop */}
           <div
-            className="max-w-[1760px] mx-auto px-5 md:px-8 hidden lg:flex relative items-center transition-all duration-500"
+            className="px-5 md:px-[72px] hidden lg:block transition-all duration-500"
             style={{ height: showExpanded ? 96 : 92 }}
           >
+            <div className="relative mx-auto flex h-full max-w-[1600px] items-center">
             {/* Left: logo */}
             <div className="flex items-center flex-shrink-0">
               <Link to="/" className="flex-shrink-0">
@@ -1379,7 +1385,7 @@ export function Navbar() {
             </div>
 
             {/* Search (absolute center) */}
-            <div ref={searchPanelRef} className="absolute left-1/2 -translate-x-1/2 w-full max-w-[680px]">
+            <div ref={searchPanelRef} className="relative z-[70] flex-1 ml-8 mr-16 md:ml-12">
               <form
                 onSubmit={handleSearchSubmit}
                 className="relative w-full"
@@ -1815,6 +1821,29 @@ export function Navbar() {
             {/* Right icons */}
             <TooltipProvider delayDuration={200}>
               <div className="ml-auto flex flex-shrink-0 items-center gap-1">
+                {/* Perfil / Login — primeiro item, com rótulo (estilo KaBuM) */}
+                <button
+                  onClick={handleUserClick}
+                  className={`relative flex h-10 items-center gap-2 pl-1 pr-2 transition-colors cursor-pointer ${iconColor}`}
+                  aria-label={isLoggedIn ? "Minha conta" : "Entrar ou cadastrar"}
+                >
+                  {isLoggedIn ? (
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/20 text-primary" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}>J</span>
+                  ) : (
+                    <User size={20} strokeWidth={1.5} />
+                  )}
+                  <span className="hidden flex-col text-left leading-[1.15] xl:flex" style={{ fontFamily: "var(--font-family-inter)" }}>
+                    {isLoggedIn ? (
+                      <span style={{ fontSize: "var(--text-sm)", fontWeight: 600 }}>Minha conta</span>
+                    ) : (
+                      <>
+                        <span className="opacity-55" style={{ fontSize: "var(--text-caption)" }}>Entre ou</span>
+                        <span style={{ fontSize: "var(--text-sm)", fontWeight: 600 }}>Cadastre-se</span>
+                      </>
+                    )}
+                  </span>
+                </button>
+
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
@@ -1826,6 +1855,19 @@ export function Navbar() {
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Ajuda</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={openVLibras}
+                      className={`relative flex h-10 w-10 items-center justify-center transition-colors cursor-pointer ${iconColor}`}
+                      aria-label="Acessibilidade em Libras"
+                    >
+                      <Hand size={20} strokeWidth={1.5} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Acessibilidade · Libras</TooltipContent>
                 </Tooltip>
 
                 <Tooltip>
@@ -1854,29 +1896,6 @@ export function Navbar() {
                   <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Favoritos</TooltipContent>
                 </Tooltip>
 
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex"><ThemeToggle showExpanded={showExpanded} navbarIsDark={isDark} /></span>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>Tema</TooltipContent>
-                </Tooltip>
-
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={handleUserClick}
-                      className={`relative flex h-10 w-10 items-center justify-center transition-colors cursor-pointer ${iconColor}`}
-                      aria-label={isLoggedIn ? "Conta" : "Login"}
-                    >
-                      {isLoggedIn ? (
-                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/20 text-primary" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}>J</span>
-                      ) : (
-                        <User size={20} strokeWidth={1.5} />
-                      )}
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" sideOffset={6} className={tooltipContentClass}>{isLoggedIn ? "Minha conta" : "Entrar"}</TooltipContent>
-                </Tooltip>
 
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -1885,7 +1904,7 @@ export function Navbar() {
                       className={`relative flex h-10 w-10 items-center justify-center transition-colors cursor-pointer ${iconColor}`}
                       aria-label="Carrinho"
                     >
-                      <ShoppingBag size={20} strokeWidth={1.5} />
+                      <ShoppingCart size={20} strokeWidth={1.5} />
                       <AnimatePresence>
                         {totalItems > 0 && (
                           <motion.span
@@ -1905,6 +1924,7 @@ export function Navbar() {
                 </Tooltip>
               </div>
             </TooltipProvider>
+            </div>
           </div>
 
           {/* Category links (expanded or desktop hamburger open) */}

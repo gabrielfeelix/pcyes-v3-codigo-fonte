@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import {
   Package, Heart, MapPin, User, CreditCard, HelpCircle, Shield, LogOut,
-  ChevronRight, Truck, Check, Clock, X as XIcon, Star, ShoppingBag, Trash2,
+  ChevronRight, Truck, Check, Clock, X as XIcon, Star, ShoppingCart, Trash2,
   ArrowLeft, Copy, Receipt, Info, Share2, AlertCircle, PackageCheck,
   LayoutDashboard, Sparkles, LayoutGrid
 } from "lucide-react";
@@ -1017,7 +1017,7 @@ export function ProfilePage() {
                                       <button onClick={(e) => { e.stopPropagation(); addItem({ ...firstItem, id: firstItem.name, price: firstItem.price, originalPrice: firstItem.price, category: "", brand: "", description: "", rating: 5, reviews: 0, images: [firstItem.image] } as any); }}
                                         className="inline-flex items-center gap-1.5 min-h-[44px] md:min-h-[24px] px-3 py-1.5 bg-primary text-primary-foreground hover:brightness-110 transition-all cursor-pointer"
                                         style={{ borderRadius: "var(--radius-card)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                                        <ShoppingBag size={12} /> Comprar de novo
+                                        <ShoppingCart size={12} /> Comprar de novo
                                       </button>
                                       {reviewedOrders.has(order.id) ? (
                                         <span className="inline-flex items-center gap-1.5 min-h-[44px] md:min-h-[24px] px-3 py-1.5 text-green-500"
@@ -1051,7 +1051,7 @@ export function ProfilePage() {
                                     <button onClick={(e) => e.stopPropagation()}
                                       className="inline-flex items-center gap-1.5 min-h-[44px] md:min-h-[24px] px-3 py-1.5 bg-primary text-primary-foreground hover:brightness-110 transition-all cursor-pointer"
                                       style={{ borderRadius: "var(--radius-card)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                                      <ShoppingBag size={12} /> Comprar de novo
+                                      <ShoppingCart size={12} /> Comprar de novo
                                     </button>
                                   )}
                                 </div>
@@ -1320,7 +1320,7 @@ export function ProfilePage() {
                       <p className="text-foreground mb-3" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" }}>Como ganhar mais</p>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                         {[
-                          { icon: ShoppingBag, title: "Cada compra", desc: "1 pt a cada R$ 10 gastos" },
+                          { icon: ShoppingCart, title: "Cada compra", desc: "1 pt a cada R$ 10 gastos" },
                           { icon: Star, title: "Avaliar produtos", desc: "+5 pts por avaliação" },
                           { icon: Share2, title: "Indicar amigos", desc: "+50 pts quando o amigo compra" },
                         ].map((item) => (
@@ -1575,7 +1575,7 @@ export function ProfilePage() {
                                 disabled={!inStock}
                                 className={`w-full min-h-[44px] md:min-h-[24px] py-1.5 inline-flex items-center justify-center gap-1.5 transition-all cursor-pointer ${inStock ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-foreground/8 text-foreground/40 cursor-not-allowed"}`}
                                 style={{ borderRadius: "var(--radius-card)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
-                              ><ShoppingBag size={11} /> {inStock ? "Comprar" : "Avisar quando voltar"}</button>
+                              ><ShoppingCart size={11} /> {inStock ? "Comprar" : "Avisar quando voltar"}</button>
                             </div>
                           </div>
                         );

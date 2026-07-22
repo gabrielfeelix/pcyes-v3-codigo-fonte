@@ -2,7 +2,7 @@ import { useMemo, useState, useRef, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import {
-  ShoppingBag, Heart, Star, ChevronLeft, ChevronRight, ChevronDown, Truck,
+  ShoppingCart, Heart, Star, ChevronLeft, ChevronRight, ChevronDown, Truck,
   Check, Share2, MapPin, CreditCard, Banknote, QrCode,
   Loader2, ArrowUpRight, Zap, X, Clock, Info,
   Rocket, CalendarDays, ShieldCheck, ZoomIn,
@@ -2751,7 +2751,7 @@ export function ProductPage() {
                           boxShadow: "var(--shadow-buy-cta-sm)",
                         }}
                       >
-                        <span className="inline-flex items-center gap-2"><ShoppingBag size={14} strokeWidth={2} /> Comprar</span>
+                        <span className="inline-flex items-center gap-2"><ShoppingCart size={14} strokeWidth={2} /> Comprar</span>
                       </button>
                     </div>
 

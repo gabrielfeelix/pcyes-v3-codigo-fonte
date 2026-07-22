@@ -11,6 +11,7 @@ import { WelcomePopup } from "./WelcomePopup";
 import { Navbar } from "./Navbar";
 import { AnnouncementBar } from "./AnnouncementBar";
 import { ThemeProvider } from "./ThemeProvider";
+import { VLibras } from "./VLibras";
 
 export function RootLayout() {
   const { pathname } = useLocation();
@@ -44,6 +45,7 @@ export function RootLayout() {
                     <Outlet />
                   </main>
                 </div>
+                <VLibras />
               </div>
             </CheckoutPrefsProvider>
           </CartProvider>

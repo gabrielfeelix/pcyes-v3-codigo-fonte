@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
-import { X, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 
@@ -459,7 +459,7 @@ export function InRealLifeSection() {
                         className="flex-shrink-0 w-11 h-11 md:w-9 md:h-9 rounded-full border border-foreground/15 text-foreground/40 hover:text-foreground hover:border-foreground/40 transition-all duration-300 cursor-pointer flex items-center justify-center"
                         title="Comprar"
                       >
-                        <ShoppingBag size={14} />
+                        <ShoppingCart size={14} />
                       </button>
                     </motion.div>
                   ))}
@@ -476,7 +476,7 @@ export function InRealLifeSection() {
                     fontWeight: "var(--font-weight-medium)",
                   }}
                 >
-                  <ShoppingBag size={14} />
+                  <ShoppingCart size={14} />
                   Comprar todos
                 </button>
               </div>

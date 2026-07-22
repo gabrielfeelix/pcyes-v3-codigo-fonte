@@ -2,7 +2,7 @@
 
 import { useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "react-router";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useAuth } from "./AuthContext";
 import { allProducts, type Product } from "./productsData";
@@ -186,7 +186,7 @@ export function ProductCard({
             }}
             className="hidden md:inline-flex absolute bottom-4 left-1/2 z-20 -translate-x-1/2 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 cursor-pointer shadow-[var(--shadow-buy-cta-sm)]"
           >
-            <ShoppingBag size={14} strokeWidth={2} /> {cfg.quickAddLabel}
+            <ShoppingCart size={14} strokeWidth={2} /> {cfg.quickAddLabel}
           </CTAButton>
         )}
       </div>
@@ -310,7 +310,7 @@ export function ProductCard({
           }}
           className="md:hidden mt-3"
         >
-          <ShoppingBag size={14} strokeWidth={2} /> {cfg.quickAddLabel}
+          <ShoppingCart size={14} strokeWidth={2} /> {cfg.quickAddLabel}
         </CTAButton>
       )}
     </div>

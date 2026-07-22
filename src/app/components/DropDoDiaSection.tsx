@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { Link } from "react-router";
 import { motion } from "motion/react";
-import { ArrowRight, Flame, ShoppingBag } from "lucide-react";
+import { ArrowRight, Flame, ShoppingCart } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { allProducts, type Product } from "./productsData";
@@ -215,7 +215,7 @@ export function DropDoDiaSection() {
                       onClick={handleAdd}
                       className="mt-5 cursor-pointer"
                     >
-                      <ShoppingBag size={14} strokeWidth={2.2} />
+                      <ShoppingCart size={14} strokeWidth={2.2} />
                       Comprar
                     </CTAButton>
                   </div>

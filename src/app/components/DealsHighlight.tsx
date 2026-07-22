@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import { motion, useInView } from "motion/react";
-import { ArrowRight, Heart, ShoppingBag, Zap } from "lucide-react";
+import { ArrowRight, Heart, ShoppingCart, Zap } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { useFavorites } from "./FavoritesContext";
@@ -62,7 +62,7 @@ export function DealsHighlight({
       ref={ref}
       className="px-5 md:px-[72px]"
       style={{
-        paddingTop: "var(--space-section-md)",
+        paddingTop: "var(--space-section-sm)",
         paddingBottom: "var(--space-section-lg)",
         background: "var(--surface-0)",
       }}

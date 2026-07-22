@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  ShoppingBag,
+  ShoppingCart,
   Trash2,
   Minus,
   Plus,
@@ -185,7 +185,7 @@ export function CartPage() {
                 boxShadow: "inset 0 1px 0 rgba(var(--foreground-rgb), 0.06)",
               }}
             >
-              <ShoppingBag size={36} strokeWidth={1.5} className="text-ink-subtle" />
+              <ShoppingCart size={36} strokeWidth={1.5} className="text-ink-subtle" />
             </div>
             <p
               className="mb-3 text-primary"

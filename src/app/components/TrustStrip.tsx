@@ -71,7 +71,7 @@ export function TrustStrip() {
   return (
     <section
       ref={ref}
-      className="border-y border-edge-subtle px-5 py-6 md:px-[72px] md:pt-7 md:pb-12"
+      className="border-y border-edge-subtle px-5 py-6 md:px-[72px] md:py-8"
       style={{ background: "var(--surface-0)" }}
     >
       {/* Mobile: 2 cards visible, auto-rotating between the two pairs every 2s.
