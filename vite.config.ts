@@ -195,14 +195,20 @@ function prerenderSeoHtml() {
   const subLabelBySlug = new Map<string, string>()
   const productsByCat = new Map<string, any[]>()
   const productsByCatSub = new Map<string, any[]>()
+  /* Indexa pela TAXONOMIA, não pelos campos crus do produto. Indexando pelo
+     dado bruto, a chave não batia com a URL gerada: o rótulo da subcategoria
+     não era encontrado e o H1 do HTML cru saía com o slug
+     ("suportes-e-ergonomia — Periféricos"), que é justamente o que o crawler
+     lê. Os agrupamentos de produto por listagem tinham o mesmo furo. */
   for (const prod of allProducts as any[]) {
     productByUrl.set(getProductUrl(prod), prod)
-    const catSlug = getCategorySlug(prod.category)
+    const node = resolveTaxonomyNode(prod)
+    const catSlug = getCategorySlug(node?.category ?? prod.category)
     ;(productsByCat.get(catSlug) ?? productsByCat.set(catSlug, []).get(catSlug)!).push(prod)
-    if (prod.subcategory) {
-      const subSlug = getSubcategorySlug(prod.subcategory)
+    const subSlug = node?.slug ?? (prod.subcategory ? getSubcategorySlug(prod.subcategory) : '')
+    if (subSlug) {
       const key = `${catSlug}/${subSlug}`
-      if (!subLabelBySlug.has(key)) subLabelBySlug.set(key, prod.subcategory)
+      if (!subLabelBySlug.has(key)) subLabelBySlug.set(key, node?.label ?? prod.subcategory)
       ;(productsByCatSub.get(key) ?? productsByCatSub.set(key, []).get(key)!).push(prod)
     }
   }
