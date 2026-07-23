@@ -31,7 +31,43 @@ type RightPanel =
   | { type: "downloads"; title: string; items: DownloadItem[] };
 
 interface MegaSubItem { label: string; href: string; right: RightPanel }
-interface MegaMenu { title: string; subItems: MegaSubItem[] }
+
+/**
+ * Banner de collab no megamenu.
+ *
+ * Collab não é categoria de produto: é campanha com marca parceira, prazo e
+ * arte própria. Por isso tem estrutura separada, em vez da miniatura circular
+ * usada por Hardware/Periféricos.
+ *
+ * Cada campo é um atributo simples, pensado para quem cadastra no Magento:
+ * nenhum aninhamento, nada calculado. O mínimo obrigatório é `title`, `image`
+ * e `href` — o resto é opcional e some sozinho quando vazio.
+ */
+interface CollabBanner {
+  /** Nome da campanha, ex.: "Maringá FC × PCYES". */
+  title: string;
+  /** Arte do banner. Proporção recomendada 4:3; o card recorta pelo centro. */
+  image: string;
+  /** Destino do clique. */
+  href: string;
+  /** Linha acima do título, ex.: "COLEÇÃO OFICIAL". */
+  eyebrow?: string;
+  /** Chamada curta sob o título. Uma linha. */
+  tagline?: string;
+  /** Rótulo do botão. Padrão: "Ver coleção". */
+  cta?: string;
+  /** Cor da marca parceira (hex) para borda e brilho no hover. */
+  accent?: string;
+  /** Muda a pill de estado. Padrão: "ativa". */
+  status?: "ativa" | "em-breve" | "encerrada";
+}
+
+interface MegaMenu {
+  title: string;
+  subItems: MegaSubItem[];
+  /** Quando presente, o painel vira grade de banners em vez de miniaturas. */
+  banners?: CollabBanner[];
+}
 
 const megaMenus: Record<string, MegaMenu> = {
   hardware: {
@@ -279,6 +315,29 @@ const megaMenus: Record<string, MegaMenu> = {
 
   collab: {
     title: "Collabs",
+    /* Painel de banners (ver CollabBanner). Para publicar uma collab nova,
+       basta acrescentar um item aqui — nenhum outro arquivo muda. */
+    banners: [
+      {
+        title: "Maringá FC × PCYES",
+        eyebrow: "Coleção oficial",
+        tagline: "Vista o manto no seu setup.",
+        image: "https://pcyes-cdn.oderco.com.br/Produtos/Cadeira-Gamer/Maringafc/3.png",
+        href: "/maringa-fc",
+        cta: "Ver coleção",
+        accent: "#16a34a",
+        status: "ativa",
+      },
+      {
+        title: "Sua marca aqui",
+        eyebrow: "Parcerias",
+        tagline: "Leve sua marca para o setup de quem joga.",
+        image: "https://pcyes-cdn.oderco.com.br/Produtos/Cadeira-Gamer/Maringafc/1.png",
+        href: "/fale-conosco",
+        cta: "Falar com a gente",
+        status: "em-breve",
+      },
+    ],
     subItems: [
       {
         label: "Maringá FC × PCYES", href: "/maringa-fc",
@@ -2019,6 +2078,97 @@ export function Navbar() {
                 onMouseEnter={() => handleMegaEnter(activeMega)} onMouseLeave={handleMegaLeave}
               >
                 <div className="mx-auto max-w-[1180px] px-5 py-6 md:px-8">
+                  {activeMegaData.banners ? (
+                    /* Collabs: campanha com marca parceira pede arte grande e
+                       nome legível — não a miniatura circular de categoria.
+                       A grade acompanha a quantidade para um banner sozinho não
+                       ficar espremido em um terço da largura. */
+                    <div
+                      className={`grid gap-4 md:gap-5 ${
+                        activeMegaData.banners.length === 1
+                          ? "grid-cols-1"
+                          : activeMegaData.banners.length === 2
+                            ? "grid-cols-1 md:grid-cols-2"
+                            : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                      }`}
+                    >
+                      {activeMegaData.banners.map((banner) => {
+                        const accent = banner.accent ?? "var(--primary)";
+                        const upcoming = banner.status === "em-breve";
+                        const ended = banner.status === "encerrada";
+                        return (
+                          <Link
+                            key={banner.title}
+                            to={resolveMenuHref(banner.href)}
+                            onClick={closeMegaMenu}
+                            className="group relative block overflow-hidden rounded-[var(--radius-card-lg)] border border-foreground/8 transition-all duration-300 hover:-translate-y-0.5"
+                            style={{ ["--collab-accent" as string]: accent }}
+                          >
+                            <div className="relative aspect-[16/10] overflow-hidden">
+                              <ImageWithFallback
+                                src={banner.image}
+                                alt={banner.title}
+                                className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06] ${ended ? "grayscale" : ""}`}
+                              />
+                              {/* Escurece a base para o texto ter contraste em
+                                  qualquer arte enviada pelo time de conteúdo. */}
+                              <div
+                                className="absolute inset-0"
+                                style={{
+                                  background:
+                                    "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 42%, rgba(0,0,0,0.08) 100%)",
+                                }}
+                              />
+                              <div
+                                className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                                style={{ boxShadow: `inset 0 0 0 1.5px ${accent}, 0 0 42px -12px ${accent}` }}
+                              />
+
+                              {(upcoming || ended) && (
+                                <span
+                                  className="absolute right-3 top-3 rounded-full bg-black/65 px-2.5 py-1 text-ink-strong backdrop-blur-md"
+                                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                                >
+                                  {upcoming ? "Em breve" : "Encerrada"}
+                                </span>
+                              )}
+
+                              <div className="absolute inset-x-0 bottom-0 p-5">
+                                {banner.eyebrow && (
+                                  <span
+                                    className="mb-2 inline-block"
+                                    style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: accent }}
+                                  >
+                                    {banner.eyebrow}
+                                  </span>
+                                )}
+                                <p
+                                  className="text-ink-strong"
+                                  style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(20px, 2vw, 26px)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.02em" }}
+                                >
+                                  {banner.title}
+                                </p>
+                                {banner.tagline && (
+                                  <p
+                                    className="mt-1.5 text-ink-strong/70"
+                                    style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.4 }}
+                                  >
+                                    {banner.tagline}
+                                  </p>
+                                )}
+                                <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-black transition-transform duration-300 group-hover:gap-2.5"
+                                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}
+                                >
+                                  {banner.cta ?? "Ver coleção"}
+                                  <ArrowUpRight size={13} strokeWidth={2.4} />
+                                </span>
+                              </div>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  ) : (
                   <div className="flex items-start justify-center gap-5 overflow-x-auto pb-1 md:gap-7 xl:gap-9">
                     {activeMegaData.subItems.map((sub) => {
                       const image = getMegaCategoryImage(sub);
@@ -2053,6 +2203,7 @@ export function Navbar() {
                       );
                     })}
                   </div>
+                  )}
                 </div>
               </motion.div>
             )}
