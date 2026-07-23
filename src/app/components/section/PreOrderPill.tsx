@@ -13,7 +13,10 @@ export function PreOrderPill({ info, compact = false, className = "" }: PreOrder
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-pill ${className}`}
+      /* nowrap + shrink-0: em linhas estreitas (item do carrinho, ao lado de um
+         título que trunca) a pill era espremida e quebrava em três linhas. Ela
+         é curta e de tamanho fixo — quem cede espaço é o título. */
+      className={`inline-flex flex-shrink-0 items-center gap-1 whitespace-nowrap rounded-pill ${className}`}
       style={{
         background: "var(--gradient-preorder-orange)",
         color: "#fff",

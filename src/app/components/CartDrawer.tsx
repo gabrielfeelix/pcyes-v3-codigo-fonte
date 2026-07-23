@@ -9,7 +9,7 @@ import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { PcyesCoin } from "./PcyesCoin";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
-import { BrindePill, PreOrderPill, QtyStepper, ScrollFade } from "./section";
+import { BrindePill, Price, PreOrderPill, QtyStepper, ScrollFade } from "./section";
 import { useFocusTrap } from "../lib/useFocusTrap";
 import { getPreOrderInfo } from "./PreOrderData";
 import { formatBRL, parseBRL } from "../../utils/format";
@@ -162,18 +162,16 @@ export function CartDrawer() {
                         <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl border border-primary/15 bg-primary/[0.08] text-primary">
                           <Gift size={15} />
                         </div>
-                        <div>
-                          <p className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: "600", lineHeight: 1.2 }}>
-                            Ganhe um brinde a partir de {formatPrice(GIFT_THRESHOLD)}
-                          </p>
-                          <p className="mt-1 text-foreground/42" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.45 }}>
-                            {giftUnlocked
-                              ? giftItem
-                                ? "Seu brinde já foi selecionado e adicionado ao carrinho."
-                                : "Você desbloqueou o presente. Escolha um item especial da PCYES."
-                              : `Faltam ${formatPrice(remainingForGift)} para desbloquear seu presente.`}
-                          </p>
-                        </div>
+                        {/* Uma linha só. Antes eram título + descrição dizendo a mesma
+                            coisa (o valor do limite já aparece na régua abaixo e o
+                            botão já diz a ação), o que inchava a altura do bloco. */}
+                        <p className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: "600", lineHeight: 1.25 }}>
+                          {giftUnlocked
+                            ? giftItem
+                              ? "Brinde adicionado ao carrinho"
+                              : "Você liberou um brinde"
+                            : `Faltam ${formatPrice(remainingForGift)} para ganhar um brinde`}
+                        </p>
                       </div>
                       {giftUnlocked && (
                         <button
@@ -286,13 +284,13 @@ export function CartDrawer() {
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
                     <span className="text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>Subtotal</span>
-                    <span className="text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>{formatPrice(subtotal)}</span>
+                    <Price value={subtotal} className="text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }} />
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between pt-1">
                   <span className="text-foreground/50" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>Total</span>
-                  <span className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: "var(--font-weight-medium)" }}>{formatPrice(total)}</span>
+                  <Price value={total} label="Total" className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: "var(--font-weight-medium)" }} />
                 </div>
 
                 <button

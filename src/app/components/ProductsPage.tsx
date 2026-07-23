@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { Link, useSearchParams, useParams } from "react-router";
 import { getCategoryFromSlug } from "../lib/slug";
+import { useFocusTrap } from "../lib/useFocusTrap";
 import { motion, AnimatePresence } from "motion/react";
 import {
   SlidersHorizontal, ArrowUpDown, ChevronDown, Grid3X3, LayoutList,
@@ -378,6 +379,10 @@ export function ProductsPage() {
   const [activeImageIndex, setActiveImageIndex] = useState<Record<string, number>>({});
   const [selectedVariantIds, setSelectedVariantIds] = useState<Record<number, number>>({});
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const closeQuickView = useCallback(() => setQuickViewProduct(null), []);
+  const quickViewRef = useFocusTrap<HTMLDivElement>(!!quickViewProduct, closeQuickView);
+  const closeMobileFilters = useCallback(() => setMobileFiltersOpen(false), []);
+  const mobileFiltersRef = useFocusTrap<HTMLDivElement>(mobileFiltersOpen, closeMobileFilters);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     categories: true, brands: true, tags: true, price: true, color: true, rating: true, promo: true, attributes: true, sizes: true,
   });
@@ -902,7 +907,7 @@ export function ProductsPage() {
 
       {availableBrands.length > 0 && (
         <FilterSection title="Marca" expanded={expandedSections.brands} onToggle={() => toggleSection("brands")}>
-          <div tabIndex={0} role="group" aria-label="Opções de filtro — role para ver mais" className="space-y-1 pt-1 max-h-[260px] overflow-y-auto pr-1" style={{ scrollbarWidth: "thin" }}>
+          <div tabIndex={0} role="group" aria-label="Opções de filtro — role para ver mais" className="pcyes-scroll space-y-1 pt-1 max-h-[260px] overflow-y-auto pr-3">
             {availableBrands.map(({ label, count }) => {
               const active = selectedBrands.has(label);
               return (
@@ -947,7 +952,7 @@ export function ProductsPage() {
 
       {availableAttributes.length > 0 && (
         <FilterSection title="Atributos" expanded={expandedSections.attributes} onToggle={() => toggleSection("attributes")}>
-          <div tabIndex={0} role="group" aria-label="Opções de filtro — role para ver mais" className="space-y-1 pt-1 max-h-[260px] overflow-y-auto pr-1" style={{ scrollbarWidth: "thin" }}>
+          <div tabIndex={0} role="group" aria-label="Opções de filtro — role para ver mais" className="pcyes-scroll space-y-1 pt-1 max-h-[260px] overflow-y-auto pr-3">
             {availableAttributes.map(({ label, count }) => {
               const active = selectedAttributes.has(label);
               return (
@@ -1388,22 +1393,39 @@ export function ProductsPage() {
                               </div>
                             </Link>
 
-                            {/* Top-left: pre-order > discount > rating */}
-                            {preOrderInfo ? (
-                              <span className="absolute top-3 left-3 z-10">
+                            {/* Topo-esquerdo empilhado: pré-venda/desconto ACIMA da nota.
+                                Antes era if/else — com desconto a nota sumia, e ela é
+                                justamente o sinal de confiança que sustenta a oferta. */}
+                            <div className="absolute top-3 left-3 z-10 flex flex-col items-start gap-1.5">
+                              {preOrderInfo ? (
                                 <PreOrderPill info={preOrderInfo} />
-                              </span>
-                            ) : discount > 0 ? (
-                              <DiscountBadge percent={discount} className="absolute top-3 left-3 z-10" />
-                            ) : (
-                              <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 rounded-full px-2.5 py-1 backdrop-blur-md"
+                              ) : discount > 0 ? (
+                                <DiscountBadge percent={discount} />
+                              ) : null}
+                              <div className="flex items-center gap-1.5 rounded-full px-2.5 py-1 backdrop-blur-md"
                                 style={{ background: "rgba(0,0,0,0.55)", border: "1px solid rgba(var(--foreground-rgb), 0.1)" }}>
                                 <Star size={11} className="fill-yellow-400 text-yellow-400" />
                                 <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "rgba(var(--foreground-rgb), 0.95)" }}>
                                   {displayProduct.rating.toFixed(1)}
                                 </span>
                               </div>
-                            )}
+                              {/* Tipo de switch (só teclados mecânicos): o dado já era
+                                  derivado por getSwitchBadgeInfo mas ninguém o exibia. */}
+                              {switchBadgeInfo && (
+                                <span
+                                  className="flex h-9 w-9 items-center justify-center rounded-lg backdrop-blur-md"
+                                  style={{ background: "rgba(0,0,0,0.55)", border: "1px solid rgba(var(--foreground-rgb), 0.1)" }}
+                                  title={switchBadgeInfo.label}
+                                >
+                                  <ImageWithFallback
+                                    src={switchBadgeInfo.src}
+                                    alt={switchBadgeInfo.label}
+                                    loading="lazy"
+                                    className="h-7 w-7 object-contain"
+                                  />
+                                </span>
+                              )}
+                            </div>
                             {displayProduct.inStock === false && (
                               <span className="absolute top-3 right-12 z-10 px-2.5 py-1 bg-foreground/80 text-background shadow-sm" style={{ borderRadius: "var(--radius)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "600" }}>
                                 Esgotado
@@ -1433,7 +1455,7 @@ export function ProductsPage() {
                             {/* Quick add — floating pill on hover (desktop only) */}
                             <button
                               onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToCart(displayProduct); }}
-                              className="hidden lg:flex absolute bottom-4 left-1/2 z-20 -translate-x-1/2 translate-y-2 whitespace-nowrap rounded-full px-10 py-3 text-[var(--text-sm)] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 cursor-pointer"
+                              className="hidden lg:flex items-center justify-center absolute bottom-4 left-4 right-4 z-20 translate-y-2 whitespace-nowrap rounded-full py-3 text-[var(--text-sm)] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 cursor-pointer"
                               style={{ background: "var(--gradient-buy)", color: "white", fontFamily: "var(--font-family-inter)", fontWeight: 700, letterSpacing: "0.04em", boxShadow: "var(--shadow-buy-cta-sm)" }}
                             >
                               <span className="inline-flex items-center gap-2"><ShoppingCart size={14} strokeWidth={2} /> Comprar</span>
@@ -1675,7 +1697,11 @@ export function ProductsPage() {
               onClick={() => setMobileFiltersOpen(false)}
             />
             <motion.div initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed left-0 top-0 bottom-0 w-[320px] max-w-[85vw] z-[60] overflow-y-auto p-6"
+              ref={mobileFiltersRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Filtros"
+              className="pcyes-scroll fixed left-0 top-0 bottom-0 w-[320px] max-w-[85vw] z-[60] overflow-y-auto p-6"
               style={{ background: "var(--surface-1)", borderRight: `1px solid ${isDark ? "rgba(var(--foreground-rgb), 0.06)" : "rgba(0,0,0,0.06)"}` }}
             >
               <div className="flex items-center justify-between mb-8">
@@ -1713,7 +1739,11 @@ export function ProductsPage() {
             />
             <motion.div initial={{ opacity: 0, scale: 0.96, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 16 }}
               transition={{ type: "spring", damping: 26, stiffness: 320 }}
-              className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[1040px] md:max-w-[95vw] md:max-h-[90vh] z-[60] overflow-y-auto p-6 md:p-8 shadow-2xl"
+              ref={quickViewRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Visualização rápida — ${quickViewProduct.name}`}
+              className="pcyes-scroll fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[1040px] md:max-w-[95vw] md:max-h-[90vh] z-[60] overflow-y-auto p-6 md:p-8 shadow-2xl"
               style={{ background: "var(--surface-0)", borderRadius: "var(--radius-card-lg)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}
             >
               <button onClick={() => setQuickViewProduct(null)}
@@ -1766,6 +1796,32 @@ export function ProductsPage() {
                       decoding="async"
                       className="relative z-10 h-full w-full object-contain p-8"
                     />
+                    {/* Setas ficam SÓ aqui, não no card da grade: no modal existe
+                        uma imagem por vez e o usuário já demonstrou interesse,
+                        então o custo de carregar as demais é justificado. */}
+                    {quickViewImages.length > 1 && (
+                      <>
+                        <button
+                          onClick={(e) => { e.preventDefault(); setImageIdx(quickViewProduct.id, (quickViewImageIndex - 1 + quickViewImages.length) % quickViewImages.length, quickViewImages.length); }}
+                          className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-ink-strong backdrop-blur-md transition-colors hover:bg-black/70 cursor-pointer"
+                          style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(var(--foreground-rgb), 0.12)" }}
+                          aria-label="Imagem anterior"
+                        >
+                          <ChevronLeft size={18} />
+                        </button>
+                        <button
+                          onClick={(e) => { e.preventDefault(); setImageIdx(quickViewProduct.id, (quickViewImageIndex + 1) % quickViewImages.length, quickViewImages.length); }}
+                          className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-ink-strong backdrop-blur-md transition-colors hover:bg-black/70 cursor-pointer"
+                          style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(var(--foreground-rgb), 0.12)" }}
+                          aria-label="Próxima imagem"
+                        >
+                          <ChevronRight size={18} />
+                        </button>
+                        <span className="sr-only" role="status" aria-live="polite">
+                          Imagem {quickViewImageIndex + 1} de {quickViewImages.length}
+                        </span>
+                      </>
+                    )}
                     {quickViewDiscount > 0 && (
                       <span
                         className="absolute top-4 left-4 z-20 px-3 py-1.5 text-ink-strong"

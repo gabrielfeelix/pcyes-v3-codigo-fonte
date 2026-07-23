@@ -12,6 +12,7 @@ import { Navbar } from "./Navbar";
 import { AnnouncementBar } from "./AnnouncementBar";
 import { ThemeProvider } from "./ThemeProvider";
 import { VLibras } from "./VLibras";
+import { CartAnnouncer } from "./CartAnnouncer";
 
 export function RootLayout() {
   const { pathname } = useLocation();
@@ -45,6 +46,7 @@ export function RootLayout() {
                     <Outlet />
                   </main>
                 </div>
+                <CartAnnouncer />
                 <VLibras />
               </div>
             </CheckoutPrefsProvider>

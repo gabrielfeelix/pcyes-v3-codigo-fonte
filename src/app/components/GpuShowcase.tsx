@@ -58,8 +58,12 @@ const COMPARISONS: Comparison[] = [
   },
 ];
 
-const BEFORE_FILTER = "blur(8px)";
-const AFTER_FILTER = "saturate(1.15) contrast(1.05)";
+/* O lado "antes" simula uma placa mais fraca, não uma foto fora de foco.
+   blur(8px) lia como "imagem quebrada"; aqui a degradação é sutil e plausível:
+   menos definição, menos cor, menos contraste e um leve escurecimento — do
+   jeito que um preset gráfico mais baixo realmente parece. */
+const BEFORE_FILTER = "blur(1.6px) saturate(0.78) contrast(0.92) brightness(0.92)";
+const AFTER_FILTER = "saturate(1.15) contrast(1.06)";
 const ACCENT = "#ff2419";
 const ACCENT_GLOW = "rgba(225, 6, 0, 0.55)";
 const ACCENT_BG = "var(--gradient-brand)";
@@ -125,6 +129,25 @@ export function GpuShowcase() {
         background: "var(--surface-0)",
       }}
     >
+      {/* Fundo: a própria cena, desfocada e escurecida. Evita a imagem estourada
+          ocupando a largura toda — a comparação fica contida e nítida, e o fundo
+          só dá ambientação. */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <ImageWithFallback
+          src={active.scene}
+          alt=""
+          className="h-full w-full object-cover"
+          style={{ filter: "blur(32px) saturate(0.6)", transform: "scale(1.12)" }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0.82) 45%, rgba(0,0,0,0.93) 100%)",
+          }}
+        />
+      </div>
+
       {/* Backdrop glow */}
       <div
         className="pointer-events-none absolute inset-0 opacity-70"
@@ -212,15 +235,18 @@ export function GpuShowcase() {
           })}
         </div>
 
-        {/* Comparison area — full width */}
+        {/* Comparação contida (não mais full-bleed): a imagem nítida fica num
+            cartão sobre o fundo escurecido, em vez de sangrar a tela inteira. */}
+        <div className="mx-auto px-5 md:px-[72px]" style={{ maxWidth: "1600px" }}>
         <div
           ref={containerRef}
           onClick={handleAreaClick}
           className="relative w-full select-none overflow-hidden cursor-ew-resize [aspect-ratio:4/3] md:[aspect-ratio:21/9]"
           style={{
             touchAction: "none",
-            borderTop: "1px solid rgba(var(--foreground-rgb), 0.08)",
-            borderBottom: "1px solid rgba(var(--foreground-rgb), 0.08)",
+            borderRadius: "var(--radius-card-xl)",
+            border: "1px solid rgba(var(--foreground-rgb), 0.10)",
+            boxShadow: "0 30px 90px -20px rgba(0,0,0,0.75)",
           }}
         >
           <AnimatePresence mode="wait">
@@ -401,6 +427,7 @@ export function GpuShowcase() {
           >
             <GripVertical size={20} strokeWidth={2.6} color="#ffffff" />
           </button>
+        </div>
         </div>
 
         {/* Featured product card */}

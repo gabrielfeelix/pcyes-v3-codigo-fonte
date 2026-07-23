@@ -31,7 +31,7 @@ import { useAuth } from "./AuthContext";
 import { AddressFormModal } from "./AddressFormModal";
 import { CardFormModal } from "./CardFormModal";
 import { Footer } from "./Footer";
-import { formatBRL, parseBRL, formatCep } from "../../utils/format";
+import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { toast } from "sonner";
@@ -802,7 +802,8 @@ export function CheckoutPage() {
                     Valor a pagar
                   </p>
                   <p className="mb-5" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-2xl)", fontWeight: 800, color: "#22c55e", letterSpacing: "-0.025em", lineHeight: 1 }}>
-                    {formatBRL(total)}
+                    <span aria-hidden="true">{formatBRL(total)}</span>
+                    <span className="sr-only">Valor a pagar, {formatBRLSpoken(total)}</span>
                   </p>
 
                   <p className="mb-2 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}>
@@ -2082,7 +2083,8 @@ export function CheckoutPage() {
                         color: payment === "pix" ? "#22c55e" : "#fff",
                       }}
                     >
-                      {formatBRL(total)}
+                      <span aria-hidden="true">{formatBRL(total)}</span>
+                      <span className="sr-only">Total, {formatBRLSpoken(total)}</span>
                     </span>
                   </div>
                   {payment !== "pix" && (

@@ -28,7 +28,7 @@ import { Footer } from "./Footer";
 import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
-import { BrindePill, PreOrderPill } from "./section";
+import { BrindePill, Price, PreOrderPill } from "./section";
 import { formatBRL, parseBRL, formatCep } from "../../utils/format";
 import { COUPONS, GIFT_THRESHOLD, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { toast } from "sonner";
@@ -927,17 +927,13 @@ export function CartPage() {
                     <span className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
                       Total
                     </span>
-                    <span className="text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 800, letterSpacing: "-0.02em" }}>
-                      {formatBRL(total)}
-                    </span>
+                    <Price value={total} label="Total" className="text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 800, letterSpacing: "-0.02em" }} />
                   </div>
                   <div className="mb-1 flex items-baseline justify-between">
                     <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#22c55e" }}>
                       no PIX
                     </span>
-                    <span style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, color: "#22c55e", letterSpacing: "-0.02em" }}>
-                      {formatBRL(totalPix)}
-                    </span>
+                    <Price value={totalPix} label="Total no PIX" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, color: "#22c55e", letterSpacing: "-0.02em" }} />
                   </div>
                   <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
                     ou 10× de {formatBRL(total / 10)} sem juros
@@ -1144,11 +1140,12 @@ export function CartPage() {
             >
               Total
             </p>
-            <p
-              className="text-ink-strong"
-              style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1 }}
-            >
-              {formatBRL(total)}
+            <p className="text-ink-strong">
+              <Price
+                value={total}
+                label="Total"
+                style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1 }}
+              />
             </p>
           </div>
           <button

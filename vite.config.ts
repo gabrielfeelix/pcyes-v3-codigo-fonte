@@ -326,6 +326,25 @@ export default defineConfig({
   build: {
     outDir: prototypeOutDir,
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        /* O catálogo (productsData.ts, ~970KB de fonte) é importado por ~23
+           componentes, entre eles a Navbar — que é eager. Sem isso ele entra
+           no bundle de entrada e ainda é reavaliado no chunk da página de
+           produto. Isolado, vira UM arquivo compartilhado e cacheado à parte:
+           o entry encolhe e o catálogo só é baixado uma vez, sobrevivendo a
+           deploys que não mexem no catálogo.
+
+           Só reparticiona o bundle — nenhuma mudança de comportamento. */
+        manualChunks(id) {
+          if (id.includes("productsData")) return "catalog";
+          // productDetails.ts (~1MB) são as descrições longas, usadas só pela
+          // página de produto. Em chunk próprio, o código da página volta a ser
+          // pequeno e as descrições ficam cacheadas à parte.
+          if (id.includes("productDetails")) return "product-details";
+        },
+      },
+    },
   },
   plugins: [
     // The React and Tailwind plugins are both required for Make, even if
