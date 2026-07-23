@@ -20,6 +20,7 @@ import {
   getProductImages,
   getProductColorLabels,
   getPrimaryProductImage,
+  getProductCategory,
   getProductSubcategory,
   getSubcategoryFromSlug,
   getProductSwatches,
@@ -488,7 +489,7 @@ export function ProductsPage() {
     setSelectedFeaturedCategories(new Set());
     if (isSelected) {
       // Clear subcategories belonging to this category when deselecting
-      const catSubcatSet = new Set(validProducts.filter((p) => p.category === cat).map(getProductSubcategory));
+      const catSubcatSet = new Set(validProducts.filter((p) => getProductCategory(p) === cat).map(getProductSubcategory));
       setSelectedSubcategories((prev) => { const n = new Set(prev); catSubcatSet.forEach((sc) => n.delete(sc)); return n; });
       const sp = new URLSearchParams(searchParams); sp.delete("category"); sp.delete("subcategory"); setSearchParams(sp, { replace: true });
     }
@@ -545,7 +546,10 @@ export function ProductsPage() {
     if (searchOrder) {
       result = result.filter((p) => searchOrder.has(p.id));
     }
-    if (selectedCategories.size > 0) result = result.filter((p) => selectedCategories.has(p.category));
+    /* Categoria CANÔNICA, não a da planilha: cabo cadastrado em "SSD e HD"
+       mora em Periféricos pela taxonomia, e é lá que a URL o coloca. Comparar
+       com o dado cru sumia com o produto da própria listagem que o lista. */
+    if (selectedCategories.size > 0) result = result.filter((p) => selectedCategories.has(getProductCategory(p)));
     if (selectedFeaturedCategories.size > 0) {
       result = result.filter((p) =>
         featuredCategoryFilters.some((filter) => selectedFeaturedCategories.has(filter.label) && filter.matches(p))
@@ -631,7 +635,7 @@ export function ProductsPage() {
   /* ── Atributos: derived from products that pass current category/subcategory ── */
   const availableAttributes = useMemo(() => {
     const scope = validProducts.filter((p) => {
-      if (selectedCategories.size > 0 && !selectedCategories.has(p.category)) return false;
+      if (selectedCategories.size > 0 && !selectedCategories.has(getProductCategory(p))) return false;
       if (selectedFeaturedCategories.size > 0 && !featuredCategoryFilters.some((f) => selectedFeaturedCategories.has(f.label) && f.matches(p))) return false;
       if (selectedSubcategories.size > 0 && !selectedSubcategories.has(getProductSubcategory(p))) return false;
       return true;
@@ -657,7 +661,7 @@ export function ProductsPage() {
         counts.set(trimmed, (counts.get(trimmed) ?? 0) + 1);
       });
 
-      if (p.category === "Cadeiras") {
+      if (getProductCategory(p) === "Cadeiras") {
         const featureSeen = new Set<string>();
         const addOnce = (label: string) => {
           const k = label.toLowerCase();

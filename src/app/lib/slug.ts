@@ -9,6 +9,7 @@
  * -> "perifericos", "SSD e HD" -> "ssd-e-hd").
  */
 import type { Product } from "../components/productsData";
+import { TAXONOMY, resolveTaxonomyNode } from "./taxonomy";
 
 export function slugify(text: string): string {
   return text
@@ -47,9 +48,17 @@ export function getCategoryFromSlug(slug: string): string | null {
   return SLUG_TO_CATEGORY[slug] ?? null;
 }
 
-/** Subcategory slugs are derived (no fixed list). Pure slugify. */
+/**
+ * Slug de subcategoria — vem da taxonomia, não do rótulo.
+ *
+ * Derivar de `slugify(label)` fazia o rótulo ditar a URL: "Memória" e
+ * "Memoria" produziam `/hardware/memoria/` as duas, e uma listagem só mostrava
+ * metade dos produtos. Com o slug declarado, corrigir um acento é cosmético.
+ * O slugify sobra como rede para rótulo fora da taxonomia.
+ */
 export function getSubcategorySlug(subcategory: string): string {
-  return slugify(subcategory);
+  const node = TAXONOMY.find((candidate) => candidate.label === subcategory);
+  return node?.slug ?? slugify(subcategory);
 }
 
 /** Brand slug. Defaults to slugified brand name; falls back to "pcyes". */
@@ -67,10 +76,17 @@ export function getProductSlug(product: Pick<Product, "name" | "seoSlug" | "sku"
   return fromName || (product.sku ? `produto-${slugify(product.sku)}` : "produto");
 }
 
-/** Build a canonical URL path for a product. */
+/**
+ * URL canônica do produto — UMA por produto, ditada pela taxonomia.
+ *
+ * Antes usava categoria e subcategoria como vieram na planilha, então erro de
+ * cadastro virava URL: cabo indexado sob /ssd-e-hd/, suporte de monitor sob
+ * /monitores/. A taxonomia resolve onde a coisa mora e a URL segue.
+ */
 export function getProductUrl(product: Pick<Product, "name" | "category" | "subcategory" | "brand" | "seoSlug" | "sku" | "id">): string {
-  const cat = getCategorySlug(product.category);
-  const sub = product.subcategory ? getSubcategorySlug(product.subcategory) : "";
+  const node = resolveTaxonomyNode(product);
+  const cat = getCategorySlug(node?.category ?? product.category);
+  const sub = node ? node.slug : product.subcategory ? getSubcategorySlug(product.subcategory) : "";
   const brand = getBrandSlug(product.brand);
   const slug = getProductSlug(product);
   return sub

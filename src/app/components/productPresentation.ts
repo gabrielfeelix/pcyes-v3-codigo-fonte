@@ -1,5 +1,6 @@
 import { allProducts, type Product } from "./productsData";
-import { getCategorySlug, getCategoryUrl, getSubcategorySlug } from "../lib/slug";
+import { getCategoryUrl } from "../lib/slug";
+import { getTaxonomyNodeBySlug, resolveTaxonomyNode } from "../lib/taxonomy";
 
 export interface CatalogHrefParams {
   category?: string;
@@ -67,77 +68,42 @@ function includesAny(value: string, keywords: string[]) {
   return keywords.some((keyword) => value.includes(keyword));
 }
 
+/**
+ * Subcategoria canônica do produto — hoje um lookup na taxonomia.
+ *
+ * Era uma escada de regras sobre o nome com fallback no campo bruto do
+ * fornecedor, e é por isso que o catálogo tinha 55 subcategorias, "Memória" e
+ * "Memoria" na mesma URL e suporte de monitor classificado como monitor. A
+ * decisão de o que é cada coisa mora em `lib/taxonomy`; aqui ficou só a
+ * tradução para rótulo.
+ */
 export function getProductSubcategory(product: Pick<Product, "name" | "category" | "subcategory">) {
-  const name = normalizeText(product.name);
-  const category = normalizeText(product.category);
-  const rawSubcategory = product.subcategory ? normalizeText(product.subcategory) : "";
-  const searchable = `${name} ${rawSubcategory}`;
-
-  if (includesAny(searchable, ["teclado", "keyboard"])) return "Teclados";
-  if (includesAny(searchable, ["mousepad", "mouse pad", "desk mat"])) return "Mousepads";
-  if (includesAny(searchable, ["mouse"])) return "Mouses";
-  if (includesAny(searchable, ["headset", "fone"])) return "Headsets";
-  if (includesAny(searchable, ["microfone", "placa de captura", "captura", "webcam"])) return product.subcategory ?? "Streaming";
-  if (includesAny(searchable, ["mini computador", "mini pc"])) return "Mini Computadores";
-  if (includesAny(searchable, ["pcyes one", "all in one"])) return "All in One";
-  if (includesAny(searchable, ["cadeira gamer"])) return "Cadeiras Gamer";
-  if (includesAny(searchable, ["cadeira ergonomica", "cadeira ergonomica", "ergonomica"])) return "Cadeiras Ergonômicas";
-  if (includesAny(searchable, ["cadeira office"])) return "Cadeiras Office";
-  if (includesAny(searchable, ["water cooler"])) return "Water Coolers";
-  if (includesAny(searchable, ["cooler fan"])) return "Cooler Fans";
-  if (includesAny(searchable, ["cooler"])) return "Coolers";
-  if (includesAny(searchable, ["gabinete"])) return "Gabinetes";
-  if (includesAny(searchable, ["placa de video", "geforce", "radeon"])) return "Placas de Vídeo";
-  if (includesAny(searchable, ["ssd", "hd ", "memoria", "memória"])) return product.subcategory ?? "Armazenamento";
-  if (includesAny(searchable, ["fonte"])) return "Fontes";
-  if (includesAny(searchable, ["monitor"])) return "Monitores";
-
-  if (product.subcategory) return product.subcategory;
-  if (category) return product.category;
-  return "Produtos";
+  const node = resolveTaxonomyNode(product);
+  if (node) return node.label;
+  // Sem nó a taxonomia está incompleta — o build acusa (validateTaxonomy).
+  // Em runtime, degradar para a categoria é melhor que quebrar a listagem.
+  return product.subcategory || product.category || "Produtos";
 }
 
 /**
- * Slug de subcategoria → rótulo real ("cadeiras-gamer" → "Cadeiras Gamer").
+ * Categoria canônica — pode diferir da que veio na planilha.
  *
- * Subcategoria não tem lista fixa: é derivada do produto por
- * `getProductSubcategory`, e a URL nasce de `slugify` dela. Faltava o caminho
- * de volta — a página de catálogo usava o slug CRU como rótulo de filtro, que
- * nunca casa com "Cadeiras Gamer". Resultado: clicar na subcategoria pelo
- * megamenu abria "cadeiras-gamer Cadeiras" com zero produtos.
- *
- * O índice é montado uma vez a partir do próprio catálogo, então continua
- * verdadeiro quando entra subcategoria nova, sem lista para manter à mão.
+ * Cabo classificado em "SSD e HD" e microfone em "Streaming/Headsets" são erro
+ * de origem, não taxonomia. O nó declara onde a coisa mora, e a URL segue daí.
  */
-let subcategorySlugIndex: Map<string, string> | null = null;
-
-function getSubcategorySlugIndex() {
-  if (subcategorySlugIndex) return subcategorySlugIndex;
-
-  const index = new Map<string, string>();
-  for (const product of allProducts) {
-    const label = getProductSubcategory(product);
-    if (!label) continue;
-    const slug = getSubcategorySlug(label);
-    if (!index.has(slug)) index.set(slug, label);
-    // Chave qualificada por categoria: duas categorias podem derivar o mesmo
-    // slug (ex.: "Acessórios" em duas famílias) e aí o rótulo certo depende
-    // de onde o usuário está.
-    index.set(`${getCategorySlug(product.category)}/${slug}`, label);
-  }
-
-  subcategorySlugIndex = index;
-  return index;
+export function getProductCategory(product: Pick<Product, "name" | "category" | "subcategory">) {
+  return resolveTaxonomyNode(product)?.category ?? product.category;
 }
 
-export function getSubcategoryFromSlug(slug: string, category?: string): string | null {
+/**
+ * Slug de subcategoria → rótulo ("cadeiras-gamer" → "Cadeiras Gamer").
+ *
+ * Aceita slug legado: URL que já existiu continua abrindo a listagem certa,
+ * mesmo antes do 301 do CDN responder.
+ */
+export function getSubcategoryFromSlug(slug: string, _category?: string): string | null {
   if (!slug) return null;
-  const index = getSubcategorySlugIndex();
-  if (category) {
-    const scoped = index.get(`${getCategorySlug(category)}/${slug}`);
-    if (scoped) return scoped;
-  }
-  return index.get(slug) ?? null;
+  return getTaxonomyNodeBySlug(slug)?.label ?? null;
 }
 
 export function isPlaceholderProductImage(image?: string) {

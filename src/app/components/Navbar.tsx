@@ -13,7 +13,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/tooltip";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "./ui/dropdown-menu";
 import { allProducts, type Product } from "./productsData";
-import { getCatalogHref, getPrimaryProductImage, getProductSubcategory, getProductSwatches, getVisibleCatalogProducts } from "./productPresentation";
+import { getCatalogHref, getPrimaryProductImage, getProductCategory, getProductSubcategory, getProductSwatches, getVisibleCatalogProducts } from "./productPresentation";
 import { getCategoryFromSlug, getCategorySlug, getSubcategorySlug } from "../lib/slug";
 import { searchProducts } from "../../utils/search";
 
@@ -493,7 +493,7 @@ function normalizeMenuValue(value: string) {
 function productMatchesMenuValue(product: Product, value: string) {
   const normalized = normalizeMenuValue(value);
   return (
-    normalizeMenuValue(product.category) === normalized ||
+    normalizeMenuValue(getProductCategory(product)) === normalized ||
     normalizeMenuValue(product.subcategory ?? "") === normalized ||
     normalizeMenuValue(getProductSubcategory(product)) === normalized
   );
@@ -526,7 +526,7 @@ function getProductsForMenuHref(href?: string) {
   const [catSlug, subSlug] = path.split("/").filter(Boolean);
   if (!catSlug || !getCategoryFromSlug(catSlug)) return [];
   return visibleCatalogProducts.filter((product) => {
-    if (getCategorySlug(product.category) !== catSlug) return false;
+    if (getCategorySlug(getProductCategory(product)) !== catSlug) return false;
     if (subSlug && getSubcategorySlug(getProductSubcategory(product)) !== subSlug) return false;
     return true;
   });
@@ -667,7 +667,7 @@ export function Navbar() {
         .filter(Boolean) as Product[];
     }
     return visibleCatalogProducts
-      .filter((p) => searchCategoryMatch.includes(p.category))
+      .filter((p) => searchCategoryMatch.includes(getProductCategory(p)))
       .sort((a, b) => (b.reviews ?? 0) - (a.reviews ?? 0))
       .slice(0, 5);
   }, [searchCategoryMatch]);
