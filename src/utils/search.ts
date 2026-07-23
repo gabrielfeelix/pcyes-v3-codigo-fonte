@@ -52,6 +52,26 @@ const SYNONYM_GROUPS: string[][] = [
   ["controle", "gamepad", "joystick"],
   ["volante"],
   ["streaming", "captura"],
+  // Cores PT↔EN: o catálogo nomeia em inglês ("Forcefield Dome White Ghost"),
+  // o cliente digita em português. Sem isso "gabinete branco" dava zero.
+  ["branco", "white"],
+  ["preto", "black"],
+  ["vermelho", "red"],
+  ["azul", "blue"],
+  ["verde", "green"],
+  ["amarelo", "yellow"],
+  ["rosa", "pink"],
+  ["roxo", "purple", "lilas"],
+  ["cinza", "gray", "grey"],
+  ["prata", "silver"],
+  ["marrom", "brown"],
+  ["laranja", "orange"],
+  // Conectividade e formato — vocabulário de vitrine vs. vocabulário de ficha.
+  ["wireless", "wifi"],
+  ["bluetooth", "bt"],
+  ["mecanico", "mechanical"],
+  ["ergonomico", "ergonomic"],
+  ["suporte", "stand"],
 ];
 
 // Índice termo→conjunto de sinônimos do seu grupo
@@ -68,10 +88,42 @@ const SYNONYM_INDEX: Map<string, Set<string>> = (() => {
   return idx;
 })();
 
+/**
+ * Plural PT-BR simplificado: "cadeiras"→"cadeira", "canais"→"canal".
+ *
+ * Não é stemmer completo de propósito — o objetivo é só não perder o produto
+ * porque o cliente digitou no plural. Reduções agressivas (radicalização real)
+ * misturariam palavras distintas e sujariam o resultado.
+ */
+function singularCandidates(token: string): string[] {
+  if (token.length < 4 || !token.endsWith("s")) return [];
+  if (token.endsWith("oes") || token.endsWith("aes")) return [`${token.slice(0, -3)}ao`];
+  if (token.endsWith("ais") || token.endsWith("eis") || token.endsWith("ois")) return [`${token.slice(0, -2)}l`];
+  /* "-res/-ses/-zes" é ambíguo: "meses"→"mes" corta dois, mas "mouses"→"mouse"
+     corta um. Devolver os dois candidatos e deixar o casamento escolher é mais
+     barato que acertar a morfologia — e o erro de cortar demais era caro:
+     "mouses" virava "mous", que só casava por prefixo, e aí mouse pad passava
+     na frente de mouse. */
+  if (token.endsWith("res") || token.endsWith("ses") || token.endsWith("zes")) {
+    return [token.slice(0, -1), token.slice(0, -2)];
+  }
+  if (token.endsWith("ns")) return [`${token.slice(0, -2)}m`];
+  return [token.slice(0, -1)];
+}
+
 function synonymsOf(token: string): Set<string> {
   const set = new Set<string>([token]);
   const syns = SYNONYM_INDEX.get(token);
   if (syns) for (const s of syns) set.add(s);
+
+  // Singular entra como variante, e os sinônimos DELE também: quem busca
+  // "cadeiras" merece o mesmo alcance de quem busca "cadeira".
+  for (const singular of singularCandidates(token)) {
+    set.add(singular);
+    const singularSyns = SYNONYM_INDEX.get(singular);
+    if (singularSyns) for (const s of singularSyns) set.add(s);
+  }
+
   return set;
 }
 
@@ -103,7 +155,7 @@ function fuzzyBudget(len: number): number {
   return 2;
 }
 
-/** Melhor pontuação de casamento de UM termo da query contra as palavras do produto. 0 = não casou. */
+/** Melhor pontuação de casamento de UM termo da query contra as palavras de UM campo. 0 = não casou. */
 function scoreToken(token: string, words: string[]): number {
   const variants = synonymsOf(token);
   let best = 0;
@@ -126,6 +178,74 @@ function scoreToken(token: string, words: string[]): number {
     }
   }
   return best;
+}
+
+/**
+ * Peso por campo. Antes tudo virava um saco de palavras único, então casar no
+ * nome valia o mesmo que casar numa tag — e "Volante Gamer ... para PC" subia
+ * na frente de "Computador PCYES One" na busca por "pc", porque as duas eram
+ * "casamento exato" e o desempate ia pra popularidade.
+ *
+ * `type` (categoria/subcategoria) pesa quase como nome de propósito: quando o
+ * termo do cliente É o tipo do produto, esse produto é o alvo — menção de
+ * passagem no nome de um acessório não é.
+ */
+const FIELD_WEIGHT = {
+  name: 1,
+  type: 0.95,
+  sku: 0.9,
+  brand: 0.6,
+  tags: 0.45,
+} as const;
+
+/** Termo que casa com o TIPO do produto ganha um empurrão extra no ranking. */
+const TYPE_MATCH_BONUS = 3;
+
+interface ProductFields {
+  name: string[];
+  type: string[];
+  sku: string[];
+  brand: string[];
+  tags: string[];
+  nameJoined: string;
+}
+
+function buildFields(p: SearchableProduct): ProductFields {
+  /* O singular de cada palavra do produto entra no índice junto com a forma
+     original. Sem isso "mouse" só chegava a "Mouses" por prefixo (3), a mesma
+     nota que chegava a "Mousepads" — e mouse pad subia na frente de mouse.
+     Com "mouses" indexado também como "mouse", o produto certo casa exato (4)
+     e o acessório fica com o prefixo. */
+  const split = (value: string) => {
+    const words = new Set<string>();
+    for (const w of normalize(value).split(" ")) {
+      if (!w) continue;
+      words.add(w);
+      for (const singular of singularCandidates(w)) words.add(singular);
+    }
+    return Array.from(words);
+  };
+  const nameJoined = normalize(p.name);
+  return {
+    name: split(p.name),
+    type: split(`${p.category || ""} ${p.subcategory || ""}`),
+    sku: split(p.sku || ""),
+    brand: split(p.brand || ""),
+    tags: split((p.tags || []).join(" ")),
+    nameJoined,
+  };
+}
+
+/** Pontuação de um termo contra o produto inteiro, já ponderada por campo. */
+function scoreTokenAgainstProduct(token: string, fields: ProductFields): number {
+  const nameScore = scoreToken(token, fields.name) * FIELD_WEIGHT.name;
+  const typeRaw = scoreToken(token, fields.type);
+  const typeScore = typeRaw * FIELD_WEIGHT.type + (typeRaw >= 2.4 ? TYPE_MATCH_BONUS : 0);
+  const skuScore = scoreToken(token, fields.sku) * FIELD_WEIGHT.sku;
+  const brandScore = scoreToken(token, fields.brand) * FIELD_WEIGHT.brand;
+  const tagScore = scoreToken(token, fields.tags) * FIELD_WEIGHT.tags;
+
+  return Math.max(nameScore, typeScore, skuScore, brandScore, tagScore);
 }
 
 export interface SearchableProduct {
@@ -151,33 +271,55 @@ export function searchProducts<T extends SearchableProduct>(query: string, produ
   const tokens = qn.split(" ").filter((t) => t && !STOPWORDS.has(t));
   if (tokens.length === 0) return [];
 
-  const ranked: Ranked<T>[] = [];
+  const full: Ranked<T>[] = [];
+  const partial: Ranked<T>[] = [];
+
   for (const p of products) {
-    const nameN = normalize(p.name);
-    const haystack = [nameN, normalize(p.category), normalize(p.subcategory || ""), normalize(p.brand || ""), normalize((p.tags || []).join(" ")), normalize(p.sku || "")]
-      .filter(Boolean)
-      .join(" ");
-    const words = Array.from(new Set(haystack.split(" ").filter(Boolean)));
+    const fields = buildFields(p);
 
     let total = 0;
-    let allMatched = true;
+    let matched = 0;
     for (const token of tokens) {
-      const s = scoreToken(token, words);
-      if (s === 0) { allMatched = false; break; }
-      total += s;
+      const s = scoreTokenAgainstProduct(token, fields);
+      if (s > 0) {
+        matched += 1;
+        total += s;
+      }
     }
-    if (!allMatched) continue;
+    if (matched === 0) continue;
 
     // Bônus de relevância: nome inteiro contém a query, ou começa com ela.
-    if (nameN.includes(qn)) total += 4;
-    if (nameN.startsWith(qn)) total += 3;
-    // Desempate leve por popularidade/avaliação.
-    total += Math.min(1, ((p.rating || 0) * (p.reviews || 0)) / 5000);
+    if (fields.nameJoined.includes(qn)) total += 2.5;
+    if (fields.nameJoined.startsWith(qn)) total += 3;
+    /* Desempate por popularidade — TETO BAIXO de propósito. Valendo até 1.0
+       ponto ele deixava de ser desempate e virava critério: a diferença entre
+       casar no tipo certo e casar por prefixo é menor que isso, então "mouse"
+       devolvia Mouse Pad (474 avaliações) antes de Mouse (56). Popularidade só
+       decide entre produtos que a busca já considera equivalentes. */
+    total += Math.min(0.35, ((p.rating || 0) * (p.reviews || 0)) / 15000);
 
-    ranked.push({ item: p, score: total });
+    if (matched === tokens.length) full.push({ item: p, score: total });
+    // Casamento parcial só vale a partir de metade dos termos — abaixo disso
+    // vira ruído ("cadeira gamer branca" não deve devolver todo item branco).
+    else if (matched * 2 >= tokens.length) partial.push({ item: p, score: total * (matched / tokens.length) });
   }
 
-  ranked.sort((a, b) => b.score - a.score);
-  const out = ranked.map((r) => r.item);
+  const byScore = (a: Ranked<T>, b: Ranked<T>) => b.score - a.score;
+  full.sort(byScore);
+  partial.sort(byScore);
+
+  /* Resultado exato primeiro; parcial ENTRA ABAIXO quando o exato é magro.
+     Zero resultado é o momento de maior abandono da sessão — e a busca em AND
+     puro produzia zero em consultas legítimas ("fone de ouvido" excluía todo
+     Headset, que não tem "ouvido" no nome). A precisão do topo continua: o
+     parcial nunca ultrapassa um casamento completo. */
+  const out = full.map((r) => r.item);
+  if (out.length < PARTIAL_FALLBACK_THRESHOLD) {
+    for (const r of partial) out.push(r.item);
+  }
+
   return limit > 0 ? out.slice(0, limit) : out;
 }
+
+/** Abaixo disso, resultados parciais complementam a lista. */
+const PARTIAL_FALLBACK_THRESHOLD = 8;
