@@ -8,7 +8,7 @@ import { useFavorites } from "./FavoritesContext";
 import { allProducts, type Product } from "./productsData";
 import {
   getPrimaryProductImage,
-  getVisibleCatalogProducts,
+  getShowcaseProducts,
 } from "./productPresentation";
 import { CarouselDots } from "./CarouselDots";
 import { SectionHeader, CarouselNavButton } from "./section";
@@ -53,7 +53,7 @@ export function ProductShelf({
   const { addFavorite } = useFavorites();
 
   const products = useMemo(() => {
-    const visible = getVisibleCatalogProducts(allProducts);
+    const visible = getShowcaseProducts(allProducts);
     const resolved = productIds
       .map((id) => visible.find((p) => p.id === id))
       .filter(Boolean) as Product[];

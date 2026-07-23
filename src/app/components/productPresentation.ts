@@ -130,6 +130,43 @@ export function getVisibleCatalogProducts(catalog: Product[] = allProducts) {
 }
 
 /**
+ * Disponibilidade do produto — fonte única de verdade para toda a UI.
+ *
+ *   "in-stock"     → tem unidade, compra liberada
+ *   "restocking"   → ativo mas sem estoque: volta, aceita aviso de reposição
+ *   "discontinued" → inativo: não volta, sem aviso, oferecer alternativas
+ *
+ * A distinção importa porque "avise-me quando chegar" só faz sentido se o
+ * produto de fato retorna. Prometer aviso de algo descontinuado é mentira.
+ */
+export type StockStatus = "in-stock" | "restocking" | "discontinued";
+
+export function getStockStatus(
+  product: Pick<Product, "inStock" | "active">,
+): StockStatus {
+  if (product.active === false) return "discontinued";
+  if (product.inStock === false) return "restocking";
+  return "in-stock";
+}
+
+/** Conveniência: o produto pode ser comprado agora? */
+export function isPurchasable(product: Pick<Product, "inStock" | "active">) {
+  return getStockStatus(product) === "in-stock";
+}
+
+/**
+ * Catálogo para vitrines (home, carrosséis, "você também pode gostar").
+ *
+ * Igual a `getVisibleCatalogProducts`, mas remove produtos esgotados
+ * (`inStock: false`). A regra é: esgotado nunca é *empurrado* pro usuário —
+ * só aparece se ele procurar (busca, filtro, link direto). Por isso a busca e
+ * a listagem de catálogo continuam usando `getVisibleCatalogProducts`.
+ */
+export function getShowcaseProducts(catalog: Product[] = allProducts) {
+  return getVisibleCatalogProducts(catalog).filter(isPurchasable);
+}
+
+/**
  * Catalog URL builder (A1 stage 3).
  *
  * When a `category` is provided, emits the semantic slug form:

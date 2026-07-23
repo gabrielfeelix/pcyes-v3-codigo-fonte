@@ -6,7 +6,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Heart, Star } from "lucide-react";
 import { useCart } from "./CartContext";
 import { allProducts as catalogProducts, type Product } from "./productsData";
-import { findProductBySwatch, getPrimaryProductImage, getProductHoverMedia, getProductSwatches, getVisibleCatalogProducts } from "./productPresentation";
+import { findProductBySwatch, getPrimaryProductImage, getProductHoverMedia, getProductSwatches, getShowcaseProducts } from "./productPresentation";
 import { QuickAddButton } from "./section";
 
 const tags = ["Todos", "Gaming", "Streaming", "Escritório", "RGB", "Wireless"];
@@ -22,7 +22,7 @@ export function ProductsByTags() {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
 
-  const catalogTagProducts = getVisibleCatalogProducts(catalogProducts).slice(0, 16);
+  const catalogTagProducts = getShowcaseProducts(catalogProducts).slice(0, 16);
   const filtered = (activeTag === "Todos" ? catalogTagProducts : catalogTagProducts.filter((p) => p.tags.includes(activeTag))).slice(0, 8);
 
   const toggleLike = (id: number, e: React.MouseEvent) => {

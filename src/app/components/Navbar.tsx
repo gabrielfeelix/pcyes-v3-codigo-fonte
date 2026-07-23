@@ -2434,6 +2434,7 @@ export function Navbar() {
                         { icon: Heart, label: "Lista de desejos", action: () => navigate("/perfil?tab=favorites"), badge: favCount },
                         { icon: User, label: isLoggedIn ? "Minha conta" : "Login", action: handleUserClick },
                         { icon: MapPin, label: "Onde comprar", action: () => navigate("/onde-encontrar") },
+                        { icon: Hand, label: "Tradutor em Libras", action: openVLibras },
                       ].map((item) => {
                         const Icon = item.icon;
                         return (

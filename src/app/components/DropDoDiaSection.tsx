@@ -7,7 +7,7 @@ import { ArrowRight, Flame, ShoppingCart } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { allProducts, type Product } from "./productsData";
-import { getPrimaryProductImage, getVisibleCatalogProducts } from "./productPresentation";
+import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { getPixPrice, formatBRL } from "./productEnhancements";
 import { SectionHeader, CTAButton, DiscountBadge } from "./section";
 
@@ -27,7 +27,7 @@ function withGuaranteedDiscount(p: Product): Product {
 export function DropDoDiaSection() {
   const { addItem } = useCart();
   const picks = useMemo(() => {
-    const visible = getVisibleCatalogProducts(allProducts);
+    const visible = getShowcaseProducts(allProducts);
     return DROP_IDS
       .map((id) => visible.find((p) => p.id === id))
       .filter(Boolean)

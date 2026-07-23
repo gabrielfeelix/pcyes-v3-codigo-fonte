@@ -26,7 +26,7 @@ import { useAuth } from "./AuthContext";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
 import { Footer } from "./Footer";
 import { allProducts } from "./productsData";
-import { getPrimaryProductImage, getVisibleCatalogProducts } from "./productPresentation";
+import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { BrindePill, PreOrderPill } from "./section";
 import { formatBRL, parseBRL, formatCep } from "../../utils/format";
@@ -62,7 +62,7 @@ export function CartPage() {
   const paidItems = items.filter((item) => !item.isGift);
   const giftOptions = useMemo(() => {
     const cats = new Set<string>();
-    return getVisibleCatalogProducts(allProducts)
+    return getShowcaseProducts(allProducts)
       .sort((a, b) => a.priceNum - b.priceNum)
       .filter((p) => {
         if (cats.has(p.category)) return false;

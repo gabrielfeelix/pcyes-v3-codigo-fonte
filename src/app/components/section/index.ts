@@ -11,3 +11,5 @@ export { FieldInput } from "./FieldInput";
 export { QtyStepper } from "./QtyStepper";
 export { QuickAddButton } from "./QuickAddButton";
 export { CarouselNavButton } from "./CarouselNavButton";
+export { Price } from "./Price";
+export { ScrollFade } from "./ScrollFade";

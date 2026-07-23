@@ -6,9 +6,10 @@ import { Heart, ShoppingCart } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useAuth } from "./AuthContext";
 import { allProducts, type Product } from "./productsData";
-import { getPrimaryProductImage, getProductSwatches } from "./productPresentation";
+import { getPrimaryProductImage, getProductSwatches, getStockStatus } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
-import { CTAButton, DiscountBadge, PreOrderPill } from "./section";
+import { CTAButton, DiscountBadge, Price, PreOrderPill } from "./section";
+import { formatBRLSpoken } from "../../utils/format";
 
 /**
  * ProductCard — organismo do catalogo (composto a partir dos primitivos do DS).
@@ -90,6 +91,8 @@ export function ProductCard({
       ? Math.round(((oldPriceNum - product.priceNum) / oldPriceNum) * 100)
       : 0;
   const preOrderInfo = getPreOrderInfo(product.id);
+  const stockStatus = getStockStatus(product);
+  const outOfStock = stockStatus !== "in-stock";
 
   const handleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -121,10 +124,19 @@ export function ProductCard({
         <ImageWithFallback
           src={image}
           alt={product.name}
-          className={`absolute inset-0 h-full w-full object-contain ${cfg.pad} transition-transform duration-500 group-hover:scale-[1.05]`}
+          className={`absolute inset-0 h-full w-full object-contain ${cfg.pad} transition-transform duration-500 group-hover:scale-[1.05] ${outOfStock ? "opacity-60 grayscale-[0.5]" : ""}`}
         />
 
         {hoverMedia}
+
+        {outOfStock && (
+          <span
+            className="absolute right-14 top-3 z-20 bg-foreground/80 px-2.5 py-1 text-background shadow-sm"
+            style={{ borderRadius: "var(--radius)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
+          >
+            {stockStatus === "discontinued" ? "Fora de linha" : "Esgotado"}
+          </span>
+        )}
 
         {rank !== undefined && (
           <span
@@ -175,7 +187,7 @@ export function ProductCard({
           </button>
         )}
 
-        {onAdd && (
+        {onAdd && !outOfStock && (
           <CTAButton
             variant="buy"
             size={cfg.quickAddSize}
@@ -220,7 +232,7 @@ export function ProductCard({
                 color: "rgba(var(--foreground-rgb), 0.62)",
               }}
             >
-              {product.oldPrice ?? `R$ ${oldPriceNum.toFixed(2).replace(".", ",")}`}
+              <Price value={oldPriceNum} label="Preço anterior" />
             </p>
           )}
           <p
@@ -232,13 +244,14 @@ export function ProductCard({
               letterSpacing: "-0.015em",
             }}
           >
-            {product.price}
+            <Price value={product.priceNum} />
           </p>
           <p
             className="mt-1.5 leading-tight"
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", color: "rgba(var(--foreground-rgb), 0.55)" }}
           >
-            No PIX ou 10x de R$ {(product.priceNum / 10).toFixed(2).replace(".", ",")}
+            <span aria-hidden="true">No PIX ou 10x de R$ {(product.priceNum / 10).toFixed(2).replace(".", ",")}</span>
+            <span className="sr-only">No PIX ou 10 vezes de {formatBRLSpoken(product.priceNum / 10)}</span>
           </p>
         </div>
       </div>
@@ -298,7 +311,7 @@ export function ProductCard({
 
       {/* Mobile buy button — below info so the image stays clean.
           Desktop uses the floating hover pill inside the image instead. */}
-      {onAdd && (
+      {onAdd && !outOfStock && (
         <CTAButton
           variant="buy"
           size="sm"

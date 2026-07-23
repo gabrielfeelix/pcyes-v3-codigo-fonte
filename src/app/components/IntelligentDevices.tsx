@@ -22,7 +22,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { useFavorites } from "./FavoritesContext";
 import { allProducts, type Product } from "./productsData";
-import { getPrimaryProductImage, getVisibleCatalogProducts } from "./productPresentation";
+import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 
 interface CategoryDef {
   label: string;
@@ -121,7 +121,7 @@ export function IntelligentDevices() {
     return () => clearInterval(id);
   }, []);
 
-  const visibleCatalog = useMemo(() => getVisibleCatalogProducts(allProducts), []);
+  const visibleCatalog = useMemo(() => getShowcaseProducts(allProducts), []);
 
   /**
    * Drop categories whose catalog returns no products — the user shouldn't

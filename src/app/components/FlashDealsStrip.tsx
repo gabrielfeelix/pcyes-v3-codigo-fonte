@@ -7,7 +7,7 @@ import { Flame, Timer } from "lucide-react";
 import { allProducts, type Product } from "./productsData";
 import {
   getPrimaryProductImage,
-  getVisibleCatalogProducts,
+  getShowcaseProducts,
 } from "./productPresentation";
 import { useCart } from "./CartContext";
 import { useFavorites } from "./FavoritesContext";
@@ -109,7 +109,7 @@ export function FlashDealsStrip() {
   const [canNext, setCanNext] = useState(true);
 
   const products = useMemo(() => {
-    const visible = getVisibleCatalogProducts(allProducts);
+    const visible = getShowcaseProducts(allProducts);
     const picked = DEAL_IDS
       .map((id) => visible.find((p) => p.id === id))
       .filter(Boolean) as Product[];

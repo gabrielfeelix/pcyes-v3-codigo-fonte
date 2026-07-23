@@ -1671,11 +1671,11 @@ export function ProductsPage() {
         {mobileFiltersOpen && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] lg:hidden"
               onClick={() => setMobileFiltersOpen(false)}
             />
             <motion.div initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed left-0 top-0 bottom-0 w-[320px] max-w-[85vw] z-50 overflow-y-auto p-6"
+              className="fixed left-0 top-0 bottom-0 w-[320px] max-w-[85vw] z-[60] overflow-y-auto p-6"
               style={{ background: "var(--surface-1)", borderRight: `1px solid ${isDark ? "rgba(var(--foreground-rgb), 0.06)" : "rgba(0,0,0,0.06)"}` }}
             >
               <div className="flex items-center justify-between mb-8">
@@ -1708,12 +1708,12 @@ export function ProductsPage() {
           return (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/85 backdrop-blur-md z-50"
+              className="fixed inset-0 bg-black/85 backdrop-blur-md z-[60]"
               onClick={() => setQuickViewProduct(null)}
             />
             <motion.div initial={{ opacity: 0, scale: 0.96, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 16 }}
               transition={{ type: "spring", damping: 26, stiffness: 320 }}
-              className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[1040px] md:max-w-[95vw] md:max-h-[90vh] z-50 overflow-y-auto p-6 md:p-8 shadow-2xl"
+              className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[1040px] md:max-w-[95vw] md:max-h-[90vh] z-[60] overflow-y-auto p-6 md:p-8 shadow-2xl"
               style={{ background: "var(--surface-0)", borderRadius: "var(--radius-card-lg)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}
             >
               <button onClick={() => setQuickViewProduct(null)}

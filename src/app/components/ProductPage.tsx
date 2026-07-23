@@ -16,7 +16,7 @@ import { Footer } from "./Footer";
 import {
   getCatalogHref, getProductImages, getPrimaryProductImage,
   getProductSubcategory, getProductSwatches,
-  getVisibleCatalogProducts,
+  getShowcaseProducts, getStockStatus,
 } from "./productPresentation";
 import { toast } from "sonner";
 import { getPreOrderInfo } from "./PreOrderData";
@@ -25,7 +25,10 @@ import { PreOrderBanner, useCountdown } from "./PreOrderBanner";
 import { CTAButton, DiscountBadge, QtyStepper } from "./section";
 import { SEO } from "./SEO";
 import { getProductSlug, getProductUrl } from "../lib/slug";
-import { formatCep } from "../../utils/format";
+import { formatCep, formatBRLSpoken } from "../../utils/format";
+import { RestockNotify } from "./RestockNotify";
+import { DiscontinuedNotice } from "./DiscontinuedNotice";
+import { useFocusTrap } from "../lib/useFocusTrap";
 import { trackViewItem } from "../../utils/analytics";
 import { productDetails } from "./productDetails";
 
@@ -237,13 +240,13 @@ function ProductGallery({ images, name, isDark }: { images: string[]; name: stri
           <>
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/90 z-50 cursor-zoom-out"
+              className="fixed inset-0 bg-black/90 z-[60] cursor-zoom-out"
               onClick={() => setZoomed(false)}
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
-              className="fixed inset-0 z-50 flex items-center justify-center px-4 py-16 md:inset-10 md:px-12 md:py-10"
+              className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-16 md:inset-10 md:px-12 md:py-10"
               onClick={() => setZoomed(false)}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
@@ -435,7 +438,7 @@ function AutoShippingCalculator({ productPrice }: { productPrice: number }) {
             letterSpacing: "0.02em",
           }}
           onFocus={(e) => {
-            e.currentTarget.style.borderColor = "rgba(34,197,94,0.55)";
+            e.currentTarget.style.borderColor = "var(--ring)";
             e.currentTarget.style.background = "rgba(var(--foreground-rgb), 0.06)";
           }}
           onBlur={(e) => {
@@ -530,16 +533,14 @@ function AutoShippingCalculator({ productPrice }: { productPrice: number }) {
    ═══════════════════════════════════════════════════════ */
 
 function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () => void; priceNum: number }) {
+  // Escape e ciclo de foco ficam no hook; aqui resta travar o scroll do fundo.
+  const modalRef = useFocusTrap<HTMLDivElement>(open, onClose);
+
   useEffect(() => {
     if (!open) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", handler);
-    return () => {
-      document.body.style.overflow = "";
-      document.removeEventListener("keydown", handler);
-    };
-  }, [open, onClose]);
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
 
   const pixPrice = priceNum * 0.9;
   const installments = Array.from({ length: 12 }, (_, i) => ({
@@ -556,15 +557,19 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
             onClick={onClose}
           />
-          <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center pointer-events-none p-0 md:p-6">
+          <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center pointer-events-none p-0 md:p-6">
             <motion.div
               initial={{ opacity: 0, y: 40, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 40, scale: 0.96 }}
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
+              ref={modalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Formas de pagamento"
               className="pointer-events-auto w-full max-w-[520px] bg-background border border-foreground/10 shadow-2xl overflow-hidden"
               style={{
                 borderRadius: "20px 20px 0 0",
@@ -785,7 +790,9 @@ function StickyPriceCard({
   product, qty, setQty, onBuyNow, onAddToCart, addedToCart, pixPrice, installment, discount,
 }: StickyCardProps) {
   const [paymentOpen, setPaymentOpen] = useState(false);
-  const inStock = product.inStock !== false;
+  const stockStatus = getStockStatus(product);
+  const inStock = stockStatus === "in-stock";
+  const discontinued = stockStatus === "discontinued";
   const stockLabel = getStockLabel(product);
 
   return (
@@ -807,10 +814,13 @@ function StickyPriceCard({
             borderRadius: "var(--radius-card-lg)",
           }}
         />
-        {/* Promo Timer */}
-        <div className="relative mb-5">
-          <CountdownTimer />
-        </div>
+        {/* Promo Timer — só faz sentido se dá para comprar. Contagem regressiva
+            de oferta em produto indisponível pressiona para uma ação impossível. */}
+        {inStock && (
+          <div className="relative mb-5">
+            <CountdownTimer />
+          </div>
+        )}
 
         {/* Price block */}
         <div className="relative mb-5">
@@ -836,7 +846,8 @@ function StickyPriceCard({
                 letterSpacing: "-0.02em",
               }}
             >
-              {formatBRL(pixPrice)}
+              <span aria-hidden="true">{formatBRL(pixPrice)}</span>
+              <span className="sr-only">{formatBRLSpoken(pixPrice)}</span>
             </span>
           </div>
 
@@ -854,8 +865,13 @@ function StickyPriceCard({
             className="text-foreground/65"
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: "1.55" }}
           >
-            ou <span className="text-foreground font-semibold">{product.price}</span> em até{" "}
-            <span className="text-foreground font-semibold">12× {formatBRL(installment)}</span> sem juros
+            <span aria-hidden="true">
+              ou <span className="text-foreground font-semibold">{product.price}</span> em até{" "}
+              <span className="text-foreground font-semibold">12× {formatBRL(installment)}</span> sem juros
+            </span>
+            <span className="sr-only">
+              ou {formatBRLSpoken(product.priceNum)} em até 12 vezes de {formatBRLSpoken(installment)} sem juros
+            </span>
           </p>
 
           <button
@@ -880,7 +896,7 @@ function StickyPriceCard({
             className={inStock ? "text-[#4CAF50]" : "text-foreground/45"}
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
           >
-            {inStock ? `${stockLabel} · envio em 24h` : "Sem estoque"}
+            {inStock ? `${stockLabel} · envio em 24h` : discontinued ? "Fora de linha" : "Sem estoque"}
           </span>
         </div>
 
@@ -895,19 +911,24 @@ function StickyPriceCard({
           <QtyStepper value={qty} onChange={setQty} disabled={!inStock} />
         </div>
 
-        {/* CTAs */}
+        {/* CTAs — esgotado troca a compra pelo aviso de reposição. */}
         <div className="relative flex flex-col gap-2 mb-5">
-          <CTAButton
-            variant="buy"
-            size="lg"
-            block
-            onClick={onBuyNow}
-            disabled={!inStock}
-            className="cursor-pointer disabled:cursor-not-allowed"
-          >
-            <Zap size={15} strokeWidth={2.4} fill="currentColor" />
-            Comprar agora
-          </CTAButton>
+          {inStock ? (
+            <CTAButton
+              variant="buy"
+              size="lg"
+              block
+              onClick={onBuyNow}
+              className="cursor-pointer disabled:cursor-not-allowed"
+            >
+              <Zap size={15} strokeWidth={2.4} fill="currentColor" />
+              Comprar agora
+            </CTAButton>
+          ) : discontinued ? (
+            <DiscontinuedNotice category={product.category} />
+          ) : (
+            <RestockNotify productName={product.name} restockDate={product.restockDate} />
+          )}
         </div>
 
         <div className="h-px bg-foreground/6 mb-5" />
@@ -941,7 +962,9 @@ function MobilePurchaseFlow({
   product, qty, setQty, onBuyNow, pixPrice, installment, discount, onSeeDescription, shippingRef, preOrderInfo,
 }: StickyCardProps & { onSeeDescription: () => void; shippingRef?: React.RefObject<HTMLDivElement>; preOrderInfo?: PreOrderInfo | null }) {
   const [paymentOpen, setPaymentOpen] = useState(false);
-  const inStock = product.inStock !== false;
+  const stockStatus = getStockStatus(product);
+  const inStock = stockStatus === "in-stock";
+  const discontinued = stockStatus === "discontinued";
   const stockLabel = getStockLabel(product);
 
   const isPreOrder = !!preOrderInfo;
@@ -1017,7 +1040,7 @@ function MobilePurchaseFlow({
               className={inStock ? "text-green-500" : "text-foreground/45"}
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}
             >
-              {inStock ? stockLabel : "Sem estoque"}
+              {inStock ? stockLabel : discontinued ? "Fora de linha" : "Sem estoque"}
             </span>
           )}
         </div>
@@ -1076,7 +1099,8 @@ function MobilePurchaseFlow({
                   letterSpacing: "-0.02em",
                 }}
               >
-                {formatBRL(pixPrice)}
+                <span aria-hidden="true">{formatBRL(pixPrice)}</span>
+                <span className="sr-only">{formatBRLSpoken(pixPrice)}</span>
               </p>
               <p
                 className="text-foreground/60"
@@ -1094,8 +1118,13 @@ function MobilePurchaseFlow({
             className="text-foreground/68 mb-3"
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: "1.6" }}
           >
-            ou <span className="text-foreground font-bold">{product.price}</span> em até{" "}
-            <span className="text-foreground font-bold">12x de {formatBRL(installment)}</span> sem juros no cartão
+            <span aria-hidden="true">
+              ou <span className="text-foreground font-bold">{product.price}</span> em até{" "}
+              <span className="text-foreground font-bold">12x de {formatBRL(installment)}</span> sem juros no cartão
+            </span>
+            <span className="sr-only">
+              ou {formatBRLSpoken(product.priceNum)} em até 12 vezes de {formatBRLSpoken(installment)} sem juros no cartão
+            </span>
           </p>
         )}
 
@@ -1246,20 +1275,28 @@ function MobilePurchaseFlow({
           />
         </div>
 
-        <CTAButton
-          variant={isPreOrder ? "preorder" : "buy"}
-          size="lg"
-          block
-          onClick={onBuyNow}
-          disabled={buyDisabled}
-          className="cursor-pointer disabled:cursor-not-allowed"
-        >
-          {isPreOrder ? (
-            <><Rocket size={15} strokeWidth={2.4} className="flex-shrink-0" /> {preOrderSoldOut ? "Esgotado" : "Comprar agora"}</>
-          ) : (
-            <><Zap size={15} strokeWidth={2.4} fill="currentColor" className="flex-shrink-0" /> Comprar agora</>
-          )}
-        </CTAButton>
+        {/* Esgotado (fora pré-venda): o slot primário vira a única ação possível —
+            cadastrar aviso de reposição — em vez de um botão de compra morto. */}
+        {!isPreOrder && discontinued ? (
+          <DiscontinuedNotice category={product.category} />
+        ) : !isPreOrder && !inStock ? (
+          <RestockNotify productName={product.name} restockDate={product.restockDate} />
+        ) : (
+          <CTAButton
+            variant={isPreOrder ? "preorder" : "buy"}
+            size="lg"
+            block
+            onClick={onBuyNow}
+            disabled={buyDisabled}
+            className="cursor-pointer disabled:cursor-not-allowed"
+          >
+            {isPreOrder ? (
+              <><Rocket size={15} strokeWidth={2.4} className="flex-shrink-0" /> {preOrderSoldOut ? "Esgotado" : "Comprar agora"}</>
+            ) : (
+              <><Zap size={15} strokeWidth={2.4} fill="currentColor" className="flex-shrink-0" /> Comprar agora</>
+            )}
+          </CTAButton>
+        )}
 
         {isPreOrder && (
           <div className="mt-4 flex items-start gap-2">
@@ -1761,7 +1798,7 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+              className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm"
               onClick={() => setSelectedMedia(null)}
             />
             <motion.div
@@ -1769,7 +1806,7 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 24, scale: 0.98 }}
               transition={{ type: "spring", damping: 28, stiffness: 260 }}
-              className="fixed inset-4 z-50 mx-auto flex max-w-[980px] items-start justify-center pointer-events-none md:inset-8 md:items-center md:overflow-hidden"
+              className="fixed inset-4 z-[60] mx-auto flex max-w-[980px] items-start justify-center pointer-events-none md:inset-8 md:items-center md:overflow-hidden"
             >
               <div
                 className="grid w-full max-h-[calc(100vh-32px)] overflow-y-auto md:max-h-[88vh] md:overflow-hidden border border-edge shadow-2xl pointer-events-auto md:grid-cols-[minmax(0,1.2fr)_360px]"
@@ -2258,7 +2295,7 @@ export function ProductPage() {
 
   const productSubcategory = getProductSubcategory(product);
   const galleryImages = getProductImages(product);
-  const visibleProducts = getVisibleCatalogProducts(allProducts);
+  const visibleProducts = getShowcaseProducts(allProducts);
   const swatches = getProductSwatches(product);
 
   const related = visibleProducts

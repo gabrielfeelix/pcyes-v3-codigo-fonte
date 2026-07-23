@@ -9,7 +9,7 @@ import { useFavorites } from "./FavoritesContext";
 import { useAuth } from "./AuthContext";
 import { Link } from "react-router";
 import { allProducts, type Product } from "./productsData";
-import { findProductBySwatch, getPrimaryProductImage, getProductHoverMedia, getProductSwatches, getVisibleCatalogProducts } from "./productPresentation";
+import { findProductBySwatch, getPrimaryProductImage, getProductHoverMedia, getProductSwatches, getShowcaseProducts } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { PreOrderPill, DiscountBadge, QuickAddButton, CarouselNavButton } from "./section";
 
@@ -43,7 +43,7 @@ export function ProductCarousel({
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
 
   const products = useMemo(() => {
-    const visibleProducts = getVisibleCatalogProducts(allProducts);
+    const visibleProducts = getShowcaseProducts(allProducts);
     const resolved = productIds
       .map((id) => visibleProducts.find((product) => product.id === id))
       .filter(Boolean) as Product[];

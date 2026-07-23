@@ -10,7 +10,7 @@ import { useFavorites } from "./FavoritesContext";
 import { allProducts, type Product } from "./productsData";
 import {
   getPrimaryProductImage,
-  getVisibleCatalogProducts,
+  getShowcaseProducts,
 } from "./productPresentation";
 import { SectionHeader, CTAButton, DiscountBadge } from "./section";
 import { ProductCard } from "./ProductCard";
@@ -33,7 +33,7 @@ export function DealsHighlight({
   const { addFavorite } = useFavorites();
 
   const products = useMemo(() => {
-    const visible = getVisibleCatalogProducts(allProducts);
+    const visible = getShowcaseProducts(allProducts);
     const resolved = productIds
       .map((id) => visible.find((p) => p.id === id))
       .filter(Boolean) as Product[];

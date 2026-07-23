@@ -14,7 +14,16 @@ export interface Product {
   image: string;
   badge?: string;
   brand?: string;
+  /** Há unidades disponíveis agora. */
   inStock?: boolean;
+  /**
+   * Produto ativo na linha. `false` = descontinuado: não volta ao estoque,
+   * não aceita aviso de reposição e nunca entra em vitrine. Continua acessível
+   * por link direto/busca para não quebrar histórico e SEO.
+   */
+  active?: boolean;
+  /** Previsão de retorno ao estoque (ISO `YYYY-MM-DD`), quando conhecida. */
+  restockDate?: string;
   description?: string;
   htmlDescription?: string;
   seoSlug?: string;
@@ -2902,7 +2911,7 @@ const rawProducts: Product[] = [
     ],
     "seoSlug": "mini-computador-b500-white-i5-1235u-8gb-512gb-nvme-linux-ubuntu",
     "productUrl": "https://www.pcyes.com.br/mini-computador-b500-white-i5-1235u-8gb-512gb-nvme-linux-ubuntu",
-    "inStock": true,
+    "inStock": false,
     "badge": "NVME"
   },
   {
@@ -3920,7 +3929,8 @@ const rawProducts: Product[] = [
     ],
     "seoSlug": "teclado-mecanico-arkeum-summit-75-abnt2-switch-red",
     "productUrl": "https://www.pcyes.com.br/teclado-mecanico-arkeum-summit-75-abnt2-switch-red",
-    "inStock": true
+    "inStock": false,
+    "restockDate": "2026-08-14"
   },
   {
     "id": 79,
@@ -10374,7 +10384,8 @@ const rawProducts: Product[] = [
     ],
     "seoSlug": "fonte-gamer-shocker-pcyes-600w-80plus-pfc-ativo-pf600shw",
     "productUrl": "https://www.pcyes.com.br/fonte-gamer-shocker-pcyes-600w-80plus-pfc-ativo-pf600shw",
-    "inStock": true
+    "inStock": false,
+    "restockDate": "2026-08-28"
   },
   {
     "id": 207,
@@ -13839,7 +13850,7 @@ const rawProducts: Product[] = [
     ],
     "seoSlug": "memoria-gamer-32gb-ddr4-3200mhz-branca-rgb-udimm-pcyes-pm323200d4wr",
     "productUrl": "https://www.pcyes.com.br/memoria-gamer-32gb-ddr4-3200mhz-branca-rgb-udimm-pcyes-pm323200d4wr",
-    "inStock": true,
+    "inStock": false,
     "oldPrice": "R$ 235,88",
     "oldPriceNum": 235.88
   },
@@ -14433,7 +14444,8 @@ const rawProducts: Product[] = [
     ],
     "seoSlug": "ssd-256gb-pcyes-sata-iii-550mb-s-ssd25py256",
     "productUrl": "https://www.pcyes.com.br/ssd-256gb-pcyes-sata-iii-550mb-s-ssd25py256",
-    "inStock": true
+    "inStock": false,
+    "active": false
   },
   {
     "id": 288,
@@ -20432,7 +20444,7 @@ const rawProducts: Product[] = [
     ],
     "seoSlug": "cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-120mm-argbsf3br",
     "productUrl": "https://www.pcyes.com.br/cooler-fan-sangue-frio-3-pcyes-argb-black-vulcan-120mm-argbsf3br",
-    "inStock": true
+    "inStock": false
   },
   {
     "id": 407,
@@ -23031,7 +23043,8 @@ const rawProducts: Product[] = [
     ],
     "seoSlug": "gabinete-gamer-forcefield-white-ghost",
     "productUrl": "https://www.pcyes.com.br/gabinete-gamer-forcefield-white-ghost",
-    "inStock": true
+    "inStock": false,
+    "restockDate": "2026-09-10"
   },
   {
     "id": 458,
@@ -25283,7 +25296,8 @@ const rawProducts: Product[] = [
     ],
     "seoSlug": "placa-video-rtx-2060-6gb-gddr6-dual-fan",
     "productUrl": "https://www.pcyes.com.br/gamers/placa-de-video-gpu-rtx-2060-gddr6-6gb-192-dual-fan-full-size-graffiti-series-pa2060rtx6gdf",
-    "inStock": true
+    "inStock": false,
+    "active": false
   },
   {
     "id": 502,

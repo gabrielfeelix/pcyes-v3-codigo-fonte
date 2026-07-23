@@ -2,29 +2,19 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
-import { X, ShoppingCart, Trash2, Truck, Tag, Loader2, Check, MapPin, ChevronDown, Gift, Sparkles } from "lucide-react";
+import { X, ShoppingCart, Trash2, Check, Gift, Sparkles } from "lucide-react";
 import { useCart } from "./CartContext";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { allProducts } from "./productsData";
-import { getPrimaryProductImage, getVisibleCatalogProducts } from "./productPresentation";
+import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { PcyesCoin } from "./PcyesCoin";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
-import { BrindePill, PreOrderPill, QtyStepper } from "./section";
+import { BrindePill, PreOrderPill, QtyStepper, ScrollFade } from "./section";
+import { useFocusTrap } from "../lib/useFocusTrap";
 import { getPreOrderInfo } from "./PreOrderData";
-import { formatBRL, parseBRL, formatCep } from "../../utils/format";
-import { COUPONS, GIFT_THRESHOLD, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
+import { formatBRL, parseBRL } from "../../utils/format";
+import { GIFT_THRESHOLD, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { toast } from "sonner";
-
-const MOCK_SHIPPING: Record<string, { name: string; price: number; days: string }[]> = {
-  default: [
-    { name: "PAC", price: 18.9, days: "8-12 dias úteis" },
-    { name: "SEDEX", price: 32.5, days: "3-5 dias úteis" },
-  ],
-  free: [
-    { name: "Frete Grátis (PAC)", price: 0, days: "8-12 dias úteis" },
-    { name: "SEDEX", price: 24.9, days: "3-5 dias úteis" },
-  ],
-};
 
 const USER_PCYES_POINTS = 480;
 
@@ -42,20 +32,12 @@ export function CartDrawer() {
   const navigate = useNavigate();
   const { pointsApplied, setPointsApplied, pointsToUse } = useCheckoutPrefs();
 
-  const [shippingOpen, setShippingOpen] = useState(false);
-  const [couponOpen, setCouponOpen] = useState(false);
+  // Foco preso no drawer enquanto aberto; Escape fecha; foco volta ao gatilho.
+  const drawerRef = useFocusTrap<HTMLDivElement>(isOpen, () => setIsOpen(false));
+
   const [giftModalOpen, setGiftModalOpen] = useState(false);
   const [giftDismissed, setGiftDismissed] = useState(false);
   const [selectedGiftId, setSelectedGiftId] = useState<number | null>(null);
-
-  const [cep, setCep] = useState("");
-  const [shippingOptions, setShippingOptions] = useState<typeof MOCK_SHIPPING.default | null>(null);
-  const [selectedShipping, setSelectedShipping] = useState<number | null>(null);
-  const [loadingCep, setLoadingCep] = useState(false);
-
-  const [coupon, setCoupon] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
-  const [couponError, setCouponError] = useState("");
 
   const parsePrice = parseBRL;
   const formatPrice = formatBRL;
@@ -64,13 +46,10 @@ export function CartDrawer() {
   const paidItems = items.filter((item) => !item.isGift);
   const giftItem = items.find((item) => item.isGift) ?? null;
   const subtotal = paidItems.reduce((sum, i) => sum + parsePrice(i.price) * i.quantity, 0);
-  const discountPct = appliedCoupon ? COUPONS[appliedCoupon] || 0 : 0;
-  const discountValue = subtotal * (discountPct / 100);
-  const shippingCost = selectedShipping !== null && shippingOptions ? shippingOptions[selectedShipping].price : 0;
-  const maxPointsRedeem = maxRedeemablePoints(USER_PCYES_POINTS, subtotal - discountValue);
+  const maxPointsRedeem = maxRedeemablePoints(USER_PCYES_POINTS, subtotal);
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
   const pointsValue = pointsToBRL(pointsUsed);
-  const total = Math.max(0, subtotal - discountValue + shippingCost - pointsValue);
+  const total = Math.max(0, subtotal - pointsValue);
   const giftUnlocked = subtotal >= GIFT_THRESHOLD;
   const giftProgress = Math.min(100, (subtotal / GIFT_THRESHOLD) * 100);
   const remainingForGift = Math.max(0, GIFT_THRESHOLD - subtotal);
@@ -78,7 +57,7 @@ export function CartDrawer() {
   const giftOptions = useMemo(
     () => {
       const uniqueCategories = new Set<string>();
-      return getVisibleCatalogProducts(allProducts)
+      return getShowcaseProducts(allProducts)
         .sort((a, b) => a.priceNum - b.priceNum)
         .filter((product) => {
           if (uniqueCategories.has(product.category)) return false;
@@ -113,28 +92,6 @@ export function CartDrawer() {
     }
   }, [giftDismissed, giftItem, giftUnlocked, setGiftItem]);
 
-  const handleCepSearch = () => {
-    if (cep.replace(/\D/g, "").length < 8) return;
-    setLoadingCep(true);
-    setSelectedShipping(null);
-    setTimeout(() => {
-      setShippingOptions(subtotal >= 299 ? MOCK_SHIPPING.free : MOCK_SHIPPING.default);
-      setLoadingCep(false);
-    }, 1200);
-  };
-
-  const handleApplyCoupon = () => {
-    const c = coupon.trim().toUpperCase();
-    if (COUPONS[c]) {
-      setAppliedCoupon(c);
-      setCouponError("");
-      setCouponOpen(false);
-    } else {
-      setCouponError(`Cupom inválido. Tente: ${Object.keys(COUPONS).join(", ")}`);
-      setAppliedCoupon(null);
-    }
-  };
-
   const confirmGift = () => {
     const product = giftOptions.find((item) => item.id === selectedGiftId);
     if (!product) return;
@@ -159,6 +116,10 @@ export function CartDrawer() {
             className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
 
           <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            ref={drawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Carrinho de compras"
             className="fixed top-0 right-0 bottom-0 z-[61] flex w-full max-w-[460px] flex-col overflow-hidden"
             style={{
               background: isDark ? "#161617" : "white",
@@ -172,7 +133,12 @@ export function CartDrawer() {
               <div className="flex items-center gap-3">
                 <ShoppingCart size={18} className="text-foreground" strokeWidth={1.5} />
                 <span className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: "var(--font-weight-medium)" }}>Carrinho</span>
-                <span className="px-2 py-0.5 bg-primary text-primary-foreground" style={{ borderRadius: "var(--radius-pill)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "var(--font-weight-medium)" }}>{totalItems}</span>
+                <span aria-hidden="true" className="px-2 py-0.5 bg-primary text-primary-foreground" style={{ borderRadius: "var(--radius-pill)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "var(--font-weight-medium)" }}>{totalItems}</span>
+                {/* O número sozinho não diz nada fora do contexto visual; esta
+                    região anuncia a mudança de quantidade a leitores de tela. */}
+                <span className="sr-only" role="status" aria-live="polite">
+                  {totalItems} {totalItems === 1 ? "item" : "itens"} no carrinho
+                </span>
                 <span className="flex items-center gap-1 px-2 py-0.5 bg-yellow-500/10 text-yellow-500/70" style={{ borderRadius: "var(--radius-pill)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
                   <PcyesCoin size={14} />
                   {formatInt(USER_PCYES_POINTS)}
@@ -247,7 +213,7 @@ export function CartDrawer() {
               </div>
             )}
 
-            <div className="flex-1 overflow-y-auto px-7 py-5" style={{ scrollbarWidth: "none" }}>
+            <ScrollFade className="flex-1 overflow-y-auto px-7 py-5" label="Itens do carrinho">
               {items.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center text-center">
                   <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">
@@ -313,7 +279,7 @@ export function CartDrawer() {
                   </AnimatePresence>
                 </div>
               )}
-            </div>
+            </ScrollFade>
 
             {items.length > 0 && (
               <div className="border-t border-foreground/5 px-7 py-5 space-y-3">
@@ -322,20 +288,6 @@ export function CartDrawer() {
                     <span className="text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>Subtotal</span>
                     <span className="text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>{formatPrice(subtotal)}</span>
                   </div>
-                  {discountValue > 0 && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-green-500" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>Desconto ({discountPct}%)</span>
-                      <span className="text-green-500" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>-{formatPrice(discountValue)}</span>
-                    </div>
-                  )}
-                  {selectedShipping !== null && shippingOptions && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>Frete</span>
-                      <span className={shippingCost === 0 ? "text-green-500" : "text-foreground/50"} style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                        {shippingCost === 0 ? "Grátis" : formatPrice(shippingCost)}
-                      </span>
-                    </div>
-                  )}
                 </div>
 
                 <div className="flex items-center justify-between pt-1">
