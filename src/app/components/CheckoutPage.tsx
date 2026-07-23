@@ -1938,7 +1938,9 @@ export function CheckoutPage() {
                         transition={{ duration: 0.22 }}
                         className="overflow-hidden"
                       >
-                        <div className="mt-2 flex gap-2">
+                        {/* p-[2px]: folga para o anel de foco não encostar na
+                            borda do container recortado pelo overflow-hidden. */}
+                        <div className="mt-2 flex gap-2 p-[2px]">
                           <input
                             type="text"
                             placeholder="Ex: PCYES10"

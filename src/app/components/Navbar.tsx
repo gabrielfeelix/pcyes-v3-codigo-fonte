@@ -370,6 +370,11 @@ const megaMenus: Record<string, MegaMenu> = {
 
 interface NavItem { label: string; href?: string; mega?: string; emphasis?: "green" | "build" }
 
+/* Troca de país/idioma: existe só no menu mobile e a loja atende apenas o
+   Brasil, então oferecer a escolha promete algo que não existe. Fica desligada
+   — a tela de região segue no código, é só ligar quando houver operação fora. */
+const SHOW_REGION_SWITCHER = false;
+
 const navItems: NavItem[] = [
   { label: "Novidades", href: "/produtos" },
   { label: "Hardware", mega: "hardware", href: getCatalogHref({ category: "Hardware" }) },
@@ -2459,17 +2464,19 @@ export function Navbar() {
                       })}
                     </div>
 
-                    <button
-                      onClick={() => setMobileMenuView("region")}
-                      className="flex w-full items-center gap-4 px-7 py-5 text-left"
-                    >
-                      <span className="flex h-8 w-8 items-center justify-center text-foreground/45">
-                        <Globe2 size={17} strokeWidth={1.45} />
-                      </span>
-                      <span className="text-foreground/78" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
-                        Brasil · Português
-                      </span>
-                    </button>
+                    {SHOW_REGION_SWITCHER && (
+                      <button
+                        onClick={() => setMobileMenuView("region")}
+                        className="flex w-full items-center gap-4 px-7 py-5 text-left"
+                      >
+                        <span className="flex h-8 w-8 items-center justify-center text-foreground/45">
+                          <Globe2 size={17} strokeWidth={1.45} />
+                        </span>
+                        <span className="text-foreground/78" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
+                          Brasil · Português
+                        </span>
+                      </button>
+                    )}
                   </div>
                 </motion.div>
               )}

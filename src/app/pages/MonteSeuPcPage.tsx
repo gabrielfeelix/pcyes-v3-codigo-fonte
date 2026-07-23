@@ -2149,7 +2149,7 @@ function QuizFlow({
   const selectedProgramCount = (answers.programs ?? []).length;
 
   return (
-    <div className="mx-auto max-w-[1080px] px-6 py-12 md:py-14">
+    <div className="mx-auto max-w-[1520px] px-6 py-12 md:py-14">
       <AnimatePresence mode="wait">
         {stepId === "use" && (
           <motion.div
@@ -3495,7 +3495,7 @@ function PresetGallery({
 
   if (recommendedPreset) {
     return (
-      <div className="mx-auto max-w-[1320px] px-6 py-12 md:py-14">
+      <div className="mx-auto max-w-[1520px] px-6 py-12 md:py-14">
         <button
           type="button"
           onClick={onBack}
@@ -3631,7 +3631,7 @@ function PresetGallery({
   }
 
   return (
-    <div className="mx-auto max-w-[1320px] px-6 py-12 md:py-14">
+    <div className="mx-auto max-w-[1520px] px-6 py-12 md:py-14">
       <button
         type="button"
         onClick={onBack}
@@ -3790,20 +3790,22 @@ function PresetGallery({
 function TopBar() {
   return (
     <header className="sticky top-0 z-50 border-b border-edge-subtle bg-surface-0/95 backdrop-blur-xl">
-      <div className="mx-auto flex h-[64px] max-w-[1520px] items-center justify-between gap-3 px-5 md:px-8">
+      {/* Logo e botão acompanham a escala do header do site (logo 34px):
+          antes eram 24px numa barra de 64px e o topo parecia de outro produto. */}
+      <div className="mx-auto flex h-[76px] max-w-[1520px] items-center justify-between gap-3 px-5 md:px-8">
         <Link to="/" className="flex items-center gap-3 transition-opacity hover:opacity-80" aria-label="PCYES home">
-          <img src={LOGO_URL} alt="PCYES" className="h-[24px] w-auto" />
+          <img src={LOGO_URL} alt="PCYES" className="h-[32px] w-auto" />
         </Link>
         <Link
           to="/"
-          className="flex h-9 items-center gap-1.5 rounded-full border border-edge bg-white/[0.02] px-4 text-zinc-300 transition-all hover:border-edge-strong hover:bg-white/[0.06] hover:text-ink-strong"
+          className="flex h-10 items-center gap-2 rounded-full border border-edge bg-white/[0.02] px-5 text-zinc-300 transition-all hover:border-edge-strong hover:bg-white/[0.06] hover:text-ink-strong"
           style={{
             fontFamily: "var(--font-family-inter)",
-            fontSize: "var(--text-caption)",
+            fontSize: "var(--text-sm)",
             fontWeight: 600,
           }}
         >
-          <X size={12} /> Voltar para o Site
+          <X size={14} /> Voltar para o Site
         </Link>
       </div>
     </header>
@@ -3920,7 +3922,7 @@ function WelcomeScreen({ onPath }: { onPath: (p: "builder" | "quiz" | "presets")
               "linear-gradient(180deg, transparent 0%, rgba(10,10,10,1) 100%)",
           }}
         />
-        <div className="relative mx-auto max-w-[1320px] px-6 py-12 md:py-24 lg:py-28 text-center">
+        <div className="relative mx-auto max-w-[1520px] px-6 py-12 md:py-24 lg:py-28 text-center">
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -3978,7 +3980,7 @@ function WelcomeScreen({ onPath }: { onPath: (p: "builder" | "quiz" | "presets")
         </div>
       </div>
 
-      <div className="mx-auto max-w-[1180px] px-6 py-14 md:py-16">
+      <div className="mx-auto max-w-[1520px] px-6 py-14 md:py-16">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <PathCard
             icon={<Cpu className="h-5 w-5" />}

@@ -157,9 +157,11 @@ export function CartDrawer() {
               <div className="border-b border-foreground/5 px-7 py-3.5">
                 <div className={`overflow-hidden rounded-card-md border ${giftUnlocked ? "border-primary/18 bg-primary/[0.06]" : "border-foreground/8 bg-foreground/[0.03]"}`}>
                   <div className="px-4 py-3.5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3">
-                        <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl border border-primary/15 bg-primary/[0.08] text-primary">
+                    {/* items-center: com o texto em uma linha só, alinhar pelo topo
+                        deixava a frase alta e o ícone "sobrando" embaixo. */}
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/[0.08] text-primary">
                           <Gift size={15} />
                         </div>
                         {/* Uma linha só. Antes eram título + descrição dizendo a mesma
