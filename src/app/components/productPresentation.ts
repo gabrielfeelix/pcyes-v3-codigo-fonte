@@ -1,5 +1,5 @@
 import { allProducts, type Product } from "./productsData";
-import { getCategoryUrl } from "../lib/slug";
+import { getCategorySlug, getCategoryUrl, getSubcategorySlug } from "../lib/slug";
 
 export interface CatalogHrefParams {
   category?: string;
@@ -95,6 +95,49 @@ export function getProductSubcategory(product: Pick<Product, "name" | "category"
   if (product.subcategory) return product.subcategory;
   if (category) return product.category;
   return "Produtos";
+}
+
+/**
+ * Slug de subcategoria → rótulo real ("cadeiras-gamer" → "Cadeiras Gamer").
+ *
+ * Subcategoria não tem lista fixa: é derivada do produto por
+ * `getProductSubcategory`, e a URL nasce de `slugify` dela. Faltava o caminho
+ * de volta — a página de catálogo usava o slug CRU como rótulo de filtro, que
+ * nunca casa com "Cadeiras Gamer". Resultado: clicar na subcategoria pelo
+ * megamenu abria "cadeiras-gamer Cadeiras" com zero produtos.
+ *
+ * O índice é montado uma vez a partir do próprio catálogo, então continua
+ * verdadeiro quando entra subcategoria nova, sem lista para manter à mão.
+ */
+let subcategorySlugIndex: Map<string, string> | null = null;
+
+function getSubcategorySlugIndex() {
+  if (subcategorySlugIndex) return subcategorySlugIndex;
+
+  const index = new Map<string, string>();
+  for (const product of allProducts) {
+    const label = getProductSubcategory(product);
+    if (!label) continue;
+    const slug = getSubcategorySlug(label);
+    if (!index.has(slug)) index.set(slug, label);
+    // Chave qualificada por categoria: duas categorias podem derivar o mesmo
+    // slug (ex.: "Acessórios" em duas famílias) e aí o rótulo certo depende
+    // de onde o usuário está.
+    index.set(`${getCategorySlug(product.category)}/${slug}`, label);
+  }
+
+  subcategorySlugIndex = index;
+  return index;
+}
+
+export function getSubcategoryFromSlug(slug: string, category?: string): string | null {
+  if (!slug) return null;
+  const index = getSubcategorySlugIndex();
+  if (category) {
+    const scoped = index.get(`${getCategorySlug(category)}/${slug}`);
+    if (scoped) return scoped;
+  }
+  return index.get(slug) ?? null;
 }
 
 export function isPlaceholderProductImage(image?: string) {

@@ -21,6 +21,7 @@ import {
   getProductColorLabels,
   getPrimaryProductImage,
   getProductSubcategory,
+  getSubcategoryFromSlug,
   getProductSwatches,
   getVisibleCatalogProducts,
 } from "./productPresentation";
@@ -348,7 +349,11 @@ export function ProductsPage() {
   const slugCategory = routeParams.category
     ? getCategoryFromSlug(routeParams.category) ?? routeParams.category
     : "";
-  const slugSubcategory = routeParams.subcategory ?? "";
+  /* Slug → rótulo real. Sem isso "cadeiras-gamer" virava filtro literal e
+     nenhum produto casava: eles carregam "Cadeiras Gamer". */
+  const slugSubcategory = routeParams.subcategory
+    ? getSubcategoryFromSlug(routeParams.subcategory, slugCategory) ?? routeParams.subcategory
+    : "";
 
   const initialCategory = slugCategory || searchParams.get("category") || "";
   const initialSubcategory = slugSubcategory || searchParams.get("subcategory") || "";
