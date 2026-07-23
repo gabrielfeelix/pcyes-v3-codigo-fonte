@@ -8,7 +8,7 @@ import { useAuth } from "./AuthContext";
 import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getProductSwatches, getStockStatus } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
-import { CTAButton, DiscountBadge, Price, PreOrderPill } from "./section";
+import { CTAButton, DiscountBadge, Price, PreOrderPill, RatingChip } from "./section";
 import { formatBRLSpoken } from "../../utils/format";
 
 /**
@@ -221,6 +221,9 @@ export function ProductCard({
         >
           {product.name}
         </h3>
+
+        {/* Nota abaixo do título — mesmo lugar do card do catálogo. */}
+        <RatingChip rating={product.rating} reviews={product.reviews} className="mt-1.5" />
 
         <div className="mt-3">
           {oldPriceNum > product.priceNum && (

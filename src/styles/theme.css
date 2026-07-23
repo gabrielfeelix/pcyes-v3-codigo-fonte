@@ -229,12 +229,60 @@
 .category-track::-webkit-scrollbar,
 .profile-tabs::-webkit-scrollbar { display: none; }
 
-/* Listas internas roláveis (filtros, painéis) usam a MESMA barra da página.
-   A barra da janela é a nativa do navegador em modo escuro — a do filtro
-   destoava só porque pedia `scrollbar-width: thin`, a variante estreita e sem
-   setas. Aqui a largura volta ao padrão e as duas ficam idênticas. */
+/* ── Scrollbar única do sistema ──────────────────────────────────────────
+   Antes cada superfície herdava a barra nativa do navegador: a janela saía
+   escura, mas painel de filtro, modal e drawer saíam claros e grossos, porque
+   o nativo só escurece onde o `color-scheme` pega. Resultado: quatro barras
+   diferentes na mesma tela.
+
+   Aqui a barra é desenhada por nós — trilho escuro discreto, polegar cinza
+   arredondado — e vale pra janela e pra qualquer lista interna. As cores saem
+   de --foreground-rgb, então acompanham o tema claro sem regra extra.
+
+   Carrosséis que escondem a barra (.shelf-track & cia) continuam escondendo:
+   as regras deles são mais específicas.                                     */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--foreground-rgb), 0.24) rgba(var(--foreground-rgb), 0.06);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(var(--foreground-rgb), 0.05);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--foreground-rgb), 0.24);
+  border-radius: 999px;
+  /* Borda transparente + background-clip afina o polegar sem estreitar a
+     área clicável — o alvo continua os 12px inteiros. */
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--foreground-rgb), 0.38);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(var(--foreground-rgb), 0.5);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Listas internas roláveis (filtros, painéis) — o seletor existe pra marcar
+   intenção nos componentes; o estilo agora vem da regra global acima. */
 .pcyes-scroll {
-  scrollbar-width: auto;
+  scrollbar-width: thin;
 }
 
 /* Card hover treatments — see --shadow-{essential,profile,order,deal}-hover tokens.

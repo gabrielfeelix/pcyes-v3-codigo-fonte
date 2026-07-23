@@ -26,7 +26,7 @@ import {
 } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { searchProducts } from "../../utils/search";
-import { DiscountBadge, PreOrderPill } from "./section";
+import { DiscountBadge, PreOrderPill, RatingChip, SpecChip } from "./section";
 import { SEO } from "./SEO";
 import { getCategoryUrl } from "../lib/slug";
 import { CategorySeoBlock } from "./CategorySeoBlock";
@@ -1393,39 +1393,20 @@ export function ProductsPage() {
                               </div>
                             </Link>
 
-                            {/* Topo-esquerdo empilhado: pré-venda/desconto ACIMA da nota.
-                                Antes era if/else — com desconto a nota sumia, e ela é
-                                justamente o sinal de confiança que sustenta a oferta. */}
-                            <div className="absolute top-3 left-3 z-10 flex flex-col items-start gap-1.5">
-                              {preOrderInfo ? (
-                                <PreOrderPill info={preOrderInfo} />
-                              ) : discount > 0 ? (
-                                <DiscountBadge percent={discount} />
-                              ) : null}
-                              <div className="flex items-center gap-1.5 rounded-full px-2.5 py-1 backdrop-blur-md"
-                                style={{ background: "rgba(0,0,0,0.55)", border: "1px solid rgba(var(--foreground-rgb), 0.1)" }}>
-                                <Star size={11} className="fill-yellow-400 text-yellow-400" />
-                                <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "rgba(var(--foreground-rgb), 0.95)" }}>
-                                  {displayProduct.rating.toFixed(1)}
-                                </span>
+                            {/* Um único badge promocional, sempre no topo-esquerdo.
+                                A coluna antiga (promo + nota + switch) empilhava três
+                                selos sobre a foto, mudava de altura card a card e
+                                escondia o produto. Nota e switch agora vivem no bloco
+                                de texto; aqui fica só o gatilho de oferta. */}
+                            {(preOrderInfo || discount > 0) && (
+                              <div className="absolute top-3 left-3 z-10">
+                                {preOrderInfo ? (
+                                  <PreOrderPill info={preOrderInfo} />
+                                ) : (
+                                  <DiscountBadge percent={discount} />
+                                )}
                               </div>
-                              {/* Tipo de switch (só teclados mecânicos): o dado já era
-                                  derivado por getSwitchBadgeInfo mas ninguém o exibia. */}
-                              {switchBadgeInfo && (
-                                <span
-                                  className="flex h-9 w-9 items-center justify-center rounded-lg backdrop-blur-md"
-                                  style={{ background: "rgba(0,0,0,0.55)", border: "1px solid rgba(var(--foreground-rgb), 0.1)" }}
-                                  title={switchBadgeInfo.label}
-                                >
-                                  <ImageWithFallback
-                                    src={switchBadgeInfo.src}
-                                    alt={switchBadgeInfo.label}
-                                    loading="lazy"
-                                    className="h-7 w-7 object-contain"
-                                  />
-                                </span>
-                              )}
-                            </div>
+                            )}
                             {displayProduct.inStock === false && (
                               <span className="absolute top-3 right-12 z-10 px-2.5 py-1 bg-foreground/80 text-background shadow-sm" style={{ borderRadius: "var(--radius)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "600" }}>
                                 Esgotado
@@ -1470,6 +1451,25 @@ export function ProductsPage() {
                                 {displayProduct.name}
                               </h3>
                             </Link>
+
+                            {/* Meta: nota + variação (switch) logo abaixo do título,
+                                onde o olho já procura avaliação antes do preço. */}
+                            <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                              <RatingChip rating={displayProduct.rating} reviews={displayProduct.reviews} />
+                              {switchBadgeInfo && (
+                                <SpecChip
+                                  label={switchBadgeInfo.label}
+                                  icon={
+                                    <ImageWithFallback
+                                      src={switchBadgeInfo.src}
+                                      alt=""
+                                      loading="lazy"
+                                      className="h-3.5 w-3.5 object-contain"
+                                    />
+                                  }
+                                />
+                              )}
+                            </div>
 
                             <div className="mt-3">
                               {swatches.length > 1 && (
@@ -1546,14 +1546,17 @@ export function ProductsPage() {
                             <div className="flex h-full w-full items-center justify-center p-2 sm:p-3">
                               <ImageWithFallback src={getPrimaryProductImage(displayProduct)} alt={displayProduct.name} loading="lazy" decoding="async" className="h-full w-full object-contain group-hover:scale-[0.97] transition-transform duration-700" />
                             </div>
+                            {/* Mesmo badge da grade — placement e visual iguais nas
+                                duas visualizações, senão o usuário reaprende o card. */}
                             {discount > 0 && (
-                              <span className="absolute top-2 left-2 px-2 py-1 bg-primary text-ink-strong" style={{ borderRadius: "var(--radius)", fontSize: "var(--text-caption)", fontWeight: "700" }}>{discount}% OFF</span>
+                              <DiscountBadge percent={discount} className="absolute left-2 top-2 z-10" />
                             )}
                           </Link>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1 sm:mb-2 pr-10 sm:pr-0">
                               <span className="text-foreground/40 uppercase font-semibold" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", letterSpacing: "0.05em" }}>{displayProduct.category}</span>
                               {displayProduct.brand && <span className="text-foreground/30 font-medium truncate" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>· {displayProduct.brand}</span>}
+                              <RatingChip rating={displayProduct.rating} reviews={displayProduct.reviews} className="ml-auto sm:ml-0" />
                             </div>
                             <Link to={`/produto/${displayProduct.id}`}>
                               <p className="line-clamp-2 sm:line-clamp-1 text-foreground group-hover:text-foreground/70 transition-colors mb-1.5 sm:mb-2 text-base sm:text-lg pr-10 sm:pr-0" style={{ fontFamily: "var(--font-family-figtree)", fontWeight: "var(--font-weight-medium)", lineHeight: 1.3 }}>
