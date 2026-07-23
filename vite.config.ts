@@ -89,6 +89,12 @@ function deferMainCss() {
  * Valida a taxonomia antes: produto sem classificação ou slug duplicado
  * derruba o build, em vez de virar URL órfã em produção.
  */
+/**
+ * Rotas que existem mas não entram no sitemap → caminho da página : canonical.
+ * Preenchida por generateSitemap e consumida pelo prerender, que roda depois.
+ */
+const mirrorRoutes = new Map<string, string>()
+
 function generateSitemap() {
   const SITE = 'https://www.pcyes.com.br'
   const STATIC_ROUTES: Array<[string, string, string]> = [
@@ -118,6 +124,7 @@ function generateSitemap() {
         )
       }
 
+      mirrorRoutes.clear()
       const rows: Array<[string, string, string]> = [...STATIC_ROUTES]
       const seen = new Set(rows.map(([loc]) => loc))
       const push = (loc: string, freq: string, prio: string) => {
@@ -144,9 +151,18 @@ function generateSitemap() {
         push(`/${getCategorySlug(category)}/`, 'weekly', '0.8')
         for (const node of getTaxonomyNodesByCategory(category)) {
           if (countIn(category, node.slug) === 0) continue
-          // Espelho da categoria: mesma lista, outra URL. Publicar as duas é
-          // pedir para o buscador escolher entre páginas idênticas.
-          if (isMirrorSubcategory(node)) continue
+          /* Espelho da categoria: mesma lista, outra URL. Fora do sitemap
+             para o buscador não escolher entre páginas idênticas — mas ainda
+             precisa de HTML próprio, com canonical apontando para a
+             categoria. Sem isso a rota cai no index.html raiz e sai com o
+             canonical da HOME, que é pior que a duplicata original. */
+          if (isMirrorSubcategory(node)) {
+            mirrorRoutes.set(
+              `/${getCategorySlug(category)}/${node.slug}/`,
+              `/${getCategorySlug(category)}/`,
+            )
+            continue
+          }
           push(`/${getCategorySlug(category)}/${node.slug}/`, 'weekly', '0.7')
         }
       }
@@ -386,6 +402,13 @@ function prerenderSeoHtml() {
       if (!fs.existsSync(tplPath) || !fs.existsSync(smPath)) return
       const tpl = fs.readFileSync(tplPath, 'utf8')
       const locs = [...fs.readFileSync(smPath, 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1])
+      // Rota fora do sitemap ainda recebe HTML: sem ele, o rewrite entrega o
+      // index.html raiz e a página herda o canonical da home.
+      const canonicalOverride = new Map<string, string>()
+      for (const [route, canonical] of mirrorRoutes) {
+        locs.push(`${SITE}${route}`)
+        canonicalOverride.set(route, `${SITE}${canonical}`)
+      }
       let count = 0
       let ld = 0
       let body = 0
@@ -395,8 +418,9 @@ function prerenderSeoHtml() {
         if (!loc.startsWith(SITE)) continue
         const p = loc.slice(SITE.length) || '/'
         if (p === '/') continue
-        let html = set(tpl, /(<link rel="canonical" href=")[^"]*(")/, loc)
-        html = set(html, /(<meta property="og:url" content=")[^"]*(")/, loc)
+        const canonical = canonicalOverride.get(p) ?? loc
+        let html = set(tpl, /(<link rel="canonical" href=")[^"]*(")/, canonical)
+        html = set(html, /(<meta property="og:url" content=")[^"]*(")/, canonical)
         const meta = META[p]
         if (meta) {
           const full = `${meta[0]} | PCYES`
