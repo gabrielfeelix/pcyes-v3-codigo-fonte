@@ -72,7 +72,11 @@ function EssentialCard({ product }: EssentialCardProps) {
         <div
           className="pointer-events-none absolute inset-3 md:inset-4"
           style={{
-            background: "var(--surface-0)",
+            // A foto do produto já vem com gradiente radial embutido. Painel
+            // chapado criava uma borda visível em volta dela; o radial daqui
+            // segue o mesmo eixo de luz e a emenda some.
+            background:
+              "radial-gradient(circle at 50% 42%, rgba(var(--foreground-rgb), 0.08) 0%, rgba(var(--foreground-rgb), 0.03) 42%, transparent 72%), var(--surface-0)",
             border: "1px solid rgba(var(--foreground-rgb), 0.06)",
             borderRadius: "calc(var(--radius-card-lg) - 6px)",
           }}
