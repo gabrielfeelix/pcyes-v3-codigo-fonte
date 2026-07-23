@@ -156,12 +156,20 @@ function getDiscount(p: Product) {
   return Math.round(((p.oldPriceNum - p.priceNum) / p.oldPriceNum) * 100);
 }
 
+/** "RED SWITCH" (como vem no dado) → "Red Switch". O chip é rótulo, não grito. */
+function toTitleCase(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/(^|[\s\-/])(\p{L})/gu, (_, sep: string, letter: string) => sep + letter.toUpperCase());
+}
+
 function getSwitchBadgeInfo(product: Product) {
   const normalized = `${product.badge ?? ""} ${product.name}`.toLowerCase();
   if (!normalized.includes("switch")) return null;
-  if (normalized.includes("blue")) return { src: "/switches/blue-switch.png", label: product.badge ?? "Blue Switch" };
-  if (normalized.includes("red")) return { src: "/switches/red-dragon.png", label: product.badge ?? "Red Switch" };
-  if (normalized.includes("brown")) return { src: "/switches/brown-switch1.png", label: product.badge ?? "Brown Switch" };
+  const label = product.badge ? toTitleCase(product.badge) : null;
+  if (normalized.includes("blue")) return { src: "/switches/blue-switch.png", label: label ?? "Blue Switch" };
+  if (normalized.includes("red")) return { src: "/switches/red-dragon.png", label: label ?? "Red Switch" };
+  if (normalized.includes("brown")) return { src: "/switches/brown-switch1.png", label: label ?? "Brown Switch" };
   return null;
 }
 
