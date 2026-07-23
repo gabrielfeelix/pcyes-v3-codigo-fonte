@@ -1,30 +1,71 @@
-import { lazy } from "react";
+import { lazy, type ComponentType } from "react";
 import { createBrowserRouter, useParams } from "react-router";
 import { RootLayout } from "./components/RootLayout";
 import { HomePage } from "./components/HomePage";
 import { GlobalErrorBoundary } from "./components/GlobalErrorBoundary";
 import { getCategoryFromSlug } from "./lib/slug";
 
+const CHUNK_RELOAD_KEY = "pcyes:chunk-reloaded";
+
+/**
+ * `lazy()` que se recupera de chunk obsoleto.
+ *
+ * Cada build gera nomes com hash novo (MonteSeuPcPage-BcAOR-0_.js). Quem estava
+ * com a aba aberta durante um deploy segue com o index.html antigo em memória e,
+ * ao navegar, pede um arquivo que não existe mais no servidor — o erro "Failed
+ * to fetch dynamically imported module". O código está certo; o índice é que
+ * envelheceu.
+ *
+ * Aqui a primeira falha recarrega a página, o que busca o index.html atual com
+ * os hashes novos. A trava em sessionStorage evita laço quando a falha for real
+ * (rede fora, arquivo realmente ausente): nesse caso o erro sobe para o
+ * GlobalErrorBoundary na segunda tentativa. Um carregamento bem-sucedido limpa
+ * a trava, então o próximo deploy volta a contar com a recuperação.
+ */
+function lazyRoute<T extends ComponentType<never>>(load: () => Promise<{ default: T }>) {
+  return lazy(() =>
+    load()
+      .then((mod) => {
+        try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* modo privado */ }
+        return mod;
+      })
+      .catch((error) => {
+        let alreadyReloaded = true;
+        try {
+          alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY) === "1";
+          if (!alreadyReloaded) sessionStorage.setItem(CHUNK_RELOAD_KEY, "1");
+        } catch { /* sem sessionStorage: não insiste */ }
+
+        if (alreadyReloaded) throw error;
+
+        window.location.reload();
+        // Promise pendente de propósito: a página já está sendo trocada, então
+        // não faz sentido resolver nem estourar erro nesse intervalo.
+        return new Promise<{ default: T }>(() => {});
+      }),
+  );
+}
+
 // Lazy-loaded page components (non-first-paint)
-const ProductsPage = lazy(() => import("./components/ProductsPage").then(m => ({ default: m.ProductsPage })));
-const ProductPage = lazy(() => import("./components/ProductPage").then(m => ({ default: m.ProductPage })));
-const CartPage = lazy(() => import("./components/CartPage").then(m => ({ default: m.CartPage })));
-const CheckoutPage = lazy(() => import("./components/CheckoutPage").then(m => ({ default: m.CheckoutPage })));
-const ProfilePage = lazy(() => import("./components/ProfilePage").then(m => ({ default: m.ProfilePage })));
-const InfluencersPage = lazy(() => import("./components/pages/InfluencersPage").then(m => ({ default: m.InfluencersPage })));
-const ResellerPage = lazy(() => import("./components/pages/ResellerPage").then(m => ({ default: m.ResellerPage })));
-const ContactPage = lazy(() => import("./components/pages/ContactPage").then(m => ({ default: m.ContactPage })));
-const StoreLocatorPage = lazy(() => import("./components/pages/StoreLocatorPage").then(m => ({ default: m.StoreLocatorPage })));
-const MaringaFCCollabPage = lazy(() => import("./components/pages/MaringaFCCollabPage").then(m => ({ default: m.MaringaFCCollabPage })));
-const MonteSeuPcPage = lazy(() => import("./pages/MonteSeuPcPage").then(m => ({ default: m.MonteSeuPcPage })));
-const DriversManuaisPage = lazy(() => import("./pages/DriversManuaisPage").then(m => ({ default: m.DriversManuaisPage })));
-const DriverDetailPage = lazy(() => import("./pages/DriverDetailPage").then(m => ({ default: m.DriverDetailPage })));
-const FaqPage = lazy(() => import("./pages/FaqPage").then(m => ({ default: m.FaqPage })));
-const QuemSomosPage = lazy(() => import("./pages/QuemSomosPage").then(m => ({ default: m.QuemSomosPage })));
-const PrivacyPage = lazy(() => import("./pages/PrivacyPage").then(m => ({ default: m.PrivacyPage })));
-const WarrantyPage = lazy(() => import("./pages/WarrantyPage").then(m => ({ default: m.WarrantyPage })));
-const TermsPage = lazy(() => import("./pages/TermsPage").then(m => ({ default: m.TermsPage })));
-const NotFoundPage = lazy(() => import("./pages/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
+const ProductsPage = lazyRoute(() => import("./components/ProductsPage").then(m => ({ default: m.ProductsPage })));
+const ProductPage = lazyRoute(() => import("./components/ProductPage").then(m => ({ default: m.ProductPage })));
+const CartPage = lazyRoute(() => import("./components/CartPage").then(m => ({ default: m.CartPage })));
+const CheckoutPage = lazyRoute(() => import("./components/CheckoutPage").then(m => ({ default: m.CheckoutPage })));
+const ProfilePage = lazyRoute(() => import("./components/ProfilePage").then(m => ({ default: m.ProfilePage })));
+const InfluencersPage = lazyRoute(() => import("./components/pages/InfluencersPage").then(m => ({ default: m.InfluencersPage })));
+const ResellerPage = lazyRoute(() => import("./components/pages/ResellerPage").then(m => ({ default: m.ResellerPage })));
+const ContactPage = lazyRoute(() => import("./components/pages/ContactPage").then(m => ({ default: m.ContactPage })));
+const StoreLocatorPage = lazyRoute(() => import("./components/pages/StoreLocatorPage").then(m => ({ default: m.StoreLocatorPage })));
+const MaringaFCCollabPage = lazyRoute(() => import("./components/pages/MaringaFCCollabPage").then(m => ({ default: m.MaringaFCCollabPage })));
+const MonteSeuPcPage = lazyRoute(() => import("./pages/MonteSeuPcPage").then(m => ({ default: m.MonteSeuPcPage })));
+const DriversManuaisPage = lazyRoute(() => import("./pages/DriversManuaisPage").then(m => ({ default: m.DriversManuaisPage })));
+const DriverDetailPage = lazyRoute(() => import("./pages/DriverDetailPage").then(m => ({ default: m.DriverDetailPage })));
+const FaqPage = lazyRoute(() => import("./pages/FaqPage").then(m => ({ default: m.FaqPage })));
+const QuemSomosPage = lazyRoute(() => import("./pages/QuemSomosPage").then(m => ({ default: m.QuemSomosPage })));
+const PrivacyPage = lazyRoute(() => import("./pages/PrivacyPage").then(m => ({ default: m.PrivacyPage })));
+const WarrantyPage = lazyRoute(() => import("./pages/WarrantyPage").then(m => ({ default: m.WarrantyPage })));
+const TermsPage = lazyRoute(() => import("./pages/TermsPage").then(m => ({ default: m.TermsPage })));
+const NotFoundPage = lazyRoute(() => import("./pages/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
 
 /* Rota de categoria: se o slug não corresponde a nenhuma categoria real
    (URL digitada errada / lixo), mostra o 404 em vez de fingir uma categoria
