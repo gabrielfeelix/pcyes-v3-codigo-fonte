@@ -30,6 +30,7 @@ import { getPreOrderInfo } from "./PreOrderData";
 import { searchProducts } from "../../utils/search";
 import { DiscountBadge, PreOrderPill, RatingChip, SpecChip } from "./section";
 import { SEO } from "./SEO";
+import { getListingSeo } from "../lib/listingSeo";
 import { getCategoryUrl } from "../lib/slug";
 import { CategorySeoBlock } from "./CategorySeoBlock";
 
@@ -1110,28 +1111,50 @@ export function ProductsPage() {
     </div>
   );
 
+  /* SEO da listagem: só existe quando há categoria — /produtos com busca livre
+     não é página de catálogo indexável, é resultado de consulta. */
+  const listingSeo = useMemo(
+    () =>
+      activeCategoryLabel
+        ? getListingSeo({
+            category: activeCategoryLabel,
+            subcategoryLabel: initialSubcategory || undefined,
+            products: validProducts.filter(
+              (p) =>
+                getProductCategory(p) === activeCategoryLabel &&
+                (!initialSubcategory || getProductSubcategory(p) === initialSubcategory),
+            ),
+          })
+        : null,
+    [activeCategoryLabel, initialSubcategory, validProducts],
+  );
+
   /* ═══════════════════════════════════════════════════════
      RENDER
      ═══════════════════════════════════════════════════════ */
 
   return (
     <div ref={mainRef} className="pt-[calc(56px+var(--announce-h))] md:pt-[calc(142px+var(--announce-h))] notebook:pt-[calc(92px+var(--announce-h))] min-h-dvh" style={{ background: "var(--surface-0)" }}>
+      {/* Título e descrição vêm de lib/listingSeo — o MESMO texto que o build
+          embute no HTML cru. Escritos aqui e lá, divergiriam: o crawler leria
+          um título e o usuário veria outro. */}
       <SEO
-        title={
-          activeCategoryLabel
-            ? initialSubcategory
-              ? `${initialSubcategory} ${activeCategoryLabel}`
-              : `${activeCategoryLabel}`
-            : "Produtos"
-        }
+        title={listingSeo?.title ?? "Produtos"}
         description={
-          activeCategoryLabel
-            ? `Veja todos os produtos da categoria ${activeCategoryLabel}${initialSubcategory ? ` / ${initialSubcategory}` : ""} na PCYES. Frete grátis acima de R$ 299, até 12x sem juros.`
-            : "Catálogo completo de produtos PCYES. Hardware, periféricos, setups gamer."
+          listingSeo?.description ??
+          "Catálogo completo de produtos PCYES. Hardware, periféricos, setups gamer."
         }
+        /* Subcategoria que espelha a categoria (Gabinetes/Gabinetes) lista os
+           mesmos produtos: canonical aponta para a categoria, senão as duas
+           URLs competem entre si pelo mesmo termo. */
         canonicalPath={
           activeCategoryLabel
-            ? getCategoryUrl(activeCategoryLabel, initialSubcategory || undefined)
+            ? getCategoryUrl(
+                activeCategoryLabel,
+                initialSubcategory && initialSubcategory !== activeCategoryLabel
+                  ? initialSubcategory
+                  : undefined,
+              )
             : "/produtos"
         }
         image={

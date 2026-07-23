@@ -15,10 +15,12 @@ import {
   CATEGORIES,
   TAXONOMY,
   getTaxonomyNodesByCategory,
+  isMirrorSubcategory,
   resolveTaxonomyNode,
   validateTaxonomy,
 } from './src/app/lib/taxonomy'
 import { hasUsableProductImage } from './src/app/components/productPresentation'
+import { getListingSeo } from './src/app/lib/listingSeo'
 
 const prototypeBasePath = process.env.PROTOTYPE_BASE_PATH || '/'
 const prototypeOutDir = process.env.PROTOTYPE_OUT_DIR || 'dist'
@@ -142,6 +144,9 @@ function generateSitemap() {
         push(`/${getCategorySlug(category)}/`, 'weekly', '0.8')
         for (const node of getTaxonomyNodesByCategory(category)) {
           if (countIn(category, node.slug) === 0) continue
+          // Espelho da categoria: mesma lista, outra URL. Publicar as duas é
+          // pedir para o buscador escolher entre páginas idênticas.
+          if (isMirrorSubcategory(node)) continue
           push(`/${getCategorySlug(category)}/${node.slug}/`, 'weekly', '0.7')
         }
       }
@@ -202,6 +207,11 @@ function prerenderSeoHtml() {
      lê. Os agrupamentos de produto por listagem tinham o mesmo furo. */
   for (const prod of allProducts as any[]) {
     productByUrl.set(getProductUrl(prod), prod)
+    /* Agrupa só o que a listagem de fato mostra. A página esconde produto sem
+       foto utilizável, então incluí-lo aqui faria o HTML cru anunciar uma
+       contagem que o usuário não encontra — e a descrição gerada divergiria
+       entre o que o crawler lê e o que a SPA renderiza. */
+    if (!hasUsableProductImage(prod)) continue
     const node = resolveTaxonomyNode(prod)
     const catSlug = getCategorySlug(node?.category ?? prod.category)
     ;(productsByCat.get(catSlug) ?? productsByCat.set(catSlug, []).get(catSlug)!).push(prod)
@@ -399,6 +409,26 @@ function prerenderSeoHtml() {
         const segs = p.split('/').filter(Boolean)
         const prod = productByUrl.get(p)
         const isCategory = !prod && segs.length <= 2 && !!getCategoryFromSlug(segs[0])
+
+        /* Listagem ganha title/description próprios, do MESMO módulo que a SPA
+           usa em runtime. Sem isso, as 40 listagens herdavam o título
+           institucional do site — quarenta páginas com o mesmo <title>, que é
+           conteúdo duplicado e desperdiça o resultado de busca. */
+        if (isCategory) {
+          const catLabel = getCategoryFromSlug(segs[0])!
+          const key = segs[1] ? `${segs[0]}/${segs[1]}` : ''
+          const subLabel = key ? subLabelBySlug.get(key) : undefined
+          const listing = getListingSeo({
+            category: catLabel,
+            subcategoryLabel: subLabel,
+            products: (key ? productsByCatSub.get(key) : productsByCat.get(segs[0])) ?? [],
+          })
+          const full = `${listing.title} | PCYES`
+          html = html.replace(/<title>[^<]*<\/title>/, () => `<title>${esc(full)}</title>`)
+          html = set(html, /(<meta name="description" content=")[^"]*(")/, esc(listing.description))
+          html = set(html, /(<meta property="og:title" content=")[^"]*(")/, esc(full))
+          html = set(html, /(<meta property="og:description" content=")[^"]*(")/, esc(listing.description))
+        }
         const blobs = prod ? productLd(prod, p) : isCategory ? categoryLd(p) : null
         if (blobs) {
           html = injectLd(html, blobs)

@@ -49,6 +49,16 @@ export interface TaxonomyNode {
   headNouns?: string[];
   /** Slugs que já apontaram para este conteúdo. */
   legacySlugs?: string[];
+  /**
+   * Título e descrição editoriais da listagem.
+   *
+   * Opcionais de propósito: o template de `lib/listingSeo` já produz texto
+   * único e correto para toda listagem, então nenhuma página nasce sem SEO.
+   * Estes campos existem para quando marketing quiser sobrescrever uma
+   * listagem específica sem tocar em código de renderização.
+   */
+  seoTitle?: string;
+  seoDescription?: string;
 }
 
 export const CATEGORIES = [
@@ -363,6 +373,22 @@ export function resolveTaxonomyNode(product: Resolvable): TaxonomyNode | null {
 
   resolveCache.set(product as object, node);
   return node;
+}
+
+/**
+ * O nó apenas espelha a própria categoria? (Fontes/Fontes, Gabinetes/Gabinetes)
+ *
+ * Nessas famílias a categoria tem um filho só, com o mesmo nome, então
+ * `/gabinetes/` e `/gabinetes/gabinetes/` listam exatamente os mesmos produtos.
+ * São duas URLs para uma página — conteúdo duplicado, com as duas competindo
+ * pelo mesmo termo e dividindo o sinal entre si.
+ *
+ * A listagem espelhada continua acessível (o segmento existe nas URLs de
+ * produto), mas não é publicada no sitemap e aponta canonical para a
+ * categoria: uma página indexável por conteúdo.
+ */
+export function isMirrorSubcategory(node: TaxonomyNode): boolean {
+  return node.label === node.category;
 }
 
 export function getTaxonomyNodeBySlug(slug: string): TaxonomyNode | null {
