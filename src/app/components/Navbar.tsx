@@ -14,6 +14,7 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/t
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "./ui/dropdown-menu";
 import { allProducts, type Product } from "./productsData";
 import { getCatalogHref, getPrimaryProductImage, getProductSubcategory, getProductSwatches, getVisibleCatalogProducts } from "./productPresentation";
+import { getCategoryFromSlug, getCategorySlug, getSubcategorySlug } from "../lib/slug";
 import { searchProducts } from "../../utils/search";
 
 const PCYES_LOGO = "https://pcyes-cdn.oderco.com.br/Logotipos/PCYES/Simbolo-Logo-Horiz-Vermelho.png";
@@ -30,7 +31,21 @@ type RightPanel =
   | { type: "featured"; title: string; image: string; name: string; desc: string; href: string }
   | { type: "downloads"; title: string; items: DownloadItem[] };
 
-interface MegaSubItem { label: string; href: string; right: RightPanel }
+interface MegaSubItem {
+  label: string;
+  href: string;
+  right: RightPanel;
+  /**
+   * Miniatura do megamenu. Opcional: quando vazia, a imagem é derivada do
+   * primeiro produto da categoria apontada por `href`.
+   *
+   * Vale preencher quando o item NÃO é uma categoria de catálogo — tiers de
+   * PC Gamer, por exemplo, são faixas de desempenho e não têm produto próprio
+   * de onde derivar. Também serve para fixar a arte quando não se quer que a
+   * thumb mude sozinha ao reordenar o catálogo.
+   */
+  image?: string;
+}
 
 /**
  * Banner de collab no megamenu.
@@ -250,7 +265,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Workstation", href: "/produtos",
+        label: "Workstation", href: "/produtos", image: "/setups/setup-render.png",
         right: {
           type: "layouts", title: "Workstation por Finalidade",
           layouts: [
@@ -268,7 +283,7 @@ const megaMenus: Record<string, MegaMenu> = {
     title: "PC Gamer",
     subItems: [
       {
-        label: "Entrada", href: "/produtos",
+        label: "Entrada", href: "/produtos", image: "/setups/setup-base.png",
         right: {
           type: "layouts", title: "PC Gamer Entrada",
           layouts: [
@@ -279,7 +294,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Intermediário", href: "/produtos",
+        label: "Intermediário", href: "/produtos", image: "/setups/setup-pulse.png",
         right: {
           type: "layouts", title: "PC Gamer Intermediário",
           layouts: [
@@ -290,7 +305,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Avançado", href: "/produtos",
+        label: "Avançado", href: "/produtos", image: "/setups/setup-apex.png",
         right: {
           type: "layouts", title: "PC Gamer Avançado",
           layouts: [
@@ -301,7 +316,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Pré-Montados", href: "/produtos",
+        label: "Pré-Montados", href: "/produtos", image: "/setups/setup-strike.png",
         right: {
           type: "featured", title: "PCs Prontos",
           image: "https://images.unsplash.com/photo-1587831990711-23ca6441447b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800",
@@ -474,18 +489,34 @@ function productMatchesMenuValue(product: Product, value: string) {
 }
 
 function getProductsForMenuHref(href?: string) {
-  if (!href?.startsWith("/produtos")) return [];
+  if (!href) return [];
+  const [path, query = ""] = href.split("?");
 
-  const [, query = ""] = href.split("?");
-  const params = new URLSearchParams(query);
-  const category = params.get("category");
-  const subcategory = params.get("subcategory");
+  // Formato legado: /produtos?category=&subcategory=
+  if (path.startsWith("/produtos")) {
+    const params = new URLSearchParams(query);
+    const category = params.get("category");
+    const subcategory = params.get("subcategory");
+    // Sem filtro não há categoria a representar. Antes devolvia os 7 primeiros
+    // do catálogo, e como só o [0] vira thumb, todos os itens sem filtro
+    // acabavam exibindo o MESMO produto.
+    if (!category && !subcategory) return [];
+    return visibleCatalogProducts.filter((product) => {
+      if (category && !productMatchesMenuValue(product, category)) return false;
+      if (subcategory && !productMatchesMenuValue(product, subcategory)) return false;
+      return true;
+    });
+  }
 
-  if (!category && !subcategory) return visibleCatalogProducts.slice(0, 7);
-
+  // Formato semântico: /computadores/mini-computadores/ — é o que
+  // getCatalogHref emite desde a migração de URLs. Sem este ramo, todo item de
+  // categoria caía no return vazio e a thumb virava a foto de banco de imagem
+  // do painel.
+  const [catSlug, subSlug] = path.split("/").filter(Boolean);
+  if (!catSlug || !getCategoryFromSlug(catSlug)) return [];
   return visibleCatalogProducts.filter((product) => {
-    if (category && !productMatchesMenuValue(product, category)) return false;
-    if (subcategory && !productMatchesMenuValue(product, subcategory)) return false;
+    if (getCategorySlug(product.category) !== catSlug) return false;
+    if (subSlug && getSubcategorySlug(getProductSubcategory(product)) !== subSlug) return false;
     return true;
   });
 }
@@ -675,6 +706,8 @@ export function Navbar() {
   };
 
   const getMegaCategoryImage = (sub: MegaSubItem) => {
+    // Arte definida à mão ganha da derivação automática.
+    if (sub.image) return sub.image;
     const productImage = getProductsForMenuHref(sub.href)[0];
     if (productImage) return getPrimaryProductImage(productImage);
     if (sub.right.type === "featured") return sub.right.image;
