@@ -11,6 +11,14 @@ import {
   getSubcategorySlug,
   getCategoryFromSlug,
 } from './src/app/lib/slug'
+import {
+  CATEGORIES,
+  TAXONOMY,
+  getTaxonomyNodesByCategory,
+  resolveTaxonomyNode,
+  validateTaxonomy,
+} from './src/app/lib/taxonomy'
+import { hasUsableProductImage } from './src/app/components/productPresentation'
 
 const prototypeBasePath = process.env.PROTOTYPE_BASE_PATH || '/'
 const prototypeOutDir = process.env.PROTOTYPE_OUT_DIR || 'dist'
@@ -63,6 +71,96 @@ function deferMainCss() {
         (match: string, pre: string, href: string, post: string) =>
           `<link rel="preload" as="style"${pre}href="${href}"${post} onload="this.onload=null;this.rel='stylesheet'"><noscript>${match}</noscript>`,
       )
+    },
+  }
+}
+
+/**
+ * Sitemap gerado do catálogo + taxonomia, e não mantido à mão.
+ *
+ * O sitemap não é só para buscador: é a LISTA DE ROTAS que o prerender abaixo
+ * usa para emitir HTML com canonical e JSON-LD. Mantido à mão, ele divergia do
+ * catálogo em silêncio — quando a taxonomia mudou, 500 rotas de produto viraram
+ * URLs que não existem mais e o JSON-LD caiu de 586 para 83 sem nada quebrar
+ * visivelmente. Gerando aqui, sitemap, prerender e app não têm como discordar.
+ *
+ * Valida a taxonomia antes: produto sem classificação ou slug duplicado
+ * derruba o build, em vez de virar URL órfã em produção.
+ */
+function generateSitemap() {
+  const SITE = 'https://www.pcyes.com.br'
+  const STATIC_ROUTES: Array<[string, string, string]> = [
+    ['/', 'daily', '1.0'],
+    ['/monte-seu-pc/', 'weekly', '0.7'],
+    ['/maringa-fc/', 'weekly', '0.6'],
+    ['/influenciadores/', 'monthly', '0.5'],
+    ['/revendedor/', 'monthly', '0.5'],
+    ['/fale-conosco/', 'monthly', '0.4'],
+    ['/onde-encontrar/', 'monthly', '0.4'],
+    ['/quem-somos/', 'monthly', '0.4'],
+    ['/faq/', 'monthly', '0.3'],
+    ['/drivers-e-manuais/', 'weekly', '0.4'],
+    ['/politica-de-privacidade/', 'yearly', '0.2'],
+    ['/politica-de-garantia/', 'yearly', '0.2'],
+    ['/termos-de-uso/', 'yearly', '0.2'],
+  ]
+
+  return {
+    name: 'generate-sitemap',
+    closeBundle() {
+      const issues = validateTaxonomy(allProducts as any[])
+      if (issues.length > 0) {
+        const preview = issues.slice(0, 10).map((i) => `  ${i.kind}: ${i.detail}`).join('\n')
+        throw new Error(
+          `[taxonomia] ${issues.length} problema(s) — corrija em src/app/lib/taxonomy.ts:\n${preview}`,
+        )
+      }
+
+      const rows: Array<[string, string, string]> = [...STATIC_ROUTES]
+      const seen = new Set(rows.map(([loc]) => loc))
+      const push = (loc: string, freq: string, prio: string) => {
+        if (seen.has(loc)) return
+        seen.add(loc)
+        rows.push([loc, freq, prio])
+      }
+
+      /* Só publica listagem que tem produto EXIBÍVEL. A taxonomia declara nós
+         que ainda não têm item (HDs, Webcams) ou cujos produtos não têm foto
+         utilizável (Pasta Térmica) — publicá-los seria oferecer ao buscador
+         uma página vazia, que é soft-404 e derruba a avaliação do domínio. O
+         nó continua existindo para quando entrar produto. */
+      const visible = (allProducts as any[]).filter(hasUsableProductImage)
+      const countIn = (category: string, slug?: string) =>
+        visible.filter((p) => {
+          const node = resolveTaxonomyNode(p)
+          const cat = node?.category ?? p.category
+          return cat === category && (!slug || node?.slug === slug)
+        }).length
+
+      for (const category of CATEGORIES) {
+        if (countIn(category) === 0) continue
+        push(`/${getCategorySlug(category)}/`, 'weekly', '0.8')
+        for (const node of getTaxonomyNodesByCategory(category)) {
+          if (countIn(category, node.slug) === 0) continue
+          push(`/${getCategorySlug(category)}/${node.slug}/`, 'weekly', '0.7')
+        }
+      }
+      for (const product of visible) {
+        push(getProductUrl(product), 'weekly', '0.6')
+      }
+
+      const body = rows
+        .map(([loc, freq, prio]) =>
+          `  <url><loc>${SITE}${loc}</loc><changefreq>${freq}</changefreq><priority>${prio}</priority></url>`,
+        )
+        .join('\n')
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`
+
+      const outDir = path.resolve(__dirname, prototypeOutDir)
+      fs.mkdirSync(outDir, { recursive: true })
+      fs.writeFileSync(path.join(outDir, 'sitemap.xml'), xml)
+      // eslint-disable-next-line no-console
+      console.log(`[sitemap] ${rows.length} rotas · taxonomia validada (${TAXONOMY.length} subcategorias)`)
     },
   }
 }
@@ -352,6 +450,7 @@ export default defineConfig({
     tailwindcss(),
     publicAssetBasePlugin,
     deferMainCss(),
+    generateSitemap(),
     prerenderSeoHtml(),
   ].filter(Boolean),
   resolve: {
