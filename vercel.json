@@ -1,6 +1,16 @@
 {
   "redirects": [
     {
+      "source": "/monitores/monitores/pcyes/cabo-vga-para-monitor-2m-pvga-2",
+      "destination": "/perifericos/cabos-e-adaptadores/pcyes/cabo-vga-para-monitor-2m-pvga-2/",
+      "permanent": true
+    },
+    {
+      "source": "/monitores/monitores/pcyes/cabo-vga-para-monitor-2m-pvga-2/",
+      "destination": "/perifericos/cabos-e-adaptadores/pcyes/cabo-vga-para-monitor-2m-pvga-2/",
+      "permanent": true
+    },
+    {
       "source": "/perifericos/teclados/pcyes/kit-teclado-mouse-sem-fio-soft-pcyes-24ghz-1200dpi-pcosfwab",
       "destination": "/perifericos/kits-teclado-e-mouse/pcyes/kit-teclado-mouse-sem-fio-soft-pcyes-24ghz-1200dpi-pcosfwab/",
       "permanent": true
@@ -362,21 +372,6 @@
     },
     {
       "source": "/perifericos/cabo-adaptador/:path*",
-      "destination": "/perifericos/cabos-e-adaptadores/:path*",
-      "permanent": true
-    },
-    {
-      "source": "/monitores/monitores",
-      "destination": "/perifericos/cabos-e-adaptadores/",
-      "permanent": true
-    },
-    {
-      "source": "/monitores/monitores/",
-      "destination": "/perifericos/cabos-e-adaptadores/",
-      "permanent": true
-    },
-    {
-      "source": "/monitores/monitores/:path*",
       "destination": "/perifericos/cabos-e-adaptadores/:path*",
       "permanent": true
     },
