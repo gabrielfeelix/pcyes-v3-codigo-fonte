@@ -306,9 +306,13 @@ export function CartDrawer() {
                     textTransform: "uppercase",
                     boxShadow: "var(--shadow-buy-cta)",
                   }}
+                  /* "Ver carrinho" e não "Finalizar compra": este botão leva ao
+                     carrinho, não ao pagamento. Prometer a compra aqui quebra a
+                     expectativa na próxima tela. O verbo de decisão fica no
+                     carrinho, onde "Finalizar compra" é verdade. */
                   onClick={() => { setIsOpen(false); navigate("/carrinho"); }}
-                  aria-label="Revisar pedido"
-                >Revisar pedido</button>
+                  aria-label="Ver carrinho"
+                >Ver carrinho</button>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="w-full flex items-center justify-center border border-foreground/12 bg-transparent text-foreground/55 hover:text-foreground/85 hover:border-foreground/22 transition-colors cursor-pointer rounded-full"

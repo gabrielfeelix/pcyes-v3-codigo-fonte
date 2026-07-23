@@ -382,7 +382,6 @@ const navItems: NavItem[] = [
   { label: "Computadores", mega: "computadores", href: getCatalogHref({ category: "Computadores" }) },
   { label: "PC Gamer", mega: "pcgamer", href: getCatalogHref({ category: "Computadores" }) },
   { label: "Collab", mega: "collab", href: "/maringa-fc" },
-  { label: "Pré-venda", href: "/pre-venda" },
   { label: "Monte seu PC", href: "/monte-seu-pc", emphasis: "build" },
 ];
 

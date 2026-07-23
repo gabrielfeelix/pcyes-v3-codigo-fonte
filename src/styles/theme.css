@@ -392,7 +392,11 @@ input:-webkit-autofill:active {
   --destructive-foreground: rgba(255, 255, 255, 1.00);
   --border: rgba(128, 128, 128, 1.00);
   --input: rgba(0, 0, 0, 0.50);
-  --ring: rgba(255, 85, 88, 1.00);
+  /* Igual ao --primary do dark. Antes era rgba(255,85,88), um vermelho
+     arrosado que não existia em nenhum outro lugar da marca. Contraste sobre
+     as superfícies escuras: 5.31:1 (surface-0) e 5.03:1 (background) — bem
+     acima dos 3:1 exigidos pela WCAG 1.4.11. */
+  --ring: rgba(255, 43, 46, 1.00);
   --sidebar: rgba(14, 14, 14, 1.00);
   --sidebar-foreground: rgba(255, 255, 255, 1.00);
   --sidebar-primary: rgba(255, 43, 46, 1.00);
@@ -575,7 +579,10 @@ input:-webkit-autofill:active {
    visible even on same-color (e.g. red) buttons. WCAG 1.4.11 / 2.4.11 met:
    --ring clears 3:1 against page surfaces. */
 *:focus-visible {
-  outline: 2px solid var(--ring) !important;
+  /* 1.5px: o traço de 2px pesava demais sobre os componentes escuros. Mantém
+     2.4.7 (foco visível) e 1.4.11 (contraste); abre mão de 2.4.13 Focus
+     Appearance, que é AAA e pede perímetro de 2px. */
+  outline: 1.5px solid var(--ring) !important;
   outline-offset: 2px !important;
   border-radius: 2px;
 }
@@ -596,7 +603,7 @@ input:-webkit-autofill:active {
    2.4.7 (foco visível) sem o fragmento cortado. */
 .pcyes-search-pill:focus-within {
   border-color: var(--ring) !important;
-  box-shadow: 0 0 0 2px var(--ring), 0 10px 32px rgba(0, 0, 0, 0.55) !important;
+  box-shadow: 0 0 0 1.5px var(--ring), 0 10px 32px rgba(0, 0, 0, 0.55) !important;
 }
 .pcyes-search-pill :focus-visible {
   outline: none !important;

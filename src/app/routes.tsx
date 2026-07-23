@@ -10,7 +10,6 @@ const ProductsPage = lazy(() => import("./components/ProductsPage").then(m => ({
 const ProductPage = lazy(() => import("./components/ProductPage").then(m => ({ default: m.ProductPage })));
 const CartPage = lazy(() => import("./components/CartPage").then(m => ({ default: m.CartPage })));
 const CheckoutPage = lazy(() => import("./components/CheckoutPage").then(m => ({ default: m.CheckoutPage })));
-const PreOrderPage = lazy(() => import("./components/PreOrderPage").then(m => ({ default: m.PreOrderPage })));
 const ProfilePage = lazy(() => import("./components/ProfilePage").then(m => ({ default: m.ProfilePage })));
 const InfluencersPage = lazy(() => import("./components/pages/InfluencersPage").then(m => ({ default: m.InfluencersPage })));
 const ResellerPage = lazy(() => import("./components/pages/ResellerPage").then(m => ({ default: m.ResellerPage })));
@@ -53,7 +52,6 @@ export const router = createBrowserRouter([
       { path: "produto/:id", Component: ProductPage },
       { path: "carrinho", Component: CartPage },
       { path: "checkout", Component: CheckoutPage },
-      { path: "pre-venda", Component: PreOrderPage },
       { path: "perfil", Component: ProfilePage },
       { path: "influenciadores", Component: InfluencersPage },
       { path: "revendedor", Component: ResellerPage },

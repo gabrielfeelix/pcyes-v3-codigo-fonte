@@ -76,7 +76,6 @@ function prerenderSeoHtml() {
   const SITE = 'https://www.pcyes.com.br'
   // Título/descrição por rota estática conhecida (canonical é feito pra TODAS).
   const META: Record<string, [string, string]> = {
-    '/pre-venda/': ['Pré-venda', 'Garanta em primeira mão os lançamentos PCYES. Reserve na pré-venda com condições exclusivas, frete grátis acima de R$ 299 e até 12x sem juros.'],
     '/monte-seu-pc/': ['Monte seu PC', 'Monte seu PC gamer ou workstation PCYES peça a peça. Compatibilidade garantida, montagem profissional, frete grátis acima de R$ 299.'],
     '/drivers-e-manuais/': ['Drivers e Manuais', 'Baixe drivers, firmwares e manuais oficiais dos produtos PCYES. Central de downloads atualizada.'],
     '/faq/': ['Perguntas Frequentes', 'Tire dúvidas sobre pedidos, entrega, trocas, garantia e pagamento na PCYES.'],
