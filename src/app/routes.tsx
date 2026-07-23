@@ -5,7 +5,13 @@ import { HomePage } from "./components/HomePage";
 import { GlobalErrorBoundary } from "./components/GlobalErrorBoundary";
 import { getCategoryFromSlug } from "./lib/slug";
 
-const CHUNK_RELOAD_KEY = "pcyes:chunk-reloaded";
+import {
+  clearChunkReload,
+  hasRecentChunkReload,
+  isChunkLoadError,
+  markChunkReload,
+  reloadForFreshChunks,
+} from "./lib/chunkReload";
 
 /**
  * `lazy()` que se recupera de chunk obsoleto.
@@ -17,28 +23,26 @@ const CHUNK_RELOAD_KEY = "pcyes:chunk-reloaded";
  * envelheceu.
  *
  * Aqui a primeira falha recarrega a página, o que busca o index.html atual com
- * os hashes novos. A trava em sessionStorage evita laço quando a falha for real
- * (rede fora, arquivo realmente ausente): nesse caso o erro sobe para o
- * GlobalErrorBoundary na segunda tentativa. Um carregamento bem-sucedido limpa
- * a trava, então o próximo deploy volta a contar com a recuperação.
+ * os hashes novos. A trava datada em sessionStorage (ver lib/chunkReload) evita
+ * laço quando a falha for real (rede fora, arquivo realmente ausente): duas
+ * falhas em poucos segundos fazem o erro subir para o GlobalErrorBoundary.
+ *
+ * Erro que não é de chunk (bug no módulo, por exemplo) sobe direto — recarregar
+ * não conserta código quebrado, só esconde o problema atrás de um piscar.
  */
 function lazyRoute<T extends ComponentType<never>>(load: () => Promise<{ default: T }>) {
   return lazy(() =>
     load()
       .then((mod) => {
-        try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* modo privado */ }
+        clearChunkReload();
         return mod;
       })
       .catch((error) => {
-        let alreadyReloaded = true;
-        try {
-          alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY) === "1";
-          if (!alreadyReloaded) sessionStorage.setItem(CHUNK_RELOAD_KEY, "1");
-        } catch { /* sem sessionStorage: não insiste */ }
+        if (!isChunkLoadError(error)) throw error;
+        if (hasRecentChunkReload()) throw error;
 
-        if (alreadyReloaded) throw error;
-
-        window.location.reload();
+        markChunkReload();
+        reloadForFreshChunks();
         // Promise pendente de propósito: a página já está sendo trocada, então
         // não faz sentido resolver nem estourar erro nesse intervalo.
         return new Promise<{ default: T }>(() => {});

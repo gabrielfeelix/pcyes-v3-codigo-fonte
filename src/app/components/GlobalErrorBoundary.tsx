@@ -1,10 +1,11 @@
 import { useRouteError, isRouteErrorResponse, Link } from "react-router";
 import { AlertCircle, ArrowLeft, RefreshCcw } from "lucide-react";
 import { Button } from "./ui/button";
+import { clearChunkReload, isChunkLoadError, reloadForFreshChunks } from "../lib/chunkReload";
 
 export function GlobalErrorBoundary() {
   const error = useRouteError();
-  
+
   let errorMessage = "Ocorreu um erro inesperado.";
   let errorStatus = 500;
 
@@ -15,6 +16,21 @@ export function GlobalErrorBoundary() {
     errorMessage = error.message;
   }
 
+  /* Chunk obsoleto não é defeito: o site foi atualizado enquanto a aba estava
+     aberta. Chegar aqui significa que a recuperação automática já tentou e a
+     trava ainda está quente, então o botão limpa a trava — assim o clique
+     recarrega de verdade em vez de esbarrar na proteção anti-laço. */
+  const staleBuild = isChunkLoadError(error);
+
+  const handleRetry = () => {
+    if (staleBuild) {
+      clearChunkReload();
+      reloadForFreshChunks();
+      return;
+    }
+    window.location.reload();
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4">
       <div className="max-w-md w-full text-center space-y-6">
@@ -23,27 +39,33 @@ export function GlobalErrorBoundary() {
         </div>
         
         <h1 className="text-4xl font-extrabold tracking-tight">
-          Oops!
+          {staleBuild ? "Site atualizado" : "Oops!"}
         </h1>
-        
+
         <div className="space-y-2">
           <p className="text-muted-foreground text-lg">
-            Desculpe, encontramos um problema ao carregar esta página.
+            {staleBuild
+              ? "Publicamos uma versão nova enquanto esta aba estava aberta. Recarregue para continuar de onde parou."
+              : "Desculpe, encontramos um problema ao carregar esta página."}
           </p>
-          <div className="bg-muted/50 p-4 rounded-md border border-border mt-4 text-left font-mono text-sm overflow-auto">
-            <p className="text-destructive/80 font-semibold mb-1">Detalhes do Erro:</p>
-            <p className="text-muted-foreground break-all">{errorMessage}</p>
-          </div>
+          {/* Mensagem técnica só quando ajuda. Em build obsoleto ela é ruído:
+              o usuário não tem o que fazer com o nome do arquivo. */}
+          {!staleBuild && (
+            <div className="bg-muted/50 p-4 rounded-md border border-border mt-4 text-left font-mono text-sm overflow-auto">
+              <p className="text-destructive/80 font-semibold mb-1">Detalhes do Erro:</p>
+              <p className="text-muted-foreground break-all">{errorMessage}</p>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-          <Button 
-            variant="default" 
-            onClick={() => window.location.reload()}
+          <Button
+            variant="default"
+            onClick={handleRetry}
             className="flex items-center gap-2"
           >
             <RefreshCcw className="w-4 h-4" />
-            Tentar Novamente
+            {staleBuild ? "Recarregar" : "Tentar Novamente"}
           </Button>
           
           <Button variant="outline" asChild>
