@@ -1,15 +1,19 @@
 /**
  * Busca de produtos no padrão de e-commerce moderno (client-side).
  *
- * Cobre o que o `.includes()` cru não cobria:
- *  - Acentos/diacríticos: "mecanico" acha "Mecânico" (normalização NFD).
- *  - Typo tolerance: "cfdeira" acha "cadeira" (distância de edição por palavra).
- *  - Sinônimos PT-BR: "gpu"/"placa de vídeo", "fone"/"headset", "notebook"/"pc".
- *  - Multi-palavra: cada termo precisa casar (AND), em qualquer ordem/campo.
- *  - Ranking por relevância: exato > prefixo > substring > fuzzy, com desempate
- *    por avaliação/popularidade — exatos sempre acima de aproximados.
+ * Escrito para como o cliente DIGITA, não para como o catálogo nomeia:
+ *  - Acento e caixa: "mecanico" acha "Mecânico".
+ *  - Erro de tecla: "cfdeira" acha "cadeira" (distância de edição por palavra).
+ *  - Grafia fonética: "teklado", "arqueum", "museped" — corrigidos contra o
+ *    vocabulário do catálogo antes de buscar (ver `correctToken`).
+ *  - Espaço a mais ou a menos: "tec lado", "placadevideo".
+ *  - Plural: "cadeiras" acha "cadeira", nos dois sentidos.
+ *  - Vocabulário do cliente: sinônimos PT-BR, cores PT↔EN ("gabinete branco"
+ *    acha "Forcefield White") e apelidos de loja ("cpu" = gabinete).
+ *  - Ranking por campo: casar no nome ou no tipo do produto vale mais que
+ *    casar numa tag, e popularidade só desempata.
  *
- * Sem dependência externa; opera sobre o catálogo em memória do protótipo.
+ * Sem dependência externa; opera sobre o catálogo em memória.
  */
 
 export function normalize(input: string): string {
@@ -72,6 +76,20 @@ const SYNONYM_GROUPS: string[][] = [
   ["mecanico", "mechanical"],
   ["ergonomico", "ergonomic"],
   ["suporte", "stand"],
+  /* Apelidos de loja física — como o cliente CHAMA, não como o catálogo
+     nomeia. "cpu" apontando para gabinete é o caso clássico: metade do país
+     chama o gabinete de CPU. Fica nos dois grupos de propósito. */
+  ["gabinete", "case", "cpu", "torre", "gabinet"],
+  ["processador", "cpu"],
+  ["kit", "combo"],
+  ["mousepad", "padmouse", "tapete"],
+  ["cabo", "fio"],
+  ["controle", "manete"],
+  ["fone", "fones"],
+  ["notebook", "note"],
+  ["headset", "hedset", "redset", "edset"],
+  ["teclado", "teklado", "tecaldo"],
+  ["mouse", "mousi", "maus"],
 ];
 
 // Índice termo→conjunto de sinônimos do seu grupo
@@ -127,6 +145,53 @@ function synonymsOf(token: string): Set<string> {
   return set;
 }
 
+/**
+ * Chave fonética PT-BR (metaphone enxuto).
+ *
+ * Quem escreve "teklado", "arqueum" ou "museped" não errou a tecla: escreveu o
+ * som. Distância de edição não alcança isso — "museped"→"mousepad" são 3
+ * edições, acima de qualquer orçamento seguro. Já a chave fonética iguala as
+ * duas, porque o que muda é grafia de vogal e de consoante equivalente.
+ *
+ * Regras: dígrafos primeiro (ph→f, ch→x, qu→k), consoantes de mesmo som
+ * colapsadas (k/q/c→k, z/ç→s, w→v, y→i), h mudo cai, letras repetidas viram
+ * uma, e vogais só contam na primeira posição — vogal é justamente onde o erro
+ * de grafia mora.
+ *
+ * É sinal de ÚLTIMO recurso: colide com facilidade ("mouse" e "mesa" viram
+ * "ms"), por isso pontua baixo e exige chave de 3+ caracteres.
+ */
+export function phoneticKey(word: string): string {
+  if (!word) return "";
+
+  let s = word
+    .replace(/ph/g, "f")
+    .replace(/[cs]h/g, "x")
+    .replace(/lh/g, "l")
+    .replace(/nh/g, "n")
+    .replace(/qu/g, "k")
+    .replace(/gu([ei])/g, "g$1")
+    .replace(/c([ei])/g, "s$1")
+    .replace(/[cqk]/g, "k")
+    .replace(/[zç]/g, "s")
+    .replace(/w/g, "v")
+    .replace(/y/g, "i")
+    .replace(/h/g, "");
+
+  // "ss"/"rr"/"tt" e afins: repetição é ruído de grafia, não som.
+  s = s.replace(/(.)\1+/g, "$1");
+
+  const first = s[0] ?? "";
+  const rest = s.slice(1).replace(/[aeiou]/g, "");
+  return first + rest;
+}
+
+/** "ark1"/"z10" → "ark"/"z": modelo digitado com número no lugar do sufixo. */
+function stripTrailingDigits(token: string): string | null {
+  const stripped = token.replace(/\d+$/, "");
+  return stripped.length >= 3 && stripped !== token ? stripped : null;
+}
+
 // Distância de Levenshtein com teto (early-exit) para typo tolerance.
 function editDistance(a: string, b: string, max: number): number {
   if (a === b) return 0;
@@ -155,9 +220,26 @@ function fuzzyBudget(len: number): number {
   return 2;
 }
 
+/** Chave fonética memoizada — a mesma palavra reaparece em todo produto. */
+const phoneticCache = new Map<string, string>();
+function cachedPhonetic(word: string): string {
+  let key = phoneticCache.get(word);
+  if (key === undefined) {
+    key = phoneticKey(word);
+    phoneticCache.set(word, key);
+  }
+  return key;
+}
+
+/** Chave fonética curta demais colide com meio catálogo. */
+const MIN_PHONETIC_KEY = 3;
+
 /** Melhor pontuação de casamento de UM termo da query contra as palavras de UM campo. 0 = não casou. */
 function scoreToken(token: string, words: string[]): number {
   const variants = synonymsOf(token);
+  const stripped = stripTrailingDigits(token);
+  if (stripped) variants.add(stripped);
+
   let best = 0;
   for (const variant of variants) {
     const isSynonym = variant !== token;
@@ -177,6 +259,7 @@ function scoreToken(token: string, words: string[]): number {
       if (best >= 4) return best;
     }
   }
+
   return best;
 }
 
@@ -208,6 +291,30 @@ interface ProductFields {
   brand: string[];
   tags: string[];
   nameJoined: string;
+}
+
+/* Índices por produto e por catálogo são caros e imutáveis — o mesmo produto
+   é renormalizado a cada tecla digitada. WeakMap porque a chave é o próprio
+   objeto: catálogo trocado é catálogo coletado, sem vazamento. */
+const fieldsCache = new WeakMap<SearchableProduct, ProductFields>();
+const vocabularyCache = new WeakMap<object, Vocabulary>();
+
+function getFields(p: SearchableProduct): ProductFields {
+  let fields = fieldsCache.get(p);
+  if (!fields) {
+    fields = buildFields(p);
+    fieldsCache.set(p, fields);
+  }
+  return fields;
+}
+
+function getVocabulary(products: SearchableProduct[]): Vocabulary {
+  let vocab = vocabularyCache.get(products);
+  if (!vocab) {
+    vocab = buildVocabulary(products);
+    vocabularyCache.set(products, vocab);
+  }
+  return vocab;
 }
 
 function buildFields(p: SearchableProduct): ProductFields {
@@ -265,17 +372,179 @@ interface Ranked<T> { item: T; score: number; }
  * Busca + ranqueia produtos. Retorna itens que satisfazem TODOS os termos
  * (AND, com sinônimos/typo), ordenados por relevância.
  */
+/**
+ * Vocabulário do catálogo — todas as palavras que existem nos produtos.
+ *
+ * Serve para decidir se juntar ou dividir termos faz sentido: "tec lado" só
+ * vira "teclado" porque "teclado" existe; "mousepad" só vira "mouse pad" pelo
+ * mesmo motivo. Sem essa checagem, juntar/dividir criaria palavras inventadas
+ * e traria lixo.
+ */
+interface Vocabulary {
+  words: Set<string>;
+  /** chave fonética → palavras reais com aquele som */
+  byPhonetic: Map<string, string[]>;
+}
+
+function buildVocabulary(products: SearchableProduct[]): Vocabulary {
+  const words = new Set<string>();
+  for (const p of products) {
+    const source = `${p.name} ${p.category} ${p.subcategory || ""} ${p.brand || ""} ${(p.tags || []).join(" ")}`;
+    for (const w of normalize(source).split(" ")) if (w.length > 2) words.add(w);
+  }
+
+  const byPhonetic = new Map<string, string[]>();
+  for (const w of words) {
+    const key = cachedPhonetic(w);
+    if (key.length < MIN_PHONETIC_KEY) continue;
+    const bucket = byPhonetic.get(key);
+    if (bucket) bucket.push(w);
+    else byPhonetic.set(key, [w]);
+  }
+
+  return { words, byPhonetic };
+}
+
+/**
+ * Corrige o termo para a palavra que o catálogo de fato usa — o "você quis
+ * dizer" resolvido antes de buscar, não depois.
+ *
+ * Foi a segunda tentativa de resolver grafia fonética. A primeira pontuava o
+ * som direto no ranking, e isso contaminava quem escreveu certo: "cooler"
+ * saltava de 50 para 105 resultados porque meia dúzia de palavras colide na
+ * chave fonética. Corrigindo o termo e refazendo a busca normal, "kuler" passa
+ * a devolver exatamente o mesmo que "cooler" — nem mais, nem menos.
+ *
+ * Ordem de tentativa: som idêntico (mais confiável) → som a uma edição →
+ * grafia a uma/duas edições. Entre candidatos, vence o de menor distância de
+ * grafia, e o mais curto no empate.
+ */
+function correctToken(token: string, vocab: Vocabulary): string {
+  if (vocab.words.has(token) || SYNONYM_INDEX.has(token)) return token;
+
+  const key = cachedPhonetic(token);
+  if (key.length < MIN_PHONETIC_KEY) return token;
+
+  const candidates = new Set<string>(vocab.byPhonetic.get(key) ?? []);
+
+  if (candidates.size === 0) {
+    for (const [otherKey, otherWords] of vocab.byPhonetic) {
+      if (otherKey[0] !== key[0]) continue; // primeira letra ancora
+      if (Math.abs(otherKey.length - key.length) > 1) continue;
+      if (editDistance(key, otherKey, 1) <= 1) for (const w of otherWords) candidates.add(w);
+    }
+  }
+
+  if (candidates.size === 0) return token;
+
+  let bestWord = token;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  for (const candidate of candidates) {
+    const budget = fuzzyBudget(Math.max(candidate.length, token.length));
+    const distance = editDistance(token, candidate, budget + 1);
+    if (distance > budget + 1) continue;
+    if (distance < bestDistance || (distance === bestDistance && candidate.length < bestWord.length)) {
+      bestDistance = distance;
+      bestWord = candidate;
+    }
+  }
+
+  return bestWord;
+}
+
+/**
+ * Corrige espaço a mais ou a menos.
+ *
+ * Espaço no meio da palavra ("tec lado", "head set") e palavra grudada
+ * ("mousepad", "placadevideo") são erro de escrita comum — e nenhum dos dois é
+ * alcançável por distância de edição por palavra, porque a unidade errada é a
+ * fronteira, não a letra.
+ */
+function repairTokenBoundaries(tokens: string[], vocab: Set<string>): string[] {
+  const joined: string[] = [];
+  for (let i = 0; i < tokens.length; i++) {
+    const pair = i + 1 < tokens.length ? tokens[i] + tokens[i + 1] : "";
+    // Junta só quando o resultado existe no catálogo e as partes soltas não
+    // valem por si ("mouse" + "pad" continuam separados; "tec" + "lado" não).
+    if (pair && vocab.has(pair) && !(vocab.has(tokens[i]) && vocab.has(tokens[i + 1]))) {
+      joined.push(pair);
+      i++;
+    } else {
+      joined.push(tokens[i]);
+    }
+  }
+
+  const out: string[] = [];
+  for (const token of joined) {
+    if (vocab.has(token) || SYNONYM_INDEX.has(token) || token.length < 6) {
+      out.push(token);
+      continue;
+    }
+    // Palavra desconhecida e longa: tenta partir em pedaços que existam.
+    // Recursivo porque grudado costuma vir com mais de uma emenda
+    // ("placadevideo" = placa + de + video).
+    const split = splitIntoKnownWords(token, vocab, 3);
+    if (split) out.push(...split);
+    else out.push(token);
+  }
+
+  return out;
+}
+
+/** Parte a palavra grudada em até `maxParts` palavras que o catálogo conheça. */
+function splitIntoKnownWords(token: string, vocab: Set<string>, maxParts: number): string[] | null {
+  if (vocab.has(token)) return [token];
+  if (maxParts <= 1 || token.length < 6) return null;
+
+  for (let cut = 2; cut <= token.length - 2; cut++) {
+    const left = token.slice(0, cut);
+    if (!vocab.has(left) && !STOPWORDS.has(left)) continue;
+    const rest = splitIntoKnownWords(token.slice(cut), vocab, maxParts - 1);
+    if (rest) return STOPWORDS.has(left) ? rest : [left, ...rest];
+  }
+  return null;
+}
+
 export function searchProducts<T extends SearchableProduct>(query: string, products: T[], limit = 0): T[] {
   const qn = normalize(query);
   if (!qn) return [];
-  const tokens = qn.split(" ").filter((t) => t && !STOPWORDS.has(t));
+  const rawTokens = qn.split(" ").filter((t) => t && !STOPWORDS.has(t));
+  if (rawTokens.length === 0) return [];
+
+  const vocab = getVocabulary(products);
+  const tokens = repairTokenBoundaries(rawTokens, vocab.words);
   if (tokens.length === 0) return [];
+
+  const strict = rankProducts(qn, tokens, products);
+  if (strict.length >= SPELLING_RESCUE_THRESHOLD) {
+    return limit > 0 ? strict.slice(0, limit) : strict;
+  }
+
+  /* Poucos resultados: assume grafia fonética e corrige os termos contra o
+     vocabulário do catálogo antes de repetir a MESMA busca. Quem escreveu
+     certo nunca passa por aqui, então a correção não tem como sujar o
+     resultado de ninguém. */
+  const corrected = tokens.map((token) => correctToken(token, vocab));
+  const changed = corrected.some((token, i) => token !== tokens[i]);
+  const result = changed ? rankProducts(normalize(corrected.join(" ")), corrected, products) : strict;
+
+  return limit > 0 ? result.slice(0, limit) : result;
+}
+
+/** Abaixo disso, vale tentar de novo assumindo que a grafia é fonética. */
+const SPELLING_RESCUE_THRESHOLD = 3;
+
+function rankProducts<T extends SearchableProduct>(
+  qn: string,
+  tokens: string[],
+  products: T[],
+): T[] {
 
   const full: Ranked<T>[] = [];
   const partial: Ranked<T>[] = [];
 
   for (const p of products) {
-    const fields = buildFields(p);
+    const fields = getFields(p);
 
     let total = 0;
     let matched = 0;
@@ -318,7 +587,7 @@ export function searchProducts<T extends SearchableProduct>(query: string, produ
     for (const r of partial) out.push(r.item);
   }
 
-  return limit > 0 ? out.slice(0, limit) : out;
+  return out;
 }
 
 /** Abaixo disso, resultados parciais complementam a lista. */
