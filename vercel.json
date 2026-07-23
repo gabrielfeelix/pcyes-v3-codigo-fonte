@@ -1,21 +1,18 @@
 {
   "rewrites": [
     {
-      "//": "SPA: rotas do React Router caem no index.html. /assets/ fica DE FORA — sem isso um chunk com hash antigo (aba aberta durante um deploy) não dava 404: recebia o index.html como resposta, e o browser tentava executar HTML esperando JavaScript.",
       "source": "/((?!assets/).*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
     {
-      "//": "Nome com hash implica conteúdo imutável: cache longo é seguro e evita rebaixar o arquivo a cada visita.",
       "source": "/assets/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "//": "O index.html é o índice que aponta para os hashes vigentes. Em cache, a aba segue pedindo chunk que já não existe — origem exata do 'Failed to fetch dynamically imported module'. Revalida sempre. Exclui /assets/ para não anular a regra imutável acima: quando duas regras casam, a última vence.",
       "source": "/((?!assets/).*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }

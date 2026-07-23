@@ -46,9 +46,31 @@ npm run dev      # http://localhost:5173
 ## Deploy
 
 Publicado na **Vercel** como SPA. O build (`vite build`) gera `dist/` e o
-`vercel.json` faz rewrite de todas as rotas para `index.html` (necessário
-para o roteamento client-side do React Router). Cada push na branch `main`
-dispara um novo deploy.
+`vercel.json` faz rewrite das rotas para `index.html` (necessário para o
+roteamento client-side do React Router). Cada push na branch `main` dispara um
+novo deploy.
+
+### Por que o `vercel.json` é do jeito que é
+
+O arquivo não tem comentários porque a Vercel valida `vercel.json` contra um
+schema **estrito**: propriedade desconhecida (inclusive a convenção `"//"`)
+derruba o deploy na validação da config, antes de rodar o build. Por isso a
+explicação mora aqui.
+
+- **`/assets/` fica fora do rewrite.** Cada build renomeia os chunks com um
+  hash novo. Quem está com a aba aberta durante um deploy segue pedindo o nome
+  antigo; se o rewrite pegasse `/assets/`, esse arquivo inexistente devolveria
+  `index.html` em vez de 404 — e o browser tentaria executar HTML esperando
+  JavaScript.
+- **`Cache-Control` imutável em `/assets/`.** Nome com hash implica conteúdo
+  fixo, então cachear por um ano é seguro.
+- **`must-revalidate` no resto.** O `index.html` é o índice que aponta para os
+  hashes vigentes; em cache, ele perpetua o erro acima.
+- **A regra geral exclui `/assets/`** para não sobrescrever a anterior: quando
+  duas regras de header casam, a última vence.
+
+A recuperação em runtime está em `src/app/routes.tsx` (`lazyRoute`), que
+recarrega a página uma vez quando um chunk não é encontrado.
 
 ## Estrutura de pastas
 
