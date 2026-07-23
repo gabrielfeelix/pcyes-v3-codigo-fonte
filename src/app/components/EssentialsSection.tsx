@@ -6,8 +6,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { allProducts, type Product } from "./productsData";
-import { getPrimaryProductImage, getProductSwatches } from "./productPresentation";
-import { Tag, CTAButton } from "./section";
+import { getPrimaryProductImage, getProductSwatches, getProductVariants } from "./productPresentation";
+import { CTAButton } from "./section";
 
 const ESSENTIAL_IDS = [128, 173, 72, 436, 329] as const;
 
@@ -20,6 +20,9 @@ function EssentialCard({ product }: EssentialCardProps) {
   const [selectedSwatchId, setSelectedSwatchId] = useState<number | null>(null);
 
   const swatches = getProductSwatches(product);
+  // Cor já é coberta pelas swatches; variações só aparecem quando o que muda
+  // na linha é outra coisa (switch, driver, conectividade, tamanho).
+  const variants = swatches.length > 0 ? [] : getProductVariants(product);
   const selectedProduct = selectedSwatchId
     ? allProducts.find((p) => p.id === selectedSwatchId) ?? product
     : product;
@@ -61,11 +64,19 @@ function EssentialCard({ product }: EssentialCardProps) {
           borderRadius: "var(--radius-card-lg)",
         }}
       />
-      {/* Image side */}
+      {/* Image side — painel com fundo próprio, distinto do card */}
       <Link
         to={productHref}
-        className="relative flex items-center justify-center md:justify-start pl-0 pr-4 py-8 md:pl-10 md:pr-4 md:py-10 group"
+        className="relative flex items-center justify-center p-3 md:p-4 group"
       >
+        <div
+          className="pointer-events-none absolute inset-3 md:inset-4"
+          style={{
+            background: "var(--surface-0)",
+            border: "1px solid rgba(var(--foreground-rgb), 0.06)",
+            borderRadius: "calc(var(--radius-card-lg) - 6px)",
+          }}
+        />
         <ImageWithFallback
           src={image}
           alt={product.name}
@@ -145,7 +156,7 @@ function EssentialCard({ product }: EssentialCardProps) {
           </div>
         )}
 
-        {product.tags?.length > 0 && (
+        {variants.length > 0 && (
           <div className="flex flex-col gap-2 mt-1">
             <span
               style={{
@@ -155,12 +166,39 @@ function EssentialCard({ product }: EssentialCardProps) {
                 color: "rgba(var(--foreground-rgb), 0.6)",
               }}
             >
-              Destaques:
+              Variações:
             </span>
             <div className="flex flex-wrap gap-2">
-              {product.tags.slice(0, 3).map((tag) => (
-                <Tag key={tag}>{tag}</Tag>
-              ))}
+              {variants.map((variant) => {
+                const active = selectedSwatchId === variant.productId;
+                return (
+                  <button
+                    key={variant.productId}
+                    type="button"
+                    onClick={() =>
+                      setSelectedSwatchId(active ? null : variant.productId)
+                    }
+                    title={variant.name}
+                    className="cursor-pointer rounded-full px-3 py-1.5 transition-all hover:scale-[1.03]"
+                    style={{
+                      fontFamily: "var(--font-family-inter)",
+                      fontSize: "var(--text-caption)",
+                      fontWeight: 500,
+                      color: active
+                        ? "var(--primary)"
+                        : "rgba(var(--foreground-rgb), 0.7)",
+                      background: active
+                        ? "rgba(225, 6, 0, 0.12)"
+                        : "rgba(var(--foreground-rgb), 0.05)",
+                      border: active
+                        ? "1px solid rgba(225, 6, 0, 0.55)"
+                        : "1px solid rgba(var(--foreground-rgb), 0.10)",
+                    }}
+                  >
+                    {variant.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

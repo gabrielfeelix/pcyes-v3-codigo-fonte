@@ -277,6 +277,81 @@ export function getProductSwatches(
   return [];
 }
 
+export interface ProductVariant {
+  productId: number;
+  label: string;
+  image: string;
+  name: string;
+}
+
+/**
+ * Variações da mesma linha de produto — irmãos que compartilham a família
+ * (`getFamilySignature`) mas se diferenciam por algo que não é cor: tipo de
+ * switch, tamanho, conectividade, driver, etc.
+ *
+ * O rótulo é derivado dos tokens que *só* aquele irmão tem, então a UI mostra
+ * exatamente o que muda entre eles ("Blue", "Red", "3,5mm", "Sem Fio") em vez
+ * de repetir o nome inteiro. Cor fica com `getProductSwatches`.
+ */
+export function getProductVariants(
+  product: Pick<Product, "id" | "name" | "category">,
+  catalog: Product[] = allProducts,
+): ProductVariant[] {
+  const signature = getFamilySignature(product);
+  if (signature.endsWith("::")) return [];
+
+  const siblings = catalog.filter(
+    (candidate) =>
+      getFamilySignature(candidate) === signature && hasUsableProductImage(candidate),
+  );
+  if (siblings.length < 2) return [];
+
+  const tokensById = new Map(siblings.map((s) => [s.id, tokenizeName(s.name)]));
+
+  // Tokens presentes em todos os irmãos são o "tronco" comum — não diferenciam.
+  const shared = new Set(
+    (tokensById.get(siblings[0].id) ?? []).filter((token) =>
+      siblings.every((s) => tokensById.get(s.id)?.includes(token)),
+    ),
+  );
+
+  const variants: ProductVariant[] = [];
+  const seen = new Set<string>();
+
+  siblings.forEach((sibling) => {
+    const distinct = Array.from(
+      new Set(
+        (tokensById.get(sibling.id) ?? [])
+          .filter((token) => !shared.has(token))
+          .filter((token) => !GENERIC_TOKENS.has(token))
+          .filter((token) => token.length > 1),
+      ),
+    );
+
+    if (distinct.length === 0) return;
+
+    const label = distinct
+      .slice(0, 2)
+      // Códigos de modelo (CM300, P2) ficam em caixa alta; palavras, capitalizadas.
+      .map((token) =>
+        /\d/.test(token) ? token.toUpperCase() : token.charAt(0).toUpperCase() + token.slice(1),
+      )
+      .join(" ");
+
+    if (label.length > 22 || seen.has(label)) return;
+    seen.add(label);
+
+    variants.push({
+      productId: sibling.id,
+      label,
+      image: getPrimaryProductImage(sibling),
+      name: sibling.name,
+    });
+  });
+
+  return variants.length > 1 ? variants.slice(0, 4) : [];
+}
+
 export function getProductHoverMedia(
   product: Pick<Product, "id" | "image" | "images">,
 ): ProductHoverMedia | null {
