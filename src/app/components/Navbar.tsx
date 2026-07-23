@@ -2128,16 +2128,30 @@ export function Navbar() {
                        A grade acompanha a quantidade para um banner sozinho não
                        ficar espremido em um terço da largura. */
                     <div
-                      className={`grid gap-4 md:gap-5 ${
+                      /* Colunas acompanham a quantidade: uma collab sozinha não
+                         fica espremida em um terço, e a partir de 7 o card
+                         encolhe para caber tudo em 2 fileiras. Sem isso, 8
+                         collabs davam 3 fileiras (~760px) e a última saía da
+                         tela em notebook, onde sobram ~636px sob o header.
+
+                         max-h + rolagem é rede de segurança: se um dia alguém
+                         cadastrar 20, o excedente continua alcançável em vez
+                         de ser cortado pelo overflow-hidden do painel. */
+                      className={`pcyes-scroll grid max-h-[min(68vh,560px)] gap-4 overflow-y-auto md:gap-5 ${
                         activeMegaData.banners.length === 1
                           ? "grid-cols-1"
                           : activeMegaData.banners.length === 2
                             ? "grid-cols-1 md:grid-cols-2"
-                            : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                            : activeMegaData.banners.length <= 6
+                              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                              : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
                       }`}
                     >
                       {activeMegaData.banners.map((banner) => {
                         const accent = banner.accent ?? "var(--primary)";
+                        /* A partir de 7 collabs o card cai para ~264px de largura;
+                           título e respiro encolhem junto para o texto não dominar. */
+                        const compact = (activeMegaData.banners?.length ?? 0) > 6;
                         const upcoming = banner.status === "em-breve";
                         const ended = banner.status === "encerrada";
                         return (
@@ -2177,7 +2191,7 @@ export function Navbar() {
                                 </span>
                               )}
 
-                              <div className="absolute inset-x-0 bottom-0 p-5">
+                              <div className={`absolute inset-x-0 bottom-0 ${compact ? "p-3.5" : "p-5"}`}>
                                 {banner.eyebrow && (
                                   <span
                                     className="mb-2 inline-block"
@@ -2188,11 +2202,13 @@ export function Navbar() {
                                 )}
                                 <p
                                   className="text-ink-strong"
-                                  style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(20px, 2vw, 26px)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.02em" }}
+                                  style={{ fontFamily: "var(--font-family-figtree)", fontSize: compact ? "var(--text-lg)" : "clamp(20px, 2vw, 26px)", fontWeight: 800, lineHeight: 1.1, letterSpacing: "-0.02em" }}
                                 >
                                   {banner.title}
                                 </p>
-                                {banner.tagline && (
+                                {/* Card pequeno prioriza nome e ação; a chamada
+                                    sai para o título não brigar por espaço. */}
+                                {banner.tagline && !compact && (
                                   <p
                                     className="mt-1.5 text-ink-strong/70"
                                     style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.4 }}
@@ -2200,7 +2216,7 @@ export function Navbar() {
                                     {banner.tagline}
                                   </p>
                                 )}
-                                <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-black transition-transform duration-300 group-hover:gap-2.5"
+                                <span className={`inline-flex items-center gap-1.5 rounded-full bg-white text-black transition-transform duration-300 group-hover:gap-2.5 ${compact ? "mt-2.5 px-3 py-1.5" : "mt-4 px-4 py-2"}`}
                                   style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}
                                 >
                                   {banner.cta ?? "Ver coleção"}
