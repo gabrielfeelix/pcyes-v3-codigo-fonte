@@ -45,6 +45,17 @@ interface MegaSubItem {
    * thumb mude sozinha ao reordenar o catálogo.
    */
   image?: string;
+  /**
+   * Formato da miniatura.
+   *
+   * "produto" (padrão) — recorte de produto (PNG sem fundo) flutuando sobre um
+   * disco. É o que funciona para categorias de catálogo.
+   *
+   * "arte" — cartão retangular 16/10 com a imagem preenchendo (`object-cover`).
+   * Use quando a imagem for uma cena/banner: no disco ela entraria com
+   * `object-contain` e ficaria pequena, cercada de tarja.
+   */
+  thumb?: "produto" | "arte";
 }
 
 /**
@@ -265,7 +276,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Workstation", href: "/produtos", image: "/setups/setup-render.png",
+        label: "Workstation", href: "/produtos", image: "/setups/setup-render.png", thumb: "arte",
         right: {
           type: "layouts", title: "Workstation por Finalidade",
           layouts: [
@@ -283,7 +294,7 @@ const megaMenus: Record<string, MegaMenu> = {
     title: "PC Gamer",
     subItems: [
       {
-        label: "Entrada", href: "/produtos", image: "/setups/setup-base.png",
+        label: "Entrada", href: "/produtos", image: "/setups/setup-base.png", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Entrada",
           layouts: [
@@ -294,7 +305,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Intermediário", href: "/produtos", image: "/setups/setup-pulse.png",
+        label: "Intermediário", href: "/produtos", image: "/setups/setup-pulse.png", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Intermediário",
           layouts: [
@@ -305,7 +316,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Avançado", href: "/produtos", image: "/setups/setup-apex.png",
+        label: "Avançado", href: "/produtos", image: "/setups/setup-apex.png", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Avançado",
           layouts: [
@@ -316,7 +327,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Pré-Montados", href: "/produtos", image: "/setups/setup-strike.png",
+        label: "Pré-Montados", href: "/produtos", image: "/setups/setup-strike.png", thumb: "arte",
         right: {
           type: "featured", title: "PCs Prontos",
           image: "https://images.unsplash.com/photo-1587831990711-23ca6441447b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800",
@@ -2212,8 +2223,24 @@ export function Navbar() {
                           to={href}
                           onClick={closeMegaMenu}
                           onMouseEnter={() => setActiveSubItem(sub.label)}
-                          className="group flex min-w-[122px] flex-col items-center gap-3 pt-2 text-center outline-none"
+                          className={`group flex flex-col items-center gap-3 pt-2 text-center outline-none ${sub.thumb === "arte" ? "min-w-[190px]" : "min-w-[122px]"}`}
                         >
+                          {sub.thumb === "arte" ? (
+                            /* Arte de cena é retangular. No disco de 118px ela
+                               entrava com object-contain e virava miniatura com
+                               tarja; aqui preenche um cartão maior. */
+                            <span className="relative block w-[190px] overflow-hidden rounded-[14px] border border-foreground/8 transition-all duration-300 group-hover:-translate-y-1">
+                              <span className="block aspect-[16/10]">
+                                <ImageWithFallback
+                                  src={image ?? ""}
+                                  alt={sub.label}
+                                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+                                />
+                              </span>
+                              <span className="pointer-events-none absolute inset-0 rounded-[14px] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                                style={{ boxShadow: "inset 0 0 0 1.5px var(--primary), 0 0 34px -14px var(--primary)" }} />
+                            </span>
+                          ) : (
                           <span className="relative flex h-[118px] w-[118px] items-center justify-center overflow-visible transition-all duration-300 group-hover:-translate-y-1 group-hover:scale-[1.03]">
                             <span className={`absolute inset-[8px] rounded-full ${isDark ? "bg-white/[0.055]" : "bg-black/[0.045]"}`} />
                             {image ? (
@@ -2226,8 +2253,9 @@ export function Navbar() {
                               <Grid2x2 size={34} className="relative z-10 text-foreground/35 transition-colors group-hover:text-primary" strokeWidth={1.5} />
                             )}
                           </span>
+                          )}
                           <span
-                            className="max-w-[130px] text-foreground/78 transition-colors group-hover:text-foreground"
+                            className={`text-foreground/78 transition-colors group-hover:text-foreground ${sub.thumb === "arte" ? "max-w-[190px]" : "max-w-[130px]"}`}
                             style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 600, lineHeight: 1.1 }}
                           >
                             {sub.label}
