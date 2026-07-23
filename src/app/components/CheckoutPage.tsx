@@ -289,7 +289,10 @@ function FakeQrCode() {
   );
 }
 
-function Line({ label, value, positive }: { label: string; value: string; positive?: boolean }) {
+/* `amount` opcional: quando informado, o valor é lido por extenso ("mil e
+   duzentos reais"). O texto visual traz "R$", que o NVDA não fala na
+   configuração padrão — sem isso a linha sai sem moeda alguma. */
+function Line({ label, value, positive, amount }: { label: string; value: string; positive?: boolean; amount?: number }) {
   return (
     <div className="flex items-center justify-between">
       <span className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
@@ -303,7 +306,12 @@ function Line({ label, value, positive }: { label: string; value: string; positi
           color: positive ? "#22c55e" : "rgba(var(--foreground-rgb), 0.85)",
         }}
       >
-        {value}
+        {amount === undefined ? value : (
+          <>
+            <span aria-hidden="true">{value}</span>
+            <span className="sr-only">{formatBRLSpoken(amount)}</span>
+          </>
+        )}
       </span>
     </div>
   );
@@ -2052,8 +2060,8 @@ export function CheckoutPage() {
                 </div>
 
                 <div className="mb-4 space-y-2">
-                  <Line label="Subtotal" value={formatBRL(subtotal)} />
-                  {discountValue > 0 && <Line label={`Cupom ${appliedCoupon}`} value={`−${formatBRL(discountValue)}`} positive />}
+                  <Line label="Subtotal" value={formatBRL(subtotal)} amount={subtotal} />
+                  {discountValue > 0 && <Line label={`Cupom ${appliedCoupon}`} value={`−${formatBRL(discountValue)}`} amount={discountValue} positive />}
                   <Line label="Frete" value={shippingPrice === 0 ? "Grátis" : formatBRL(shippingPrice)} positive={shippingPrice === 0} />
                   {pointsValue > 0 && (
                     <div className="flex items-center justify-between">
@@ -2065,7 +2073,7 @@ export function CheckoutPage() {
                       </span>
                     </div>
                   )}
-                  {pixDiscount > 0 && <Line label="Desconto PIX (10%)" value={`−${formatBRL(pixDiscount)}`} positive />}
+                  {pixDiscount > 0 && <Line label="Desconto PIX (10%)" value={`−${formatBRL(pixDiscount)}`} amount={pixDiscount} positive />}
                 </div>
 
                 <div

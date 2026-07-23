@@ -29,7 +29,7 @@ import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { BrindePill, Price, PreOrderPill } from "./section";
-import { formatBRL, parseBRL, formatCep } from "../../utils/format";
+import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { COUPONS, GIFT_THRESHOLD, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { toast } from "sonner";
 
@@ -558,14 +558,14 @@ export function CartPage() {
                                     letterSpacing: "-0.015em",
                                   }}
                                 >
-                                  {formatBRL(unit * item.quantity)}
+                                  <Price value={unit * item.quantity} />
                                 </p>
                                 {item.quantity > 1 && (
                                   <p
                                     className="text-ink-subtle"
                                     style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
                                   >
-                                    {item.quantity}× {formatBRL(unit)}
+                                    {item.quantity}× <Price value={unit} />
                                   </p>
                                 )}
                               </>
@@ -881,7 +881,7 @@ export function CartPage() {
                       Subtotal
                     </span>
                     <span className="text-ink" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
-                      {formatBRL(subtotal)}
+                      <Price value={subtotal} />
                     </span>
                   </div>
                   {discountValue > 0 && (
@@ -890,7 +890,8 @@ export function CartPage() {
                         Cupom {appliedCoupon}
                       </span>
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "#22c55e", fontWeight: 700 }}>
-                        −{formatBRL(discountValue)}
+                        <span aria-hidden="true">−{formatBRL(discountValue)}</span>
+                        <span className="sr-only">desconto de {formatBRLSpoken(discountValue)}</span>
                       </span>
                     </div>
                   )}
@@ -915,7 +916,8 @@ export function CartPage() {
                         PCYES Points
                       </span>
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "#facc15", fontWeight: 700 }}>
-                        −{formatBRL(pointsValue)}
+                        <span aria-hidden="true">−{formatBRL(pointsValue)}</span>
+                        <span className="sr-only">desconto de {formatBRLSpoken(pointsValue)}</span>
                       </span>
                     </div>
                   )}

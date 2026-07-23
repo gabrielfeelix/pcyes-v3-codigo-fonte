@@ -250,7 +250,7 @@ export function CartDrawer() {
                                 <p className="text-foreground/20 line-through" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>{item.originalPrice}</p>
                               )}
                               <p className={item.isGift ? "text-primary" : "text-foreground/50"} style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: item.isGift ? "600" : "400" }}>
-                                {item.price}
+                                <Price value={parsePrice(item.price)} />
                               </p>
                             </div>
                           </div>
@@ -306,13 +306,15 @@ export function CartDrawer() {
                     textTransform: "uppercase",
                     boxShadow: "var(--shadow-buy-cta)",
                   }}
-                  /* "Ver carrinho" e não "Finalizar compra": este botão leva ao
-                     carrinho, não ao pagamento. Prometer a compra aqui quebra a
-                     expectativa na próxima tela. O verbo de decisão fica no
-                     carrinho, onde "Finalizar compra" é verdade. */
+                  /* Leva ao carrinho, não ao pagamento — por isso não é
+                     "Finalizar compra": prometer a compra aqui quebraria a
+                     expectativa na tela seguinte. "Revisar pedido" ao menos
+                     sinaliza que existe um pedido em curso; "Ver carrinho"
+                     soava como desvio. O verbo de decisão fica no carrinho,
+                     onde "Finalizar compra" é verdade. */
                   onClick={() => { setIsOpen(false); navigate("/carrinho"); }}
-                  aria-label="Ver carrinho"
-                >Ver carrinho</button>
+                  aria-label="Revisar pedido"
+                >Revisar pedido</button>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="w-full flex items-center justify-center border border-foreground/12 bg-transparent text-foreground/55 hover:text-foreground/85 hover:border-foreground/22 transition-colors cursor-pointer rounded-full"
