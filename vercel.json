@@ -1,4 +1,731 @@
 {
+  "redirects": [
+    {
+      "source": "/perifericos/teclados/pcyes/kit-teclado-mouse-sem-fio-soft-pcyes-24ghz-1200dpi-pcosfwab",
+      "destination": "/perifericos/kits-teclado-e-mouse/pcyes/kit-teclado-mouse-sem-fio-soft-pcyes-24ghz-1200dpi-pcosfwab/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/kit-teclado-mouse-sem-fio-soft-pcyes-24ghz-1200dpi-pcosfwab/",
+      "destination": "/perifericos/kits-teclado-e-mouse/pcyes/kit-teclado-mouse-sem-fio-soft-pcyes-24ghz-1200dpi-pcosfwab/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/kit-teclado-mouse-sem-fio-comfort-pcyes-24ghz-1200dpi-pcocwab",
+      "destination": "/perifericos/kits-teclado-e-mouse/pcyes/kit-teclado-mouse-sem-fio-comfort-pcyes-24ghz-1200dpi-pcocwab/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/kit-teclado-mouse-sem-fio-comfort-pcyes-24ghz-1200dpi-pcocwab/",
+      "destination": "/perifericos/kits-teclado-e-mouse/pcyes/kit-teclado-mouse-sem-fio-comfort-pcyes-24ghz-1200dpi-pcocwab/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/kit-teclado-mouse-usb-classic-pcyes-abnt2-1000dpi-kcbk",
+      "destination": "/perifericos/kits-teclado-e-mouse/pcyes/kit-teclado-mouse-usb-classic-pcyes-abnt2-1000dpi-kcbk/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/kit-teclado-mouse-usb-classic-pcyes-abnt2-1000dpi-kcbk/",
+      "destination": "/perifericos/kits-teclado-e-mouse/pcyes/kit-teclado-mouse-usb-classic-pcyes-abnt2-1000dpi-kcbk/",
+      "permanent": true
+    },
+    {
+      "source": "/gabinetes/gabinetes/pcyes/suporte-gabinete-cpu-pcyes-suspenso-plmsc03",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-gabinete-cpu-pcyes-suspenso-plmsc03/",
+      "permanent": true
+    },
+    {
+      "source": "/gabinetes/gabinetes/pcyes/suporte-gabinete-cpu-pcyes-suspenso-plmsc03/",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-gabinete-cpu-pcyes-suspenso-plmsc03/",
+      "permanent": true
+    },
+    {
+      "source": "/streaming/headsets/pcyes/suporte-microfone-pcyes-streaming-podcast-plmsmic01",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-microfone-pcyes-streaming-podcast-plmsmic01/",
+      "permanent": true
+    },
+    {
+      "source": "/streaming/headsets/pcyes/suporte-microfone-pcyes-streaming-podcast-plmsmic01/",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-microfone-pcyes-streaming-podcast-plmsmic01/",
+      "permanent": true
+    },
+    {
+      "source": "/computadores/mini-computadores/pcyes/suporte-mini-computador-pcyes-adaptador-vesa-plmsn01",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-mini-computador-pcyes-adaptador-vesa-plmsn01/",
+      "permanent": true
+    },
+    {
+      "source": "/computadores/mini-computadores/pcyes/suporte-mini-computador-pcyes-adaptador-vesa-plmsn01/",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-mini-computador-pcyes-adaptador-vesa-plmsn01/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/headsets/pcyes/suporte-headset-organizador-mesa-pcyes-preto-so-da06p",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-headset-organizador-mesa-pcyes-preto-so-da06p/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/headsets/pcyes/suporte-headset-organizador-mesa-pcyes-preto-so-da06p/",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-headset-organizador-mesa-pcyes-preto-so-da06p/",
+      "permanent": true
+    },
+    {
+      "source": "/computadores/mini-computadores/pcyes/suporte-monitor-pcyes-17-32-mini-pc-regulagem-altura-smd-100",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-monitor-pcyes-17-32-mini-pc-regulagem-altura-smd-100/",
+      "permanent": true
+    },
+    {
+      "source": "/computadores/mini-computadores/pcyes/suporte-monitor-pcyes-17-32-mini-pc-regulagem-altura-smd-100/",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-monitor-pcyes-17-32-mini-pc-regulagem-altura-smd-100/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/suporte-mesa-retratil-teclado-pcyes-apoio-gel-plmst01a",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-mesa-retratil-teclado-pcyes-apoio-gel-plmst01a/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/suporte-mesa-retratil-teclado-pcyes-apoio-gel-plmst01a/",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-mesa-retratil-teclado-pcyes-apoio-gel-plmst01a/",
+      "permanent": true
+    },
+    {
+      "source": "/computadores/mini-computadores/pcyes/suporte-mini-pc-pcyes-nuc-thin-client-vesa-universal-plmsc01",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-mini-pc-pcyes-nuc-thin-client-vesa-universal-plmsc01/",
+      "permanent": true
+    },
+    {
+      "source": "/computadores/mini-computadores/pcyes/suporte-mini-pc-pcyes-nuc-thin-client-vesa-universal-plmsc01/",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/suporte-mini-pc-pcyes-nuc-thin-client-vesa-universal-plmsc01/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/apoio-de-pulso-signature-pcyes-red-magma-wrsrm",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/apoio-de-pulso-signature-pcyes-red-magma-wrsrm/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/apoio-de-pulso-signature-pcyes-red-magma-wrsrm/",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/apoio-de-pulso-signature-pcyes-red-magma-wrsrm/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/apoio-de-pulso-signature-pcyes-white-ghost-wrswg",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/apoio-de-pulso-signature-pcyes-white-ghost-wrswg/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/apoio-de-pulso-signature-pcyes-white-ghost-wrswg/",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/apoio-de-pulso-signature-pcyes-white-ghost-wrswg/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/apoio-de-pulso-signature-pcyes-black-vulcan-wrsbv",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/apoio-de-pulso-signature-pcyes-black-vulcan-wrsbv/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/apoio-de-pulso-signature-pcyes-black-vulcan-wrsbv/",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/apoio-de-pulso-signature-pcyes-black-vulcan-wrsbv/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/apoio-de-pulso-ergonomico-pcyes-450x93mm-pas01",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/apoio-de-pulso-ergonomico-pcyes-450x93mm-pas01/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/apoio-de-pulso-ergonomico-pcyes-450x93mm-pas01/",
+      "destination": "/perifericos/suportes-e-ergonomia/pcyes/apoio-de-pulso-ergonomico-pcyes-450x93mm-pas01/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/combo-teclado-mouse-soft-pcyes-branco-pcosf2w",
+      "destination": "/perifericos/kits-teclado-e-mouse/pcyes/combo-teclado-mouse-soft-pcyes-branco-pcosf2w/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/teclados/pcyes/combo-teclado-mouse-soft-pcyes-branco-pcosf2w/",
+      "destination": "/perifericos/kits-teclado-e-mouse/pcyes/combo-teclado-mouse-soft-pcyes-branco-pcosf2w/",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/coolers/pcyes/kit-cooler-fan-sangue-frio-3-argb-white-ghost-reverse-120mm-2200rpm-60cfm-k3argbsf3wgrvbr",
+      "destination": "/refrigeracao/cooler-fans/pcyes/kit-cooler-fan-sangue-frio-3-argb-white-ghost-reverse-120mm-2200rpm-60cfm-k3argbsf3wgrvbr/",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/coolers/pcyes/kit-cooler-fan-sangue-frio-3-argb-white-ghost-reverse-120mm-2200rpm-60cfm-k3argbsf3wgrvbr/",
+      "destination": "/refrigeracao/cooler-fans/pcyes/kit-cooler-fan-sangue-frio-3-argb-white-ghost-reverse-120mm-2200rpm-60cfm-k3argbsf3wgrvbr/",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/coolers/pcyes/kit-cooler-fan-sangue-frio-3-argb-white-ghost-120mm-k3argbsf3wgbr",
+      "destination": "/refrigeracao/cooler-fans/pcyes/kit-cooler-fan-sangue-frio-3-argb-white-ghost-120mm-k3argbsf3wgbr/",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/coolers/pcyes/kit-cooler-fan-sangue-frio-3-argb-white-ghost-120mm-k3argbsf3wgbr/",
+      "destination": "/refrigeracao/cooler-fans/pcyes/kit-cooler-fan-sangue-frio-3-argb-white-ghost-120mm-k3argbsf3wgbr/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-hdmi",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-hdmi/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-hdmi/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/adaptador",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/adaptador/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/adaptador/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-de-audio",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-de-audio/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-de-audio/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/hardware/memoria",
+      "destination": "/hardware/memorias/",
+      "permanent": true
+    },
+    {
+      "source": "/hardware/memoria/",
+      "destination": "/hardware/memorias/",
+      "permanent": true
+    },
+    {
+      "source": "/hardware/memoria/:path*",
+      "destination": "/hardware/memorias/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-de-video",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-de-video/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-de-video/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/adaptador-otg",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/adaptador-otg/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/adaptador-otg/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cabo",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cabo/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cabo/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-c",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-c/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-c/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cabo-hdmi",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cabo-hdmi/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cabo-hdmi/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-av",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-av/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-av/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/streaming/headsets",
+      "destination": "/streaming/microfones/",
+      "permanent": true
+    },
+    {
+      "source": "/streaming/headsets/",
+      "destination": "/streaming/microfones/",
+      "permanent": true
+    },
+    {
+      "source": "/streaming/headsets/:path*",
+      "destination": "/streaming/microfones/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-adaptador",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-adaptador/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-adaptador/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/monitores/monitores",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/monitores/monitores/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/monitores/monitores/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/adaptador-de-audio",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/adaptador-de-audio/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/adaptador-de-audio/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-para-tablet",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-para-tablet/",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-para-tablet/:path*",
+      "destination": "/perifericos/suportes-e-ergonomia/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/monitores",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/monitores/",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/monitores/:path*",
+      "destination": "/perifericos/suportes-e-ergonomia/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/organizador-de-mesa",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/organizador-de-mesa/",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/organizador-de-mesa/:path*",
+      "destination": "/perifericos/suportes-e-ergonomia/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-de-tv",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-de-tv/",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-de-tv/:path*",
+      "destination": "/perifericos/suportes-e-ergonomia/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-para-notebook",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-para-notebook/",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-para-notebook/:path*",
+      "destination": "/perifericos/suportes-e-ergonomia/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-para-cpu",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-para-cpu/",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/suporte-para-cpu/:path*",
+      "destination": "/perifericos/suportes-e-ergonomia/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/organizador-de-cabos",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/organizador-de-cabos/",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/organizador-de-cabos/:path*",
+      "destination": "/perifericos/suportes-e-ergonomia/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/hardware/placa-mae",
+      "destination": "/hardware/placas-mae/",
+      "permanent": true
+    },
+    {
+      "source": "/hardware/placa-mae/",
+      "destination": "/hardware/placas-mae/",
+      "permanent": true
+    },
+    {
+      "source": "/hardware/placa-mae/:path*",
+      "destination": "/hardware/placas-mae/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/monitores/monitor-gamer",
+      "destination": "/monitores/monitores/",
+      "permanent": true
+    },
+    {
+      "source": "/monitores/monitor-gamer/",
+      "destination": "/monitores/monitores/",
+      "permanent": true
+    },
+    {
+      "source": "/monitores/monitor-gamer/:path*",
+      "destination": "/monitores/monitores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/ssd",
+      "destination": "/ssd-e-hd/ssds/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/ssd/",
+      "destination": "/ssd-e-hd/ssds/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/ssd/:path*",
+      "destination": "/ssd-e-hd/ssds/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/monitores/monitor",
+      "destination": "/monitores/monitores/",
+      "permanent": true
+    },
+    {
+      "source": "/monitores/monitor/",
+      "destination": "/monitores/monitores/",
+      "permanent": true
+    },
+    {
+      "source": "/monitores/monitor/:path*",
+      "destination": "/monitores/monitores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cartao-de-memoria",
+      "destination": "/ssd-e-hd/cartoes-de-memoria/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cartao-de-memoria/",
+      "destination": "/ssd-e-hd/cartoes-de-memoria/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cartao-de-memoria/:path*",
+      "destination": "/ssd-e-hd/cartoes-de-memoria/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cartao-micro-sd",
+      "destination": "/ssd-e-hd/cartoes-de-memoria/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cartao-micro-sd/",
+      "destination": "/ssd-e-hd/cartoes-de-memoria/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/cartao-micro-sd/:path*",
+      "destination": "/ssd-e-hd/cartoes-de-memoria/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/apoio-de-pulso",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/apoio-de-pulso/",
+      "destination": "/perifericos/suportes-e-ergonomia/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/apoio-de-pulso/:path*",
+      "destination": "/perifericos/suportes-e-ergonomia/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/volante-gamer",
+      "destination": "/perifericos/volantes-e-controles/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/volante-gamer/",
+      "destination": "/perifericos/volantes-e-controles/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/volante-gamer/:path*",
+      "destination": "/perifericos/volantes-e-controles/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/hardware/placa-de-rede",
+      "destination": "/hardware/placas-de-rede/",
+      "permanent": true
+    },
+    {
+      "source": "/hardware/placa-de-rede/",
+      "destination": "/hardware/placas-de-rede/",
+      "permanent": true
+    },
+    {
+      "source": "/hardware/placa-de-rede/:path*",
+      "destination": "/hardware/placas-de-rede/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/acessorio-para-ssd",
+      "destination": "/ssd-e-hd/ssds/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/acessorio-para-ssd/",
+      "destination": "/ssd-e-hd/ssds/",
+      "permanent": true
+    },
+    {
+      "source": "/ssd-e-hd/acessorio-para-ssd/:path*",
+      "destination": "/ssd-e-hd/ssds/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/controlador-led",
+      "destination": "/refrigeracao/acessorios-de-refrigeracao/",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/controlador-led/",
+      "destination": "/refrigeracao/acessorios-de-refrigeracao/",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/controlador-led/:path*",
+      "destination": "/refrigeracao/acessorios-de-refrigeracao/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/controlador-fan",
+      "destination": "/refrigeracao/acessorios-de-refrigeracao/",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/controlador-fan/",
+      "destination": "/refrigeracao/acessorios-de-refrigeracao/",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/controlador-fan/:path*",
+      "destination": "/refrigeracao/acessorios-de-refrigeracao/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-splitter",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-splitter/",
+      "destination": "/perifericos/cabos-e-adaptadores/",
+      "permanent": true
+    },
+    {
+      "source": "/perifericos/cabo-splitter/:path*",
+      "destination": "/perifericos/cabos-e-adaptadores/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/contact-frame",
+      "destination": "/refrigeracao/acessorios-de-refrigeracao/",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/contact-frame/",
+      "destination": "/refrigeracao/acessorios-de-refrigeracao/",
+      "permanent": true
+    },
+    {
+      "source": "/refrigeracao/contact-frame/:path*",
+      "destination": "/refrigeracao/acessorios-de-refrigeracao/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/streaming/placa-de-captura",
+      "destination": "/streaming/placas-de-captura/",
+      "permanent": true
+    },
+    {
+      "source": "/streaming/placa-de-captura/",
+      "destination": "/streaming/placas-de-captura/",
+      "permanent": true
+    },
+    {
+      "source": "/streaming/placa-de-captura/:path*",
+      "destination": "/streaming/placas-de-captura/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/((?!assets/).*)",
@@ -9,13 +736,19 @@
     {
       "source": "/assets/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/((?!assets/).*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
       ]
     }
   ]
