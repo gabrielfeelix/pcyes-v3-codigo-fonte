@@ -19,7 +19,7 @@ import { formatBRLSpoken } from "../../utils/format";
  *
  * Variantes (Figma 1:1):
  *   variant="shelf" — card de prateleira: imagem 5/6, titulo 1 linha, quick-add "Comprar"
- *   variant="grid"  — card de grade compacto: imagem quadrada, titulo 2 linhas, quick-add "Adicionar"
+ *   variant="grid"  — card de grade compacto: imagem quadrada, titulo 2 linhas, quick-add "Comprar"
  *
  * Toggles: rank (medalhao Top N), swatches (cores), favorite (coracao, gated por login),
  * hoverMedia (slot de video/2a imagem no hover), emphasizeDiscount (deriva oldPrice).
@@ -40,7 +40,7 @@ const VARIANT = {
     pad: "p-2 md:p-6",
     clamp: "line-clamp-2",
     quickAddSize: "sm" as const,
-    quickAddLabel: "Adicionar",
+    quickAddLabel: "Comprar",
   },
 };
 

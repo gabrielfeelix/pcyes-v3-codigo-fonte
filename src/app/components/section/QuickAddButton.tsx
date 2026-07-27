@@ -12,7 +12,7 @@ const BASE_STYLE: CSSProperties = {
   boxShadow: "var(--shadow-buy-cta-sm)",
 };
 
-export function QuickAddButton({ label = "Adicionar", className = "", style, ...props }: QuickAddButtonProps) {
+export function QuickAddButton({ label = "Comprar", className = "", style, ...props }: QuickAddButtonProps) {
   return (
     <button
       {...props}
