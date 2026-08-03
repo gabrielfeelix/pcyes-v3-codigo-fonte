@@ -25,6 +25,7 @@ import { PreOrderBanner, useCountdown } from "./PreOrderBanner";
 import { CTAButton, DiscountBadge, QtyStepper } from "./section";
 import { SEO } from "./SEO";
 import { getProductSlug, getProductUrl } from "../lib/slug";
+import { isSetupProduct, getSetupComponents, type SetupComponent } from "../lib/setups";
 import { formatCep, formatBRLSpoken } from "../../utils/format";
 import { RestockNotify } from "./RestockNotify";
 import { DiscontinuedNotice } from "./DiscontinuedNotice";
@@ -2002,7 +2003,104 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
    STANDARD PRODUCT DESCRIPTION
    ═══════════════════════════════════════════════════════ */
 
+/**
+ * Descrição de setup ("build pronta"): mesma moldura da descrição padrão, mas
+ * o miolo é a lista de COMPONENTES. Cada peça é um card com rótulo do slot,
+ * modelo e cópia padrão (ver lib/setups) — trocar a memória de um build é
+ * editar uma string lá, o card não se repete no código.
+ */
+function SetupDescription({ product, image, components }: { product: any; image: string; components: SetupComponent[] }) {
+  const lead = product.description?.split("\n").find((item: string) => item.trim()) ?? product.name;
+  const productImageBg = {
+    background: "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.10) 0%, rgba(var(--foreground-rgb), 0.03) 100%)",
+    border: "1px solid rgba(var(--foreground-rgb), 0.08)",
+    boxShadow: "var(--shadow-card-hairline)",
+  } as const;
+
+  return (
+    <section className="pb-20 border-t border-foreground/5">
+      <div className="mx-auto mt-10 max-w-[1120px]">
+        <div
+          className="overflow-hidden shadow-[0_22px_70px_rgba(0,0,0,0.24)]"
+          style={{ borderRadius: "var(--radius-card-xl)", background: "linear-gradient(180deg, #161617 0%, #131314 100%)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}
+        >
+          {/* Cabeçalho + imagem do setup */}
+          <section className="px-6 py-10 text-center md:px-10 md:py-14">
+            <p className="mb-4 text-primary tracking-[0.24em]" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800 }}>
+              // SETUP MONTADO E TESTADO
+            </p>
+            <h2 className="mx-auto max-w-[820px] text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(24px, 5vw, 52px)", lineHeight: 1.02, fontWeight: 700, letterSpacing: "-0.04em" }}>
+              O que vem no setup
+            </h2>
+            <p className="mx-auto mt-5 max-w-[820px] text-foreground/65" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-base)", lineHeight: 1.65 }}>
+              {lead}
+            </p>
+            <div className="relative mt-9 flex min-h-[320px] items-center justify-center overflow-hidden p-8" style={{ borderRadius: "var(--radius-card-xl)", ...productImageBg }}>
+              <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(circle at 30% 25%, rgba(var(--foreground-rgb), 0.06) 0%, transparent 55%)", borderRadius: "var(--radius-card-xl)" }} />
+              <ImageWithFallback src={image} alt={product.name} className="relative max-h-[320px] w-full object-contain drop-shadow-[0_24px_30px_rgba(0,0,0,0.32)]" />
+            </div>
+          </section>
+
+          {/* Cards de componentes — um por peça, cópia padrão + modelo do build */}
+          <section className="border-t border-edge-subtle px-6 py-10 md:px-10">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {components.map((comp, i) => (
+                <article
+                  key={comp.slot}
+                  className="flex flex-col p-6"
+                  style={{ borderRadius: "var(--radius-card-lg)", background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.07)" }}
+                >
+                  <div className="mb-3 flex items-center gap-3">
+                    <span
+                      className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full tabular-nums"
+                      style={{ background: "var(--gradient-brand)", color: "white", fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-caption)", fontWeight: 800 }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      className="uppercase tracking-[0.12em] text-foreground/45"
+                      style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}
+                    >
+                      {comp.slot}
+                    </span>
+                  </div>
+                  <h3 className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.2 }}>
+                    {comp.model}
+                  </h3>
+                  <p className="mt-2 text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.6 }}>
+                    {comp.description}
+                  </p>
+                </article>
+              ))}
+            </div>
+
+            {/* Selos de serviço PCYES */}
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              {[
+                ["Montado e certificado", "Enviado pronto para ligar, com BIOS e drivers atualizados."],
+                ["Cabos organizados", "Gerenciamento traseiro para um interior limpo e melhor fluxo de ar."],
+                ["Garantia por peça", "Cada componente com garantia individual indicada na nota fiscal."],
+              ].map(([title, desc]) => (
+                <div key={title} className="p-5" style={{ borderRadius: "var(--radius-card)", background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}>
+                  <p className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 700 }}>{title}</p>
+                  <p className="mt-1 text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.55 }}>{desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ProductStandardDescription({ product, images }: { product: any; images: string[] }) {
+  // Setup usa uma descrição própria — lista de componentes em vez do genérico.
+  const setupComps = getSetupComponents(product.id);
+  if (setupComps && isSetupProduct(product)) {
+    return <SetupDescription product={product} image={images[0] ?? getPrimaryProductImage(product)} components={setupComps} />;
+  }
+
   const primaryImage = images[0] ?? getPrimaryProductImage(product);
   const secondaryImage = images[1] ?? primaryImage;
   const tertiaryImage = images[2] ?? secondaryImage;

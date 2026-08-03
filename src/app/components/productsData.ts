@@ -1,3 +1,5 @@
+import { setupProducts } from "../lib/setups";
+
 export interface Product {
   id: number;
   sku?: string;
@@ -25764,7 +25766,8 @@ function withSyntheticDiscount(p: Product): Product {
   return { ...p, oldPriceNum, oldPrice };
 }
 
-export const allProducts: Product[] = rawProducts.map(withSyntheticDiscount);
+// Setups ("builds prontas") são produtos de catálogo — ver lib/setups.
+export const allProducts: Product[] = [...rawProducts, ...setupProducts].map(withSyntheticDiscount);
 
 export const categories = ["Periféricos","Refrigeração","Computadores","Hardware","Fontes","SSD e HD","Streaming","Monitores","Placas de Vídeo","Gabinetes","Cadeiras"];
 export const allTags = ["Escritório","Periféricos","Cabo HDMI","Cabo","Adaptador","Refrigeração","Pasta Térmica","Computadores","Mini Computador","Computador","Cabo de Áudio","Hardware","Memória","Gaming","Fontes","Fonte","Mini PC","Wireless","Teclado Mecânico","RGB","Cabo de Video","Adaptador OTG","SSD e HD","Cabo -C","Cabo de Vídeo","Cabo AV","Water Cooler","Cooler para Processador","Mouse","Streaming","Microfone","Iluminação","Cabo Adaptador","Monitores","Placas de Vídeo","Placa de Vídeo NVIDIA","Headset","Teclado","Kit Teclado e Mouse","Adaptador de Áudio","Suporte para Tablet","Gabinetes","Suporte para Gabinete","Suporte de Monitor","Organizador de Mesa","Suporte de TV","Suporte de Microfone","Suporte de Mesa","Suporte VESA","Suporte para Notebook","Suporte para CPU","Organizador de Cabos","Suporte para Monitor","Suporte","Placa-mãe","Monitor Gamer","SSD","Monitor","Memoria","Cartão de Memória","Cartão Micro SD","Mouse Pad","Mousepad","Apoio de Pulso","Fone Gamer","Volante Gamer","Placa de Rede","Acessório para SSD","Controlador LED","Kit Cooler Fan","Cooler Fan","Controlador Fan","Kit Cooler","Cabo Splitter","Contact Frame","Gabinete Gamer","Cadeiras","Cadeira Gamer","Cadeira Ergonômica","Cadeira Office","Placa de Captura","Placa de Vídeo AMD"];

@@ -3885,6 +3885,7 @@ function PathCard({
 }
 
 function WelcomeScreen({ onPath }: { onPath: (p: "builder" | "quiz" | "presets") => void }) {
+  const navigate = useNavigate();
   return (
     <div className="relative">
       <div
@@ -4000,9 +4001,11 @@ function WelcomeScreen({ onPath }: { onPath: (p: "builder" | "quiz" | "presets")
           <PathCard
             icon={<Sparkles className="h-5 w-5" />}
             label="Quero builds prontas"
-            desc="Setups Start, Pro e Ultra já montados e testados. Aplica e customiza qualquer peça antes de comprar."
+            desc="Setups gamer, creator e office já montados e testados. Compre num clique como qualquer produto."
             cta="Ver setups"
-            onClick={() => onPath("presets")}
+            /* Builds prontas agora são produtos de catálogo: abre a listagem
+               normal filtrada em Setups, não mais a tela/sidebar própria. */
+            onClick={() => navigate("/computadores/setups/")}
           />
         </div>
       </div>

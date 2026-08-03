@@ -83,6 +83,18 @@ export const CATEGORIES = [
  * "Cartão de Memória" antes de "Memória"). Trocar a ordem troca a taxonomia.
  */
 export const TAXONOMY: TaxonomyNode[] = [
+  // ── Setups (builds prontas) primeiro: headNoun "setup" só casa nomes que
+  //    começam com "Setup ", nunca "Suporte para Setup Studio" (esse é suporte). ──
+  {
+    slug: "setups",
+    label: "Setups",
+    category: "Computadores",
+    keywords: [],
+    headNouns: ["setup"],
+    seoTitle: "Setups Gamer e PCs Montados",
+    seoDescription:
+      "PCs montados e testados pela PCYES: setups gamer, creator e office prontos para usar, com garantia e frete grátis acima de R$ 299.",
+  },
   // ── Acessórios primeiro: são o que são, não o que acompanham ──
   {
     slug: "suportes-e-ergonomia",
