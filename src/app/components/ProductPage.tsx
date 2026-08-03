@@ -15,8 +15,8 @@ import { allProducts } from "./productsData";
 import { Footer } from "./Footer";
 import {
   getCatalogHref, getProductImages, getPrimaryProductImage,
-  getProductSubcategory, getProductSwatches,
-  getShowcaseProducts, getStockStatus,
+  getProductCategory, getProductSubcategory, getProductSwatches,
+  getShowcaseProducts, getStockStatus, getVisibleCatalogProducts,
 } from "./productPresentation";
 import { toast } from "sonner";
 import { getPreOrderInfo } from "./PreOrderData";
@@ -1335,12 +1335,60 @@ function MobilePurchaseFlow({
    ═══════════════════════════════════════════════════════ */
 
 function AboutProduct({ product, onSeeDescription }: { product: any; onSeeDescription: () => void }) {
+  // Setup: a lateral vira uma ficha-resumo das peças (specs), não bullets soltos.
+  const setup = isSetupProduct(product) && product.specs?.length
+    ? (product.specs as { label: string; value: string }[])
+    : null;
+
   const bullets: string[] = product.features?.length
     ? product.features
     : (product.description ?? "")
         .split("\n")
         .map((s: string) => s.trim())
         .filter(Boolean);
+
+  if (setup) {
+    const lead = (product.description ?? "").split("\n").find((s: string) => s.trim());
+    return (
+      <section>
+        <p
+          className="text-primary font-bold tracking-wide mb-4"
+          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", letterSpacing: "0.3em" }}
+        >
+          // FICHA DO SETUP
+        </p>
+        {lead && (
+          <p className="mb-5 text-foreground/65 leading-relaxed" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.65 }}>
+            {lead}
+          </p>
+        )}
+        <ul className="space-y-0">
+          {setup.map((spec, i) => (
+            <li
+              key={spec.label}
+              className="flex items-center justify-between gap-4 py-2.5"
+              style={{ borderTop: i === 0 ? "none" : "1px solid rgba(var(--foreground-rgb), 0.07)" }}
+            >
+              <span className="text-foreground/45 uppercase tracking-[0.08em]" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}>
+                {spec.label}
+              </span>
+              <span className="text-right text-foreground" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
+                {spec.value}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <button
+          onClick={onSeeDescription}
+          className="mt-5 inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors cursor-pointer group"
+          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
+        >
+          Ver todos os componentes
+          <ChevronRight size={13} className="rotate-90 transition-transform group-hover:translate-y-0.5" />
+        </button>
+      </section>
+    );
+  }
 
   if (!bullets.length) return null;
 
@@ -2004,10 +2052,55 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
    ═══════════════════════════════════════════════════════ */
 
 /**
+ * Imagem real do catálogo por slot de componente. Cada slot aponta para a
+ * categoria/subcategoria correspondente e pega a primeira foto utilizável —
+ * assim o card de "Placa de Vídeo" mostra uma GPU de verdade da loja, etc.
+ * Processador não tem categoria própria no catálogo, então fica sem foto.
+ */
+const COMPONENT_IMAGE_QUERY: Record<string, { category?: string; subcategory?: string }> = {
+  "Placa de Vídeo": { category: "Placas de Vídeo" },
+  "Memória RAM": { subcategory: "Memórias" },
+  Armazenamento: { subcategory: "SSDs" },
+  "Placa-mãe": { subcategory: "Placas-mãe" },
+  Fonte: { category: "Fontes" },
+  Cooler: { subcategory: "Water Coolers" },
+  Gabinete: { category: "Gabinetes" },
+  Monitor: { category: "Monitores" },
+  "Kit Periféricos": { subcategory: "Kits Teclado e Mouse" },
+};
+
+/* Slots sem categoria própria no catálogo: foto direta do oderco (CDN oficial
+   da loja). Processador não tem SKU avulso no catálogo, então usamos a caixa do
+   Intel Core i5 12ª gen — fundo branco, casa com os outros cards. */
+/* Slots sem categoria própria no catálogo. Processador não tem SKU avulso, então
+   usamos a caixa do Intel Core i5 12ª gen (do oderco) com o FUNDO já removido e
+   servida localmente — cai limpa no card escuro, como as demais. */
+const COMPONENT_IMAGE_FALLBACK: Record<string, string> = {
+  Processador: "/setups/cpu-intel-i5.png",
+};
+
+const componentImageCache = new Map<string, string | null>();
+function getComponentImage(slot: string): string | null {
+  if (componentImageCache.has(slot)) return componentImageCache.get(slot)!;
+  const query = COMPONENT_IMAGE_QUERY[slot];
+  let image: string | null = COMPONENT_IMAGE_FALLBACK[slot] ?? null;
+  if (!image && query) {
+    const match = getVisibleCatalogProducts(allProducts).find(
+      (p) =>
+        (!query.category || getProductCategory(p) === query.category) &&
+        (!query.subcategory || getProductSubcategory(p) === query.subcategory),
+    );
+    if (match) image = getPrimaryProductImage(match);
+  }
+  componentImageCache.set(slot, image);
+  return image;
+}
+
+/**
  * Descrição de setup ("build pronta"): mesma moldura da descrição padrão, mas
  * o miolo é a lista de COMPONENTES. Cada peça é um card com rótulo do slot,
- * modelo e cópia padrão (ver lib/setups) — trocar a memória de um build é
- * editar uma string lá, o card não se repete no código.
+ * modelo, cópia padrão (ver lib/setups) e foto real do catálogo — trocar a
+ * memória de um build é editar uma string lá, o card não se repete no código.
  */
 function SetupDescription({ product, image, components }: { product: any; image: string; components: SetupComponent[] }) {
   const lead = product.description?.split("\n").find((item: string) => item.trim()) ?? product.name;
@@ -2044,34 +2137,61 @@ function SetupDescription({ product, image, components }: { product: any; image:
           {/* Cards de componentes — um por peça, cópia padrão + modelo do build */}
           <section className="border-t border-edge-subtle px-6 py-10 md:px-10">
             <div className="grid gap-4 sm:grid-cols-2">
-              {components.map((comp, i) => (
-                <article
-                  key={comp.slot}
-                  className="flex flex-col p-6"
-                  style={{ borderRadius: "var(--radius-card-lg)", background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.07)" }}
-                >
-                  <div className="mb-3 flex items-center gap-3">
-                    <span
-                      className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full tabular-nums"
-                      style={{ background: "var(--gradient-brand)", color: "white", fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-caption)", fontWeight: 800 }}
-                    >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span
-                      className="uppercase tracking-[0.12em] text-foreground/45"
-                      style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}
-                    >
-                      {comp.slot}
-                    </span>
-                  </div>
-                  <h3 className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.2 }}>
-                    {comp.model}
-                  </h3>
-                  <p className="mt-2 text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.6 }}>
-                    {comp.description}
-                  </p>
-                </article>
-              ))}
+              {components.map((comp, i) => {
+                const compImage = getComponentImage(comp.slot);
+                return (
+                  <article
+                    key={comp.slot}
+                    className="flex flex-col overflow-hidden"
+                    style={{ borderRadius: "var(--radius-card-lg)", background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.07)" }}
+                  >
+                    {/* Foto real do catálogo, quando existe para o slot */}
+                    {compImage && (
+                      <div
+                        className="relative flex h-40 items-center justify-center p-5"
+                        style={{ background: "radial-gradient(circle at 30% 22%, rgba(var(--foreground-rgb), 0.07) 0%, transparent 60%), rgba(0,0,0,0.18)" }}
+                      >
+                        <ImageWithFallback
+                          src={compImage}
+                          alt={comp.model}
+                          className="max-h-full max-w-full object-contain"
+                          style={{ filter: "drop-shadow(0 14px 20px rgba(0,0,0,0.5))" }}
+                        />
+                        <span
+                          className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full tabular-nums"
+                          style={{ background: "var(--gradient-brand)", color: "white", fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-caption)", fontWeight: 800 }}
+                        >
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex flex-col p-6">
+                      <div className="mb-2 flex items-center gap-3">
+                        {!compImage && (
+                          <span
+                            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full tabular-nums"
+                            style={{ background: "var(--gradient-brand)", color: "white", fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-caption)", fontWeight: 800 }}
+                          >
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                        )}
+                        <span
+                          className="uppercase tracking-[0.12em] text-foreground/45"
+                          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}
+                        >
+                          {comp.slot}
+                        </span>
+                      </div>
+                      <h3 className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.2 }}>
+                        {comp.model}
+                      </h3>
+                      <p className="mt-2 text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.6 }}>
+                        {comp.description}
+                      </p>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
 
             {/* Selos de serviço PCYES */}
