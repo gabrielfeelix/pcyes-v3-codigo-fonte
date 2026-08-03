@@ -660,6 +660,15 @@ input:-webkit-autofill:active {
   background: rgba(var(--foreground-rgb), 0.08);
 }
 
+/* Campo que JÁ pinta a própria borda no foco (CEP da página de produto): o
+   anel global desenhava um segundo traço 2px para fora, e o campo ficava com
+   dois retângulos vermelhos concêntricos. Aqui o realce é um só — borda + halo
+   colado nela, sem folga entre os dois. */
+.pcyes-field-ring:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 1.5px var(--ring);
+}
+
 /* Busca inline (ex.: "o que roda nessa máquina" na página do setup): o input
    ocupa a caixa inteira, então o outline com offset de 2px caía DENTRO da
    borda do container e aparecia como um segundo retângulo vermelho colado no

@@ -434,7 +434,7 @@ function AutoShippingCalculator({ productPrice }: { productPrice: number }) {
           placeholder="Digite seu CEP"
           value={cep}
           onChange={(e) => setCep(formatCep(e.target.value))}
-          className="w-full text-foreground placeholder-foreground/30 px-4 py-3 pr-11 focus:outline-none transition-all"
+          className="pcyes-field-ring w-full text-foreground placeholder-foreground/30 px-4 py-3 pr-11 focus:outline-none transition-all"
           style={{
             borderRadius: "var(--radius-card-sm)",
             border: "1px solid rgba(var(--foreground-rgb), 0.10)",
