@@ -113,14 +113,16 @@ export function CartDrawer() {
       {isOpen && (
         <>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+            /* Camada mais alta da aplicação: o carrinho abre por cima de
+               qualquer sheet aberto (ex.: configuração do setup, z-[101]). */
+            className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
 
           <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             ref={drawerRef}
             role="dialog"
             aria-modal="true"
             aria-label="Carrinho de compras"
-            className="fixed top-0 right-0 bottom-0 z-[61] flex w-full max-w-[460px] flex-col overflow-hidden"
+            className="fixed top-0 right-0 bottom-0 z-[111] flex w-full max-w-[460px] flex-col overflow-hidden"
             style={{
               background: isDark ? "#161617" : "white",
               borderTopLeftRadius: "var(--radius-card-lg)",
@@ -344,7 +346,8 @@ export function CartDrawer() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => { setGiftModalOpen(false); setGiftDismissed(true); setSelectedGiftId(null); }}
-                className="fixed inset-0 z-[80] flex items-end justify-center bg-black/70 backdrop-blur-md p-0 md:items-center md:p-6"
+                /* Acima do próprio drawer do carrinho (z-[111]). */
+                className="fixed inset-0 z-[120] flex items-end justify-center bg-black/70 backdrop-blur-md p-0 md:items-center md:p-6"
               >
                 <motion.div
                   initial={{ opacity: 0, y: 18, scale: 0.97 }}

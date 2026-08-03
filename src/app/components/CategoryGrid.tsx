@@ -41,7 +41,7 @@ const categoryGroups: Record<Audience, CategoryCard[]> = {
     {
       name: "PC Gamer",
       caption: "Combinações pensadas para jogar com performance",
-      href: "/produtos",
+      href: "/computadores/pc-gamer/",
       image: "/home/category-pc-gamer.png",
       span: "col-span-1",
     },
@@ -85,7 +85,7 @@ const categoryGroups: Record<Audience, CategoryCard[]> = {
     {
       name: "PC Gamer",
       caption: "Builds prontas para entrar em jogo",
-      href: "/produtos",
+      href: "/computadores/pc-gamer/",
       image: "/home/category-pc-gamer.png",
       span: "col-span-1",
     },

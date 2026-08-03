@@ -31,6 +31,7 @@ import { searchProducts } from "../../utils/search";
 import { DiscountBadge, PreOrderPill, RatingChip, SpecChip } from "./section";
 import { SEO } from "./SEO";
 import { getListingSeo } from "../lib/listingSeo";
+import { getShowcase, getShowcasePath, matchesShowcase } from "../lib/showcases";
 import { getCategoryUrl } from "../lib/slug";
 import { CategorySeoBlock } from "./CategorySeoBlock";
 
@@ -152,7 +153,30 @@ const sortOptions = [
 ];
 const brandsList = productBrands;
 const GLOBAL_MIN = 0;
-const GLOBAL_MAX = 15000;
+/* Teto derivado do catálogo, não fixo: com 15.000 no código o setup Studio
+   (R$ 18.499) ficava fora de QUALQUER listagem, inclusive da própria vitrine de
+   Workstation. Arredonda pro milhar de cima para o slider terminar redondo. */
+const GLOBAL_MAX = Math.max(
+  15000,
+  Math.ceil(Math.max(...allProducts.map((p) => p.priceNum ?? 0), 0) / 1000) * 1000,
+);
+
+/* Tags de setup são duas dimensões diferentes no mesmo array: para quem serve
+   (persona) e quanto entrega (faixa). Clicar "Entrada" dentro de PC Gamer tem
+   que INTERSECTAR as duas — com o OR plano, "Gamer,Entrada" devolvia todo setup
+   gamer MAIS todo setup de entrada. Entre dimensões é E, dentro da mesma é OU. */
+const TAG_DIMENSIONS: Record<string, string> = {
+  Gamer: "persona", Creator: "persona", Office: "persona",
+  Entrada: "faixa", "Intermediário": "faixa", "Avançado": "faixa",
+};
+function matchesTagFilter(product: Product, selected: Set<string>) {
+  const byDimension = new Map<string, string[]>();
+  for (const tag of selected) {
+    const dimension = TAG_DIMENSIONS[tag] ?? "outras";
+    byDimension.set(dimension, [...(byDimension.get(dimension) ?? []), tag]);
+  }
+  return [...byDimension.values()].every((tags) => tags.some((tag) => product.tags.includes(tag)));
+}
 
 function getDiscount(p: Product) {
   if (!p.oldPriceNum || p.oldPriceNum <= p.priceNum) return 0;
@@ -351,9 +375,17 @@ export function ProductsPage() {
   const slugCategory = routeParams.category
     ? getCategoryFromSlug(routeParams.category) ?? routeParams.category
     : "";
+  /* Vitrine por uso (/computadores/pc-gamer/) ocupa o mesmo lugar da URL que a
+     subcategoria, mas NÃO é subcategoria: o recorte é por tag e o slug não
+     existe no catálogo. Resolvida primeiro, ela impede que "pc-gamer" vire
+     filtro de subcategoria literal — que zeraria a listagem. */
+  const showcase = routeParams.category && routeParams.subcategory
+    ? getShowcase(routeParams.category, routeParams.subcategory)
+    : undefined;
+
   /* Slug → rótulo real. Sem isso "cadeiras-gamer" virava filtro literal e
      nenhum produto casava: eles carregam "Cadeiras Gamer". */
-  const slugSubcategory = routeParams.subcategory
+  const slugSubcategory = routeParams.subcategory && !showcase
     ? getSubcategoryFromSlug(routeParams.subcategory, slugCategory) ?? routeParams.subcategory
     : "";
 
@@ -439,6 +471,12 @@ export function ProductsPage() {
 
     const atributos = searchParams.get("atributos");
     setSelectedAttributes(atributos ? new Set(atributos.split(",").filter(Boolean)) : new Set());
+
+    /* Tags via URL: é o que o megamenu usa para recortar a listagem por uso
+       ("PC Gamer" = setups com a tag Gamer). A tag pode não estar na lista de
+       tags da sidebar — o chip removível acima da grade dá a saída. */
+    const tags = searchParams.get("tags");
+    setSelectedTags(tags ? new Set(tags.split(",").filter(Boolean)) : new Set());
   }, [searchParams, slugCategory, slugSubcategory]);
 
   /* ── Sync filter state -> URL querystring (B4) ──
@@ -463,6 +501,9 @@ export function ProductsPage() {
     if (selectedAttributes.size > 0) sp.set("atributos", [...selectedAttributes].join(","));
     else sp.delete("atributos");
 
+    if (selectedTags.size > 0) sp.set("tags", [...selectedTags].join(","));
+    else sp.delete("tags");
+
     // Only call setSearchParams if anything actually changed to avoid loops.
     const next = sp.toString();
     const current = searchParams.toString();
@@ -471,7 +512,7 @@ export function ProductsPage() {
       lastWrittenSearchRef.current = next;
       setSearchParams(sp, { replace: true });
     }
-  }, [priceMin, priceMax, onlyDiscount, selectedBrands, selectedAttributes, searchParams, setSearchParams]);
+  }, [priceMin, priceMax, onlyDiscount, selectedBrands, selectedAttributes, selectedTags, searchParams, setSearchParams]);
 
   /* ── Scroll to top on category change ── */
   const mainRef = useRef<HTMLDivElement>(null);
@@ -550,6 +591,10 @@ export function ProductsPage() {
     /* Categoria CANÔNICA, não a da planilha: cabo cadastrado em "SSD e HD"
        mora em Periféricos pela taxonomia, e é lá que a URL o coloca. Comparar
        com o dado cru sumia com o produto da própria listagem que o lista. */
+    /* Recorte da vitrine: é a PÁGINA, não um filtro escolhido pelo usuário —
+       por isso não entra em activeFilterCount (senão a vitrine sairia noindex)
+       nem vira chip removível (remover "Gamer" em /pc-gamer/ não faz sentido). */
+    if (showcase) result = result.filter((p) => matchesShowcase(showcase, p));
     if (selectedCategories.size > 0) result = result.filter((p) => selectedCategories.has(getProductCategory(p)));
     if (selectedFeaturedCategories.size > 0) {
       result = result.filter((p) =>
@@ -557,7 +602,7 @@ export function ProductsPage() {
       );
     }
     if (selectedSubcategories.size > 0) result = result.filter((p) => selectedSubcategories.has(getProductSubcategory(p)));
-    if (selectedTags.size > 0) result = result.filter((p) => p.tags.some((t) => selectedTags.has(t)));
+    if (selectedTags.size > 0) result = result.filter((p) => matchesTagFilter(p, selectedTags));
     if (selectedAttributes.size > 0) {
       result = result.filter((p) => {
         const haystack = [
@@ -597,7 +642,7 @@ export function ProductsPage() {
     if (inStockOnly) result = result.filter((p) => p.inStock !== false);
 
     return result;
-  }, [selectedCategories, selectedFeaturedCategories, selectedSubcategories, selectedTags, selectedAttributes, selectedBrands, selectedSizes, onlyDiscount, selectedDiscounts, selectedRatings, inStockOnly, searchOrder]);
+  }, [showcase, selectedCategories, selectedFeaturedCategories, selectedSubcategories, selectedTags, selectedAttributes, selectedBrands, selectedSizes, onlyDiscount, selectedDiscounts, selectedRatings, inStockOnly, searchOrder]);
 
   const priceBounds = useMemo(() => {
     const productsForPrice = selectedColors.size > 0
@@ -624,6 +669,20 @@ export function ProductsPage() {
     + (priceFilterActive ? 1 : 0) + (onlyDiscount ? 1 : 0)
     + selectedDiscounts.size
     + selectedRatings.size + (searchQuery ? 1 : 0) + (inStockOnly ? 1 : 0);
+
+  /* Indexação ≠ contagem de filtros do usuário.
+     activeFilterCount inclui a categoria e a subcategoria que vêm da PRÓPRIA
+     URL — então /computadores/setups/ contava 2 e a SPA marcava `noindex` em
+     runtime, sobrescrevendo o `index` do HTML cru. Resultado: toda listagem
+     canônica pedia para não ser indexada. Aqui contam só os refinamentos que o
+     usuário aplicou por cima da rota; esses sim criam variação sem URL própria
+     e devem ficar fora do índice, com o canonical apontando para a página-mãe. */
+  const refinementCount = selectedTags.size + selectedAttributes.size + selectedBrands.size + selectedSizes.size + selectedColors.size
+    + selectedDiscounts.size + selectedRatings.size
+    + (priceFilterActive ? 1 : 0) + (onlyDiscount ? 1 : 0) + (searchQuery ? 1 : 0) + (inStockOnly ? 1 : 0)
+    + (selectedCategories.size > (slugCategory ? 1 : 0) ? 1 : 0)
+    + (selectedSubcategories.size > (slugSubcategory ? 1 : 0) ? 1 : 0)
+    + selectedFeaturedCategories.size;
 
   const productsBeforeColorFilter = useMemo(() => {
     let result = [...productsWithoutPriceFilter];
@@ -1139,8 +1198,9 @@ export function ProductsPage() {
           embute no HTML cru. Escritos aqui e lá, divergiriam: o crawler leria
           um título e o usuário veria outro. */}
       <SEO
-        title={listingSeo?.title ?? "Produtos"}
+        title={showcase?.seoTitle ?? listingSeo?.title ?? "Produtos"}
         description={
+          showcase?.seoDescription ??
           listingSeo?.description ??
           "Catálogo completo de produtos PCYES. Hardware, periféricos, setups gamer."
         }
@@ -1148,14 +1208,16 @@ export function ProductsPage() {
            mesmos produtos: canonical aponta para a categoria, senão as duas
            URLs competem entre si pelo mesmo termo. */
         canonicalPath={
-          activeCategoryLabel
-            ? getCategoryUrl(
-                activeCategoryLabel,
-                initialSubcategory && initialSubcategory !== activeCategoryLabel
-                  ? initialSubcategory
-                  : undefined,
-              )
-            : "/produtos"
+          showcase
+            ? getShowcasePath(showcase)
+            : activeCategoryLabel
+              ? getCategoryUrl(
+                  activeCategoryLabel,
+                  initialSubcategory && initialSubcategory !== activeCategoryLabel
+                    ? initialSubcategory
+                    : undefined,
+                )
+              : "/produtos"
         }
         image={
           activeCategoryLabel && filtered.length > 0
@@ -1163,7 +1225,7 @@ export function ProductsPage() {
             : undefined
         }
         ogType="website"
-        robots={activeFilterCount > 0 ? "noindex" : "index"}
+        robots={refinementCount > 0 ? "noindex" : "index"}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
@@ -1172,9 +1234,11 @@ export function ProductsPage() {
             ...(activeCategoryLabel
               ? [{ "@type": "ListItem", position: 2, name: activeCategoryLabel, item: `https://www.pcyes.com.br${getCategoryUrl(activeCategoryLabel)}` }]
               : [{ "@type": "ListItem", position: 2, name: "Produtos", item: "https://www.pcyes.com.br/produtos" }]),
-            ...(initialSubcategory
-              ? [{ "@type": "ListItem", position: 3, name: initialSubcategory }]
-              : []),
+            ...(showcase
+              ? [{ "@type": "ListItem", position: 3, name: showcase.label }]
+              : initialSubcategory
+                ? [{ "@type": "ListItem", position: 3, name: initialSubcategory }]
+                : []),
           ],
         }}
       />
@@ -1196,11 +1260,11 @@ export function ProductsPage() {
               </span>
             )}
           </li>
-          {initialSubcategory && (
+          {(showcase || initialSubcategory) && (
             <li className="flex items-center gap-2">
               <span className="text-foreground/20" style={{ fontSize: "var(--text-caption)" }}>›</span>
               <span aria-current="page" className="text-foreground/70" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
-                {initialSubcategory}
+                {showcase?.label ?? initialSubcategory}
               </span>
             </li>
           )}
@@ -1222,9 +1286,11 @@ export function ProductsPage() {
                 letterSpacing: "-0.02em",
               }}
             >
-              {initialSubcategory
-                ? `${initialSubcategory} ${activeCategoryLabel}`
-                : activeCategoryLabel || "Todos os produtos"}
+              {showcase
+                ? showcase.h1
+                : initialSubcategory
+                  ? `${initialSubcategory} ${activeCategoryLabel}`
+                  : activeCategoryLabel || "Todos os produtos"}
             </h1>
             <p
               className="mt-3 text-foreground/75"
@@ -1235,9 +1301,11 @@ export function ProductsPage() {
                 maxWidth: "720px",
               }}
             >
-              {activeCategoryLabel
-                ? `Confira a linha completa de ${initialSubcategory ? `${initialSubcategory.toLowerCase()} ${activeCategoryLabel.toLowerCase()}` : activeCategoryLabel.toLowerCase()} PCYES. Garantia oficial, frete grátis acima de R$ 299, até 12x sem juros.`
-                : "Catálogo completo PCYES. Hardware, periféricos, setups gamer e mais."}
+              {showcase
+                ? showcase.intro
+                : activeCategoryLabel
+                  ? `Confira a linha completa de ${initialSubcategory ? `${initialSubcategory.toLowerCase()} ${activeCategoryLabel.toLowerCase()}` : activeCategoryLabel.toLowerCase()} PCYES. Garantia oficial, frete grátis acima de R$ 299, até 12x sem juros.`
+                  : "Catálogo completo PCYES. Hardware, periféricos, setups gamer e mais."}
             </p>
           </header>
 

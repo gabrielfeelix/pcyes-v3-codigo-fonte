@@ -660,6 +660,18 @@ input:-webkit-autofill:active {
   background: rgba(var(--foreground-rgb), 0.08);
 }
 
+/* Busca inline (ex.: "o que roda nessa máquina" na página do setup): o input
+   ocupa a caixa inteira, então o outline com offset de 2px caía DENTRO da
+   borda do container e aparecia como um segundo retângulo vermelho colado no
+   campo. Mesma solução da pílula de busca: o anel vai no container. */
+.pcyes-inline-search:focus-within {
+  border-color: var(--ring) !important;
+  box-shadow: 0 0 0 1.5px var(--ring);
+}
+.pcyes-inline-search :focus-visible {
+  outline: none !important;
+}
+
 /* Cupom (checkout): input dentro de motion.div com overflow-hidden (animação de
    altura) — o outline de foco recortado vira borda + box-shadow INSET, ambos
    dentro do input, então não são cortados. */

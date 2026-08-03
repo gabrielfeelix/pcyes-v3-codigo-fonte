@@ -13,10 +13,10 @@ interface SpotlightCard {
 const cards: SpotlightCard[] = [
   { name: "Hardware", href: "/produtos", image: "/home/category-hardware.png" },
   { name: "Periféricos", href: "/produtos?category=Perif%C3%A9ricos", image: "/home/category-peripherals.png" },
-  { name: "PC Gamer", href: "/produtos", image: "/home/category-pc-gamer.png" },
+  { name: "PC Gamer", href: "/computadores/pc-gamer/", image: "/home/category-pc-gamer.png" },
   { name: "Placas de Vídeo", href: "/produtos?category=Placas%20de%20V%C3%ADdeo", image: "/home/category-gpu.png" },
   { name: "Cadeiras", href: "/produtos?category=Cadeiras", image: "/home/category-chair.png" },
-  { name: "Computadores", href: "/produtos", image: "/home/category-computers.png" },
+  { name: "Computadores", href: "/computadores/", image: "/home/category-computers.png" },
 ];
 
 export function CategorySpotlight() {

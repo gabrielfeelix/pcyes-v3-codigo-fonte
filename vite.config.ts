@@ -21,6 +21,7 @@ import {
 } from './src/app/lib/taxonomy'
 import { hasUsableProductImage } from './src/app/components/productPresentation'
 import { getListingSeo } from './src/app/lib/listingSeo'
+import { SHOWCASES, getShowcasePath, matchesShowcase } from './src/app/lib/showcases'
 
 const prototypeBasePath = process.env.PROTOTYPE_BASE_PATH || '/'
 const prototypeOutDir = process.env.PROTOTYPE_OUT_DIR || 'dist'
@@ -166,6 +167,15 @@ function generateSitemap() {
           push(`/${getCategorySlug(category)}/${node.slug}/`, 'weekly', '0.7')
         }
       }
+      /* Vitrines por uso (PC Gamer, Workstation): páginas de intenção de busca
+         com URL própria. Entram no sitemap só se tiverem produto — vitrine
+         vazia é soft-404, mesma regra das listagens acima. */
+      for (const showcase of SHOWCASES) {
+        const count = visible.filter((p) => matchesShowcase(showcase, p as any)).length
+        if (count === 0) continue
+        push(getShowcasePath(showcase), 'weekly', '0.8')
+      }
+
       for (const product of visible) {
         push(getProductUrl(product), 'weekly', '0.6')
       }
@@ -287,7 +297,38 @@ function prerenderSeoHtml() {
     return [product, { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items }]
   }
 
+  /* Vitrine indexada por caminho: o prerender precisa reconhecê-la antes de
+     tratar o segundo segmento como subcategoria — senão o HTML cru sairia com
+     H1 "pc-gamer — Computadores" e lista vazia. */
+  const showcaseByPath = new Map(SHOWCASES.map((s) => [getShowcasePath(s), s]))
+  const showcaseProducts = (showcase: (typeof SHOWCASES)[number]) =>
+    (allProducts as any[]).filter((p) => hasUsableProductImage(p) && matchesShowcase(showcase, p))
+
   const categoryLd = (p: string): any[] | null => {
+    const showcase = showcaseByPath.get(p)
+    if (showcase) {
+      const catSlug = p.split('/').filter(Boolean)[0]
+      return [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+            { '@type': 'ListItem', position: 2, name: showcase.category, item: `${SITE}/${catSlug}/` },
+            { '@type': 'ListItem', position: 3, name: showcase.label, item: `${SITE}${p}` },
+          ],
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: showcase.h1,
+          description: showcase.seoDescription,
+          url: `${SITE}${p}`,
+          isPartOf: { '@type': 'WebSite', name: 'PCYES', url: SITE },
+        },
+      ]
+    }
+
     const segs = p.split('/').filter(Boolean)
     const catLabel = getCategoryFromSlug(segs[0])
     if (!catLabel) return null
@@ -362,6 +403,21 @@ function prerenderSeoHtml() {
   }
 
   const categorySeo = (p: string) => {
+    const showcase = showcaseByPath.get(p)
+    if (showcase) {
+      const catSlug = p.split('/').filter(Boolean)[0]
+      const items = showcaseProducts(showcase)
+        .slice(0, 60)
+        .map((pr) => `<li><a href="${getProductUrl(pr)}">${esc(pr.name)}</a> — ${esc(pr.price)}</li>`)
+        .join('')
+      return wrapSeo(
+        `<nav aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/${catSlug}/">${esc(showcase.category)}</a> / ${esc(showcase.label)}</nav>` +
+          `<h1>${esc(showcase.h1)}</h1>` +
+          `<p>${esc(showcase.intro)}</p>` +
+          `<ul>${items}</ul>`,
+      )
+    }
+
     const segs = p.split('/').filter(Boolean)
     const catLabel = getCategoryFromSlug(segs[0])
     if (!catLabel) return null
@@ -442,11 +498,17 @@ function prerenderSeoHtml() {
           const catLabel = getCategoryFromSlug(segs[0])!
           const key = segs[1] ? `${segs[0]}/${segs[1]}` : ''
           const subLabel = key ? subLabelBySlug.get(key) : undefined
-          const listing = getListingSeo({
-            category: catLabel,
-            subcategoryLabel: subLabel,
-            products: (key ? productsByCatSub.get(key) : productsByCat.get(segs[0])) ?? [],
-          })
+          /* Vitrine tem texto próprio: o segundo segmento não é subcategoria,
+             então getListingSeo cairia no rótulo da categoria e duas páginas
+             sairiam com o mesmo <title>. */
+          const showcase = showcaseByPath.get(p)
+          const listing = showcase
+            ? { title: showcase.seoTitle, description: showcase.seoDescription }
+            : getListingSeo({
+                category: catLabel,
+                subcategoryLabel: subLabel,
+                products: (key ? productsByCatSub.get(key) : productsByCat.get(segs[0])) ?? [],
+              })
           const full = `${listing.title} | PCYES`
           html = html.replace(/<title>[^<]*<\/title>/, () => `<title>${esc(full)}</title>`)
           html = set(html, /(<meta name="description" content=")[^"]*(")/, esc(listing.description))

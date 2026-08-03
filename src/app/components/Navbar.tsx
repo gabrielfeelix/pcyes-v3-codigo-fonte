@@ -15,6 +15,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { allProducts, type Product } from "./productsData";
 import { getCatalogHref, getPrimaryProductImage, getProductCategory, getProductSubcategory, getProductSwatches, getVisibleCatalogProducts } from "./productPresentation";
 import { getCategoryFromSlug, getCategorySlug, getSubcategorySlug } from "../lib/slug";
+import { SHOWCASES, getShowcasePath } from "../lib/showcases";
 import { searchProducts } from "../../utils/search";
 
 const PCYES_LOGO = "https://pcyes-cdn.oderco.com.br/Logotipos/PCYES/Simbolo-Logo-Horiz-Vermelho.png";
@@ -93,6 +94,26 @@ interface MegaMenu {
   subItems: MegaSubItem[];
   /** Quando presente, o painel vira grade de banners em vez de miniaturas. */
   banners?: CollabBanner[];
+}
+
+/**
+ * Link para a vitrine de setups já recortada.
+ *
+ * "PC Gamer" e "Workstation" não são categorias de catálogo — são recortes por
+ * USO sobre os setups (Computadores › Setups). O recorte vive na querystring:
+ * `tags` casa com as tags do produto (persona + faixa: Gamer, Creator, Office,
+ * Entrada, Intermediário, Avançado) e a faixa de preço usa os mesmos params
+ * que os filtros da listagem já escrevem. Nada aqui inventa parâmetro novo.
+ */
+function setupsHref(opts: { tags?: string[]; precoMin?: number; precoMax?: number; showcase?: string } = {}) {
+  const showcase = opts.showcase ? SHOWCASES.find((s) => s.slug === opts.showcase) : undefined;
+  const path = showcase ? getShowcasePath(showcase) : getCatalogHref({ category: "Computadores", subcategory: "Setups" });
+  const sp = new URLSearchParams();
+  if (opts.tags?.length) sp.set("tags", opts.tags.join(","));
+  if (opts.precoMin) sp.set("precoMin", String(opts.precoMin));
+  if (opts.precoMax) sp.set("precoMax", String(opts.precoMax));
+  const query = sp.toString();
+  return query ? `${path}?${query}` : path;
 }
 
 const megaMenus: Record<string, MegaMenu> = {
@@ -276,14 +297,16 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Workstation", href: "/produtos", image: "/setups/setup-render.png", thumb: "arte",
+        /* Workstation = máquina de trabalho pesado. No catálogo isso é a linha
+           Creator; as finalidades abaixo são recortes de preço dentro dela. */
+        label: "Workstation", href: setupsHref({ showcase: "workstation" }), image: "/setups/setup-render.png", thumb: "arte",
         right: {
           type: "layouts", title: "Workstation por Finalidade",
           layouts: [
-            { label: "Edição de Vídeo", desc: "Processamento pesado e RAM de alta capacidade", href: "/produtos" },
-            { label: "Design Gráfico", desc: "GPU poderosa e display preciso", href: "/produtos" },
-            { label: "Desenvolvimento", desc: "Multitarefa extrema com SSD rápido", href: "/produtos" },
-            { label: "Renderização 3D", desc: "CPU multi-core e GPU profissional", href: "/produtos" },
+            { label: "Design Gráfico", desc: "Photoshop, Figma e Lightroom sem engasgo", href: setupsHref({ showcase: "workstation", precoMax: 6000 }) },
+            { label: "Edição de Vídeo", desc: "Premiere e DaVinci 4K em tempo real", href: setupsHref({ showcase: "workstation", precoMin: 6000, precoMax: 12000 }) },
+            { label: "Renderização 3D", desc: "CPU multi-core e GPU profissional", href: setupsHref({ showcase: "workstation", precoMin: 12000 }) },
+            { label: "Desenvolvimento", desc: "Multitarefa extrema com SSD rápido", href: setupsHref({ tags: ["Office"], precoMin: 4000 }) },
           ]
         }
       },
@@ -294,46 +317,46 @@ const megaMenus: Record<string, MegaMenu> = {
     title: "PC Gamer",
     subItems: [
       {
-        label: "Entrada", href: "/produtos", image: "/setups/setup-base.png", thumb: "arte",
+        label: "Entrada", href: setupsHref({ showcase: "pc-gamer", tags: ["Entrada"] }), image: "/setups/setup-base.png", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Entrada",
           layouts: [
-            { label: "Starter R$ 2.500", desc: "1080p @ 60fps — Jogos leves e esports", href: "/produtos" },
-            { label: "Entry R$ 3.500", desc: "1080p @ 100fps — Gaming do dia a dia", href: "/produtos" },
-            { label: "Budget R$ 4.500", desc: "1080p @ 144fps — Esports competitivo", href: "/produtos" },
+            { label: "Até R$ 3.000", desc: "1080p @ 60fps — Jogos leves e esports", href: setupsHref({ showcase: "pc-gamer", precoMax: 3000 }) },
+            { label: "R$ 3.000 – R$ 4.000", desc: "1080p @ 100fps — Gaming do dia a dia", href: setupsHref({ showcase: "pc-gamer", precoMin: 3000, precoMax: 4000 }) },
+            { label: "R$ 4.000 – R$ 5.500", desc: "1080p @ 144fps — Esports competitivo", href: setupsHref({ showcase: "pc-gamer", precoMin: 4000, precoMax: 5500 }) },
           ]
         }
       },
       {
-        label: "Intermediário", href: "/produtos", image: "/setups/setup-pulse.png", thumb: "arte",
+        label: "Intermediário", href: setupsHref({ showcase: "pc-gamer", tags: ["Intermediário"] }), image: "/setups/setup-pulse.png", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Intermediário",
           layouts: [
-            { label: "Mid R$ 5.500", desc: "1440p @ 60fps — AAA em alta qualidade", href: "/produtos" },
-            { label: "Standard R$ 7.000", desc: "1440p @ 144fps — Gaming premium", href: "/produtos" },
-            { label: "Plus R$ 8.500", desc: "4K @ 60fps — Qualidade máxima visual", href: "/produtos" },
+            { label: "R$ 5.500 – R$ 8.000", desc: "1440p @ 144fps — AAA em alta qualidade", href: setupsHref({ showcase: "pc-gamer", precoMin: 5500, precoMax: 8000 }) },
+            { label: "R$ 8.000 – R$ 11.000", desc: "1440p @ 165fps — Gaming premium", href: setupsHref({ showcase: "pc-gamer", precoMin: 8000, precoMax: 11000 }) },
+            { label: "Todos os intermediários", desc: "A faixa inteira, sem corte de preço", href: setupsHref({ showcase: "pc-gamer", tags: ["Intermediário"] }) },
           ]
         }
       },
       {
-        label: "Avançado", href: "/produtos", image: "/setups/setup-apex.png", thumb: "arte",
+        label: "Avançado", href: setupsHref({ showcase: "pc-gamer", tags: ["Avançado"] }), image: "/setups/setup-apex.png", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Avançado",
           layouts: [
-            { label: "Pro R$ 10.000", desc: "4K @ 144fps — RTX ON em tudo", href: "/produtos" },
-            { label: "Elite R$ 15.000", desc: "4K @ 240fps — Competitivo de alto nível", href: "/produtos" },
-            { label: "Ultimate R$ 20.000+", desc: "Sem limites — O melhor do melhor", href: "/produtos" },
+            { label: "R$ 11.000 – R$ 16.000", desc: "4K @ 144fps — RTX ON em tudo", href: setupsHref({ showcase: "pc-gamer", precoMin: 11000, precoMax: 16000 }) },
+            { label: "Acima de R$ 16.000", desc: "Sem limites — o topo da linha", href: setupsHref({ showcase: "pc-gamer", precoMin: 16000 }) },
+            { label: "Todos os avançados", desc: "A faixa inteira, sem corte de preço", href: setupsHref({ showcase: "pc-gamer", tags: ["Avançado"] }) },
           ]
         }
       },
       {
-        label: "Pré-Montados", href: "/produtos", image: "/setups/setup-strike.png", thumb: "arte",
+        label: "Pré-Montados", href: setupsHref(), image: "/setups/setup-strike.png", thumb: "arte",
         right: {
           type: "featured", title: "PCs Prontos",
           image: "https://images.unsplash.com/photo-1587831990711-23ca6441447b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800",
           name: "Desempenho garantido",
           desc: "Máquinas testadas e prontas para jogar. Garantia total PCYES.",
-          href: "/produtos"
+          href: setupsHref()
         }
       },
     ]
@@ -465,7 +488,7 @@ const navItems: NavItem[] = [
   { label: "Hardware", mega: "hardware", href: getCatalogHref({ category: "Hardware" }) },
   { label: "Periféricos", mega: "perifericos", href: getCatalogHref({ category: "Periféricos" }) },
   { label: "Computadores", mega: "computadores", href: getCatalogHref({ category: "Computadores" }) },
-  { label: "PC Gamer", mega: "pcgamer", href: getCatalogHref({ category: "Computadores" }) },
+  { label: "PC Gamer", mega: "pcgamer", href: setupsHref({ showcase: "pc-gamer" }) },
   { label: "Collab", mega: "collab", href: "/maringa-fc" },
   { label: "Monte seu PC", href: "/monte-seu-pc", emphasis: "build" },
 ];

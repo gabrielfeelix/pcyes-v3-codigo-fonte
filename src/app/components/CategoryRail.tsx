@@ -25,7 +25,7 @@ interface CategoryItem {
 
 const items: CategoryItem[] = [
   { label: "Hardware", href: "/produtos?category=Hardware", Icon: Cpu },
-  { label: "PC Gamer", href: "/produtos?category=Computadores", Icon: Gamepad2 },
+  { label: "PC Gamer", href: "/computadores/pc-gamer/", Icon: Gamepad2 },
   { label: "Placas de Vídeo", href: "/produtos?category=Placas%20de%20V%C3%ADdeo", Icon: Zap },
   { label: "Periféricos", href: "/produtos?category=Perif%C3%A9ricos", Icon: Keyboard },
   { label: "Mouses", href: "/produtos?search=mouse", Icon: Mouse },
