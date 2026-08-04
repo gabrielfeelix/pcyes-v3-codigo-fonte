@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import { Link, useSearchParams, useParams } from "react-router";
 import { getCategoryFromSlug } from "../lib/slug";
 import { useFocusTrap } from "../lib/useFocusTrap";
+import { isSetupArt, setupArtVariant } from "../lib/setupImages";
 import { motion, AnimatePresence } from "motion/react";
 import {
   SlidersHorizontal, ArrowUpDown, ChevronDown, Grid3X3, LayoutList,
@@ -33,7 +34,28 @@ import { SEO } from "./SEO";
 import { getListingSeo } from "../lib/listingSeo";
 import { getShowcase, getShowcasePath, matchesShowcase } from "../lib/showcases";
 import { getCategoryUrl } from "../lib/slug";
-import { CategorySeoBlock } from "./CategorySeoBlock";
+import { CategorySeoBlock } from "./CategorySeoBlock";/* Tags que descrevem PERSONA e FAIXA do setup. Persona já é o recorte da
+   vitrine; faixa tem seção própria — nenhuma das duas volta na lista genérica
+   de atributos. */
+/**
+ * Faceta que não separa nada não vira filtro.
+ *
+ * "Marca: PCYES (3)" numa listagem com 3 produtos PCYES é ruído: clicar não
+ * muda a lista. Vale para qualquer faceta — uma opção só, cobrindo o resultado
+ * inteiro, é informação de cabeçalho, não escolha.
+ */
+function facetDiscrimina(opcoes: Array<{ count: number }>, total: number): boolean {
+  if (opcoes.length === 0) return false;
+  if (opcoes.length > 1) return true;
+  return opcoes[0].count < total;
+}
+
+const SETUP_TIERS = ["Entrada", "Intermediário", "Avançado"] as const;
+const SETUP_FACET_TAGS = new Set<string>([...SETUP_TIERS, "Gamer", "Creator", "Office", "Setup"]);
+/** Specs que viram filtro na listagem de setup. */
+const SETUP_SPEC_FACETS = new Set(["Placa de Vídeo", "Memória"]);
+
+
 
 const categoryMap: Record<string, string> = {
   ...Object.fromEntries(productCategories.map((category) => [category, category])),
@@ -692,9 +714,71 @@ export function ProductsPage() {
     return result;
   }, [productsWithoutPriceFilter, priceMin, priceMax, priceBounds.min, priceBounds.max]);
 
-  /* ── Atributos: derived from products that pass current category/subcategory ── */
+  /* Conjunto sobre o qual TODA faceta é calculada: o recorte da página (vitrine
+     ou família), antes dos filtros que o próprio usuário marcou. É o que faz a
+     contagem bater com a lista e nenhum filtro levar a zero resultado. */
+  const facetScope = useMemo(() => {
+    let scope = validProducts;
+    if (showcase) scope = scope.filter((p) => matchesShowcase(showcase, p));
+    /* A família da URL também é recorte de PÁGINA, não filtro do usuário: em
+       /perifericos/teclados/ a tag "Gaming" tem que contar os teclados, não os
+       177 do catálogo inteiro. */
+    if (activeCategoryLabel) scope = scope.filter((p) => getProductCategory(p) === activeCategoryLabel);
+    if (initialSubcategory) scope = scope.filter((p) => getProductSubcategory(p) === initialSubcategory);
+    return scope;
+  }, [showcase, activeCategoryLabel, initialSubcategory]);
+
+  /** Tags do catálogo que realmente existem no recorte atual. */
+  const availableLooseTags = useMemo(() => {
+    return allTags
+      .map((tag) => ({ label: tag, count: facetScope.filter((p) => matchesTagFilter(p, new Set([tag]))).length }))
+      .filter((t) => t.count > 0 && !SETUP_FACET_TAGS.has(t.label));
+  }, [facetScope]);
+
+  /* ── Facetas de setup ─────────────────────────────────────────────────────
+
+     Numa listagem de build pronta, "categoria" não discrimina nada — todo item
+     é a mesma coisa. O que decide a compra é a FAIXA e o hardware. Estas duas
+     seções só aparecem quando a listagem é majoritariamente de setups; no resto
+     do catálogo nada muda. */
+  const setupScope = useMemo(
+    () => productsWithoutPriceFilter.filter((p) => (p.tags ?? []).includes("Setup")),
+    [productsWithoutPriceFilter],
+  );
+  const isSetupListing = setupScope.length > 0 && setupScope.length >= productsWithoutPriceFilter.length / 2;
+
+  /** Entrada/Intermediário/Avançado com a contagem do resultado atual. */
+  const availableTiers = useMemo(() => {
+    if (!isSetupListing) return [] as Array<{ label: string; count: number }>;
+    return SETUP_TIERS
+      .map((label) => ({ label, count: setupScope.filter((p) => (p.tags ?? []).includes(label)).length }))
+      .filter((t) => t.count > 0);
+  }, [isSetupListing, setupScope]);
+
+  /** Placa de vídeo e memória saem da ficha — é o que separa uma build da outra. */
+  const availableHardware = useMemo(() => {
+    if (!isSetupListing) return [] as Array<{ label: string; count: number }>;
+    const counts = new Map<string, number>();
+    setupScope.forEach((p) => {
+      (p.specs ?? []).forEach((spec) => {
+        if (!SETUP_SPEC_FACETS.has(spec.label)) return;
+        /* Só o modelo, sem o sufixo de clock/variação: "32GB DDR5 5600MHz" e
+           "32GB DDR5 6000MHz" são a mesma escolha para quem está filtrando. */
+        const valor = spec.label === "Memória" ? spec.value.replace(/\s+\d+MHz$/i, "") : spec.value;
+        counts.set(valor, (counts.get(valor) ?? 0) + 1);
+      });
+    });
+    return [...counts.entries()].map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count);
+  }, [isSetupListing, setupScope]);
+
+  /* ── Atributos: derivados do que a listagem REALMENTE está mostrando ──────
+     Faceta é recorte do conjunto atual. Sem o filtro da vitrine aqui, /pc-gamer/
+     (3 produtos) oferecia "Mini Computador (15)" e "Wireless (3)": contagem do
+     catálogo inteiro dentro de uma página que não tem nenhum deles — filtro que
+     ou não muda nada ou joga o usuário para fora do contexto que ele escolheu. */
   const availableAttributes = useMemo(() => {
     const scope = validProducts.filter((p) => {
+      if (showcase && !matchesShowcase(showcase, p)) return false;
       if (selectedCategories.size > 0 && !selectedCategories.has(getProductCategory(p))) return false;
       if (selectedFeaturedCategories.size > 0 && !featuredCategoryFilters.some((f) => selectedFeaturedCategories.has(f.label) && f.matches(p))) return false;
       if (selectedSubcategories.size > 0 && !selectedSubcategories.has(getProductSubcategory(p))) return false;
@@ -753,10 +837,13 @@ export function ProductsPage() {
 
     return [...counts.entries()]
       .map(([label, count]) => ({ label, count }))
+      /* Persona e faixa saem daqui: viram (ou já são) o recorte da própria
+         vitrine e a seção "Faixa" logo acima — repetir vira filtro duplicado. */
+      .filter((entry) => !SETUP_FACET_TAGS.has(entry.label))
       .filter((entry) => entry.count >= 2)
       .sort((a, b) => b.count - a.count)
       .slice(0, 24);
-  }, [selectedCategories, selectedFeaturedCategories, selectedSubcategories]);
+  }, [showcase, selectedCategories, selectedFeaturedCategories, selectedSubcategories]);
 
   const availableBrands = useMemo(() => {
     const counts = new Map<string, number>();
@@ -956,11 +1043,15 @@ export function ProductsPage() {
           </Link>
         </div>
       ) : (
+        featuredCategoryFilters.some(({ matches }) => facetScope.some(matches)) ? (
         <FilterSection title="Categorias" expanded={expandedSections.categories} onToggle={() => toggleSection("categories")}>
-          {featuredCategoryFilters.map(({ label, matches }) => {
+          {featuredCategoryFilters.filter(({ matches }) => facetScope.some(matches)).map(({ label, matches }) => {
             const route = featuredCategoryRoutes[label];
             const isSelected = selectedFeaturedCategories.has(label) || Boolean(route && selectedCategories.has(route.category) && selectedSubcategories.has(route.subcategory));
-            const catCount = validProducts.filter(matches).length;
+            /* Contagem do conjunto atual, não do catálogo: numa vitrine de PC
+               Gamer, "Mouse (62)" era filtro morto que tirava o usuário do
+               contexto. Categoria que não existe no resultado nem aparece. */
+            const catCount = facetScope.filter(matches).length;
             return (
               <button
                 key={label}
@@ -980,9 +1071,10 @@ export function ProductsPage() {
             );
           })}
         </FilterSection>
+        ) : null
       )}
 
-      {availableBrands.length > 0 && (
+      {facetDiscrimina(availableBrands, filtered.length) && (
         <FilterSection title="Marca" expanded={expandedSections.brands} onToggle={() => toggleSection("brands")}>
           <div tabIndex={0} role="group" aria-label="Opções de filtro — role para ver mais" className="pcyes-scroll space-y-1 pt-1 max-h-[260px] overflow-y-auto pr-3">
             {availableBrands.map(({ label, count }) => {
@@ -1021,6 +1113,53 @@ export function ProductsPage() {
                   {label}
                   <span className="text-foreground/30" style={{ fontSize: "var(--text-caption)" }}>({count})</span>
                 </button>
+              );
+            })}
+          </div>
+        </FilterSection>
+      )}
+
+      {/* Faixa e hardware antes de "Atributos": numa listagem de build pronta é
+          o que o comprador realmente usa para cortar a lista. */}
+      {facetDiscrimina(availableTiers, filtered.length) && (
+        <FilterSection title="Faixa" expanded={expandedSections.tags} onToggle={() => toggleSection("tags")}>
+          <div className="flex flex-wrap gap-2 pt-1">
+            {availableTiers.map(({ label, count }) => {
+              const active = selectedTags.has(label);
+              return (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => toggleSet(setSelectedTags, label)}
+                  className={`flex items-center gap-1.5 px-3 py-2 min-h-[44px] lg:min-h-[24px] border transition-colors ${active ? "border-foreground/30 bg-foreground/5 text-foreground" : "border-foreground/10 text-foreground/55 hover:border-foreground/25"}`}
+                  style={{ borderRadius: "var(--radius-pill)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
+                  aria-pressed={active}
+                >
+                  {label}
+                  <span className="text-foreground/30" style={{ fontSize: "var(--text-caption)" }}>({count})</span>
+                </button>
+              );
+            })}
+          </div>
+        </FilterSection>
+      )}
+
+      {facetDiscrimina(availableHardware, filtered.length) && (
+        <FilterSection title="Hardware" expanded={expandedSections.attributes} onToggle={() => toggleSection("attributes")}>
+          <div tabIndex={0} role="group" aria-label="Opções de filtro — role para ver mais" className="pcyes-scroll space-y-1 pt-1 max-h-[260px] overflow-y-auto pr-3">
+            {availableHardware.map(({ label, count }) => {
+              const active = selectedAttributes.has(label);
+              return (
+                <label key={label} className="flex items-center gap-3 py-1.5 min-h-[44px] lg:min-h-[24px] cursor-pointer group/item">
+                  <input type="checkbox" className="hidden" checked={active} onChange={() => toggleSet(setSelectedAttributes, label)} />
+                  <span className={`w-4 h-4 border flex items-center justify-center flex-shrink-0 transition-colors ${active ? "border-foreground bg-foreground" : "border-foreground/20 group-hover/item:border-foreground/40"}`} style={{ borderRadius: "var(--radius)" }}>
+                    {active && <svg width="10" height="10" viewBox="0 0 8 8"><path d="M1.5 4L3 5.5L6.5 2.5" stroke={"var(--surface-0)"} strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                  </span>
+                  <span className="text-foreground/70 group-hover/item:text-foreground transition-colors flex-1 truncate" title={label} style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
+                    {label}
+                  </span>
+                  <span className="text-foreground/30 flex-shrink-0" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>({count})</span>
+                </label>
               );
             })}
           </div>
@@ -1106,9 +1245,12 @@ export function ProductsPage() {
           </span>
           <span className="text-foreground/70 group-hover/item:text-foreground transition-colors" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>Em promoção</span>
         </label>
+        {/* Faixa sem nenhum produto não vira opção: filtro que leva a zero
+           resultado é bug, não escolha. */}
         {[10, 20, 30, 40].map((pct) => {
           const count = productsBeforeColorFilter.filter((pr) => getDiscount(getColorMatchedProduct(pr)) >= pct).length;
           const active = selectedDiscounts.has(pct);
+          if (count === 0 && !active) return null;
           return (
             <label key={pct} className="flex items-center gap-3 py-2 min-h-[44px] lg:min-h-[24px] cursor-pointer group/item">
               <input type="checkbox" className="hidden" checked={active} onChange={() => toggleSet(setSelectedDiscounts, pct)} />
@@ -1122,21 +1264,27 @@ export function ProductsPage() {
         })}
       </FilterSection>
 
-      {/* Tags */}
-      <FilterSection title="Tags" expanded={expandedSections.tags} onToggle={() => toggleSection("tags")}>
-        <div className="flex flex-wrap gap-2">
-          {allTags.map((tag) => {
-            const active = selectedTags.has(tag);
-            return (
-              <button key={tag} onClick={() => toggleSet(setSelectedTags, tag)}
-                className={`flex items-center px-4 py-2 min-h-[44px] lg:min-h-[24px] border transition-colors ${active ? "border-foreground/30 bg-foreground/5 text-foreground" : "border-foreground/10 text-foreground/50 hover:border-foreground/25"
-                  }`}
-                style={{ borderRadius: "var(--radius-pill)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
-              >{tag}</button>
-            );
-          })}
-        </div>
-      </FilterSection>
+      {/* Tags — só as que existem no resultado, com a contagem junto. A lista
+          fixa oferecia "Wireless" e "Streaming" numa listagem de PC pronto. */}
+      {facetDiscrimina(availableLooseTags, filtered.length) && (
+        <FilterSection title="Tags" expanded={expandedSections.tags} onToggle={() => toggleSection("tags")}>
+          <div className="flex flex-wrap gap-2">
+            {availableLooseTags.map(({ label, count }) => {
+              const active = selectedTags.has(label);
+              return (
+                <button key={label} onClick={() => toggleSet(setSelectedTags, label)}
+                  className={`flex items-center gap-1.5 px-4 py-2 min-h-[44px] lg:min-h-[24px] border transition-colors ${active ? "border-foreground/30 bg-foreground/5 text-foreground" : "border-foreground/10 text-foreground/50 hover:border-foreground/25"}`}
+                  style={{ borderRadius: "var(--radius-pill)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
+                  aria-pressed={active}
+                >
+                  {label}
+                  <span className="text-foreground/30" style={{ fontSize: "var(--text-caption)" }}>({count})</span>
+                </button>
+              );
+            })}
+          </div>
+        </FilterSection>
+      )}
 
       {/* Avaliação */}
       <FilterSection title="Avaliação" expanded={expandedSections.rating} onToggle={() => toggleSection("rating")}>
@@ -1490,13 +1638,20 @@ export function ProductsPage() {
                             {/* Inner shine */}
                             <div className="pointer-events-none absolute inset-0 z-[1]" style={{ background: "radial-gradient(circle at 30% 25%, rgba(var(--foreground-rgb), 0.06) 0%, transparent 55%)", borderRadius: "var(--radius-card-lg)" }} />
                             <Link to={`/produto/${displayProduct.id}`} className="block h-full">
-                              <div className="flex h-full w-full items-center justify-center p-2 sm:p-5 lg:p-6">
+                              {/* Arte de setup preenche o quadro (tem fundo próprio);
+                                  foto de produto recortada mantém padding e contain. */}
+                              <div className={`flex h-full w-full items-center justify-center ${isSetupArt(productImages[imgIdx]) ? "" : "p-2 sm:p-5 lg:p-6"}`}>
                                 <ImageWithFallback
-                                  src={productImages[imgIdx]}
+                                  /* Quadro 5:6: pede a arte vertical da build. */
+                                  src={setupArtVariant(productImages[imgIdx], "tall")}
                                   alt={displayProduct.name}
                                   loading="lazy"
                                   decoding="async"
-                                  className="h-full w-full object-contain scale-100 sm:scale-[0.92] group-hover:scale-[0.97] transition-transform duration-500 ease-out"
+                                  className={`h-full w-full transition-transform duration-500 ease-out ${
+                                    isSetupArt(productImages[imgIdx])
+                                      ? "object-contain group-hover:scale-[1.03]"
+                                      : "object-contain scale-100 sm:scale-[0.92] group-hover:scale-[0.97]"
+                                  }`}
                                 />
                               </div>
                             </Link>
@@ -1651,8 +1806,8 @@ export function ProductsPage() {
                           style={{ borderRadius: "var(--radius-card)" }}
                         >
                           <Link to={`/produto/${displayProduct.id}`} className={`w-[104px] h-[104px] sm:w-[140px] sm:h-[140px] flex-shrink-0 overflow-hidden relative block transition-all ${displayProduct.inStock === false ? 'opacity-60 grayscale-[0.5]' : ''}`} style={{ borderRadius: "var(--radius-button)", background: "var(--surface-1)" }}>
-                            <div className="flex h-full w-full items-center justify-center p-2 sm:p-3">
-                              <ImageWithFallback src={getPrimaryProductImage(displayProduct)} alt={displayProduct.name} loading="lazy" decoding="async" className="h-full w-full object-contain group-hover:scale-[0.97] transition-transform duration-700" />
+                            <div className={`flex h-full w-full items-center justify-center ${isSetupArt(getPrimaryProductImage(displayProduct)) ? "" : "p-2 sm:p-3"}`}>
+                              <ImageWithFallback src={getPrimaryProductImage(displayProduct)} alt={displayProduct.name} loading="lazy" decoding="async" className={`h-full w-full transition-transform duration-700 ${isSetupArt(getPrimaryProductImage(displayProduct)) ? "object-contain" : "object-contain group-hover:scale-[0.97]"}`} />
                             </div>
                             {/* Mesmo badge da grade — placement e visual iguais nas
                                 duas visualizações, senão o usuário reaprende o card. */}
