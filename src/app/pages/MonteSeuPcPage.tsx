@@ -741,7 +741,7 @@ const presets: Preset[] = [
     accent: "#22c55e",
     glow: "rgba(34,197,94,0.35)",
     icon: <Gamepad2 className="h-5 w-5" />,
-    heroImage: "/setups/setup-pulse.png",
+    heroImage: "/setups/setup-pulse.webp",
     performance: "Entrada",
     specs: {
       cpu: "Intel Core i5-12400F",
@@ -779,7 +779,7 @@ const presets: Preset[] = [
     glow: "rgba(255,43,46,0.45)",
     icon: <Zap className="h-5 w-5" />,
     badge: "MAIS PEDIDA",
-    heroImage: "/setups/setup-strike.png",
+    heroImage: "/setups/setup-strike.webp",
     performance: "Performance",
     specs: {
       cpu: "Intel Core i7-12700K",
@@ -816,7 +816,7 @@ const presets: Preset[] = [
     accent: "#a78bfa",
     glow: "rgba(167,139,250,0.4)",
     icon: <Trophy className="h-5 w-5" />,
-    heroImage: "/setups/setup-apex.png",
+    heroImage: "/setups/setup-apex.webp",
     performance: "Extremo",
     specs: {
       cpu: "AMD Ryzen 7 7800X3D",
@@ -853,7 +853,7 @@ const presets: Preset[] = [
     accent: "#06b6d4",
     glow: "rgba(6,182,212,0.4)",
     icon: <Palette className="h-5 w-5" />,
-    heroImage: "/setups/setup-sketch.png",
+    heroImage: "/setups/setup-sketch.webp",
     performance: "Entrada",
     specs: {
       cpu: "Intel Core i5-12400",
@@ -890,7 +890,7 @@ const presets: Preset[] = [
     accent: "#ec4899",
     glow: "rgba(236,72,153,0.4)",
     icon: <Sparkles className="h-5 w-5" />,
-    heroImage: "/setups/setup-render.png",
+    heroImage: "/setups/setup-render.webp",
     performance: "Performance",
     specs: {
       cpu: "AMD Ryzen 7 7700",
@@ -928,7 +928,7 @@ const presets: Preset[] = [
     glow: "rgba(245,158,11,0.4)",
     icon: <Sparkles className="h-5 w-5" />,
     badge: "WORKSTATION",
-    heroImage: "/setups/setup-studio.png",
+    heroImage: "/setups/setup-studio.webp",
     performance: "Extremo",
     specs: {
       cpu: "AMD Ryzen 9 7950X",
@@ -965,7 +965,7 @@ const presets: Preset[] = [
     accent: "#64748b",
     glow: "rgba(100,116,139,0.35)",
     icon: <Briefcase className="h-5 w-5" />,
-    heroImage: "/setups/setup-base.png",
+    heroImage: "/setups/setup-base.webp",
     performance: "Entrada",
     specs: {
       cpu: "Intel Core i3-12100F",
@@ -1002,7 +1002,7 @@ const presets: Preset[] = [
     accent: "#0ea5e9",
     glow: "rgba(14,165,233,0.4)",
     icon: <LayoutGrid className="h-5 w-5" />,
-    heroImage: "/setups/setup-hub.png",
+    heroImage: "/setups/setup-hub.webp",
     performance: "Performance",
     specs: {
       cpu: "Intel Core i5-12400F",
@@ -1039,7 +1039,7 @@ const presets: Preset[] = [
     accent: "#8b5cf6",
     glow: "rgba(139,92,246,0.4)",
     icon: <Layers className="h-5 w-5" />,
-    heroImage: "/setups/setup-cockpit.png",
+    heroImage: "/setups/setup-cockpit.webp",
     performance: "Extremo",
     specs: {
       cpu: "Intel Core i7-12700K",

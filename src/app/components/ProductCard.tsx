@@ -7,6 +7,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useAuth } from "./AuthContext";
 import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getProductSwatches, getStockStatus } from "./productPresentation";
+import { artFitClass, setupArtVariant } from "../lib/setupImages";
 import { getPreOrderInfo } from "./PreOrderData";
 import { CTAButton, DiscountBadge, Price, PreOrderPill, RatingChip } from "./section";
 import { formatBRLSpoken } from "../../utils/format";
@@ -122,9 +123,11 @@ export function ProductCard({
         />
 
         <ImageWithFallback
-          src={image}
+          /* Prateleira é 5:6, grade é quadrada — cada uma pede a sua arte. */
+          src={variant === "shelf" ? setupArtVariant(image, "tall") : image}
           alt={product.name}
-          className={`absolute inset-0 h-full w-full object-contain ${cfg.pad} transition-transform duration-500 group-hover:scale-[1.05] ${outOfStock ? "opacity-60 grayscale-[0.5]" : ""}`}
+          /* Arte de setup sangra; foto de produto mantém contain + padding. */
+          className={`absolute inset-0 h-full w-full ${artFitClass(image, cfg.pad)} transition-transform duration-500 group-hover:scale-[1.05] ${outOfStock ? "opacity-60 grayscale-[0.5]" : ""}`}
         />
 
         {hoverMedia}

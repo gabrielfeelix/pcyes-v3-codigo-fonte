@@ -299,7 +299,7 @@ const megaMenus: Record<string, MegaMenu> = {
       {
         /* Workstation = máquina de trabalho pesado. No catálogo isso é a linha
            Creator; as finalidades abaixo são recortes de preço dentro dela. */
-        label: "Workstation", href: setupsHref({ showcase: "workstation" }), image: "/setups/setup-render.png", thumb: "arte",
+        label: "Workstation", href: setupsHref({ showcase: "workstation" }), image: "/setups/wide/setup-render.webp", thumb: "arte",
         right: {
           type: "layouts", title: "Workstation por Finalidade",
           layouts: [
@@ -317,7 +317,7 @@ const megaMenus: Record<string, MegaMenu> = {
     title: "PC Gamer",
     subItems: [
       {
-        label: "Entrada", href: setupsHref({ showcase: "pc-gamer", tags: ["Entrada"] }), image: "/setups/setup-base.png", thumb: "arte",
+        label: "Entrada", href: setupsHref({ showcase: "pc-gamer", tags: ["Entrada"] }), image: "/setups/wide/setup-base.webp", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Entrada",
           layouts: [
@@ -328,7 +328,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Intermediário", href: setupsHref({ showcase: "pc-gamer", tags: ["Intermediário"] }), image: "/setups/setup-pulse.png", thumb: "arte",
+        label: "Intermediário", href: setupsHref({ showcase: "pc-gamer", tags: ["Intermediário"] }), image: "/setups/wide/setup-pulse.webp", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Intermediário",
           layouts: [
@@ -339,7 +339,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Avançado", href: setupsHref({ showcase: "pc-gamer", tags: ["Avançado"] }), image: "/setups/setup-apex.png", thumb: "arte",
+        label: "Avançado", href: setupsHref({ showcase: "pc-gamer", tags: ["Avançado"] }), image: "/setups/wide/setup-apex.webp", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Avançado",
           layouts: [
