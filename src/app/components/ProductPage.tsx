@@ -41,6 +41,7 @@ import {
 import { SetupStoryIntro, SetupStoryProof, SetupStoryClose } from "./SetupStorySections";
 import { getComponentImage, artFitClass, setupArtVariant } from "../lib/setupImages";
 import { formatCep, formatBRLSpoken } from "../../utils/format";
+import { isValidCep } from "../../utils/cep";
 import { RestockNotify } from "./RestockNotify";
 import { DiscontinuedNotice } from "./DiscontinuedNotice";
 import { useFocusTrap } from "../lib/useFocusTrap";
@@ -510,7 +511,14 @@ function CountdownTimer() {
    ═══════════════════════════════════════════════════════ */
 
 function AutoShippingCalculator({ productPrice }: { productPrice: number }) {
-  const [cep, setCep] = useState("");
+  // Herda o CEP do cabeçalho ("Entregar em"), quando já informado: o popover de
+  // lá promete prazo e frete prontos aqui, então este campo começa preenchido e
+  // já calculado. Digitar aqui não volta para o cabeçalho — é ajuste pontual.
+  const [cep, setCep] = useState(() => {
+    if (typeof window === "undefined") return "";
+    const stored = window.localStorage.getItem("pcyes-cep");
+    return stored && isValidCep(stored) ? stored : "";
+  });
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<ShippingOption[] | null>(null);
 

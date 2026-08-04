@@ -10,6 +10,7 @@ import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
 import { useFavorites } from "./FavoritesContext";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { HeaderDelivery } from "./HeaderDelivery";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/tooltip";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "./ui/dropdown-menu";
 import { allProducts, type Product } from "./productsData";
@@ -491,6 +492,16 @@ const mostSearchedProductIds = [436, 72, 329, 199, 446];
 
 const searchCategories = ["Todas as categorias", "Hardware", "Periféricos", "Computadores", "PC Gamer"];
 
+/**
+ * Rótulo do seletor DENTRO da pílula de busca.
+ *
+ * "Todas as categorias" gastava 191px — 28% da largura útil da busca — só para
+ * dizer "sem filtro nenhum". O nome inteiro continua na lista suspensa e no
+ * aria-label do botão; aqui fica a versão curta. Categoria escolhida aparece
+ * por extenso, porque aí o texto carrega informação.
+ */
+const searchCategoryLabelOf = (cat: string) => (cat === searchCategories[0] ? "Todas" : cat);
+
 const isPlaceholderHref = (href?: string) => !href || href === "#";
 const resolveMenuHref = (href?: string) => (isPlaceholderHref(href) ? "/produtos" : href);
 const visibleCatalogProducts = getVisibleCatalogProducts(allProducts);
@@ -711,6 +722,7 @@ export function Navbar() {
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
 
   const searchResults = searchProducts(searchQuery, visibleCatalogProducts, 8);
+  const searchCategoryLabel = searchCategoryLabelOf(searchCategory);
 
   const handleMegaEnter = (mega: string) => {
     if (megaTimeout.current) clearTimeout(megaTimeout.current);
@@ -1496,22 +1508,40 @@ export function Navbar() {
             className="px-5 md:px-[72px] hidden lg:block transition-all duration-500"
             style={{ height: showExpanded ? 96 : 92 }}
           >
-            <div className="relative mx-auto flex h-full max-w-[1600px] items-center">
-            {/* Left: logo */}
-            <div className="flex items-center flex-shrink-0">
+            {/*
+              Três colunas em vez de flex: a do meio tem largura máxima fixa, e
+              as laterais (1fr) dividem a sobra igualmente. É o que mantém a
+              busca no eixo central da tela — o mesmo eixo da linha de navegação
+              logo abaixo. Com flex-1 a pílula esticava até 1045px a 1920px,
+              deixando ~600px de campo vazio.
+
+              O teto sobe por breakpoint porque o bloco da direita engorda em
+              xl (ganha o rótulo "Entre ou / Cadastre-se"): com um teto único de
+              680px, a partir de 1280px a coluna central invadia o logo.
+            */}
+            {/*
+              `px-5 md:px-[72px]` + `max-w-[1600px]` é o mesmo par que
+              `SectionContainer` aplica por padrão — o container das seções da
+              home. Não trocar por outro token: o logo sai da coluna onde os
+              títulos de seção começam (x=160 a 1920px, x=72 a 1600px).
+            */}
+            <div className="relative mx-auto grid h-full max-w-[1600px] grid-cols-[1fr_minmax(0,480px)_1fr] items-center gap-6 xl:grid-cols-[1fr_minmax(0,600px)_1fr] xl:gap-10 2xl:grid-cols-[1fr_minmax(0,680px)_1fr]">
+            {/* Left: logo + entrega */}
+            <div className="flex items-center gap-3 flex-shrink-0">
               <Link to="/" className="flex-shrink-0">
                 <img src={PCYES_LOGO} alt="PCYES" className="h-[34px] w-auto object-contain" />
               </Link>
+              <HeaderDelivery className="hidden min-[1440px]:block" />
             </div>
 
-            {/* Search (absolute center) */}
-            <div ref={searchPanelRef} className="relative z-[70] flex-1 ml-8 mr-16 md:ml-12">
+            {/* Search (coluna central) */}
+            <div ref={searchPanelRef} className="relative z-[70] w-full">
               <form
                 onSubmit={handleSearchSubmit}
                 className="relative w-full"
               >
                 <div
-                  className="pcyes-search-pill flex h-[40px] items-center overflow-hidden rounded-full border transition-all"
+                  className="pcyes-search-pill flex h-[44px] items-center overflow-hidden rounded-full border transition-all"
                   style={{
                     background: "var(--surface-2)",
                     borderColor: searchPanelOpen ? "rgba(var(--foreground-rgb), 0.35)" : "rgba(var(--foreground-rgb), 0.08)",
@@ -1530,9 +1560,11 @@ export function Navbar() {
                       }}
                       className="flex h-full items-center gap-1.5 pl-5 pr-3 text-ink transition-colors hover:text-ink-strong"
                       style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}
+                      aria-haspopup="listbox"
+                      aria-expanded={searchCategoryOpen}
+                      aria-label={`Filtrar busca por categoria — ${searchCategory}`}
                     >
-                      <span className="hidden xl:inline">{searchCategory}</span>
-                      <span className="xl:hidden">Categorias</span>
+                      <span className="whitespace-nowrap">{searchCategoryLabel}</span>
                       <ChevronDown size={14} strokeWidth={2} className={`transition-transform duration-200 ${searchCategoryOpen ? "rotate-180" : ""}`} />
                     </button>
                     <span className="absolute right-0 top-1/2 h-5 w-px -translate-y-1/2 bg-white/15" />
@@ -1544,18 +1576,37 @@ export function Navbar() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setSearchPanelOpen(true)}
                     placeholder="O que você está procurando?"
-                    aria-label="Buscar produtos" className="h-full min-w-0 flex-1 bg-transparent px-4 text-ink-strong outline-none placeholder:text-ink-subtle"
+                    aria-label="Buscar produtos"
+                    role="combobox"
+                    aria-expanded={searchPanelOpen}
+                    aria-controls="pcyes-search-panel"
+                    aria-autocomplete="list"
+                    autoComplete="off"
+                    className="h-full min-w-0 flex-1 bg-transparent px-4 text-ink-strong outline-none placeholder:text-ink-subtle"
                     style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
                   />
 
-                  {searchQuery && (
+                  {/* Um X só, dentro da pílula: limpa o termo e, se já estiver
+                      vazio, fecha o painel. O antigo ficava flutuando 48px à
+                      direita da busca e, a partir de ~1440px, encostava no
+                      bloco de ícones da conta. */}
+                  {(searchQuery || searchPanelOpen) && (
                     <button
                       type="button"
-                      onClick={() => setSearchQuery("")}
+                      onClick={() => {
+                        if (searchQuery) {
+                          setSearchQuery("");
+                          searchInputRef.current?.focus();
+                          return;
+                        }
+                        setSearchPanelOpen(false);
+                        setSearchCategoryOpen(false);
+                        searchInputRef.current?.blur();
+                      }}
                       className="flex h-full w-9 items-center justify-center text-ink-subtle transition-colors hover:text-ink"
-                      aria-label="Limpar busca"
+                      aria-label={searchQuery ? "Limpar busca" : "Fechar busca"}
                     >
-                      <X size={14} />
+                      <X size={15} />
                     </button>
                   )}
 
@@ -1570,30 +1621,6 @@ export function Navbar() {
                   </button>
                 </div>
 
-                {/* X close (when panel open) */}
-                <AnimatePresence>
-                  {searchPanelOpen && (
-                    <motion.button
-                      key="search-close"
-                      type="button"
-                      initial={{ opacity: 0, scale: 0.6 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.6 }}
-                      transition={{ duration: 0.15 }}
-                      onClick={() => {
-                        setSearchPanelOpen(false);
-                        setSearchQuery("");
-                        setSearchCategoryOpen(false);
-                        searchInputRef.current?.blur();
-                      }}
-                      className={`absolute -right-12 top-1/2 z-[61] flex h-10 w-10 -translate-y-1/2 items-center justify-center transition-colors cursor-pointer ${iconColor}`}
-                      aria-label="Fechar busca"
-                    >
-                      <X size={22} strokeWidth={1.7} />
-                    </motion.button>
-                  )}
-                </AnimatePresence>
-
                 {/* Category dropdown */}
                 <AnimatePresence>
                   {searchCategoryOpen && (
@@ -1602,12 +1629,16 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -6 }}
                       transition={{ duration: 0.14 }}
-                      className="absolute left-0 top-[48px] z-[70] w-[220px] overflow-hidden rounded-[var(--radius-card-sm)] border border-edge bg-surface-0 shadow-2xl"
+                      role="listbox"
+                      aria-label="Categoria da busca"
+                      className="absolute left-0 top-[52px] z-[70] w-[220px] overflow-hidden rounded-[var(--radius-card-sm)] border border-edge bg-surface-0 shadow-2xl"
                     >
                       {searchCategories.map((cat) => (
                         <button
                           key={cat}
                           type="button"
+                          role="option"
+                          aria-selected={searchCategory === cat}
                           onClick={() => {
                             setSearchCategory(cat);
                             setSearchCategoryOpen(false);
@@ -1635,7 +1666,8 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                      className="absolute left-1/2 top-[58px] z-[60] w-[min(1320px,calc(100vw-64px))] -translate-x-1/2 overflow-hidden rounded-card-lg shadow-[0_28px_80px_rgba(0,0,0,0.55)]"
+                      id="pcyes-search-panel"
+                      className="absolute left-1/2 top-[62px] z-[60] w-[min(1320px,calc(100vw-64px))] -translate-x-1/2 overflow-hidden rounded-card-lg shadow-[0_28px_80px_rgba(0,0,0,0.55)]"
                       style={{
                         background: "var(--surface-2)",
                         border: "1px solid rgba(var(--foreground-rgb), 0.08)",
@@ -1940,7 +1972,7 @@ export function Navbar() {
 
             {/* Right icons */}
             <TooltipProvider delayDuration={200}>
-              <div className="ml-auto flex flex-shrink-0 items-center gap-1">
+              <div className="flex flex-shrink-0 items-center justify-self-end gap-1">
                 {/* Perfil / Login — primeiro item, com rótulo (estilo KaBuM) */}
                 <button
                   onClick={handleUserClick}
@@ -1952,7 +1984,10 @@ export function Navbar() {
                   ) : (
                     <User size={20} strokeWidth={1.5} />
                   )}
-                  <span className="hidden flex-col text-left leading-[1.15] xl:flex" style={{ fontFamily: "var(--font-family-inter)" }}>
+                  {/* whitespace-nowrap: em grid, a coluna da direita encolhe até
+                      o min-content, e sem isso "Cadastre-se" quebrava em duas
+                      linhas a 1280px. */}
+                  <span className="hidden flex-col whitespace-nowrap text-left leading-[1.15] xl:flex" style={{ fontFamily: "var(--font-family-inter)" }}>
                     {isLoggedIn ? (
                       <span style={{ fontSize: "var(--text-sm)", fontWeight: 600 }}>Minha conta</span>
                     ) : (
