@@ -349,16 +349,6 @@ const megaMenus: Record<string, MegaMenu> = {
           ]
         }
       },
-      {
-        label: "Pré-Montados", href: setupsHref(), image: "/setups/setup-strike.png", thumb: "arte",
-        right: {
-          type: "featured", title: "PCs Prontos",
-          image: "https://images.unsplash.com/photo-1587831990711-23ca6441447b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800",
-          name: "Desempenho garantido",
-          desc: "Máquinas testadas e prontas para jogar. Garantia total PCYES.",
-          href: setupsHref()
-        }
-      },
     ]
   },
 
