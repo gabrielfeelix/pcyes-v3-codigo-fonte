@@ -1,11 +1,12 @@
 import { useMemo, useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useParams, Link, useNavigate } from "react-router";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import {
-  ShoppingCart, Heart, Star, ChevronLeft, ChevronRight, ChevronDown, Truck,
+  ShoppingCart, Heart, Star, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Truck,
   Check, Share2, MapPin, CreditCard, Banknote, QrCode,
   Loader2, ArrowUpRight, Zap, X, Clock, Info,
-  Rocket, CalendarDays, ShieldCheck, ZoomIn, Search, Settings2,
+  Rocket, CalendarDays, ShieldCheck, ZoomIn, Settings2,
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "./ui/sheet";
@@ -28,9 +29,17 @@ import { CTAButton, DiscountBadge, QtyStepper } from "./section";
 import { SEO } from "./SEO";
 import { getProductSlug, getProductUrl } from "../lib/slug";
 import {
-  isSetupProduct, getSetupComponents, getSetupPlaybook, getSetupPitch, matchesWorkloadSearch, getHeaviestSupported,
-  type SetupComponent, type SetupWorkload, type WorkloadKind,
+  isSetupProduct, getSetupComponents, getSetupPlaybook, getSetupPitch,
+  type SetupComponent, type WorkloadKind,
 } from "../lib/setups";
+/* "O que roda" é bloco GLOBAL de setup, não conteúdo desta página: mora em
+   arquivo próprio, recebe só o identificador da máquina e é o que vira um CMS
+   block único no Magento (ver docs/magento/setup-pdp-blocos.md). */
+import {
+  SetupWorkloadsBlock, WorkloadsCatalogSheet, WorkloadFichaRow, WORKLOADS_ANCHOR_ID,
+} from "./SetupWorkloadsBlock";
+import { SetupStoryIntro, SetupStoryProof, SetupStoryClose } from "./SetupStorySections";
+import { getComponentImage, artFitClass, setupArtVariant } from "../lib/setupImages";
 import { formatCep, formatBRLSpoken } from "../../utils/format";
 import { RestockNotify } from "./RestockNotify";
 import { DiscontinuedNotice } from "./DiscontinuedNotice";
@@ -111,7 +120,15 @@ function calcShipping(digits: string, productPrice: number): ShippingOption[] {
    GALLERY
    ═══════════════════════════════════════════════════════ */
 
-function ProductGallery({ images, name, isDark }: { images: string[]; name: string; isDark: boolean }) {
+/**
+ * `fullBleedFirst`: a primeira imagem sangra até a borda do palco, sem padding.
+ *
+ * Produto normal precisa do respiro — foto de teclado recortada encostando na
+ * moldura fica sufocada. Arte de campanha de setup é o contrário: é 1:1, tem
+ * fundo próprio e foi feita para preencher o quadrado. Com o padding herdado
+ * sobrava uma faixa do fundo do card em volta dela.
+ */
+function ProductGallery({ images, name, isDark, fullBleedFirst = false }: { images: string[]; name: string; isDark: boolean; fullBleedFirst?: boolean }) {
   const [active, setActive] = useState(0);
   const [zoomed, setZoomed] = useState(false);
   const [lbZoom, setLbZoom] = useState(false);
@@ -119,6 +136,71 @@ function ProductGallery({ images, name, isDark }: { images: string[]; name: stri
 
   const prev = () => setActive((i) => (i - 1 + images.length) % images.length);
   const next = () => setActive((i) => (i + 1) % images.length);
+
+  // Rail vertical de miniaturas: sem barra de rolagem, navega com setas.
+  // A altura vem medida do palco da imagem — o rail não pode crescer com o conteúdo,
+  // senão ele é que passa a definir a altura da linha flex.
+  const railRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [stageH, setStageH] = useState(0);
+  const [rail, setRail] = useState({ h: 0, gap: 12, step: 80, arrows: false });
+  const [railState, setRailState] = useState({ up: false, down: false });
+
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setStageH(el.offsetHeight));
+    ro.observe(el);
+    setStageH(el.offsetHeight);
+    return () => ro.disconnect();
+  }, []);
+
+  // Encaixa um número inteiro de miniaturas na altura do palco — nada de thumb cortada
+  // pela metade — e distribui a sobra no espaçamento.
+  useEffect(() => {
+    if (!stageH) return;
+    const thumb = (railRef.current?.firstElementChild as HTMLElement | null)?.offsetHeight || 68;
+    const MIN_GAP = 12, MAX_GAP = 20, ARROWS_H = 60; // 2 setas de 24px + 2 gaps de 6px
+    const fit = (avail: number) => Math.max(1, Math.floor((avail + MIN_GAP) / (thumb + MIN_GAP)));
+
+    const arrows = images.length > fit(stageH);
+    const avail = stageH - (arrows ? ARROWS_H : 0);
+    const n = Math.min(images.length, fit(avail));
+    const gap = n > 1 ? Math.min(MAX_GAP, (avail - n * thumb) / (n - 1)) : MIN_GAP;
+
+    setRail({ h: n * thumb + (n - 1) * gap, gap, step: n * (thumb + gap), arrows });
+  }, [stageH, images.length]);
+
+  const syncRail = () => {
+    const el = railRef.current;
+    if (!el) return;
+    const max = el.scrollHeight - el.clientHeight;
+    setRailState({ up: el.scrollTop > 2, down: el.scrollTop < max - 2 });
+  };
+
+  useEffect(() => {
+    syncRail();
+    const el = railRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(syncRail);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [images.length]);
+
+  // Mantém a miniatura ativa visível quando a navegação vem das setas da imagem grande
+  useEffect(() => {
+    const el = railRef.current;
+    const thumb = el?.children[active] as HTMLElement | undefined;
+    if (!el || !thumb) return;
+    const top = thumb.offsetTop;
+    const bottom = top + thumb.offsetHeight;
+    if (top < el.scrollTop) el.scrollTo({ top, behavior: "smooth" });
+    else if (bottom > el.scrollTop + el.clientHeight) el.scrollTo({ top: bottom - el.clientHeight, behavior: "smooth" });
+  }, [active]);
+
+  const scrollRail = (dir: 1 | -1) => {
+    railRef.current?.scrollBy({ top: dir * rail.step, behavior: "smooth" });
+  };
 
   const touchStart = useRef<number | null>(null);
   const handleTouchStart = (e: React.TouchEvent) => { touchStart.current = e.touches[0].clientX; };
@@ -132,21 +214,51 @@ function ProductGallery({ images, name, isDark }: { images: string[]; name: stri
   return (
     <div className="flex w-full flex-col items-stretch gap-4 overflow-visible md:flex-row md:items-start md:gap-4">
       {images.length > 1 && (
-        <div className="hidden md:flex md:flex-col md:gap-3 md:max-h-[640px] md:overflow-y-auto md:pr-1 scrollbar-none">
-          {images.map((img, i) => (
+        <div className="hidden md:flex md:flex-col md:items-center md:gap-1.5">
+          {rail.arrows && (
             <button
-              key={`vthumb-${i}`}
-              onClick={() => setActive(i)}
-              className={`flex-shrink-0 w-[68px] h-[68px] xl:w-[78px] xl:h-[78px] overflow-hidden border transition-all cursor-pointer ${i === active ? "border-primary ring-1 ring-primary/35" : "border-foreground/10 hover:border-foreground/30"}`}
+              onClick={() => scrollRail(-1)}
+              disabled={!railState.up}
+              className="w-[68px] xl:w-[78px] h-6 flex items-center justify-center border border-foreground/10 text-foreground/60 transition-all cursor-pointer hover:border-foreground/30 hover:text-foreground disabled:opacity-30 disabled:cursor-default"
               style={{ borderRadius: "var(--radius-card)", background: "var(--surface-3)" }}
-              aria-label={`Ver imagem ${i + 1}`}
+              aria-label="Ver miniaturas anteriores"
             >
-              <ImageWithFallback src={img} alt={`${name} ${i + 1}`} className="w-full h-full object-contain p-1.5" />
+              <ChevronUp size={15} />
             </button>
-          ))}
+          )}
+          <div
+            ref={railRef}
+            onScroll={syncRail}
+            className="flex flex-col overflow-y-auto overscroll-contain max-h-[420px]"
+            style={{ height: rail.h || undefined, maxHeight: rail.h || undefined, gap: rail.gap, scrollbarWidth: "none", msOverflowStyle: "none", scrollSnapType: "y mandatory" } as React.CSSProperties}
+          >
+            {images.map((img, i) => (
+              <button
+                key={`vthumb-${i}`}
+                onClick={() => setActive(i)}
+                className={`flex-shrink-0 w-[68px] h-[68px] xl:w-[78px] xl:h-[78px] overflow-hidden border transition-all cursor-pointer ${i === active ? "border-primary ring-1 ring-primary/35" : "border-foreground/10 hover:border-foreground/30"}`}
+                style={{ borderRadius: "var(--radius-card)", background: "var(--surface-3)", scrollSnapAlign: "start" }}
+                aria-label={`Ver imagem ${i + 1}`}
+              >
+                <ImageWithFallback src={img} alt={`${name} ${i + 1}`} className="w-full h-full object-contain p-1.5" />
+              </button>
+            ))}
+          </div>
+          {rail.arrows && (
+          <button
+            onClick={() => scrollRail(1)}
+            disabled={!railState.down}
+            className="w-[68px] xl:w-[78px] h-6 flex items-center justify-center border border-foreground/10 text-foreground/60 transition-all cursor-pointer hover:border-foreground/30 hover:text-foreground disabled:opacity-30 disabled:cursor-default"
+            style={{ borderRadius: "var(--radius-card)", background: "var(--surface-3)" }}
+            aria-label="Ver próximas miniaturas"
+          >
+            <ChevronDown size={15} />
+          </button>
+          )}
         </div>
       )}
       <div
+        ref={stageRef}
         className="relative w-full max-w-full md:flex-1 aspect-square overflow-hidden group cursor-zoom-in"
         style={{
           borderRadius: "var(--radius-card-lg)",
@@ -170,8 +282,12 @@ function ProductGallery({ images, name, isDark }: { images: string[]; name: stri
           }}
         />
         {/* Affordance de zoom — sempre visível pra sinalizar que a imagem amplia */}
+        {/* Sem backdrop-blur: dois elementos com backdrop-filter sobrepostos
+            (este e o overlay dos modais) caem em backdrop roots diferentes no
+            Chromium, e o selo passava a pintar POR CIMA do modal de pagamento
+            mesmo com z bem menor. Fundo sólido resolve e é visualmente igual. */}
         <span
-          className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-2.5 py-1 bg-black/30 backdrop-blur-md text-ink pointer-events-none transition-opacity group-hover:bg-black/45"
+          className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-2.5 py-1 bg-black/45 text-ink pointer-events-none transition-opacity group-hover:bg-black/60"
           style={{ borderRadius: "var(--radius-pill)", fontSize: "var(--text-caption)", fontFamily: "var(--font-family-inter)", fontWeight: 600 }}
         >
           <ZoomIn size={13} /> Ampliar
@@ -188,7 +304,9 @@ function ProductGallery({ images, name, isDark }: { images: string[]; name: stri
             <ImageWithFallback
               src={images[active]}
               alt={name}
-              className="w-full h-full object-contain p-4 md:p-5 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+              className={`w-full h-full group-hover:scale-[1.03] transition-transform duration-700 ease-out ${
+                fullBleedFirst && active === 0 ? "object-contain" : "object-contain p-4 md:p-5"
+              }`}
             />
           </motion.div>
         </AnimatePresence>
@@ -554,7 +672,13 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
     value: priceNum / (i + 1),
   }));
 
-  return (
+  /* Portal para o body — mesma saída que o Sheet do design system usa.
+     Renderizado dentro da árvore da página, o overlay ficava preso a um
+     contexto de empilhamento do meio do caminho: o selo "Ampliar" da galeria
+     (z-10!) pintava por cima do modal, e subir o z do modal não resolvia. */
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <>
@@ -563,10 +687,12 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm"
             onClick={onClose}
           />
-          <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center pointer-events-none p-0 md:p-6">
+          {/* Acima do header (z-50) e com respiro para ele: centralizado puro, o
+              topo do painel entrava embaixo da barra fixa em tela de notebook. */}
+          <div className="fixed inset-0 z-[70] flex items-end md:items-center justify-center pointer-events-none p-0 md:px-6 md:pb-6 md:pt-[calc(150px+var(--announce-h,40px))]">
             <motion.div
               initial={{ opacity: 0, y: 40, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -576,11 +702,11 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
               role="dialog"
               aria-modal="true"
               aria-label="Formas de pagamento"
-              className="pointer-events-auto w-full max-w-[520px] bg-background border border-foreground/10 shadow-2xl overflow-hidden"
-              style={{
-                borderRadius: "20px 20px 0 0",
-                maxHeight: "min(85vh, 720px)",
-              }}
+              /* A altura sai de classe, não de style: no desktop ela desconta o
+                 header (que o container já reservou em padding-top), senão o
+                 painel volta a crescer por baixo da barra fixa. */
+              className="pointer-events-auto w-full max-w-[520px] bg-background border border-foreground/10 shadow-2xl overflow-hidden max-h-[min(85vh,720px)] md:max-h-[min(720px,calc(100dvh-190px))]"
+              style={{ borderRadius: "20px 20px 0 0" }}
               onClick={(e) => e.stopPropagation()}
             >
               <div
@@ -772,7 +898,8 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
           </div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
 
@@ -1504,64 +1631,6 @@ function SetupComponentsDrawer({
         </div>
       </SheetContent>
     </Sheet>
-  );
-}
-
-/**
- * Linha da ficha que resume jogos ou programas: três capas em bolinha, o
- * quanto sobra e o atalho para a seção completa. Cabe onde antes havia uma
- * pilha de chips, e mantém o alinhamento das outras linhas de spec.
- */
-function WorkloadFichaRow({
-  label,
-  items,
-  actionLabel,
-  onClick,
-}: {
-  label: string;
-  items: SetupWorkload[];
-  actionLabel: string;
-  onClick: () => void;
-}) {
-  if (!items.length) return null;
-  const preview = items.slice(0, 3);
-  const rest = items.length - preview.length;
-
-  return (
-    <li
-      className="flex items-center justify-between gap-4 py-2.5"
-      style={{ borderTop: "1px solid rgba(var(--foreground-rgb), 0.07)" }}
-    >
-      <span className="text-foreground/45 uppercase tracking-[0.08em] leading-tight" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}>
-        {label}
-      </span>
-      {/* nowrap: com a linha quebrando, "Ver programas" descia e desalinhava
-          das outras linhas da ficha. */}
-      <button
-        type="button"
-        onClick={onClick}
-        className="group flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap text-primary transition-colors hover:text-primary/80"
-        style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
-      >
-        {/* Capas sobrepostas: a borda na cor do fundo separa uma da outra. */}
-        <span className="flex -space-x-1.5">
-          {preview.map((item) => (
-            <WorkloadArt
-              key={item.id}
-              item={item}
-              className="h-5 w-5 shrink-0 rounded-full ring-2 ring-[var(--surface-0)]"
-            />
-          ))}
-        </span>
-        {rest > 0 && (
-          <span className="text-foreground/55 tabular-nums" style={{ fontWeight: 700 }}>
-            +{rest}
-          </span>
-        )}
-        {actionLabel}
-        <ChevronRight size={13} className="transition-transform group-hover:translate-x-0.5" />
-      </button>
-    </li>
   );
 }
 
@@ -2321,454 +2390,20 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
    ═══════════════════════════════════════════════════════ */
 
 /**
- * Imagem real do catálogo por slot de componente. Cada slot aponta para a
- * categoria/subcategoria correspondente e pega a primeira foto utilizável —
- * assim o card de "Placa de Vídeo" mostra uma GPU de verdade da loja, etc.
- * Processador não tem categoria própria no catálogo, então fica sem foto.
- */
-const COMPONENT_IMAGE_QUERY: Record<string, { category?: string; subcategory?: string }> = {
-  "Placa de Vídeo": { category: "Placas de Vídeo" },
-  "Memória RAM": { subcategory: "Memórias" },
-  Armazenamento: { subcategory: "SSDs" },
-  "Placa-mãe": { subcategory: "Placas-mãe" },
-  Fonte: { category: "Fontes" },
-  Cooler: { subcategory: "Water Coolers" },
-  Gabinete: { category: "Gabinetes" },
-  Monitor: { category: "Monitores" },
-  "Kit Periféricos": { subcategory: "Kits Teclado e Mouse" },
-};
-
-/* Slots sem categoria própria no catálogo: foto direta do oderco (CDN oficial
-   da loja). Processador não tem SKU avulso no catálogo, então usamos a caixa do
-   Intel Core i5 12ª gen — fundo branco, casa com os outros cards. */
-/* Slots sem categoria própria no catálogo. Processador não tem SKU avulso, então
-   usamos a caixa do Intel Core i5 12ª gen (do oderco) com o FUNDO já removido e
-   servida localmente — cai limpa no card escuro, como as demais. */
-const COMPONENT_IMAGE_FALLBACK: Record<string, string> = {
-  Processador: "/setups/cpu-intel-i5.png",
-};
-
-const componentImageCache = new Map<string, string | null>();
-function getComponentImage(slot: string): string | null {
-  if (componentImageCache.has(slot)) return componentImageCache.get(slot)!;
-  const query = COMPONENT_IMAGE_QUERY[slot];
-  let image: string | null = COMPONENT_IMAGE_FALLBACK[slot] ?? null;
-  if (!image && query) {
-    const match = getVisibleCatalogProducts(allProducts).find(
-      (p) =>
-        (!query.category || getProductCategory(p) === query.category) &&
-        (!query.subcategory || getProductSubcategory(p) === query.subcategory),
-    );
-    if (match) image = getPrimaryProductImage(match);
-  }
-  componentImageCache.set(slot, image);
-  return image;
-}
-
-/**
  * Descrição de setup ("build pronta"): mesma moldura da descrição padrão, mas
  * o miolo é a lista de COMPONENTES. Cada peça é um card com rótulo do slot,
  * modelo, cópia padrão (ver lib/setups) e foto real do catálogo — trocar a
  * memória de um build é editar uma string lá, o card não se repete no código.
  */
-/** Âncora da seção "o que roda" — a ficha lateral rola até aqui. */
-const WORKLOADS_ANCHOR_ID = "o-que-roda";
-
-const WORKLOAD_TAB_LABEL: Record<WorkloadKind, string> = { game: "Jogos", program: "Programas" };
-
-/* PROTÓTIPO: três layouts para a mesma seção, trocáveis na própria página para
-   comparar lado a lado. Quando um for escolhido, apagam-se os outros dois e o
-   seletor junto — nada aqui é feito para sobreviver à decisão. */
-type WorkloadVariant = "v1" | "v2" | "v3";
-const WORKLOAD_VARIANTS: Array<{ id: WorkloadVariant; label: string }> = [
-  { id: "v1", label: "v1 · grid de capas" },
-  { id: "v2", label: "v2 · destaque + faixa" },
-  { id: "v3", label: "v3 · lista compacta" },
-];
-
-/** Arte do título. Capa de jogo preenche; logo de programa flutua sobre a cor da marca. */
-function WorkloadArt({ item, className = "", contain }: { item: SetupWorkload; className?: string; contain?: boolean }) {
-  const background = item.bg1
-    ? `linear-gradient(135deg, ${item.bg1} 0%, ${item.bg2 ?? item.bg1} 100%)`
-    : "rgba(var(--foreground-rgb), 0.06)";
-  /* Capa de jogo (paisagem) preenche; logo e vetor precisam de respiro, senão
-     o Iconify sai esticado e o SVG da Wikipedia, cortado. */
-  const fitsInside = contain ?? Boolean(item.bg1);
-  /* Sem `relative` fixo aqui: o v2 passa `absolute inset-0`, e as duas classes
-     têm a mesma especificidade — a base venceria e a arte voltaria ao fluxo,
-     empurrando o hero para o dobro da altura. Posicionamento é do consumidor. */
-  return (
-    <div className={`overflow-hidden ${className}`} style={{ background }} aria-hidden="true">
-      {item.image ? (
-        <ImageWithFallback
-          src={item.image}
-          alt=""
-          /* Padding proporcional: `p-4` fixo sufocava o logo na miniatura de
-             80×44 e sobrava no card grande. */
-          className={`h-full w-full ${fitsInside ? "object-contain p-[9%]" : "object-cover"}`}
-        />
-      ) : (
-        <div className="flex h-full w-full items-center justify-center text-foreground/30" style={{ fontFamily: "var(--font-family-figtree)", fontWeight: 800 }}>
-          {item.name.slice(0, 2).toUpperCase()}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/** Selo de qualidade — some no item que a máquina não dá conta. */
-function WorkloadBadge({ item }: { item: SetupWorkload }) {
-  return (
-    <span
-      className={`rounded-full px-2 py-0.5 uppercase tracking-[0.1em] ${item.supported ? "bg-primary/15 text-primary" : "bg-foreground/10 text-foreground/50"}`}
-      style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}
-    >
-      {item.quality}
-    </span>
-  );
-}
-
-/* ── v1: grid de capas ─────────────────────────────────── */
-function WorkloadsGrid({ items }: { items: SetupWorkload[] }) {
-  return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((item) => (
-        <article
-          key={item.id}
-          className="group overflow-hidden border border-foreground/8 transition-colors hover:border-foreground/20"
-          style={{ borderRadius: "var(--radius-card)", background: "rgba(var(--foreground-rgb), 0.03)", opacity: item.supported ? 1 : 0.6 }}
-        >
-          <WorkloadArt item={item} className="h-[130px] w-full" />
-          {/* Nome e métrica empilhados: lado a lado, o detalhe longo dos
-              programas ("vários projetos abertos ao mesmo tempo") espremia a
-              coluna da esquerda até o nome sumir. */}
-          <div className="p-4">
-            <p className="truncate text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 700, letterSpacing: "-0.01em" }}>
-              {item.name}
-            </p>
-            <p className="truncate text-foreground/45" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-              {item.tag}
-            </p>
-            <p className={`mt-2 ${item.supported ? "text-primary" : "text-foreground/50"}`} style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1 }}>
-              {item.value}
-            </p>
-            <p className="text-foreground/45" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.35 }}>
-              {item.detail}
-            </p>
-          </div>
-        </article>
-      ))}
-    </div>
-  );
-}
-
-/* ── v2: destaque + faixa rolável ──────────────────────── */
-function WorkloadsSpotlight({ items }: { items: SetupWorkload[] }) {
-  const [activeId, setActiveId] = useState(items[0]?.id);
-  const active = items.find((i) => i.id === activeId) ?? items[0];
-  if (!active) return null;
-
-  return (
-    <div className="space-y-4">
-      <article
-        className="relative overflow-hidden border border-foreground/8"
-        style={{ borderRadius: "var(--radius-card-lg)", minHeight: "300px" }}
-      >
-        <WorkloadArt item={active} className="absolute inset-0 h-full w-full" contain={Boolean(active.bg1)} />
-        <div className="absolute inset-0" /* Capa clara (CS2, Fortnite) engolia o texto branco: o gradiente precisa
-             segurar o contraste até em cima, não só na base. */
-          style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.82) 45%, rgba(0,0,0,0.42) 100%)" }} />
-        <div className="relative flex min-h-[300px] flex-col justify-end gap-2 p-6 md:p-8">
-          <div className="flex items-center gap-2">
-            <WorkloadBadge item={active} />
-            <span className="text-white/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-              {active.tag}
-            </span>
-          </div>
-          <p className="text-white" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(22px, 3vw, 34px)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.05 }}>
-            {active.name}
-          </p>
-          <p className={active.supported ? "text-primary" : "text-white/50"} style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(30px, 5vw, 52px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1 }}>
-            {active.value}
-          </p>
-          <p className="text-white/70" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
-            {active.detail}
-          </p>
-        </div>
-      </article>
-
-      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
-        {items.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => setActiveId(item.id)}
-            aria-pressed={item.id === active.id}
-            className={`shrink-0 cursor-pointer overflow-hidden border transition-colors ${item.id === active.id ? "border-primary" : "border-foreground/10 hover:border-foreground/30"}`}
-            style={{ borderRadius: "var(--radius-card-sm)", width: "132px", opacity: item.supported ? 1 : 0.55 }}
-          >
-            <WorkloadArt item={item} className="h-[62px] w-full" />
-            <span className="block px-2 py-1.5 text-left">
-              <span className="block truncate text-foreground" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                {item.name}
-              </span>
-              <span className={`block ${item.supported ? "text-primary" : "text-foreground/40"}`} style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-caption)", fontWeight: 800 }}>
-                {item.value}
-              </span>
-            </span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── v3: lista compacta ────────────────────────────────── */
-function WorkloadsList({ items }: { items: SetupWorkload[] }) {
-  return (
-    <ul className="overflow-hidden border border-foreground/8" style={{ borderRadius: "var(--radius-card)" }}>
-      {items.map((item, i) => (
-        <li
-          key={item.id}
-          className="flex items-center gap-4 p-3"
-          style={{
-            background: i % 2 === 0 ? "rgba(var(--foreground-rgb), 0.03)" : "transparent",
-            borderTop: i === 0 ? "none" : "1px solid rgba(var(--foreground-rgb), 0.06)",
-            opacity: item.supported ? 1 : 0.6,
-          }}
-        >
-          <WorkloadArt item={item} className="h-11 w-20 shrink-0 rounded-[var(--radius-card-sm)]" />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
-              {item.name}
-            </p>
-            <p className="truncate text-foreground/45" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-              {item.tag}
-            </p>
-          </div>
-          <span className="hidden shrink-0 sm:block">
-            <WorkloadBadge item={item} />
-          </span>
-          <div className="w-[150px] shrink-0 text-right">
-            <p className={item.supported ? "text-foreground" : "text-foreground/50"} style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 800, letterSpacing: "-0.01em" }}>
-              {item.value}
-            </p>
-            <p className="text-foreground/45" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.35 }}>
-              {item.detail}
-            </p>
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/**
- * "O que roda nessa máquina": jogos e programas na mesma seção, em abas.
- *
- * A aba que abre primeiro segue a persona do setup (gamer abre em Jogos,
- * creator e office abrem em Programas), mas as duas estão sempre a um clique —
- * quem compra office também joga, e quem compra gamer também abre planilha.
- * O desempenho de cada título sai do peso × tier (ver lib/setups).
- */
-function SetupWorkloads({
-  productId,
-  tab,
-  onTabChange,
-}: {
-  productId: number;
-  /* Aba controlada de fora: "Ver jogos" na ficha precisa rolar até aqui JÁ na
-     aba certa — com estado interno, caía na aba da persona e o usuário via
-     programas depois de pedir jogos. */
-  tab: WorkloadKind;
-  onTabChange: (kind: WorkloadKind) => void;
-}) {
-  const playbook = getSetupPlaybook(productId);
-  const setTab = onTabChange;
-  const [variant, setVariant] = useState<WorkloadVariant>("v1");
-  const [expanded, setExpanded] = useState(false);
-  const [query, setQuery] = useState("");
-  if (!playbook) return null;
-
-  const searching = query.trim().length > 0;
-  const all = tab === "game" ? playbook.games : playbook.programs;
-  const other = tab === "game" ? playbook.programs : playbook.games;
-
-  const matches = searching ? all.filter((item) => matchesWorkloadSearch(item, query)) : all;
-  /* Busca atravessa as abas: quem digita "premiere" na aba Jogos não pode ver
-     "nada encontrado" com o resultado esperando na aba do lado. */
-  const matchesElsewhere = searching ? other.filter((item) => matchesWorkloadSearch(item, query)) : [];
-  // Buscando, mostra tudo o que casou — cortar em 9 esconderia o que se procurou.
-  const items = searching || expanded ? matches : matches.slice(0, variant === "v3" ? 8 : 9);
-
-  return (
-    <section id={WORKLOADS_ANCHOR_ID} className="scroll-mt-32 border-t border-edge-subtle px-6 py-10 md:px-10">
-      <p className="mb-3 text-primary tracking-[0.24em]" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800 }}>
-        // O QUE RODA NESSA MÁQUINA
-      </p>
-      <h3
-        className="max-w-[720px] text-foreground"
-        style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(20px, 3.2vw, 32px)", lineHeight: 1.1, fontWeight: 700, letterSpacing: "-0.03em" }}
-      >
-        Jogos e programas, com o desempenho que você pode esperar
-      </h3>
-      <p className="mt-3 max-w-[720px] text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.6 }}>
-        Estimativas com a configuração de fábrica deste setup, na resolução do monitor que acompanha.
-      </p>
-
-      {/* PROTÓTIPO: seletor de layout. Sai junto com as versões descartadas. */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        <span className="uppercase tracking-[0.16em] text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}>
-          Layout:
-        </span>
-        {WORKLOAD_VARIANTS.map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            onClick={() => setVariant(option.id)}
-            aria-pressed={variant === option.id}
-            className={`cursor-pointer rounded-full border px-3 py-1 transition-colors ${variant === option.id ? "border-primary/60 bg-primary/10 text-primary" : "border-foreground/12 text-foreground/50 hover:text-foreground/80"}`}
-            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Busca sobre o que está medido. Não estima título fora da lista. */}
-      <div className="pcyes-inline-search mt-5 flex max-w-[420px] items-center gap-2 rounded-[var(--radius-button)] border border-foreground/12 px-3 py-2 transition-colors">
-        <Search size={15} className="shrink-0 text-foreground/35" />
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Busque o jogo ou programa que você usa"
-          aria-label="Buscar jogo ou programa"
-          className="w-full bg-transparent text-foreground outline-none placeholder:text-foreground/35"
-          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
-        />
-        {searching && (
-          <button
-            type="button"
-            onClick={() => setQuery("")}
-            aria-label="Limpar busca"
-            className="shrink-0 cursor-pointer text-foreground/40 transition-colors hover:text-foreground"
-          >
-            <X size={14} />
-          </button>
-        )}
-      </div>
-
-      {/* Abas Jogos | Programas */}
-      <div className="mt-5 flex items-center gap-6 border-b border-foreground/8" role="tablist">
-        {(["game", "program"] as WorkloadKind[]).map((kind) => {
-          const active = tab === kind;
-          const list = kind === "game" ? playbook.games : playbook.programs;
-          // Com busca ativa, a aba mostra quantos resultados tem — é o que diz
-          // para qual lado ir quando o título procurado está na outra.
-          const count = searching ? list.filter((item) => matchesWorkloadSearch(item, query)).length : list.length;
-          return (
-            <button
-              key={kind}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => { setTab(kind); setExpanded(false); }}
-              className={`-mb-px cursor-pointer border-b-2 pb-3 transition-colors ${active ? "border-primary text-foreground" : "border-transparent text-foreground/45 hover:text-foreground/70"}`}
-              style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 700, letterSpacing: "-0.01em" }}
-            >
-              {WORKLOAD_TAB_LABEL[kind]} <span className="text-foreground/35">({count})</span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="mt-6">
-        {items.length > 0 ? (
-          <>
-            {variant === "v1" && <WorkloadsGrid items={items} />}
-            {variant === "v2" && <WorkloadsSpotlight key={`${tab}-${query}`} items={items} />}
-            {variant === "v3" && <WorkloadsList items={items} />}
-          </>
-        ) : (
-          /* Vazio útil: não medimos aquele título, mas a régua responde. Quem vê
-             que a máquina roda os mais pesados da lista conclui sozinho. */
-          <div className="p-6" style={{ borderRadius: "var(--radius-card)", background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.07)" }}>
-            <p className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 700 }}>
-              Não temos “{query.trim()}” medido nesta lista.
-            </p>
-            {matchesElsewhere.length > 0 ? (
-              <button
-                type="button"
-                onClick={() => setTab(tab === "game" ? "program" : "game")}
-                className="mt-2 inline-flex cursor-pointer items-center gap-1 text-primary transition-colors hover:text-primary/80"
-                style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}
-              >
-                Mas achamos {matchesElsewhere.length} em {WORKLOAD_TAB_LABEL[tab === "game" ? "program" : "game"]}
-                <ChevronRight size={14} />
-              </button>
-            ) : (
-              <>
-                <p className="mt-2 max-w-[560px] text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.6 }}>
-                  Use como régua o mais pesado que esta máquina entrega — se roda isso, roda o que exige menos.
-                </p>
-                <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                  {getHeaviestSupported(all).map((item) => (
-                    <div key={item.id} className="flex items-center gap-3">
-                      <WorkloadArt item={item} className="h-11 w-20 shrink-0 rounded-[var(--radius-card-sm)]" />
-                      <div className="min-w-0">
-                        <p className="truncate text-foreground" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                          {item.name}
-                        </p>
-                        <p className="text-primary" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-sm)", fontWeight: 800 }}>
-                          {item.value}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        )}
-      </div>
-
-      {searching ? (
-        matchesElsewhere.length > 0 && items.length > 0 && (
-          <button
-            type="button"
-            onClick={() => setTab(tab === "game" ? "program" : "game")}
-            className="mt-4 inline-flex cursor-pointer items-center gap-1 text-foreground/50 transition-colors hover:text-foreground"
-            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
-          >
-            Também há {matchesElsewhere.length} resultado{matchesElsewhere.length > 1 ? "s" : ""} em {WORKLOAD_TAB_LABEL[tab === "game" ? "program" : "game"]}
-            <ChevronRight size={13} />
-          </button>
-        )
-      ) : (
-        all.length > items.length && (
-          <button
-            type="button"
-            onClick={() => setExpanded(true)}
-            className="mt-5 inline-flex cursor-pointer items-center gap-1 text-primary transition-colors hover:text-primary/80"
-            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
-          >
-            Ver os {all.length} {tab === "game" ? "jogos" : "programas"}
-            <ChevronDown size={14} />
-          </button>
-        )
-      )}
-    </section>
-  );
-}
 
 function SetupDescription({
-  product, image, workloadTab, onWorkloadTabChange,
+  product, image, workloadTab, onWorkloadTabChange, onOpenWorkloadsCatalog,
 }: {
   product: any;
   image: string;
   workloadTab: WorkloadKind;
   onWorkloadTabChange: (kind: WorkloadKind) => void;
+  onOpenWorkloadsCatalog: (kind: WorkloadKind) => void;
 }) {
   const pitch = getSetupPitch(product.id);
   const lead = product.description?.split("\n").find((item: string) => item.trim()) ?? product.name;
@@ -2797,18 +2432,11 @@ function SetupDescription({
                 {pitch?.audience.text ?? lead}
               </p>
             </div>
-            {/* Imagem ao lado do texto, não flutuando sozinha numa faixa: a arte
-                é de campanha (4:3, com título embutido) e só faz sentido junto
-                do argumento — foto ambientada própria entra aqui quando houver. */}
-            <div
-              className="relative flex min-h-[240px] items-center justify-center overflow-hidden p-6"
-              style={{
-                borderRadius: "var(--radius-card-lg)",
-                background: "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.10) 0%, rgba(var(--foreground-rgb), 0.03) 100%)",
-                border: "1px solid rgba(var(--foreground-rgb), 0.08)",
-              }}
-            >
-              <ImageWithFallback src={image} alt={product.name} className="max-h-[300px] w-full object-contain drop-shadow-[0_24px_30px_rgba(0,0,0,0.32)]" />
+            {/* A arte é uma cena inteira, com fundo próprio: preenche o quadro.
+                Com padding e `contain` ela virava um selo no meio de uma moldura
+                vazia. Quadrada de propósito — é a proporção em que ela é gerada. */}
+            <div className="relative aspect-square w-full overflow-hidden" style={{ borderRadius: "var(--radius-card-lg)" }}>
+              <ImageWithFallback src={image} alt={product.name} className="absolute inset-0 h-full w-full object-cover" />
             </div>
           </section>
 
@@ -2859,48 +2487,22 @@ function SetupDescription({
             </section>
           )}
 
-          {/* Jogos e programas — mesma lista em todo setup, ordem por persona. */}
-          <SetupWorkloads productId={product.id} tab={workloadTab} onTabChange={onWorkloadTabChange} />
+          {/* Ver rodando e cenas de uso — vendem antes do dado técnico. */}
+          <SetupStoryIntro productId={product.id} />
 
-          {/* ESSA OU A VIZINHA — comparação que o comprador faz de qualquer
-              jeito, feita aqui com o ganho explícito em vez de três abas. */}
-          {pitch && (pitch.upgrade || pitch.downgrade) && (
-            <section className="border-t border-edge-subtle px-6 py-10 md:px-10">
-              <p className="mb-2 text-primary tracking-[0.24em]" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800 }}>
-                // ESSA OU A VIZINHA
-              </p>
-              <p className="mb-6 max-w-[640px] text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.6 }}>
-                Mesma linha, outro degrau de desempenho. A diferença de preço e o que ela compra, sem rodeio.
-              </p>
-              <div className="grid gap-4 md:grid-cols-2">
-                {[pitch.downgrade, pitch.upgrade].filter(Boolean).map((neighbor) => (
-                  <Link
-                    key={neighbor!.id}
-                    to={neighbor!.url}
-                    className="group flex items-center justify-between gap-4 border border-foreground/8 p-5 transition-colors hover:border-primary/40"
-                    style={{ borderRadius: "var(--radius-card-lg)", background: "rgba(var(--foreground-rgb), 0.03)" }}
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 700, letterSpacing: "-0.01em" }}>
-                        {neighbor!.name}
-                      </p>
-                      <p className="mt-1 text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.5 }}>
-                        {neighbor!.gain}
-                      </p>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p className="tabular-nums text-primary" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 800 }}>
-                        {neighbor!.priceDiff}
-                      </p>
-                      <p className="tabular-nums text-foreground/45" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                        {neighbor!.price}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
+          {/* Jogos e programas — mesma lista em todo setup, ordem por persona. */}
+          <SetupWorkloadsBlock
+            productId={product.id}
+            tab={workloadTab}
+            onTabChange={onWorkloadTabChange}
+            onOpenCatalog={onOpenWorkloadsCatalog}
+          />
+
+          {/* Montagem, caixa, ruído e expansão — as dúvidas que vêm depois. */}
+          <SetupStoryProof productId={product.id} heroImage={image} heroName={product.name} />
+
+          {/* Comparação com a vizinha e FAQ fecham a página. */}
+          <SetupStoryClose productId={product.id} pitch={pitch} />
         </div>
       </div>
     </section>
@@ -2908,14 +2510,16 @@ function SetupDescription({
 }
 
 function ProductStandardDescription({
-  product, images, workloadTab, onWorkloadTabChange,
+  product, images, workloadTab, onWorkloadTabChange, onOpenWorkloadsCatalog,
 }: {
   product: any;
   images: string[];
   workloadTab: WorkloadKind;
   onWorkloadTabChange: (kind: WorkloadKind) => void;
+  onOpenWorkloadsCatalog: (kind: WorkloadKind) => void;
 }) {
-  // Setup usa uma descrição própria — lista de componentes em vez do genérico.
+  /* Setup usa uma descrição própria — e é o ÚNICO caminho que renderiza o bloco
+     de jogos: teclado, monitor e afins nunca passam por aqui. */
   const setupComps = getSetupComponents(product.id);
   if (setupComps && isSetupProduct(product)) {
     return (
@@ -2924,6 +2528,7 @@ function ProductStandardDescription({
         image={images[0] ?? getPrimaryProductImage(product)}
         workloadTab={workloadTab}
         onWorkloadTabChange={onWorkloadTabChange}
+        onOpenWorkloadsCatalog={onOpenWorkloadsCatalog}
       />
     );
   }
@@ -3126,14 +2731,16 @@ export function ProductPage() {
   const [componentsOpen, setComponentsOpen] = useState(false);
   const setupPlaybook = baseProduct ? getSetupPlaybook(baseProduct.id) : undefined;
   const [workloadTab, setWorkloadTab] = useState<WorkloadKind>(setupPlaybook?.initialTab ?? "game");
+  const [workloadsOpen, setWorkloadsOpen] = useState(false);
   useEffect(() => {
     setWorkloadTab(setupPlaybook?.initialTab ?? "game");
+    setWorkloadsOpen(false);
   }, [baseProduct?.id]);
 
-  /** Abre a seção "o que roda" na aba pedida e leva o usuário até ela. */
+  /** "Ver jogos" da ficha abre o catálogo na aba pedida, sem tirar da página. */
   const showWorkloads = (kind: WorkloadKind) => {
     setWorkloadTab(kind);
-    document.getElementById(WORKLOADS_ANCHOR_ID)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setWorkloadsOpen(true);
   };
 
   const { addItem } = useCart();
@@ -3407,7 +3014,13 @@ export function ProductPage() {
             transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className="order-2 w-full lg:order-none lg:w-[56%] xl:w-[58%] flex-shrink-0"
           >
-            <ProductGallery images={galleryImages} name={product.name} isDark={isDark} />
+            <ProductGallery
+              images={galleryImages}
+              name={product.name}
+              isDark={isDark}
+              /* Só setup tem arte quadrada de campanha na primeira posição. */
+              fullBleedFirst={Boolean(setupComponents?.length)}
+            />
           </motion.div>
 
           {swatches.length > 1 && (
@@ -3637,7 +3250,13 @@ export function ProductPage() {
 
           <div className="min-w-0 lg:col-start-1 lg:row-start-2">
             <div ref={descriptionRef} className="scroll-mt-[96px]">
-              <ProductStandardDescription product={product} images={galleryImages} workloadTab={workloadTab} onWorkloadTabChange={setWorkloadTab} />
+              <ProductStandardDescription
+                product={product}
+                images={galleryImages}
+                workloadTab={workloadTab}
+                onWorkloadTabChange={setWorkloadTab}
+                onOpenWorkloadsCatalog={showWorkloads}
+              />
             </div>
 
       {/* Reviews Section */}
@@ -3711,9 +3330,11 @@ export function ProductPage() {
                         }}
                       />
                       <ImageWithFallback
-                        src={getPrimaryProductImage(rProduct)}
+                        /* Quadro 5:6: pede a arte vertical da build. */
+                        src={setupArtVariant(getPrimaryProductImage(rProduct), "tall")}
                         alt={rProduct.name}
-                        className="absolute inset-0 h-full w-full object-contain p-4 md:p-8 transition-transform duration-500 group-hover:scale-[1.05]"
+                        /* Arte de setup sangra; foto recortada respira. */
+                        className={`absolute inset-0 h-full w-full transition-transform duration-500 group-hover:scale-[1.05] ${artFitClass(getPrimaryProductImage(rProduct), "p-4 md:p-8")}`}
                       />
                       {rDiscount > 0 && (
                         <span
@@ -3837,6 +3458,19 @@ export function ProductPage() {
           open={componentsOpen}
           onOpenChange={setComponentsOpen}
           onBuy={handleAdd}
+        />
+      ) : null}
+
+      {/* Catálogo de jogos e programas — só existe em setup (setupPlaybook só é
+          montado para build pronta), e é o mesmo bloco em todas elas. */}
+      {setupPlaybook ? (
+        <WorkloadsCatalogSheet
+          productId={product.id}
+          productName={product.name}
+          open={workloadsOpen}
+          onOpenChange={setWorkloadsOpen}
+          tab={workloadTab}
+          onTabChange={setWorkloadTab}
         />
       ) : null}
 
