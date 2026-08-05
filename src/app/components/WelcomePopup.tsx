@@ -1,25 +1,75 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ArrowRight, Check, Facebook, Instagram, Youtube, Twitter } from "lucide-react";
 
 const PCYES_LOGO = "https://pcyes-cdn.oderco.com.br/Logotipos/PCYES/Simbolo-Logo-Horiz-Vermelho.png";
+
+/** Fração da página que precisa ser percorrida antes do convite aparecer. */
+const SCROLL_TRIGGER = 0.15;
+
+/**
+ * Piso em pixels. Em página curta 15% do rolável é quase nada — o modal abriria
+ * com dois toques de dedo, que é o mesmo que abrir sozinho.
+ */
+const SCROLL_FLOOR_PX = 600;
+
+/**
+ * Tempo mínimo na página. Rolagem por inércia atravessa os 15% em menos de um
+ * segundo; sem esse piso o modal apareceria no meio do gesto.
+ */
+const MIN_DWELL_MS = 2500;
+
+/**
+ * Onde o convite NÃO abre. Carrinho e checkout são a etapa em que a pessoa já
+ * decidiu comprar: cobrir a tela com captura de e-mail ali derruba venda.
+ */
+const BLOCKED_PATHS = ["/carrinho", "/checkout"];
 
 export function WelcomePopup() {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const { pathname } = useLocation();
 
   useEffect(() => { setMounted(true); }, []);
 
+  /**
+   * Gatilho por rolagem, não por relógio.
+   *
+   * Antes era um `setTimeout` de 4s: abria em qualquer página, com a pessoa
+   * parada, sem nenhum sinal de interesse. Rolar 15% da página é sinal; quatro
+   * segundos de nada não é.
+   */
   useEffect(() => {
     if (!mounted) return;
-    const seen = sessionStorage.getItem("pcyes-welcome");
-    if (!seen) {
-      const timer = setTimeout(() => setVisible(true), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [mounted]);
+    if (sessionStorage.getItem("pcyes-welcome")) return;
+    if (BLOCKED_PATHS.some((p) => pathname.startsWith(p))) return;
+
+    const openedAt = Date.now();
+    let done = false;
+
+    const check = () => {
+      if (done) return;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollable <= 0) return;
+      const threshold = Math.min(Math.max(scrollable * SCROLL_TRIGGER, SCROLL_FLOOR_PX), scrollable);
+      if (window.scrollY < threshold) return;
+      if (Date.now() - openedAt < MIN_DWELL_MS) return;
+      done = true;
+      setVisible(true);
+    };
+
+    window.addEventListener("scroll", check, { passive: true });
+    // A rolagem pode parar exatamente antes do piso de tempo vencer; sem este
+    // intervalo o convite ficaria preso esperando um scroll que não vem mais.
+    const poll = setInterval(check, 500);
+    return () => {
+      window.removeEventListener("scroll", check);
+      clearInterval(poll);
+    };
+  }, [mounted, pathname]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

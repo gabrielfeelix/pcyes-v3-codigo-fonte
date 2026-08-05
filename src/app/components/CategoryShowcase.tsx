@@ -107,26 +107,61 @@ interface Category extends CategoryDef {
   count: number;
 }
 
-/* Ritmo do mosaico (índice segue CATEGORY_DEFS; grid-auto-flow dense preenche
-   os buracos): Gabinetes hero 2×2, Cadeiras frame alto, o resto quadrado. */
-const BENTO_SPAN = [
-  "col-span-2 row-span-2", // Gabinetes (hero)
-  "row-span-2", // Cadeiras (frame alto)
-  "", // Mouses
-  "", // Headsets
-  "", // Monitores
-  "", // Microfones
-  "", // Teclados
-  "", // Placas
+/* Ritmo do mosaico no desktop (índice segue CATEGORY_DEFS; grid-auto-flow dense
+   preenche os buracos): Gabinetes hero 2×2, Cadeiras frame alto, o resto
+   quadrado. A trilha vale 1 linha por quadrado. */
+const BENTO_SPAN_MD = [
+  "md:col-span-2 md:row-span-2", // Gabinetes (hero)
+  "md:col-span-1 md:row-span-2", // Cadeiras (frame alto)
+  "md:col-span-1 md:row-span-1", // Mouses
+  "md:col-span-1 md:row-span-1", // Headsets
+  "md:col-span-1 md:row-span-1", // Monitores
+  "md:col-span-1 md:row-span-1", // Microfones
+  "md:col-span-1 md:row-span-1", // Teclados
+  "md:col-span-1 md:row-span-1", // Placas
+];
+
+/*
+ * Ritmo do mosaico no mobile — duas colunas.
+ *
+ * A trilha aqui é fina (ver MOBILE_ROW) porque os cards precisam de alturas que
+ * não são múltiplos de um quadrado: o hero e o card de fechamento ficam entre
+ * "um quadrado" e "dois quadrados". Com trilha grossa só existiriam 150px ou
+ * 312px, nada no meio.
+ *
+ * Contas a 390px de viewport (trilha 42px, gap 12px):
+ *   3 linhas = 150px · 4 = 204px · 5 = 258px · 6 = 312px
+ *
+ * O empilhamento resultante, com `dense`:
+ *   [ Gabinetes  (2 col) ]
+ *   [ Cadeiras ][ Mouses ]
+ *   [   alta   ][Headsets]
+ *   [Monitores ][Microfon]
+ *   [Teclados  ][  alto  ]
+ *   [  Placas   (2 col)  ]
+ *
+ * As duas colunas somam 12 linhas entre o hero e o fechamento, então fecham
+ * niveladas — sem buraco para o `dense` remendar.
+ */
+const BENTO_SPAN_MOBILE = [
+  "col-span-2 row-span-5", // Gabinetes — hero, 258px
+  "row-span-6", // Cadeiras — frame alto, 312px
+  "row-span-3", // Mouses — 150px
+  "row-span-3", // Headsets
+  "row-span-3", // Monitores
+  "row-span-6", // Microfones — frame alto, par da Cadeiras
+  "row-span-3", // Teclados
+  "col-span-2 row-span-4", // Placas — fechamento, 204px
 ];
 
 function BentoCell({ cat, index }: { cat: Category; index: number }) {
   return (
     <Link
       to={cat.href}
-      className={`bento-cell group relative overflow-hidden ${BENTO_SPAN[index] ?? ""}`}
+      /* Canto um pouco menor no mobile (18px contra 22px): no tile pequeno o
+         raio grande arredonda demais e come a foto nos cantos. */
+      className={`bento-cell group relative overflow-hidden rounded-[var(--radius-card-md)] md:rounded-[var(--radius-card-lg)] ${BENTO_SPAN_MOBILE[index] ?? "row-span-3"} ${BENTO_SPAN_MD[index] ?? "md:col-span-1 md:row-span-1"}`}
       style={{
-        borderRadius: "var(--radius-card-lg)",
         border: "1px solid rgba(var(--foreground-rgb), 0.08)",
         background: "var(--surface-1)",
       }}
@@ -137,9 +172,18 @@ function BentoCell({ cat, index }: { cat: Category; index: number }) {
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
         style={{ objectPosition: cat.imgPos ?? "center" }}
       />
-      {/* Véu curto só atrás do texto — topo e base leves, meio limpo. */}
+      {/* Véu curto só atrás do texto — topo e base leves, meio limpo.
+          No mobile vai mais fraco: o tile é pequeno, então a mesma faixa de
+          degradê cobre proporcionalmente muito mais da foto. */}
       <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 md:hidden"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(8,8,10,0.22) 0%, transparent 14%, transparent 84%, rgba(8,8,10,0.3) 100%)",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0 hidden md:block"
         style={{
           background:
             "linear-gradient(180deg, rgba(8,8,10,0.32) 0%, transparent 12%, transparent 80%, rgba(8,8,10,0.42) 100%)",
@@ -147,11 +191,8 @@ function BentoCell({ cat, index }: { cat: Category; index: number }) {
       />
       {/* Anel vermelho suave no hover. */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{
-          borderRadius: "var(--radius-card-lg)",
-          boxShadow: "inset 0 0 0 1.5px rgba(225,6,0,0.55)",
-        }}
+        className="pointer-events-none absolute inset-0 rounded-[var(--radius-card-md)] opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:rounded-[var(--radius-card-lg)]"
+        style={{ boxShadow: "inset 0 0 0 1.5px rgba(225,6,0,0.55)" }}
       />
       <div className="absolute left-4 right-4 top-4 md:left-5 md:top-5 flex items-start justify-between">
         <div>
@@ -246,9 +287,12 @@ export function CategoryShowcase() {
           />
         </div>
 
+        {/* Trilha fina no mobile (42px) para dar alturas intermediárias aos
+            cards largos; trilha grossa a partir do `md`, uma linha por
+            quadrado. Ver BENTO_SPAN_MOBILE. */}
         <div
-          className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
-          style={{ gridAutoRows: "clamp(150px, 16vw, 190px)", gridAutoFlow: "dense" }}
+          className="grid grid-cols-2 gap-3 [grid-auto-rows:42px] md:grid-cols-4 md:gap-4 md:[grid-auto-rows:clamp(150px,16vw,190px)]"
+          style={{ gridAutoFlow: "dense" }}
         >
           {categories.map((cat, i) => (
             <BentoCell key={cat.href} cat={cat} index={i} />

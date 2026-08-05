@@ -391,7 +391,15 @@ export function IntelligentDevices() {
                       <Heart size={13} strokeWidth={isFav ? 0 : 1.8} fill={isFav ? "#ff2419" : "none"} />
                     </button>
 
-                    {/* Quick add — floating pill */}
+                    {/*
+                      Quick add sobreposto à foto — só do `md` para cima, onde
+                      existe hover para revelá-lo. No mobile ele ficava com
+                      `opacity-100` permanente por cima da imagem: em grade de 2
+                      colunas o card tem ~169px a 390px de viewport, e a pílula
+                      cobria boa parte do produto. Lá embaixo o botão vai no
+                      fluxo do card (ver depois do preço), como no ProductCard
+                      usado em "Drops mais cobiçados".
+                    */}
                     <CTAButton
                       onClick={(e) => {
                         e.preventDefault();
@@ -400,7 +408,7 @@ export function IntelligentDevices() {
                       }}
                       variant="buy"
                       size="sm"
-                      className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 translate-y-0 md:translate-y-2 opacity-100 md:opacity-0 transition-all duration-300 md:group-hover:translate-y-0 md:group-hover:opacity-100 cursor-pointer"
+                      className="hidden md:inline-flex absolute bottom-4 left-1/2 z-20 -translate-x-1/2 md:translate-y-2 md:opacity-0 transition-all duration-300 md:group-hover:translate-y-0 md:group-hover:opacity-100 cursor-pointer"
                     >
                       <ShoppingCart size={12} strokeWidth={2} /> Comprar
                     </CTAButton>
@@ -431,6 +439,19 @@ export function IntelligentDevices() {
                     </p>
                   </div>
                 </Link>
+
+                {/* Mobile: ação no fim do card, fora do <Link> — imagem, nome,
+                    preço, ação. Some no `md`, onde o pill flutuante assume. */}
+                <CTAButton
+                  onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image })}
+                  variant="buy"
+                  size="sm"
+                  block
+                  className="mt-3 md:hidden"
+                  aria-label={`Comprar ${product.name}`}
+                >
+                  <ShoppingCart size={12} strokeWidth={2} /> Comprar
+                </CTAButton>
               </div>
             );
           })}
