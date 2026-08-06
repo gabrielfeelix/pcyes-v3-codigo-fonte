@@ -614,14 +614,17 @@ function AutoShippingCalculator({ productPrice }: { productPrice: number }) {
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <div className="mt-3 space-y-1.5">
+            {/* `space-y-1`: o vão entre uma opção e a próxima — do "8 dias
+                úteis" até o "Correios PAC" — soma o padding de baixo de uma
+                linha, este espaço e o padding de cima da seguinte. */}
+            <div className="mt-3 space-y-1">
               {options.map((opt, i) => (
                 <motion.div
                   key={opt.id}
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="flex items-center justify-between py-2.5"
+                  className="flex items-center justify-between py-2"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <Truck
@@ -1074,8 +1077,9 @@ function StickyPriceCard({
 
         <div className="h-px bg-foreground/6 mb-5" />
 
-        {/* Shipping */}
-        <div className="mb-5">
+        {/* Shipping — último bloco do card, sem margem inferior: com as opções
+            de frete abertas ela virava uma faixa vazia de 20px no fim. */}
+        <div>
           <AutoShippingCalculator productPrice={product.priceNum} />
         </div>
       </div>
@@ -3233,6 +3237,10 @@ export function ProductPage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              /* Sem teto de altura nem rolagem interna: quando o card é mais
+                 alto que a dobra ele passa da tela, e é assim que deve ser —
+                 painel de compra com barra de rolagem própria é pior que
+                 transbordar. */
               className="hidden w-full lg:col-start-2 lg:row-start-1 lg:block lg:sticky lg:top-[190px] lg:self-start"
             >
               {preOrderInfo ? (

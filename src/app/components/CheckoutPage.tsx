@@ -24,6 +24,7 @@ import {
   RefreshCw,
   Ticket,
 } from "lucide-react";
+import { artFitClass } from "../lib/setupImages";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
@@ -973,7 +974,7 @@ export function CheckoutPage() {
                             border: "1px solid rgba(var(--foreground-rgb), 0.08)",
                           }}
                         >
-                          <ImageWithFallback src={item.image} alt={item.name} className="h-full w-full object-contain p-1.5" />
+                          <ImageWithFallback src={item.image} alt={item.name} className={`h-full w-full ${artFitClass(item.image, "p-1.5")}`} />
                         </div>
                         {item.quantity > 1 && (
                           <span
@@ -1769,7 +1770,7 @@ export function CheckoutPage() {
                                     border: "1px solid rgba(var(--foreground-rgb), 0.06)",
                                   }}
                                 >
-                                  <ImageWithFallback src={item.image} alt={item.name} className="h-full w-full object-contain p-1.5" />
+                                  <ImageWithFallback src={item.image} alt={item.name} className={`h-full w-full ${artFitClass(item.image, "p-1.5")}`} />
                                 </div>
                                 <div className="min-w-0 flex-1">
                                   <p className="line-clamp-1 text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
@@ -1870,7 +1871,7 @@ export function CheckoutPage() {
                             boxShadow: "inset 0 1px 0 rgba(var(--foreground-rgb), 0.04)",
                           }}
                         >
-                          <ImageWithFallback src={item.image} alt={item.name} className="h-full w-full object-contain p-1.5" />
+                          <ImageWithFallback src={item.image} alt={item.name} className={`h-full w-full ${artFitClass(item.image, "p-1.5")}`} />
                         </div>
                         {item.quantity > 1 && (
                           <span

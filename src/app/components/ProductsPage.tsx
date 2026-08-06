@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import { Link, useSearchParams, useParams } from "react-router";
 import { getCategoryFromSlug } from "../lib/slug";
 import { useFocusTrap } from "../lib/useFocusTrap";
-import { isSetupArt, setupArtVariant } from "../lib/setupImages";
+import { artFitClass, isSetupArt, setupArtVariant } from "../lib/setupImages";
 import { motion, AnimatePresence } from "motion/react";
 import {
   SlidersHorizontal, ArrowUpDown, ChevronDown, Grid3X3, LayoutList,
@@ -34,6 +34,7 @@ import { SEO } from "./SEO";
 import { getListingSeo } from "../lib/listingSeo";
 import { getShowcase, getShowcasePath, matchesShowcase } from "../lib/showcases";
 import { getCategoryUrl } from "../lib/slug";
+import { getSetupTier, TIER_STYLE } from "../lib/setups";
 import { CategorySeoBlock } from "./CategorySeoBlock";/* Tags que descrevem PERSONA e FAIXA do setup. Persona já é o recorte da
    vitrine; faixa tem seção própria — nenhuma das duas volta na lista genérica
    de atributos. */
@@ -1708,8 +1709,30 @@ export function ProductsPage() {
 
                           {/* Product info */}
                           <div className="mt-4 px-1">
+                            {/* Degrau do setup: "Apex" ou "Cockpit" não dizem se
+                                a máquina é de entrada ou de topo. O rótulo é o
+                                mesmo nas três personas, então a escada é
+                                aprendível de uma olhada. */}
+                            {getSetupTier(displayProduct) && (
+                              <span
+                                className="mb-1.5 inline-block rounded-full border px-2 py-0.5"
+                                style={{
+                                  ...TIER_STYLE[getSetupTier(displayProduct)!],
+                                  fontFamily: "var(--font-family-inter)",
+                                  fontSize: "var(--text-caption)",
+                                  fontWeight: 700,
+                                  letterSpacing: "0.1em",
+                                  textTransform: "uppercase",
+                                }}
+                              >
+                                {getSetupTier(displayProduct)}
+                              </span>
+                            )}
                             <Link to={`/produto/${displayProduct.id}`}>
-                              <h3 className="line-clamp-2 md:line-clamp-1 text-ink-strong"
+                              {/* Duas linhas também no desktop: o nome do setup
+                                  carrega placa e resolução no fim, que é
+                                  justamente o que `line-clamp-1` cortava. */}
+                              <h3 className="line-clamp-2 text-ink-strong"
                                 style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 600, lineHeight: 1.3, letterSpacing: "-0.01em" }}>
                                 {displayProduct.name}
                               </h3>
@@ -2055,12 +2078,15 @@ export function ProductsPage() {
                       className="pointer-events-none absolute inset-0"
                       style={{ background: "radial-gradient(circle at 30% 25%, rgba(var(--foreground-rgb), 0.06) 0%, transparent 55%)", borderRadius: "var(--radius-card-md)" }}
                     />
+                    {/* Arte ambientada sangra até a borda; foto de produto
+                        mantém o respiro. O padding fixo transformava a cena do
+                        setup num selo pequeno flutuando no meio da moldura. */}
                     <ImageWithFallback
                       src={quickViewImages[quickViewImageIndex]}
                       alt={quickViewProduct.name}
                       loading="lazy"
                       decoding="async"
-                      className="relative z-10 h-full w-full object-contain p-8"
+                      className={`relative z-10 h-full w-full ${artFitClass(quickViewImages[quickViewImageIndex], "p-8")}`}
                     />
                     {/* Setas ficam SÓ aqui, não no card da grade: no modal existe
                         uma imagem por vez e o usuário já demonstrou interesse,

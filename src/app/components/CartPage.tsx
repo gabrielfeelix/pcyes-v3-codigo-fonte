@@ -20,6 +20,7 @@ import {
   Coins,
   X,
 } from "lucide-react";
+import { artFitClass } from "../lib/setupImages";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
@@ -438,7 +439,7 @@ export function CartPage() {
                         <ImageWithFallback
                           src={item.image}
                           alt={item.name}
-                          className="h-full w-full object-contain p-2.5 md:p-3"
+                          className={`h-full w-full ${artFitClass(item.image, "p-2.5 md:p-3")}`}
                         />
                       </div>
 
@@ -1043,7 +1044,7 @@ export function CartPage() {
                           <ImageWithFallback
                             src={getPrimaryProductImage(product)}
                             alt={product.name}
-                            className="h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.04] md:p-6"
+                            className={`h-full w-full transition-transform duration-500 group-hover:scale-[1.04] ${artFitClass(getPrimaryProductImage(product), "p-4 md:p-6")}`}
                           />
                           <div
                             className="absolute left-2 top-2 flex h-7 w-7 items-center justify-center rounded-full text-ink-strong md:left-4 md:top-4 md:h-9 md:w-9"

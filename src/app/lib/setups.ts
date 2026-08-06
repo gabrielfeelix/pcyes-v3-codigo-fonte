@@ -246,6 +246,48 @@ export const setupProducts: Product[] = SETUP_SEED.map((seed, i) => {
 const setupIds = new Set(setupProducts.map((p) => p.id));
 
 /** É um setup ("build pronta")? */
+/**
+ * Id do produto de catálogo a partir da chave do setup ("pulse", "strike"…).
+ *
+ * O quiz do "Monte seu PC" trabalha com essas chaves e precisa mandar a pessoa
+ * direto para a página do setup recomendado. Devolve `undefined` para chave
+ * desconhecida, para o chamador decidir o fallback.
+ */
+export function getSetupProductId(key: string): number | undefined {
+  const index = SETUP_SEED.findIndex((seed) => seed.key === key);
+  return index === -1 ? undefined : SETUP_ID_BASE + index + 1;
+}
+
+/** Rótulos de degrau, na ordem da escada. */
+const TIER_LABELS = Object.values(TIER_TAG);
+
+/**
+ * Cor de cada degrau — rampa fria → quente, que é como o olho lê "mais
+ * potência" sem precisar de legenda.
+ *
+ * As cores livres são poucas, porque o card já usa: vermelho no selo de
+ * desconto, verde no botão Comprar e laranja na pílula de pré-venda. Repetir
+ * qualquer uma delas aqui faria dois selos de cor igual e significado
+ * diferente no mesmo card.
+ */
+export const TIER_STYLE: Record<string, { color: string; borderColor: string; background: string }> = {
+  Entrada: { color: "#38bdf8", borderColor: "rgba(56,189,248,0.42)", background: "rgba(56,189,248,0.12)" },
+  Intermediário: { color: "#a78bfa", borderColor: "rgba(167,139,250,0.42)", background: "rgba(167,139,250,0.12)" },
+  Avançado: { color: "#fbbf24", borderColor: "rgba(251,191,36,0.45)", background: "rgba(251,191,36,0.14)" },
+};
+
+/**
+ * Degrau do setup — "Entrada", "Intermediário" ou "Avançado".
+ *
+ * Sai das tags porque é lá que o filtro da listagem já lê. Serve para o card
+ * dizer o nível sem depender de a pessoa conhecer a linha: "Apex" não informa
+ * nada, "Avançado" informa.
+ */
+export function getSetupTier(product: Pick<Product, "id" | "subcategory" | "tags">): string | undefined {
+  if (!isSetupProduct(product)) return undefined;
+  return product.tags?.find((tag) => TIER_LABELS.includes(tag));
+}
+
 export function isSetupProduct(product: Pick<Product, "id" | "subcategory">): boolean {
   return setupIds.has(product.id) || product.subcategory === SETUP_SUBCATEGORY;
 }

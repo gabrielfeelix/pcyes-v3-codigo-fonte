@@ -8,6 +8,7 @@ import { useAuth } from "./AuthContext";
 import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getProductSwatches, getStockStatus } from "./productPresentation";
 import { artFitClass, setupArtVariant } from "../lib/setupImages";
+import { getSetupTier, TIER_STYLE } from "../lib/setups";
 import { getPreOrderInfo } from "./PreOrderData";
 import { CTAButton, DiscountBadge, Price, PreOrderPill, RatingChip } from "./section";
 import { formatBRLSpoken } from "../../utils/format";
@@ -75,6 +76,7 @@ export function ProductCard({
   style,
 }: ProductCardProps) {
   const cfg = VARIANT[variant];
+  const setupTier = getSetupTier(product);
   const [isFavorited, setIsFavorited] = useState(false);
   const [selectedSwatchId, setSelectedSwatchId] = useState<number | null>(null);
   const { isLoggedIn } = useAuth();
@@ -207,6 +209,25 @@ export function ProductCard({
       </div>
 
       <div className="mt-4 px-1">
+        {/* Degrau do setup. Nome de linha ("Apex", "Cockpit") não diz se a
+            máquina é de entrada ou de topo, e o rótulo é o mesmo nas três
+            personas — é o que torna a escada aprendível de uma olhada. */}
+        {setupTier && (
+          <span
+            className="mb-1.5 inline-block rounded-full border px-2 py-0.5"
+            style={{
+              ...TIER_STYLE[setupTier],
+              fontFamily: "var(--font-family-inter)",
+              fontSize: "var(--text-caption)",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+            }}
+          >
+            {setupTier}
+          </span>
+        )}
+
         <h3
           className={`${cfg.clamp} text-ink-strong`}
           style={{

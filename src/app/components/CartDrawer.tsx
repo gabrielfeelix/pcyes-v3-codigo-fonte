@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
 import { X, ShoppingCart, Trash2, Check, Gift, Sparkles } from "lucide-react";
 import { useCart } from "./CartContext";
+import { artFitClass } from "../lib/setupImages";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
@@ -414,7 +415,7 @@ export function CartDrawer() {
                           className="relative h-[132px] w-[132px] flex-shrink-0 overflow-hidden border-r border-edge-subtle md:h-[210px] md:w-full md:border-r-0 md:border-b"
                           style={{ background: "radial-gradient(circle at top, rgba(225,6,0,0.12) 0%, transparent 60%)" }}
                         >
-                          <ImageWithFallback src={getPrimaryProductImage(product)} alt={product.name} className="h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.04] md:p-6" />
+                          <ImageWithFallback src={getPrimaryProductImage(product)} alt={product.name} className={`h-full w-full transition-transform duration-500 group-hover:scale-[1.04] ${artFitClass(getPrimaryProductImage(product), "p-4 md:p-6")}`} />
                           <div
                             className="absolute left-2 top-2 flex h-7 w-7 items-center justify-center rounded-full text-ink-strong md:left-4 md:top-4 md:h-9 md:w-9"
                             style={{

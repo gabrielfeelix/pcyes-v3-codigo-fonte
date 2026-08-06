@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowLeft,
@@ -657,6 +657,7 @@ type PresetTier =
 type Scenario = { label: string; value: string; sub?: string };
 
 import { quizGames, quizPrograms, type QuizGame, type QuizProgram } from "../lib/gameLibrary";
+import { getSetupProductId } from "../lib/setups";
 
 type UseTypeCardData = {
   id: UseType;
@@ -5523,7 +5524,18 @@ export function MonteSeuPcPage() {
   const [expandedCategory, setExpandedCategory] = useState<string>("cpu");
   const [activeView, setActiveView] = useState(0);
   const [actionFeedback, setActionFeedback] = useState("");
-  const [view, setView] = useState<View>("welcome");
+  /**
+   * `?inicio=` pula a tela de escolha e abre direto num dos caminhos.
+   *
+   * Existe para quem chega de um link que já promete um caminho específico —
+   * o banner da home diz "fazer o quiz", então tem que cair no quiz, não numa
+   * tela pedindo para escolher de novo. Valor inválido cai em "welcome".
+   */
+  const [searchParams] = useSearchParams();
+  const [view, setView] = useState<View>(() => {
+    const inicio = searchParams.get("inicio");
+    return inicio === "quiz" || inicio === "builder" || inicio === "presets" ? inicio : "welcome";
+  });
   const [quizRec, setQuizRec] = useState<PresetTier | null>(null);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [stepSheetOpen, setStepSheetOpen] = useState(false);
@@ -5551,7 +5563,20 @@ export function MonteSeuPcPage() {
     setQuizRec(null);
     setView("welcome");
   };
+  /**
+   * Fim do quiz vai direto para a página do setup recomendado.
+   *
+   * Antes caía na vitrine de builds com o card marcado "SUGERIDA PRA VOCÊ" — a
+   * pessoa respondia três perguntas para receber uma resposta e ainda precisava
+   * procurá-la no meio das outras oito. A vitrine continua como fallback se a
+   * chave não casar com nenhum produto.
+   */
   const handleQuizComplete = (rec: PresetTier) => {
+    const productId = getSetupProductId(rec);
+    if (productId) {
+      navigate(`/produto/${productId}`);
+      return;
+    }
     setQuizRec(rec);
     setView("presets");
   };
