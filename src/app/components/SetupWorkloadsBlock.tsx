@@ -40,15 +40,10 @@ export const WORKLOADS_ANCHOR_ID = "o-que-roda";
 const TAB_LABEL: Record<WorkloadKind, string> = { game: "Jogos", program: "Programas" };
 const TAB_NOUN: Record<WorkloadKind, string> = { game: "jogos", program: "programas" };
 
-/* PROTÓTIPO: três layouts para o catálogo, trocáveis dentro do modal para
-   comparar lado a lado. Quando um for escolhido, apagam-se os outros dois e o
-   seletor junto — nada aqui é feito para sobreviver à decisão. */
-type WorkloadVariant = "v1" | "v2" | "v3";
-const WORKLOAD_VARIANTS: Array<{ id: WorkloadVariant; label: string }> = [
-  { id: "v1", label: "v1 · grid de capas" },
-  { id: "v2", label: "v2 · destaque + faixa" },
-  { id: "v3", label: "v3 · lista compacta" },
-];
+/* O catálogo teve três layouts em protótipo — grid de capas, destaque + faixa
+   e lista compacta — trocáveis dentro do modal para comparar lado a lado. O
+   cliente escolheu o grid de capas; os outros dois e o seletor foram apagados.
+   Não reintroduzir: a comparação já aconteceu. */
 
 /* ═══════════════════════════════════════════════════════
    PEÇAS VISUAIS
@@ -114,7 +109,7 @@ function VerdictHeader({ group, kind }: { group: WorkloadGroup; kind: WorkloadKi
   );
 }
 
-/* ── v1: grid de capas ─────────────────────────────────── */
+/* Grid de capas — o layout escolhido para o catálogo. */
 function WorkloadsGrid({ items, showVerdict }: { items: SetupWorkload[]; showVerdict: boolean }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -151,115 +146,6 @@ function WorkloadsGrid({ items, showVerdict }: { items: SetupWorkload[]; showVer
   );
 }
 
-/* ── v2: destaque + faixa rolável ──────────────────────── */
-function WorkloadsSpotlight({ items }: { items: SetupWorkload[] }) {
-  const [activeId, setActiveId] = useState(items[0]?.id);
-  const active = items.find((i) => i.id === activeId) ?? items[0];
-  if (!active) return null;
-
-  return (
-    <div className="space-y-4">
-      <article className="relative overflow-hidden border border-foreground/8" style={{ borderRadius: "var(--radius-card-lg)", minHeight: "300px" }}>
-        <WorkloadArt item={active} className="absolute inset-0 h-full w-full" contain={Boolean(active.bg1)} />
-        <div
-          className="absolute inset-0"
-          /* Capa clara (CS2, Fortnite) engolia o texto branco: o gradiente
-             precisa segurar o contraste até em cima, não só na base. */
-          style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.82) 45%, rgba(0,0,0,0.42) 100%)" }}
-        />
-        <div className="relative flex min-h-[300px] flex-col justify-end gap-2 p-6 md:p-8">
-          <div className="flex items-center gap-2">
-            <WorkloadBadge item={active} />
-            <span className="text-white/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-              {active.tag}
-            </span>
-          </div>
-          <p className="text-white" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(22px, 3vw, 34px)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.05 }}>
-            {active.name}
-          </p>
-          <p className={active.supported ? "text-primary" : "text-white/50"} style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(30px, 5vw, 52px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1 }}>
-            {active.value}
-          </p>
-          <p className="text-white/70" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
-            {active.detail}
-          </p>
-        </div>
-      </article>
-
-      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
-        {items.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => setActiveId(item.id)}
-            aria-pressed={item.id === active.id}
-            className={`shrink-0 cursor-pointer overflow-hidden border transition-colors ${item.id === active.id ? "border-primary" : "border-foreground/10 hover:border-foreground/30"}`}
-            style={{ borderRadius: "var(--radius-card-sm)", width: "132px", opacity: item.supported ? 1 : 0.55 }}
-          >
-            <WorkloadArt item={item} className="h-[62px] w-full" />
-            <span className="block px-2 py-1.5 text-left">
-              <span className="block truncate text-foreground" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                {item.name}
-              </span>
-              <span className={`block ${item.supported ? "text-primary" : "text-foreground/40"}`} style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-caption)", fontWeight: 800 }}>
-                {item.value}
-              </span>
-            </span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── v3: lista compacta ────────────────────────────────── */
-function WorkloadsList({ items, showVerdict }: { items: SetupWorkload[]; showVerdict: boolean }) {
-  return (
-    <ul className="overflow-hidden border border-foreground/8" style={{ borderRadius: "var(--radius-card)" }}>
-      {items.map((item, i) => (
-        <li
-          key={item.id}
-          className="flex items-center gap-4 p-3"
-          style={{
-            background: i % 2 === 0 ? "rgba(var(--foreground-rgb), 0.03)" : "transparent",
-            borderTop: i === 0 ? "none" : "1px solid rgba(var(--foreground-rgb), 0.06)",
-            opacity: item.supported ? 1 : 0.6,
-          }}
-        >
-          <WorkloadArt item={item} className="h-11 w-20 shrink-0 rounded-[var(--radius-card-sm)]" />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
-              {item.name}
-            </p>
-            <p className="truncate text-foreground/45" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-              {item.tag}
-            </p>
-          </div>
-          {showVerdict ? (
-            <>
-              <span className="hidden shrink-0 sm:block">
-                <WorkloadBadge item={item} />
-              </span>
-              <div className="w-[150px] shrink-0 text-right">
-                <p className={item.supported ? "text-foreground" : "text-foreground/50"} style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 800, letterSpacing: "-0.01em" }}>
-                  {item.value}
-                </p>
-                <p className="text-foreground/45" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.35 }}>
-                  {item.detail}
-                </p>
-              </div>
-            </>
-          ) : (
-            <span className="shrink-0">
-              <WorkloadBadge item={item} />
-            </span>
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 /**
  * Lista de títulos — agrupada por veredito quando isso ajuda, flat quando não.
  *
@@ -274,15 +160,10 @@ function WorkloadsList({ items, showVerdict }: { items: SetupWorkload[]; showVer
  */
 const MIN_GROUP_AVG = 3;
 
-function GroupedWorkloads({ items, kind, variant }: { items: SetupWorkload[]; kind: WorkloadKind; variant: WorkloadVariant }) {
-  /* O destaque (v2) é vitrine de um item só: agrupar não faz sentido ali. */
-  if (variant === "v2") return <WorkloadsSpotlight items={items} />;
-
+function GroupedWorkloads({ items, kind }: { items: SetupWorkload[]; kind: WorkloadKind }) {
   const groups = groupWorkloadsByVerdict(items);
   if (items.length / groups.length < MIN_GROUP_AVG) {
-    return variant === "v3"
-      ? <WorkloadsList items={items} showVerdict />
-      : <WorkloadsGrid items={items} showVerdict />;
+    return <WorkloadsGrid items={items} showVerdict />;
   }
 
   return (
@@ -290,9 +171,7 @@ function GroupedWorkloads({ items, kind, variant }: { items: SetupWorkload[]; ki
       {groups.map((group) => (
         <section key={`${group.value}-${group.detail}`}>
           <VerdictHeader group={group} kind={kind} />
-          {variant === "v3"
-            ? <WorkloadsList items={group.items} showVerdict={false} />
-            : <WorkloadsGrid items={group.items} showVerdict={false} />}
+          <WorkloadsGrid items={group.items} showVerdict={false} />
         </section>
       ))}
     </div>
@@ -416,7 +295,7 @@ export function SetupWorkloadsBlock({
       </div>
 
       <div className="mt-6">
-        <GroupedWorkloads items={featured} kind={tab} variant="v1" />
+        <GroupedWorkloads items={featured} kind={tab} />
       </div>
 
       {/* Rodapé: o que ficou de fora, com o número na frente do convite. */}
@@ -464,7 +343,6 @@ export function WorkloadsCatalogSheet({
 }) {
   const playbook = getSetupPlaybook(productId);
   const [query, setQuery] = useState("");
-  const [variant, setVariant] = useState<WorkloadVariant>("v1");
   if (!playbook) return null;
 
   const searching = query.trim().length > 0;
@@ -539,27 +417,8 @@ export function WorkloadsCatalogSheet({
             fica cortada em vez de rolar. */}
         <ScrollArea className="min-h-0 flex-1">
           <div className="p-5">
-            {/* PROTÓTIPO: seletor de layout. Sai junto com as versões descartadas. */}
-            <div className="mb-5 flex flex-wrap items-center gap-2">
-              <span className="uppercase tracking-[0.16em] text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}>
-                Layout:
-              </span>
-              {WORKLOAD_VARIANTS.map((option) => (
-                <button
-                  key={option.id}
-                  type="button"
-                  onClick={() => setVariant(option.id)}
-                  aria-pressed={variant === option.id}
-                  className={`cursor-pointer rounded-full border px-3 py-1 transition-colors ${variant === option.id ? "border-primary/60 bg-primary/10 text-primary" : "border-foreground/12 text-foreground/50 hover:text-foreground/80"}`}
-                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-
             {matches.length > 0 ? (
-              <GroupedWorkloads key={`${tab}-${query}-${variant}`} items={matches} kind={tab} variant={variant} />
+              <GroupedWorkloads key={`${tab}-${query}`} items={matches} kind={tab} />
             ) : (
               /* Vazio útil: não medimos aquele título, mas a régua responde. Quem
                  vê que a máquina roda os mais pesados da lista conclui sozinho. */

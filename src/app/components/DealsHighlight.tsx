@@ -35,6 +35,15 @@ const BUILD_PHOTO = "/setups/wide/setup-base.webp";
 /** Arte do card de builds prontas — mesma família, outro setup. */
 const SETUP_PHOTO = "/setups/wide/setup-strike.webp";
 
+/**
+ * Piso de altura das duas portas do "Monte seu PC".
+ *
+ * O mesmo valor nos dois cards, de propósito: eles vivem numa grade de duas
+ * fileiras `1fr` e precisam terminar na mesma altura. Um mínimo diferente em
+ * cada um desempata a fileira e volta o degrau que existia antes.
+ */
+const PORTA_MIN_H = "clamp(320px, 68vw, 400px)";
+
 interface DealsHighlightProps {
   label?: string;
   title?: string;
@@ -135,7 +144,12 @@ export function DealsHighlight({
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.55, delay: 0.15 }}
-            className="flex h-full flex-col gap-5 md:gap-6"
+            /* Grade de duas fileiras `1fr`, não flex: com `flex-[1.2]` e
+               `flex-1` o card do quiz ficava 20% mais alto que o de builds, e
+               no celular, onde a coluna não tem altura para repartir, cada um
+               parava na própria altura de conteúdo. Duas fileiras iguais casam
+               a altura nos dois casos, pelo maior conteúdo. */
+            className="grid h-full grid-rows-2 gap-5 md:gap-6"
           >
           <div
             data-keep-dark
@@ -143,7 +157,7 @@ export function DealsHighlight({
                BannerDuo e InRealLifeSection): o anel vermelho é
                o estado de HOVER. Aqui ele estava como borda e brilho fixos, o
                que obrigava a inventar um segundo realce por cima. */
-            className="stroke-hover-red group/quiz relative flex flex-[1.2] flex-col justify-between overflow-hidden border border-white/10 p-7 md:p-9"
+            className="stroke-hover-red group/quiz relative flex min-h-0 flex-col justify-between overflow-hidden border border-white/10 p-7 md:p-9"
             style={{
               background:
                 "radial-gradient(circle at 25% 15%, rgba(255,90,80,0.35) 0%, transparent 55%), radial-gradient(circle at 80% 85%, rgba(225,6,0,0.4) 0%, transparent 55%), linear-gradient(135deg, #b00500 0%, #6e0200 50%, #2a0000 100%)",
@@ -151,7 +165,9 @@ export function DealsHighlight({
               /* Sem `boxShadow` inline: estilo inline vence a regra de
                  `.stroke-hover-red:hover` e o anel nunca aparecia. Os outros
                  banners do sistema também não têm sombra em repouso. */
-              minHeight: "clamp(390px, 82vw, 470px)",
+              /* Mesmo piso do card de baixo — as duas fileiras da grade são
+                 `1fr`, então um mínimo diferente desempataria a altura. */
+              minHeight: PORTA_MIN_H,
             }}
           >
             {/* Faint grid texture */}
@@ -311,10 +327,10 @@ export function DealsHighlight({
               if ((e.target as HTMLElement).closest("a")) return;
               navigate("/computadores/setups/");
             }}
-            className="stroke-hover-red group/setup relative flex flex-1 cursor-pointer flex-col justify-end overflow-hidden border border-white/10 p-7 md:p-9"
+            className="stroke-hover-red group/setup relative flex min-h-0 cursor-pointer flex-col justify-end overflow-hidden border border-white/10 p-7 md:p-9"
             style={{
               borderRadius: "var(--radius-card-xl)",
-              minHeight: "clamp(250px, 54vw, 320px)",
+              minHeight: PORTA_MIN_H,
             }}
           >
             <ImageWithFallback

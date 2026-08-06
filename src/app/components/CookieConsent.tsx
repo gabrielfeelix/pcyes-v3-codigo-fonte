@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Cookie } from "lucide-react";
 import { updateConsent } from "../../utils/analytics";
@@ -6,7 +6,6 @@ import { updateConsent } from "../../utils/analytics";
 export function CookieConsent() {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
-  const barraRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -31,6 +30,9 @@ export function CookieConsent() {
    *
    * O texto quebra em mais linhas conforme a largura, então a altura é medida
    * de verdade em vez de chutada — e reobservada quando a janela muda.
+   *
+   * O elemento é achado por `[data-cookie-bar]`, não por `ref`: ver o porquê no
+   * comentário do `motion.div` lá embaixo.
    */
   useEffect(() => {
     const raiz = document.documentElement;
@@ -38,14 +40,16 @@ export function CookieConsent() {
 
     if (!visible) { zerar(); return; }
 
+    const barra = document.querySelector<HTMLElement>("[data-cookie-bar]");
+    if (!barra) { zerar(); return; }
+
     const medir = () => {
-      const alturaAtual = barraRef.current?.offsetHeight;
-      if (alturaAtual) raiz.style.setProperty("--cookie-h", `${alturaAtual}px`);
+      if (barra.offsetHeight) raiz.style.setProperty("--cookie-h", `${barra.offsetHeight}px`);
     };
     medir();
 
     const observer = new ResizeObserver(medir);
-    if (barraRef.current) observer.observe(barraRef.current);
+    observer.observe(barra);
     window.addEventListener("resize", medir);
 
     return () => {
@@ -63,7 +67,12 @@ export function CookieConsent() {
     <AnimatePresence>
       {mounted && visible && (
         <motion.div
-          ref={barraRef}
+          /* Marcado por atributo em vez de `ref`: em React 18 `ref` não é prop,
+             e o `PopChild` do `AnimatePresence` tenta lê-lo como prop de
+             qualquer filho direto — dava aviso no console em toda página com o
+             aviso aberto, com ou sem `motion` no meio. O efeito que mede a
+             altura acha o elemento por este atributo. */
+          data-cookie-bar
           initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="fixed bottom-0 left-0 right-0 z-[80] p-4 md:p-6"

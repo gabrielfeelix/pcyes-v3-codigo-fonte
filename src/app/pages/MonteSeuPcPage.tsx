@@ -31,6 +31,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Footer } from "../components/Footer";
+import { BlueprintBuilder, BlueprintQuiz, BlueprintPresets } from "../components/PathBlueprint";
 import { SEO } from "../components/SEO";
 import { allProducts } from "../components/productsData";
 import { useCart } from "../components/CartContext";
@@ -3532,34 +3533,58 @@ function TopBar() {
   );
 }
 
+/**
+ * Uma das três portas do "Monte seu PC".
+ *
+ * O realce é `data-ativo`, não `:hover`. Duas razões:
+ *
+ * 1. Uma das portas nasce em foco (o quiz, que é a recomendada) — inclusive
+ *    antes de existir cursor na página, e no celular, onde nunca existe. Com
+ *    `:hover` a tela abriria com as três apagadas, e a recomendação só
+ *    apareceria para quem já tivesse decidido passar o mouse.
+ * 2. O gesto de cada ilustração pendura no mesmo atributo (`group-data-[ativo]`
+ *    em `PathBlueprint`). Um gatilho só para o realce e para a animação.
+ *
+ * Quem move o atributo é a tela, no `onMouseEnter`/`onFocus`. Teclado entra
+ * junto: tabular pelos cards move o foco visual igual ao mouse.
+ */
 function PathCard({
   icon,
+  blueprint,
   label,
   desc,
   cta,
   badge,
+  ativo,
+  onFocar,
   onClick,
 }: {
   icon: React.ReactNode;
+  blueprint: React.ReactNode;
   label: string;
   desc: string;
   cta: string;
   badge?: string;
+  ativo: boolean;
+  onFocar: () => void;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group relative flex flex-col overflow-hidden rounded-[var(--radius-card-xl)] border border-edge bg-surface-0 p-7 text-left transition-all duration-300 md:border-edge-subtle hover:border-primary/45 hover:bg-surface-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]"
+      onMouseEnter={onFocar}
+      onFocus={onFocar}
+      data-ativo={ativo || undefined}
+      className="group relative flex flex-col overflow-hidden rounded-[var(--radius-card-xl)] border border-edge bg-surface-0 p-7 text-left transition-all duration-300 md:border-edge-subtle data-[ativo]:border-primary/45 data-[ativo]:bg-surface-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]"
     >
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.35] transition-opacity duration-500 group-hover:opacity-100 md:opacity-0"
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-data-[ativo]:opacity-100"
         style={{ background: "radial-gradient(circle at 50% 0%, rgba(255,43,46,0.18), transparent 60%)" }}
       />
       {badge && (
         <span
-          className="absolute right-5 top-5 rounded-full bg-primary px-2 py-0.5 text-ink-strong"
+          className="absolute right-5 top-5 z-10 rounded-full bg-primary px-2 py-0.5 text-ink-strong"
           style={{
             fontFamily: "var(--font-family-inter)",
             fontSize: "var(--text-caption)",
@@ -3571,8 +3596,27 @@ function PathCard({
           {badge}
         </span>
       )}
+
+      {/* Ilustração sangrando até a borda do card: as margens negativas
+          cancelam o `p-7`. O véu por cima desbota só as laterais e o rodapé,
+          senão o desenho termina num corte seco contra a borda — e nunca o
+          topo, que o `overflow-hidden` já resolve no canto arredondado.
+          O rodapé só começa a desbotar em 82% para não engolir a cota. */}
+      <div className="pointer-events-none relative -mx-7 -mt-7 mb-6 h-[126px] overflow-hidden">
+        {blueprint}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(90deg, var(--surface-0) 0%, transparent 11%, transparent 89%, var(--surface-0) 100%), linear-gradient(180deg, transparent 82%, var(--surface-0) 100%)",
+          }}
+        />
+      </div>
+
       <div className="relative">
-        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/25 bg-primary/[0.1] text-primary transition-all group-hover:scale-110 group-hover:border-primary/45 group-hover:bg-primary/15">
+        {/* O ícone fica: é o que se repete no resto do fluxo (passo, resumo,
+            carrinho), e a ilustração é só desta tela. */}
+        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/25 bg-primary/[0.1] text-primary transition-all group-data-[ativo]:scale-110 group-data-[ativo]:border-primary/45 group-data-[ativo]:bg-primary/15">
           {icon}
         </div>
         <h3
@@ -3597,7 +3641,7 @@ function PathCard({
           style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}
         >
           {cta}
-          <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+          <ArrowRight size={14} className="transition-transform group-data-[ativo]:translate-x-1" />
         </div>
       </div>
     </button>
@@ -3606,6 +3650,21 @@ function PathCard({
 
 function WelcomeScreen({ onPath }: { onPath: (p: "builder" | "quiz" | "presets") => void }) {
   const navigate = useNavigate();
+
+  /**
+   * Qual das três portas está em foco.
+   *
+   * Começa no quiz porque é a recomendada — é a que leva o selo POPULAR, e a
+   * que resolve para quem chegou sem saber o que quer. A tela abrir com ela
+   * acesa é a recomendação acontecendo antes de qualquer interação, em vez de
+   * três cards iguais esperando o cursor.
+   *
+   * Passar o mouse (ou tabular) por outra porta move o foco para ela. Ao sair
+   * da fileira volta para o quiz: o padrão é uma recomendação, não o rastro do
+   * último card que o cursor tocou.
+   */
+  const [focada, setFocada] = useState<"builder" | "quiz" | "presets">("quiz");
+
   return (
     <div className="relative">
       <div
@@ -3702,27 +3761,42 @@ function WelcomeScreen({ onPath }: { onPath: (p: "builder" | "quiz" | "presets")
       </div>
 
       <div className="mx-auto max-w-[1520px] px-6 py-14 md:py-16">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div
+          className="grid grid-cols-1 gap-4 md:grid-cols-3"
+          /* No `onMouseLeave` da fileira, e não de cada card: saindo de um card
+             direto para o vizinho, o foco só troca de dono. Voltar ao padrão é
+             coisa de quem saiu das três. */
+          onMouseLeave={() => setFocada("quiz")}
+        >
           <PathCard
             icon={<Cpu className="h-5 w-5" />}
+            blueprint={<BlueprintBuilder />}
             label="Eu já sei o que quero"
             desc="Vai direto pro builder. Escolhe cada peça do zero, com filtros, busca e compatibilidade automática."
             cta="Montar do zero"
+            ativo={focada === "builder"}
+            onFocar={() => setFocada("builder")}
             onClick={() => onPath("builder")}
           />
           <PathCard
             icon={<Wand2 className="h-5 w-5" />}
+            blueprint={<BlueprintQuiz />}
             label="Me ajuda a escolher"
             desc="Diz pra gente o que você joga, edita ou faz no dia-a-dia. A gente devolve a build certa pro seu uso."
             cta="Começar"
             badge="POPULAR"
+            ativo={focada === "quiz"}
+            onFocar={() => setFocada("quiz")}
             onClick={() => onPath("quiz")}
           />
           <PathCard
             icon={<Sparkles className="h-5 w-5" />}
+            blueprint={<BlueprintPresets />}
             label="Quero builds prontas"
             desc="Setups gamer, creator e office já montados e testados. Compre num clique como qualquer produto."
             cta="Ver setups"
+            ativo={focada === "presets"}
+            onFocar={() => setFocada("presets")}
             /* Builds prontas agora são produtos de catálogo: abre a listagem
                normal filtrada em Setups, não mais a tela/sidebar própria. */
             onClick={() => navigate("/computadores/setups/")}

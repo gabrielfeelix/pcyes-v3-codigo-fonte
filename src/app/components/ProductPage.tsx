@@ -38,7 +38,7 @@ import {
 import {
   SetupWorkloadsBlock, WorkloadsCatalogSheet, WorkloadFichaRow, WORKLOADS_ANCHOR_ID,
 } from "./SetupWorkloadsBlock";
-import { SetupStoryIntro, SetupStoryProof, SetupStoryClose } from "./SetupStorySections";
+import { SetupStoryIntro, SetupStoryClose } from "./SetupStorySections";
 import { getComponentImage, artFitClass, setupArtVariant } from "../lib/setupImages";
 import { formatCep, formatBRLSpoken } from "../../utils/format";
 import { isValidCep } from "../../utils/cep";
@@ -2510,11 +2510,10 @@ function SetupDescription({
             onOpenCatalog={onOpenWorkloadsCatalog}
           />
 
-          {/* Montagem, caixa, ruído e expansão — as dúvidas que vêm depois. */}
-          <SetupStoryProof productId={product.id} heroImage={image} heroName={product.name} />
-
-          {/* Comparação com a vizinha e FAQ fecham a página. */}
-          <SetupStoryClose productId={product.id} pitch={pitch} />
+          {/* O FAQ fecha a página. Entre ele e "o que roda" havia montagem,
+              caixa, ruído, expansão e a comparação com a vizinha — saíram por
+              decisão do cliente. Ver `SetupStoryClose`. */}
+          <SetupStoryClose productId={product.id} />
         </div>
       </div>
     </section>

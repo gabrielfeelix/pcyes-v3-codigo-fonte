@@ -1,6 +1,6 @@
 # Fila de ajustes — estado e pendências
 
-Documento de passagem de bastão. Última atualização: **06/08/2026**, commit `aa73765` + rodada de dívida técnica.
+Documento de passagem de bastão. Última atualização: **06/08/2026**, commit `0717b10` + rodada de layout.
 
 Status: `[ ]` a fazer · `[~]` em andamento · `[x]` resolvido · `[!]` decisão pendente
 
@@ -64,8 +64,8 @@ busca — mexer numa obriga a revisitar a outra.
   > Resolvia o degrau, mas o cliente preferiu o escalonamento. **Não refazer** — foi decisão
   > de gosto, não defeito.
 
-  > **Cuidado:** existe também `CategoryGrid.tsx`, com seção parecida. É **código morto**.
-  > A home usa `CategoryShowcase`.
+  > Existia também um `CategoryGrid.tsx` com seção parecida, que confundia quem procurava a
+  > grade de categorias. Era código morto e foi apagado — a home usa `CategoryShowcase`.
 
 - **`IntelligentDevices`** — a pílula "Comprar" ficava sobreposta à foto com `opacity-100`
   permanente no mobile, onde não há hover. Agora a sobreposição é `md:` para cima e o mobile
@@ -103,6 +103,46 @@ busca — mexer numa obriga a revisitar a outra.
   > **Descartado:** teto de altura + rolagem interna no card sticky. O cliente prefere que o
   > card **passe da tela** a ter barra de rolagem própria. Não reintroduzir.
 
+### Página de setup enxugada e as três portas ganham desenho
+
+- **[x] Catálogo de "o que roda" fixado na v1.** O modal tinha um seletor de protótipo com três
+  layouts — grid de capas, destaque + faixa, lista compacta. O cliente escolheu o **grid de
+  capas**; os outros dois e o seletor foram apagados. **Não reintroduzir:** a comparação já
+  aconteceu.
+
+- **[x] Cinco seções saíram da PDP de setup.** Entre "// O QUE RODA NESSA MÁQUINA" e o FAQ
+  havia "// ANTES DE SAIR DAQUI" (trilha de montagem + certificado), "// UMA CAIXA SÓ",
+  "// SILÊNCIO E TEMPERATURA", "// O QUE AINDA CABE DENTRO" e "// ESSA OU A VIZINHA". Todas
+  removidas: a página fica no que a máquina FAZ, não em como foi montada. Hoje é
+  vídeo → cenas → o que roda → FAQ.
+
+  > O **conteúdo** delas continua em `getSetupStory` (`assembly`, `certificate`, `box`,
+  > `acoustics`, `expansion`). Voltar qualquer uma é reescrever a seção, não o texto.
+  >
+  > Com "essa ou a vizinha" saiu o **único dado vivo** do arquivo: era a única seção que
+  > mostrava nome e preço de outro produto, e a única que exigiria consulta em runtime no
+  > Magento. Hoje `SetupStorySections` é 100% estático.
+
+- **[x] Os dois cards do `DealsHighlight` tinham alturas diferentes.** O do quiz era `flex-[1.2]`
+  contra `flex-1` do de builds, com pisos de altura diferentes: 20% mais alto no desktop, e no
+  celular cada um parava na própria altura de conteúdo. Viraram uma grade de duas fileiras
+  `1fr` com o mesmo piso (`PORTA_MIN_H`). Conferido em 1440/1024/768/390px: iguais nos quatro.
+
+- **[x] Ilustrações nas três portas do "Monte seu PC"** (`PathBlueprint.tsx`). Desenho técnico
+  em SVG inline — traço fino sobre grade milimetrada, como planta de engenharia, para conversar
+  com o "compatibilidade garantida" que a página promete logo abaixo. Gabinete explodido no
+  builder, três perguntas convergindo no quiz, três máquinas carimbadas nas prontas.
+
+- **[x] Uma porta nasce em foco.** O realce dos `PathCard` deixou de ser `:hover` e virou
+  `data-ativo`, controlado por estado: **"Me ajuda a escolher" começa aceso** (é o que leva o
+  selo POPULAR), e passar o mouse — ou tabular — move o foco para outra porta. Saindo da
+  fileira, volta para o quiz.
+
+  > Por que não `:hover`: com ele a tela abria com as três apagadas, e a recomendação só
+  > aparecia para quem já tivesse decidido passar o mouse — no celular, nunca. O mesmo atributo
+  > dispara o gesto de cada ilustração (`group-data-[ativo]` em `PathBlueprint`), então realce e
+  > animação têm um gatilho só.
+
 ---
 
 ## Pendente — precisa de detalhe do cliente
@@ -111,17 +151,16 @@ busca — mexer numa obriga a revisitar a outra.
   armazenamento, fonte, monitor, categoria de uso) + linhas "Jogos que rodam" / "Programas que
   rodam" com avatares e `+25 Ver jogos` · `+19 Ver programas`. Link "Ver configuração completa".
 
-- **[ ] 4. Blocos de baixo da página de setup.**
-  - "A máquina montada" — galeria de componentes
-  - "// Silêncio e temperatura" — dB em repouso/carga, temp CPU/GPU
-  - "// O que dá pra caber dentro" — baias SATA/M.2/3,5", slots PCIe, consumo vs fonte
-  - "// Essa é da vizinha" — comparação de degraus da linha, preço/delta
-
-- **[~] 5. Três portas do Monte seu PC.** Parcialmente resolvido: as três aparecem na home
-  pelos dois banners do `DealsHighlight`. Falta decidir se a página em si muda.
+- **[~] 5. Três portas do Monte seu PC.** As três aparecem na home pelos dois banners do
+  `DealsHighlight`, e a página em si ganhou ilustração e foco padrão. Falta decidir se muda
+  mais alguma coisa.
 
 - **[ ] 1. Card de promoções mobile.** O slot virou "Monte seu PC". Se ainda quiser um bloco
   de promoções, é assunto novo e precisa de lugar.
+
+> **Encerrado:** o item 4 (blocos de baixo da página de setup — "A máquina montada",
+> "Silêncio e temperatura", "O que dá pra caber dentro", "Essa é da vizinha") saiu da fila.
+> Essas seções existiam e foram **removidas** por decisão do cliente. Não replanejar.
 
 ---
 
@@ -229,6 +268,16 @@ busca — mexer numa obriga a revisitar a outra.
   alias. Sobra um formato de moeda escrito à mão fora do padrão: o `DropDoDiaSection`, que
   escreve "ou R$ 1299,90 em 10x sem juros" com estrutura própria — não é o mesmo texto, então
   não entrou no `PriceBlock`.
+
+- **[ ] `SheetOverlay` dá aviso de `ref` no console** (`components/ui/sheet.tsx`, componente
+  shadcn). "Function components cannot be given refs" ao abrir qualquer `Sheet` — o catálogo de
+  jogos, por exemplo. É `forwardRef` faltando no wrapper do Radix. Não é regressão desta rodada;
+  aparece desde que o Sheet existe.
+
+  > Cuidado parecido, este já resolvido: `AnimatePresence` do `motion` lê `ref` como **prop** de
+  > qualquer filho direto, e em React 18 `ref` não é prop. O `CookieConsent` dava o mesmo tipo de
+  > aviso; a saída foi marcar o elemento com `data-cookie-bar` e achá-lo por seletor. Envolver
+  > num `<div ref>` **não** resolve — o aviso passa a apontar para o `div`.
 
 - **[ ] Deploy pela CLI não configurado.** O README aponta para
   `pcyes-v3-codigo-fonte.vercel.app`, mas a conta Vercel logada na máquina (`gabfeelix1-7902`,
