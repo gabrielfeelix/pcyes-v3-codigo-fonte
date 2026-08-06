@@ -29,12 +29,11 @@ import {
 } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { searchProducts } from "../../utils/search";
-import { DiscountBadge, PreOrderPill, RatingChip, SpecChip } from "./section";
+import { DiscountBadge, InstallmentLine, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge, SpecChip } from "./section";
 import { SEO } from "./SEO";
 import { getListingSeo } from "../lib/listingSeo";
 import { getShowcase, getShowcasePath, matchesShowcase } from "../lib/showcases";
 import { getCategoryUrl } from "../lib/slug";
-import { getSetupTier, TIER_STYLE } from "../lib/setups";
 import { CategorySeoBlock } from "./CategorySeoBlock";/* Tags que descrevem PERSONA e FAIXA do setup. Persona já é o recorte da
    vitrine; faixa tem seção própria — nenhuma das duas volta na lista genérica
    de atributos. */
@@ -1709,25 +1708,7 @@ export function ProductsPage() {
 
                           {/* Product info */}
                           <div className="mt-4 px-1">
-                            {/* Degrau do setup: "Apex" ou "Cockpit" não dizem se
-                                a máquina é de entrada ou de topo. O rótulo é o
-                                mesmo nas três personas, então a escada é
-                                aprendível de uma olhada. */}
-                            {getSetupTier(displayProduct) && (
-                              <span
-                                className="mb-1.5 inline-block rounded-full border px-2 py-0.5"
-                                style={{
-                                  ...TIER_STYLE[getSetupTier(displayProduct)!],
-                                  fontFamily: "var(--font-family-inter)",
-                                  fontSize: "var(--text-caption)",
-                                  fontWeight: 700,
-                                  letterSpacing: "0.1em",
-                                  textTransform: "uppercase",
-                                }}
-                              >
-                                {getSetupTier(displayProduct)}
-                              </span>
-                            )}
+                            <SetupTierBadge product={displayProduct} />
                             <Link to={`/produto/${displayProduct.id}`}>
                               {/* Duas linhas também no desktop: o nome do setup
                                   carrega placa e resolução no fim, que é
@@ -1784,20 +1765,13 @@ export function ProductsPage() {
                                   ))}
                                 </div>
                               )}
-                              {displayProduct.oldPrice && (
-                                <p className="line-through leading-none mb-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "rgba(var(--foreground-rgb), 0.62)" }}>
-                                  {displayProduct.oldPrice}
-                                </p>
-                              )}
-                              <p className="text-ink-strong leading-none" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, letterSpacing: "-0.015em" }}>
-                                {displayProduct.price}
-                              </p>
-                              <p className="mt-1.5 leading-tight" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "rgba(var(--foreground-rgb), 0.6)" }}>
-                                No PIX ou 10x de {(() => {
-                                  const inst = (displayProduct.priceNum / 10);
-                                  return `R$ ${inst.toFixed(2).replace(".", ",")}`;
-                                })()}
-                              </p>
+                              <PriceBlock
+                                scale="catalog"
+                                priceNum={displayProduct.priceNum}
+                                price={displayProduct.price}
+                                oldPrice={displayProduct.oldPrice}
+                                oldPriceNum={displayProduct.oldPriceNum}
+                              />
                             </div>
 
                             {/* Mobile buy button — below info so the image stays clean.
@@ -1853,9 +1827,7 @@ export function ProductsPage() {
                               <p className="text-foreground text-lg sm:text-xl leading-none" style={{ fontFamily: "var(--font-family-inter)", fontWeight: "700" }}>{displayProduct.price}</p>
                               {displayProduct.oldPrice && <p className="text-foreground/40 line-through text-sm" style={{ fontFamily: "var(--font-family-inter)" }}>{displayProduct.oldPrice}</p>}
                             </div>
-                            <p className="mt-1 leading-tight" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "rgba(var(--foreground-rgb), 0.6)" }}>
-                              No PIX ou 10x de R$ {(displayProduct.priceNum / 10).toFixed(2).replace(".", ",")}
-                            </p>
+                            <InstallmentLine scale="catalog" priceNum={displayProduct.priceNum} className="mt-1" />
                             {/* Mobile buy button — full width below info */}
                             <button onClick={() => handleAddToCart(displayProduct)}
                               className="sm:hidden mt-2.5 flex w-full items-center justify-center gap-2 rounded-full py-2 cursor-pointer"

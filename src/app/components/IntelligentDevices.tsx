@@ -23,6 +23,7 @@ import { useCart } from "./CartContext";
 import { useFavorites } from "./FavoritesContext";
 import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
+import { artFitClass } from "../lib/setupImages";
 
 interface CategoryDef {
   label: string;
@@ -364,7 +365,8 @@ export function IntelligentDevices() {
                     <ImageWithFallback
                       src={image}
                       alt={product.name}
-                      className="absolute inset-0 h-full w-full object-contain p-4 md:p-7 transition-transform duration-500 group-hover:scale-[1.06]"
+                      /* Arte de setup sangra; foto de produto mantém contain + padding. */
+                      className={`absolute inset-0 h-full w-full ${artFitClass(image, "p-4 md:p-7")} transition-transform duration-500 group-hover:scale-[1.06]`}
                     />
                     {/* Hover actions */}
                     {/* Favorite */}

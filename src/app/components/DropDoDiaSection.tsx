@@ -8,6 +8,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
+import { artFitClass } from "../lib/setupImages";
 import { getPixPrice, formatBRL } from "./productEnhancements";
 import { SectionHeader, CTAButton, DiscountBadge } from "./section";
 
@@ -95,7 +96,8 @@ export function DropDoDiaSection() {
                       <ImageWithFallback
                         src={getPrimaryProductImage(product)}
                         alt={product.name}
-                        className="absolute inset-0 h-full w-full object-contain p-4 md:p-8 transition-transform duration-500 group-hover:scale-[1.05]"
+                        /* Arte de setup sangra; foto de produto mantém contain + padding. */
+                        className={`absolute inset-0 h-full w-full ${artFitClass(getPrimaryProductImage(product), "p-4 md:p-8")} transition-transform duration-500 group-hover:scale-[1.05]`}
                       />
                       {discount > 0 && (
                         <DiscountBadge

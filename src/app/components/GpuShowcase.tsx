@@ -8,6 +8,7 @@ import { CTAButton } from "./section";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage } from "./productPresentation";
+import { artFitClass } from "../lib/setupImages";
 
 interface Comparison {
   id: string;
@@ -462,7 +463,8 @@ export function GpuShowcase() {
                     <ImageWithFallback
                       src={getPrimaryProductImage(product)}
                       alt={product.name}
-                      className="h-full w-full object-contain p-2"
+                      /* Arte de setup sangra; foto de produto mantém contain + padding. */
+                      className={`h-full w-full ${artFitClass(getPrimaryProductImage(product), "p-2")}`}
                     />
                   </div>
 

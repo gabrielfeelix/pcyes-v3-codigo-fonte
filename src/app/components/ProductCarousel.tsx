@@ -10,8 +10,9 @@ import { useAuth } from "./AuthContext";
 import { Link } from "react-router";
 import { allProducts, type Product } from "./productsData";
 import { findProductBySwatch, getPrimaryProductImage, getProductHoverMedia, getProductSwatches, getShowcaseProducts } from "./productPresentation";
+import { artFitClass, setupArtVariant } from "../lib/setupImages";
 import { getPreOrderInfo } from "./PreOrderData";
-import { PreOrderPill, DiscountBadge, QuickAddButton, CarouselNavButton } from "./section";
+import { PreOrderPill, DiscountBadge, PriceBlock, QuickAddButton, CarouselNavButton } from "./section";
 
 interface ProductCarouselProps {
   label?: string;
@@ -253,18 +254,20 @@ export function ProductCarousel({
                   onMouseLeave={() => setHoveredProductId((current) => (current === displayProduct.id ? null : current))}
                 >
                   <ImageWithFallback
-                    src={getPrimaryProductImage(displayProduct)}
+                    /* Quadro 5:6: pede a arte vertical da build. */
+                    src={setupArtVariant(getPrimaryProductImage(displayProduct), "tall")}
                     alt={displayProduct.name}
-                    className={`absolute inset-0 w-full h-full object-contain p-7 transition-all duration-[900ms] ease-out ${
+                    /* Arte de setup sangra; foto de produto mantém contain + padding. */
+                    className={`absolute inset-0 w-full h-full ${artFitClass(getPrimaryProductImage(displayProduct), "p-7")} transition-all duration-[900ms] ease-out ${
                       hoverMedia ? "group-hover:scale-[1.02] group-hover:opacity-0" : "group-hover:scale-105"
                     }`}
                   />
 
                   {hoverMedia?.type === "image" && (
                     <ImageWithFallback
-                        src={hoverMedia.src}
+                      src={hoverMedia.src}
                       alt={`${displayProduct.name} em destaque`}
-                      className="absolute inset-0 h-full w-full object-contain p-7 opacity-0 scale-[1.04] transition-all duration-[900ms] ease-out group-hover:scale-100 group-hover:opacity-100"
+                      className={`absolute inset-0 h-full w-full ${artFitClass(hoverMedia.src, "p-7")} opacity-0 scale-[1.04] transition-all duration-[900ms] ease-out group-hover:scale-100 group-hover:opacity-100`}
                     />
                   )}
 
@@ -351,24 +354,13 @@ export function ProductCarousel({
                 </Link>
                 {(() => {
                   const dp = selectedVariants[key] ?? product;
-                  const discount = dp.oldPriceNum && dp.priceNum && dp.oldPriceNum > dp.priceNum
-                    ? Math.round(((dp.oldPriceNum - dp.priceNum) / dp.oldPriceNum) * 100)
-                    : 0;
-                  const installment = `R$ ${(dp.priceNum / 10).toFixed(2).replace(".", ",")}`;
                   return (
-                    <>
-                      {dp.oldPrice && (
-                        <p className="line-through leading-none mb-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "rgba(var(--foreground-rgb), 0.62)" }}>
-                          {dp.oldPrice}
-                        </p>
-                      )}
-                      <p className="text-foreground leading-none" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 700, letterSpacing: "-0.015em" }}>
-                        {dp.price}
-                      </p>
-                      <p className="mt-1.5 leading-tight" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", color: "rgba(var(--foreground-rgb), 0.55)" }}>
-                        No PIX ou 10x de {installment}
-                      </p>
-                    </>
+                    <PriceBlock
+                      priceNum={dp.priceNum}
+                      price={dp.price}
+                      oldPrice={dp.oldPrice}
+                      oldPriceNum={dp.oldPriceNum}
+                    />
                   );
                 })()}
               </div>

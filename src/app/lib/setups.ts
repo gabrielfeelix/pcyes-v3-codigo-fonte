@@ -1,5 +1,6 @@
 import type { Product } from "../components/productsData";
 import { getProductUrl } from "./slug";
+import { formatBRL } from "../../utils/format";
 
 /**
  * Setups PCYES ("builds prontas") como PRODUTOS de catálogo.
@@ -174,9 +175,9 @@ const TIER_TAG: Record<Tier, string> = {
   Extremo: "Avançado",
 };
 
-function brl(value: number) {
-  return `R$ ${value.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
-}
+/* Era uma cópia byte a byte de `formatBRL`. Duas fontes para o mesmo formato de
+   moeda é como o preço do card e a parcela acabam divergindo. */
+const brl = formatBRL;
 
 /* IDs altos e isolados: catálogo real vai até ~509; os sintéticos de carrinho
    do builder começam em 900000. 90000+ não colide com nenhum dos dois. */

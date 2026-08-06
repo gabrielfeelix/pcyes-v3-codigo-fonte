@@ -140,7 +140,7 @@ export function DealsHighlight({
           <div
             data-keep-dark
             /* `stroke-hover-red` é o hover de banner do sistema (mesmo de
-               BannerDuo, CategoryGrid e InRealLifeSection): o anel vermelho é
+               BannerDuo e InRealLifeSection): o anel vermelho é
                o estado de HOVER. Aqui ele estava como borda e brilho fixos, o
                que obrigava a inventar um segundo realce por cima. */
             className="stroke-hover-red group/quiz relative flex flex-[1.2] flex-col justify-between overflow-hidden border border-white/10 p-7 md:p-9"

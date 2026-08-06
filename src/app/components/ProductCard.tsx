@@ -8,10 +8,8 @@ import { useAuth } from "./AuthContext";
 import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getProductSwatches, getStockStatus } from "./productPresentation";
 import { artFitClass, setupArtVariant } from "../lib/setupImages";
-import { getSetupTier, TIER_STYLE } from "../lib/setups";
 import { getPreOrderInfo } from "./PreOrderData";
-import { CTAButton, DiscountBadge, Price, PreOrderPill, RatingChip } from "./section";
-import { formatBRLSpoken } from "../../utils/format";
+import { CTAButton, DiscountBadge, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge } from "./section";
 
 /**
  * ProductCard — organismo do catalogo (composto a partir dos primitivos do DS).
@@ -76,7 +74,6 @@ export function ProductCard({
   style,
 }: ProductCardProps) {
   const cfg = VARIANT[variant];
-  const setupTier = getSetupTier(product);
   const [isFavorited, setIsFavorited] = useState(false);
   const [selectedSwatchId, setSelectedSwatchId] = useState<number | null>(null);
   const { isLoggedIn } = useAuth();
@@ -209,24 +206,7 @@ export function ProductCard({
       </div>
 
       <div className="mt-4 px-1">
-        {/* Degrau do setup. Nome de linha ("Apex", "Cockpit") não diz se a
-            máquina é de entrada ou de topo, e o rótulo é o mesmo nas três
-            personas — é o que torna a escada aprendível de uma olhada. */}
-        {setupTier && (
-          <span
-            className="mb-1.5 inline-block rounded-full border px-2 py-0.5"
-            style={{
-              ...TIER_STYLE[setupTier],
-              fontFamily: "var(--font-family-inter)",
-              fontSize: "var(--text-caption)",
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-            }}
-          >
-            {setupTier}
-          </span>
-        )}
+        <SetupTierBadge product={product} />
 
         <h3
           className={`${cfg.clamp} text-ink-strong`}
@@ -249,38 +229,11 @@ export function ProductCard({
         {/* Nota abaixo do título — mesmo lugar do card do catálogo. */}
         <RatingChip rating={product.rating} reviews={product.reviews} className="mt-1.5" />
 
-        <div className="mt-3">
-          {oldPriceNum > product.priceNum && (
-            <p
-              className="line-through leading-none mb-1"
-              style={{
-                fontFamily: "var(--font-family-inter)",
-                fontSize: "var(--text-sm)",
-                color: "rgba(var(--foreground-rgb), 0.62)",
-              }}
-            >
-              <Price value={oldPriceNum} label="Preço anterior" />
-            </p>
-          )}
-          <p
-            className="text-ink-strong leading-none"
-            style={{
-              fontFamily: "var(--font-family-figtree)",
-              fontSize: "var(--text-lg)",
-              fontWeight: 700,
-              letterSpacing: "-0.015em",
-            }}
-          >
-            <Price value={product.priceNum} />
-          </p>
-          <p
-            className="mt-1.5 leading-tight"
-            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", color: "rgba(var(--foreground-rgb), 0.55)" }}
-          >
-            <span aria-hidden="true">No PIX ou 10x de R$ {(product.priceNum / 10).toFixed(2).replace(".", ",")}</span>
-            <span className="sr-only">No PIX ou 10 vezes de {formatBRLSpoken(product.priceNum / 10)}</span>
-          </p>
-        </div>
+        <PriceBlock
+          className="mt-3"
+          priceNum={product.priceNum}
+          oldPriceNum={oldPriceNum > product.priceNum ? oldPriceNum : undefined}
+        />
       </div>
     </>
   );

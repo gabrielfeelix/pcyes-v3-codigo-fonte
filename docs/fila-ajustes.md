@@ -1,6 +1,6 @@
 # Fila de ajustes — estado e pendências
 
-Documento de passagem de bastão. Última atualização: **04/08/2026**, commit `ac0fefe`.
+Documento de passagem de bastão. Última atualização: **06/08/2026**, commit `aa73765` + rodada de dívida técnica.
 
 Status: `[ ]` a fazer · `[~]` em andamento · `[x]` resolvido · `[!]` decisão pendente
 
@@ -19,7 +19,8 @@ Status: `[ ]` a fazer · `[~]` em andamento · `[x]` resolvido · `[!]` decisão
 - **Medir não é verificar.** Já aconteceu de eu ler números, dar por bom e passar um bug
   visível (dois botões colidindo). Sempre tire o print E olhe.
 - **Popup atrapalha screenshot:** o convite de cadastro abre sobre a página e escurece tudo.
-  Dispense com `localStorage`/`sessionStorage` ou clique em "Não, obrigado" antes de fotografar.
+  A chave é `sessionStorage["pcyes-welcome"] = "seen"` — ponha num `addInitScript` antes de
+  navegar. O banner de cookies também cobre card, e esse não tem chave: clique em "Aceitar".
 
 ---
 
@@ -154,24 +155,64 @@ busca — mexer numa obriga a revisitar a outra.
 
 ## Dívida técnica
 
-- **[ ] Dois cards de produto em paralelo.** `ProductCard.tsx` e o markup inline da listagem
-  em `ProductsPage.tsx` (~linha 1710). Toda mudança de card precisa ser feita duas vezes — o
-  selo de degrau foi implementado duas vezes por causa disso.
+- **[x] `CategoryGrid.tsx` era código morto.** Apagado. O único vestígio era um comentário no
+  `DealsHighlight` que o citava como exemplo de `stroke-hover-red`; passou a citar
+  `BannerDuo` e `InRealLifeSection`, que existem.
 
-- **[ ] `CategoryGrid.tsx` é código morto.** Não é importado em lugar nenhum. Dá para apagar.
+- **[x] Padding fixo de imagem** em `DropDoDiaSection`, `IntelligentDevices`, `GpuShowcase` e
+  `ProductCarousel` → `artFitClass(src, padding)` nos quatro. O `ProductCarousel` desenha num
+  quadro 5:6 e também ganhou `setupArtVariant(src, "tall")`, como o `ProductCard`. Nenhuma
+  dessas listas tem setup hoje, então na tela nada muda — muda no dia em que tiver.
 
-- **[ ] Padding fixo de imagem** em `DropDoDiaSection`, `IntelligentDevices`, `GpuShowcase` e
-  `ProductCarousel`. Hoje as listas são de IDs curados sem setup; se um dia incluírem, a arte
-  ambientada volta a flutuar no meio da moldura. A correção é `artFitClass(src, padding)`.
+- **[x] `public/setups/_originais-1448/`** virou `assets-fonte/setups-1448/`, com README.
+  O problema maior não era o git: a pasta estava dentro de `public/`, então os 17 MB de PNG
+  master iam para `dist/` a cada build sem que página nenhuma os pedisse. O `dist/` caiu de
+  36 MB para 19 MB.
+
+- **[~] Dois cards de produto em paralelo.** `ProductCard.tsx` e o markup inline da listagem
+  em `ProductsPage.tsx` continuam existindo, mas as três partes que doíam saíram para
+  primitivos em `components/section/`:
+
+  - `SetupTierBadge` — o selo de degrau, que era o exemplo do problema (escrito duas vezes).
+  - `PriceBlock` — preço anterior + preço + parcela. Estava copiado em **quatro** lugares
+    (`ProductCard`, listagem, `ProductCarousel`, relacionados da PDP), com duas escalas:
+    `card` (`--text-lg`/`--text-caption`) e `catalog` (`--text-xl`/`--text-sm`).
+  - `InstallmentLine` — a linha da parcela sozinha, para a visão em lista.
+
+  De brinde, três dessas quatro cópias escreviam preço e parcela como texto puro, sem a
+  versão `sr-only` falada — o NVDA não anuncia o "R$" na configuração padrão, então o leitor
+  de tela ouvia "R 1899 vírgula 90", sem moeda. Só o `ProductCard` tinha o tratamento (via
+  `Price`); agora os quatro têm.
+
+  > **Fundir os dois cards num só ainda não dá — e é decisão de design, não refactor.**
+  > Contei ~15 divergências deliberadas entre eles: escala de preço, `mb-4` a mais no poço da
+  > imagem, corte do título (1 linha × 2), breakpoint do hover (`md` × `lg`), tratamento da
+  > foto (`group-hover:scale-[1.05]` × `sm:scale-[0.92] group-hover:scale-[0.97]`), botão de
+  > favorito com desenho diferente, quick view só na listagem, selo de switch só na listagem,
+  > swatches com estado interno × controlado por fora, e o `<Link>` cobrindo o card inteiro ×
+  > só imagem e título. Um `variant="catalog"` que respeitasse tudo isso viraria uma máquina
+  > de condicionais pior que as duas implementações. O caminho real é o cliente escolher qual
+  > dos dois desenhos vence — aí a fusão é mecânica.
+
+- **[!] Parcela acima de R$ 1.000 ganhou separador de milhar.** Efeito colateral do
+  `PriceBlock`: a conta da parcela era `toFixed(2).replace(".", ",")` à mão em todos os
+  lugares, sem separador, enquanto o preço logo acima usava `formatBRL`, com separador. No
+  mesmo card lia-se `R$ 20.499,00` e `10x de R$ 2049,90`. Agora os dois usam `formatBRL`.
+  **Muda pixel em 3 dos 9 setups** (Studio, Apex e Cockpit, os acima de R$ 10 mil) e em nada
+  mais — o resto do catálogo tem parcela abaixo de mil. Se o cliente preferir sem separador,
+  é trocar `formatBRL` por `toFixed` dentro de `InstallmentLine`, um lugar só.
+
+  Junto disso, `brl()` em `lib/setups.ts` era cópia byte a byte de `formatBRL` e virou um
+  alias. Sobra um formato de moeda escrito à mão fora do padrão: o `DropDoDiaSection`, que
+  escreve "ou R$ 1299,90 em 10x sem juros" com estrutura própria — não é o mesmo texto, então
+  não entrou no `PriceBlock`.
 
 - **[ ] Deploy pela CLI não configurado.** O README aponta para
   `pcyes-v3-codigo-fonte.vercel.app`, mas a conta Vercel logada na máquina (`gabfeelix1-7902`,
   time `freela1`) não tem projeto nenhum, e não há `.vercel/` nem workflow no `.github/`. Ou o
   projeto vive em outra conta, ou o deploy sai da integração com o GitHub. Precisa de
-  `vercel link` (interativo) ou da conta certa.
-
-- **[ ] `public/setups/_originais-1448/`** está sem rastrear no git desde antes desta rodada.
-  Decidir se entra ou vai para o `.gitignore`.
+  `vercel link` (interativo) ou da conta certa. **Não dá para resolver sozinho** — o comando
+  é interativo e depende de qual conta é a certa.
 
 ---
 
