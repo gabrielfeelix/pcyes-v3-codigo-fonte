@@ -752,7 +752,13 @@ export function CartPage() {
                             setCouponError("");
                           }}
                           onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
-                          className="flex-1 px-3.5 py-2.5 text-ink-strong placeholder:text-ink-subtle focus:outline-none transition-all cart-field"
+                          /* `pcyes-coupon-input`: este campo vive no `motion.div`
+                             de altura animada logo acima, que é `overflow-hidden`
+                             e recorta o anel de foco global (desenhado 2px PARA
+                             FORA). Sem a classe, o foco vira um retângulo de
+                             cantos retos destacado do campo, em vez do realce da
+                             própria borda. Mesmo tratamento do cupom do checkout. */
+                          className="pcyes-coupon-input flex-1 px-3.5 py-2.5 text-ink-strong placeholder:text-ink-subtle focus:outline-none transition-all cart-field"
                           style={{
                             borderRadius: "var(--radius-card-sm)",
                             border: "1px solid rgba(var(--foreground-rgb), 0.1)",

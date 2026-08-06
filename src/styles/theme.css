@@ -690,9 +690,15 @@ input:-webkit-autofill:active {
   outline: none !important;
 }
 
-/* Cupom (checkout): input dentro de motion.div com overflow-hidden (animação de
-   altura) — o outline de foco recortado vira borda + box-shadow INSET, ambos
-   dentro do input, então não são cortados. */
+/* Cupom (carrinho E checkout): input dentro de motion.div com overflow-hidden
+   (animação de altura) — o outline de foco recortado vira borda + box-shadow
+   INSET, ambos dentro do input, então não são cortados.
+
+   Os dois campos são irmãos e precisam da classe: o do carrinho ficou sem ela
+   por um tempo e mostrava o anel global recortado — retângulo de cantos retos
+   destacado do campo, que lê como uma cor diferente da borda mesmo sendo a
+   mesma `--ring`. Quem criar um terceiro campo dentro de bloco animado põe a
+   classe também. */
 .pcyes-coupon-input:focus-visible {
   outline: none !important;
   border-color: var(--ring) !important;
