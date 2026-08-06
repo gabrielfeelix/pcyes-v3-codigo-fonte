@@ -3408,10 +3408,14 @@ export function ProductPage() {
       )}
       </div>
 
-      {/* Mobile sticky CTA */}
-      <div className={`fixed bottom-0 left-0 right-0 z-40 lg:hidden transition-all duration-300 ${
-        showMobileStickyCta ? "translate-y-0 opacity-100" : "translate-y-full opacity-0 pointer-events-none"
-      }`}>
+      {/* Mobile sticky CTA — ancorado acima do aviso de cookies, que é fixed
+          num z maior e cobria este botão por inteiro. Ver `--cookie-h`. */}
+      <div
+        style={{ bottom: "var(--cookie-h, 0px)" }}
+        className={`fixed left-0 right-0 z-40 lg:hidden transition-all duration-300 ${
+          showMobileStickyCta ? "translate-y-0 opacity-100" : "translate-y-full opacity-0 pointer-events-none"
+        }`}
+      >
         <div
           className="px-4 py-3 flex items-center gap-3 border-t border-foreground/10"
           style={{ background: isDark ? "rgba(16,16,17,0.95)" : "rgba(var(--foreground-rgb), 0.95)", backdropFilter: "blur(20px)" }}

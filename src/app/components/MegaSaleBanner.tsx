@@ -122,7 +122,9 @@ export function MegaSaleBanner() {
 
               <div className="flex flex-wrap items-center gap-3">
                 <Link
-                  to="/produtos?onlyDiscount=true"
+                  /* A listagem lê `promo=1` (ProductsPage:489). `onlyDiscount=true`
+                     era ignorado, então a CTA caía no catálogo inteiro. */
+                  to="/produtos?promo=1"
                   className="group/cta inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-white px-6 py-3.5 transition-transform hover:scale-[1.04] active:scale-[0.98]"
                   style={{
                     color: "#1a0000",

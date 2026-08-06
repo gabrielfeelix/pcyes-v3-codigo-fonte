@@ -1130,8 +1130,9 @@ export function CartPage() {
         )}
       </AnimatePresence>
 
-      {/* Mobile fixed bottom action bar — total + checkout CTA. lg:hidden, abaixo dos modais (z-[80]). */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
+      {/* Mobile fixed bottom action bar — total + checkout CTA. lg:hidden, abaixo dos modais (z-[80]).
+          Ancorada acima do aviso de cookies, que é fixed num z maior. Ver `--cookie-h`. */}
+      <div style={{ bottom: "var(--cookie-h, 0px)" }} className="fixed left-0 right-0 z-40 lg:hidden">
         <div
           className="flex items-center gap-3 border-t border-edge px-4 py-3"
           style={{ background: "rgba(14,14,14,0.95)", backdropFilter: "blur(20px)" }}

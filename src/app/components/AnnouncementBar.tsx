@@ -1,19 +1,53 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import { X } from "lucide-react";
+import { Check, Copy, X } from "lucide-react";
 
-const MESSAGES = [
-  "Que a Força esteja com seu setup ⚔️ · 25% OFF com cupom JEDI25",
-  "Estes não são os preços que você procura... são MELHORES ⭐ · até 60% OFF",
-  "Path of the Sith aceito · Cartão, PIX e até créditos do Império",
-  "I am your father... do desconto. Use NERDPRIDE pra 10% extra",
+/**
+ * A barra anunciava "25% OFF com cupom JEDI25" e não existia lugar nenhum no
+ * site para copiar o código — nem aqui, nem na home, nem no carrinho. Quem não
+ * decorasse o cupom na primeira leitura perdia o desconto, e a barra ainda pode
+ * ser fechada.
+ *
+ * Agora o código sai do texto e vira um chip que copia no clique. Fica onde a
+ * pessoa já está lendo a oferta, sem inventar um bloco novo na home — isso é
+ * assunto de marketing, e continua em aberto.
+ */
+const MESSAGES: { texto: string; cupom?: string }[] = [
+  { texto: "Que a Força esteja com seu setup ⚔️ · 25% OFF com cupom", cupom: "JEDI25" },
+  { texto: "Estes não são os preços que você procura... são MELHORES ⭐ · até 60% OFF" },
+  { texto: "Path of the Sith aceito · Cartão, PIX e até créditos do Império" },
+  { texto: "I am your father... do desconto. 10% extra com o cupom", cupom: "NERDPRIDE" },
 ];
 
 export function AnnouncementBar() {
   const [dismissed, setDismissed] = useState(false);
   const [idx, setIdx] = useState(0);
+  const [copiado, setCopiado] = useState(false);
+  const timerCopia = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const mensagem = MESSAGES[idx];
+
+  /* Um cupom por vez: trocar de anúncio limpa o "copiado" do anterior. */
+  useEffect(() => {
+    setCopiado(false);
+  }, [idx]);
+
+  useEffect(() => () => clearTimeout(timerCopia.current), []);
+
+  const copiar = async (cupom: string) => {
+    try {
+      await navigator.clipboard.writeText(cupom);
+    } catch {
+      /* Sem permissão de área de transferência (http, Safari antigo): o código
+         continua visível para copiar à mão, então só não confirmamos. */
+      return;
+    }
+    setCopiado(true);
+    clearTimeout(timerCopia.current);
+    timerCopia.current = setTimeout(() => setCopiado(false), 2000);
+  };
 
   useEffect(() => {
     document.documentElement.style.setProperty("--announce-h", dismissed ? "0px" : "40px");
@@ -88,21 +122,55 @@ export function AnnouncementBar() {
             ⚡ Semana do Orgulho Nerd
           </span>
 
-          <Link
-            to="/produtos"
-            key={idx}
-            className="line-clamp-1 text-center text-ink transition-opacity hover:text-ink-strong"
-            style={{
-              fontFamily: "var(--font-family-inter)",
-              fontSize: "var(--text-caption)",
-              fontWeight: 600,
-              letterSpacing: "0.02em",
-              animation: "fadeSlide 0.45s ease",
-            }}
-          >
-            {MESSAGES[idx]}
-          </Link>
+          {/* O chip de cupom é um <button>, então não pode viver dentro do
+              <Link> — conteúdo interativo aninhado em <a> é HTML inválido e
+              o clique brigaria com a navegação. Por isso são irmãos. */}
+          <div key={idx} className="flex min-w-0 items-center gap-2" style={{ animation: "fadeSlide 0.45s ease" }}>
+            <Link
+              to="/produtos"
+              className="line-clamp-1 text-center text-ink transition-opacity hover:text-ink-strong"
+              style={{
+                fontFamily: "var(--font-family-inter)",
+                fontSize: "var(--text-caption)",
+                fontWeight: 600,
+                letterSpacing: "0.02em",
+              }}
+            >
+              {mensagem.texto}
+            </Link>
+
+            {mensagem.cupom && (
+              <button
+                type="button"
+                onClick={() => copiar(mensagem.cupom!)}
+                aria-label={copiado ? `Cupom ${mensagem.cupom} copiado` : `Copiar cupom ${mensagem.cupom}`}
+                className="group/cupom inline-flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-[3px] transition-colors cursor-pointer"
+                style={{
+                  borderColor: copiado ? "rgba(34,197,94,0.55)" : "rgba(255,232,31,0.45)",
+                  background: copiado ? "rgba(34,197,94,0.14)" : "rgba(255,232,31,0.10)",
+                  color: copiado ? "#4ade80" : "#ffe81f",
+                  fontFamily: "var(--font-family-inter)",
+                  fontSize: "var(--text-caption)",
+                  fontWeight: 800,
+                  letterSpacing: "0.08em",
+                }}
+              >
+                {mensagem.cupom}
+                {copiado ? (
+                  <Check size={11} strokeWidth={2.6} aria-hidden="true" />
+                ) : (
+                  <Copy size={11} strokeWidth={2.2} aria-hidden="true" />
+                )}
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* WCAG 4.1.3 — confirma a cópia para leitor de tela; o "copiado" do
+            chip é só cor e ícone. */}
+        <span role="status" aria-live="polite" className="sr-only">
+          {copiado ? `Cupom ${mensagem.cupom} copiado` : ""}
+        </span>
 
         <div className="flex items-center gap-2">
           <button

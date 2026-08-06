@@ -8,7 +8,11 @@ Status: `[ ]` a fazer · `[~]` em andamento · `[x]` resolvido · `[!]` decisão
 
 ## Como trabalhar neste repositório
 
-- **Dev server:** `npm run dev -- --port 5220`. Ele cai entre sessões; reinicie antes de testar.
+- **Dev server:** `npm run dev -- --port 5220`. **Ele não cai entre sessões — ele acumula.**
+  Já achei três `vite` vivos ao mesmo tempo, um deles de horas antes, servindo módulos velhos:
+  a página quebrava com "does not provide an export named X" enquanto o código no disco estava
+  certo. Se o comando avisar que subiu em **outra porta**, tem zumbi na 5220. Mate todos
+  (`pkill -f vite`), apague `node_modules/.vite` e suba um só.
 - **Build:** `npm run build`. Roda sitemap + prerender e valida a taxonomia — se o número de
   rotas mudar sem motivo, alguma URL quebrou.
 - **`npm run typecheck` NÃO funciona:** `typescript` não está instalado (`tsc: not found`).
@@ -139,17 +143,36 @@ busca — mexer numa obriga a revisitar a outra.
 
 ---
 
-## Bugs achados e ainda abertos
+## Bugs
 
-- **[ ] `MegaSaleBanner` usa `?onlyDiscount=true`** ([linha 125](../src/app/components/MegaSaleBanner.tsx#L125)).
-  Mesmo bug que corrigi no `DealsHighlight`: a listagem lê `promo=1`, então o link leva ao
-  catálogo inteiro (489 produtos) em vez do filtrado (280). É trocar um parâmetro.
+- **[x] `MegaSaleBanner` usava `?onlyDiscount=true`.** Agora `promo=1`, que é o que a listagem
+  lê (`ProductsPage:489`). Conferido no navegador: `/produtos?promo=1` mostra 280 produtos com
+  a pílula "Promoção" ligada; `/produtos` mostra 489.
 
-- **[ ] Cupom JEDI25 sem superfície na home.** A barra do topo anuncia "25% OFF com cupom
-  JEDI25" e não existe lugar nenhum para copiar o código. A barra ainda pode ser fechada.
+- **[x] Banner de cookies cobria o card de compra.** Era pior do que estava escrito aqui: o
+  aviso é `fixed bottom-0` num `z-[80]`, e **quatro** páginas têm barra fixa embaixo num
+  `z-40` — PDP, carrinho, checkout e Monte seu PC. No celular ele cobria o "Comprar agora"
+  inteiro, preço e botão (medido: barra em y 774–844, aviso a partir de y 655).
 
-- **[ ] Banner de cookies cobre o card de compra** na página de produto, bem em cima da área
-  de frete.
+  A altura do aviso agora é medida e publicada em `--cookie-h`, no mesmo padrão do
+  `--announce-h` da `AnnouncementBar`. Quem ancora embaixo usa `bottom: var(--cookie-h, 0px)`,
+  e o `main` ganha o mesmo valor de `padding-bottom` para que o fim da página não fique
+  escondido. Aceito ou recusado, volta a `0px` e o layout reflui.
+
+  > **Verificado de verdade só na PDP** (celular: a barra saiu de y 774–844 para 510–580, sem
+  > sobreposição; desktop: "Consultar frete" e o campo de CEP livres). Carrinho, checkout e
+  > Monte seu PC receberam a **mesma linha**, mas não consegui exercitar: o carrinho vive só
+  > em memória (o `CartContext` não persiste em `localStorage`), então recarregar a página
+  > esvazia, e o fluxo de adicionar pelo Playwright não fechou. Vale um olhar humano nos três.
+
+- **[x] Cupom sem lugar para copiar.** O código saiu do texto da `AnnouncementBar` e virou um
+  chip que copia no clique, com confirmação em `role="status"` para leitor de tela. Vale para
+  os dois cupons da barra, JEDI25 e NERDPRIDE. O chip é irmão do `<Link>`, não filho —
+  `<button>` dentro de `<a>` é HTML inválido e o clique brigaria com a navegação.
+
+  > **Continua aberto:** um bloco de cupom na home. O chip resolve "não dá para copiar", não
+  > resolve "a barra pode ser fechada e o cupom some do site". Onde esse bloco entra é decisão
+  > de marketing, como o card de promoções mobile.
 
 ---
 

@@ -83,6 +83,15 @@
      reflows the layout cleanly instead of leaving a 40px gap. */
   --announce-h: 40px;
 
+  /* Altura do aviso de cookies (medida e escrita por CookieConsent.tsx).
+     Ele é `fixed bottom-0` num z acima de tudo, e as páginas de compra têm a
+     PRÓPRIA barra fixa embaixo (PDP, carrinho, checkout, Monte seu PC): sem
+     isto o aviso cobria o botão "Comprar agora" por inteiro no celular.
+     Quem tem barra embaixo ancora em `bottom: var(--cookie-h)`; o `main`
+     ganha o mesmo valor de padding para que nada fique escondido embaixo
+     do aviso. Aceito ou recusado, volta a 0px e o layout reflui. */
+  --cookie-h: 0px;
+
   /* ===================================================================
      CARD RADIUS FAMILY
      Existing --radius (4px) and --radius-card (8px) cover form controls

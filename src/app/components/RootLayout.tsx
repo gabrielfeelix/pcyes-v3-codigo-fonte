@@ -42,7 +42,16 @@ export function RootLayout() {
                   <AuthModal />
                   <WelcomePopup />
                   <CookieConsent />
-                  <main id="main-content" tabIndex={-1} className="outline-none">
+                  {/* O aviso de cookies é `fixed bottom-0`: sem reservar a altura
+                      dele, o rodapé da página e o fim do card de compra ficam
+                      permanentemente escondidos embaixo. Aceito ou recusado,
+                      `--cookie-h` volta a 0px. */}
+                  <main
+                    id="main-content"
+                    tabIndex={-1}
+                    className="outline-none"
+                    style={{ paddingBottom: "var(--cookie-h, 0px)" }}
+                  >
                     <Outlet />
                   </main>
                 </div>

@@ -6364,10 +6364,12 @@ export function MonteSeuPcPage() {
                     </aside>
                   </div>
 
-                  {/* Mobile fixed action bar */}
+                  {/* Mobile fixed action bar — ancorada acima do aviso de cookies,
+                      que é fixed num z maior. Ver `--cookie-h`. */}
                   <div
-                    className="fixed bottom-0 left-0 right-0 z-40 flex items-center gap-3 border-t border-edge px-4 py-3 lg:hidden"
+                    className="fixed left-0 right-0 z-40 flex items-center gap-3 border-t border-edge px-4 py-3 lg:hidden"
                     style={{
+                      bottom: "var(--cookie-h, 0px)",
                       background: "rgba(14,14,14,0.96)",
                       backdropFilter: "blur(20px)",
                       WebkitBackdropFilter: "blur(20px)",
