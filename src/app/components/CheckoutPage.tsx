@@ -32,6 +32,7 @@ import { useAuth } from "./AuthContext";
 import { AddressFormModal } from "./AddressFormModal";
 import { CardFormModal } from "./CardFormModal";
 import { Footer } from "./Footer";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
@@ -1643,18 +1644,64 @@ export function CheckoutPage() {
                             {/* Parcelas — visível sempre que payment=credit (cartão novo ou salvo) */}
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mt-2">
                               <Field label="Parcelas" className="md:col-span-2">
-                                <select
-                                  value={installments}
-                                  onChange={(e) => setInstallments(Number(e.target.value))}
-                                  className={`${inputClass} checkout-field`}
-                                  style={inputStyle}
+                                {/*
+                                  Select do DS, não `<select>` nativo. O nativo tinha três
+                                  problemas aqui, todos fora do alcance de CSS:
+
+                                  · a lista aberta é desenhada pelo SISTEMA — `<option>` quase
+                                    não aceita estilo, então vinha o menu do sistema operacional,
+                                    com o item ativo em azul, no meio de um checkout escuro;
+                                  · a seta é do navegador e fica colada na borda direita,
+                                    ignorando o padding do campo;
+                                  · o campo vive no `motion.div` de altura animada logo acima,
+                                    que é `overflow-hidden` — o anel de foco global, desenhado
+                                    2px para fora, saía cortado (mesma armadilha do cupom).
+
+                                  O Radix resolve os três: a lista vai para um portal (não é
+                                  recortada nem pelo `overflow-hidden` nem pelo sistema), o
+                                  chevron é nosso e respeita o padding, e o foco é `box-shadow`,
+                                  que não precisa de espaço fora do campo.
+                                */}
+                                <Select
+                                  value={String(installments)}
+                                  onValueChange={(v) => setInstallments(Number(v))}
                                 >
-                                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-                                    <option key={n} value={n} style={{ background: "var(--surface-2)" }}>
-                                      {n}× {formatBRL(baseTotal / n)} sem juros
-                                    </option>
-                                  ))}
-                                </select>
+                                  <SelectTrigger
+                                    aria-label="Parcelas"
+                                    /*
+                                      `!h-auto` — o trigger do DS chega com `h-9` fixo, que
+                                      encolheria o campo perto dos vizinhos do checkout.
+
+                                      `pcyes-field-ring` + `focus-visible:ring-0` — o foco
+                                      vinha com DOIS anéis: o `ring` de 3px do DS, colado, e o
+                                      anel global de 1px a 2px de distância. O de fora é o que
+                                      o `overflow-hidden` do bloco animado cortava. A classe
+                                      zera o outline global e desenha um anel só, colado na
+                                      borda; o `ring-0` tira o do DS para não somarem.
+                                    */
+                                    className="pcyes-field-ring checkout-field w-full !h-auto justify-between text-ink-strong transition-all focus-visible:ring-0 data-[state=open]:border-primary/45 [&_svg]:text-ink-muted [&_svg]:opacity-100"
+                                    style={inputStyle}
+                                  >
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent
+                                    /* Largura do gatilho: a lista alinhada com o campo lê como
+                                       continuação dele, não como caixa solta. */
+                                    className="w-[var(--radix-select-trigger-width)] border-edge bg-surface-1 text-ink-strong shadow-2xl shadow-black/60"
+                                    style={{ borderRadius: "var(--radius-card-sm)" }}
+                                  >
+                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                                      <SelectItem
+                                        key={n}
+                                        value={String(n)}
+                                        className="cursor-pointer rounded-[var(--radius)] focus:bg-primary/15 focus:text-ink-strong data-[state=checked]:text-primary"
+                                        style={{ fontFamily: "var(--font-family-inter)", fontWeight: 600 }}
+                                      >
+                                        {n}× {formatBRL(baseTotal / n)} sem juros
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
                               </Field>
                             </div>
                           </motion.div>
