@@ -15,6 +15,18 @@ import { formatBRL, formatBRLSpoken } from "../../../utils/format";
  *
  * `price`/`oldPrice` aceitam o texto já formatado que vem do dado do produto;
  * sem eles o valor é formatado aqui. A fala sai sempre do número.
+ *
+ * VERDE DE ECONOMIA (`--save`): quando há preço anterior, o percentual sai em
+ * verde ao lado do preço. Antes o card não tinha verde nenhum — o desconto só
+ * existia como selo vermelho sobre a foto, e vermelho no card já significa
+ * outras três coisas (marca, oferta, pré-venda). Verde é o que faz o olho
+ * registrar "estou economizando" antes de ler o número.
+ *
+ * Um verde só: a palavra PIX chegou a sair em verde também e os dois, em linhas
+ * coladas, disputavam a atenção. O desconto ganhou.
+ *
+ * O percentual é DERIVADO dos dois preços, nunca escrito à mão: card e selo da
+ * foto sempre concordam, e ninguém precisa lembrar de atualizar os dois.
  */
 
 type PriceScale = "card" | "catalog";
@@ -30,7 +42,13 @@ interface InstallmentLineProps {
   className?: string;
 }
 
-/** "No PIX ou 10x de R$ X" — visual e falado. */
+/**
+ * "No PIX ou 10x de R$ X" — visual e falado.
+ *
+ * Sem destaque no "PIX", de propósito: chegou a sair em verde junto com o
+ * percentual e ficaram dois verdes em linhas coladas, competindo. O verde no
+ * card é UM só, e é o do desconto — que é o que precisa ser visto primeiro.
+ */
 export function InstallmentLine({ priceNum, scale = "card", className = "mt-1.5" }: InstallmentLineProps) {
   const parcela = priceNum / 10;
   const cfg = SCALE[scale];
@@ -71,6 +89,14 @@ export function PriceBlock({
   const cfg = SCALE[scale];
   const hasOld = Boolean(oldPrice) || (oldPriceNum !== undefined && oldPriceNum > priceNum);
 
+  /* Derivado, nunca escrito à mão — o mesmo cálculo do selo sobre a foto.
+     Só sai quando há número: com `oldPrice` apenas como texto não dá para
+     calcular, e um "OFF" sem percentual não informa nada. */
+  const off =
+    oldPriceNum !== undefined && oldPriceNum > priceNum
+      ? Math.round(((oldPriceNum - priceNum) / oldPriceNum) * 100)
+      : 0;
+
   return (
     <div className={className}>
       {hasOld && (
@@ -97,18 +123,41 @@ export function PriceBlock({
         </p>
       )}
 
-      <p
-        className="text-ink-strong leading-none"
-        style={{
-          fontFamily: "var(--font-family-figtree)",
-          fontSize: cfg.price,
-          fontWeight: 700,
-          letterSpacing: "-0.015em",
-        }}
-      >
-        <span aria-hidden="true">{price ?? formatBRL(priceNum)}</span>
-        <span className="sr-only">{formatBRLSpoken(priceNum)}</span>
-      </p>
+      {/* `items-baseline`: o percentual é bem menor que o preço, e alinhado pelo
+          centro ele flutuava acima da linha dos algarismos. */}
+      <div className="flex flex-wrap items-baseline gap-x-2">
+        <p
+          className="text-ink-strong leading-none"
+          style={{
+            fontFamily: "var(--font-family-figtree)",
+            fontSize: cfg.price,
+            fontWeight: 700,
+            letterSpacing: "-0.015em",
+          }}
+        >
+          <span aria-hidden="true">{price ?? formatBRL(priceNum)}</span>
+          <span className="sr-only">{formatBRLSpoken(priceNum)}</span>
+        </p>
+
+        {off > 0 && (
+          /* Texto puro, sem pílula: o selo sobre a foto já é uma pílula, e duas
+             a dois centímetros uma da outra brigam. Aqui a cor basta.
+             O "OFF" fica junto do número e não só na cor — WCAG 1.4.1 pede que
+             a informação não dependa de cor sozinha. */
+          <span
+            className="leading-none"
+            style={{
+              fontFamily: "var(--font-family-inter)",
+              fontSize: cfg.installment,
+              fontWeight: 700,
+              color: "var(--save)",
+              letterSpacing: "0.01em",
+            }}
+          >
+            {off}% OFF
+          </span>
+        )}
+      </div>
 
       <InstallmentLine priceNum={priceNum} scale={scale} />
     </div>
