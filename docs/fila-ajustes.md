@@ -166,6 +166,19 @@ busca — mexer numa obriga a revisitar a outra.
 
 ## Pendente — decisão do cliente, não técnica
 
+- **[!] Header inteiro ilegível no tema claro.** A barra do topo tem fundo `#000000` chumbado
+  (está comentado no `Navbar`: "keep text/icons white in both themes"), mas os textos usam
+  `text-ink`/`text-ink-strong`, que no claro resolvem para `rgba(22,22,22,0.95)` — preto sobre
+  preto. Medido no navegador: **11 de 12 elementos a 1,16:1**, contra 21:1 no escuro. Pega
+  "Entrega", "Informar CEP", "Todas", "Entre ou / Cadastre-se" e a nav inteira.
+
+  Não é regressão: o próprio `theme.css` diz que "Light ainda é rascunho (milestone próprio);
+  dark é o que vale hoje". Fica registrado com número para quando esse milestone abrir — a
+  correção é o header parar de herdar `ink` e fixar branco, já que o fundo dele não muda de
+  tema. **Não consertei de surpresa** porque troca a cor de todo o header e a decisão é do
+  milestone, não desta rodada.
+
+
 - **[!] `sessionStorage` do `WelcomePopup`.** O convite volta a cada aba nova. Trocar por
   `localStorage` com prazo (ex.: 30 dias) muda quantas vezes uma pessoa real vê a oferta.
   É decisão de marketing.

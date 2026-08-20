@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
 import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
+import { PcyesCoin } from "./PcyesCoin";
 import { useFavorites } from "./FavoritesContext";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { HeaderDelivery } from "./HeaderDelivery";
@@ -586,7 +587,7 @@ export function Navbar() {
   const megaTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { totalItems, setIsOpen: setCartOpen } = useCart();
-  const { isLoggedIn, setAuthModalOpen, logout } = useAuth();
+  const { isLoggedIn, user, setAuthModalOpen, logout } = useAuth();
   const { count: favCount } = useFavorites();
   const { resolvedTheme } = useTheme();
   const navigate = useNavigate();
@@ -1989,7 +1990,20 @@ export function Navbar() {
                       linhas a 1280px. */}
                   <span className="hidden flex-col whitespace-nowrap text-left leading-[1.15] xl:flex" style={{ fontFamily: "var(--font-family-inter)" }}>
                     {isLoggedIn ? (
-                      <span style={{ fontSize: "var(--text-sm)", fontWeight: 600 }}>Minha conta</span>
+                      <>
+                        <span style={{ fontSize: "var(--text-sm)", fontWeight: 600 }}>Minha conta</span>
+                        {/* O saldo ocupa a segunda linha, que deslogado é o
+                            "Entre ou" e logado ficava vazia — o bloco encolhia e
+                            desalinhava dos ícones ao lado. Saldo é o dado que
+                            mais faz voltar, e antes só aparecia no carrinho e no
+                            checkout, tarde demais para influenciar a compra. */}
+                        {typeof user?.pcyesPoints === "number" && user.pcyesPoints > 0 && (
+                          <span className="flex items-center gap-1" style={{ fontSize: "var(--text-caption)", fontWeight: 700, color: "#facc15" }}>
+                            <PcyesCoin size={11} />
+                            {user.pcyesPoints} pts
+                          </span>
+                        )}
+                      </>
                     ) : (
                       <>
                         <span className="opacity-55" style={{ fontSize: "var(--text-caption)" }}>Entre ou</span>
