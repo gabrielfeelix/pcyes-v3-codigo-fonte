@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useMemo, useRef } from "react";
+import { useNavigate } from "react-router";
 import { motion, useInView } from "motion/react";
-import { ArrowRight, Heart, ShoppingCart, Zap } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { useFavorites } from "./FavoritesContext";
@@ -15,34 +15,36 @@ import {
   getShowcaseProducts,
   getVisibleCatalogProducts,
 } from "./productPresentation";
-import { SectionHeader, CTAButton, DiscountBadge } from "./section";
+import { SectionHeader } from "./section";
 import { ProductCard } from "./ProductCard";
 
 /**
- * Arte do banner — setup PCYES montado sobre a mesa.
+ * Arte do banner da direita.
+ *
+ * PROVISÓRIA: o destino do slot é uma peça fechada do marketing. Até lá vale a
+ * arte de setup montado, que é o que existe no repositório.
  *
  * O convite fala com quem NÃO entende de peça. Fotos de interior de gabinete
- * mostravam justamente o que assusta esse público — cabos, dissipadores,
- * placas — e ainda vinham com logo de concorrente à mostra (ASUS, MSI). Aqui a
- * imagem mostra o resultado: a máquina pronta, ligada, em cima da mesa.
+ * mostram justamente o que assusta esse público — cabos, dissipadores, placas —
+ * e ainda vinham com logo de concorrente à mostra (ASUS, MSI). Esta mostra o
+ * resultado: a máquina pronta, ligada, em cima da mesa.
  *
- * `object-position` puxa o enquadramento para a direita porque a arte é larga e
- * traz o letreiro "PCYES Base" no canto esquerdo — nomear uma linha específica
- * não faz sentido num banner genérico.
+ * Variante `tall` (1000×1200, 5:6), não a `wide`: o slot é EM PÉ — no desktop
+ * ele estica pela altura das duas fileiras de produto ao lado, algo perto de
+ * 360×820. Com a arte larga, `object-cover` mostrava a cena quase inteira e
+ * trazia junto o letreiro "PCYES Base", que nomeia uma linha específica num
+ * banner genérico.
  */
-const BUILD_PHOTO = "/setups/wide/setup-base.webp";
-
-/** Arte do card de builds prontas — mesma família, outro setup. */
-const SETUP_PHOTO = "/setups/wide/setup-strike.webp";
+const BANNER_ARTE = "/setups/tall/setup-base.webp";
 
 /**
- * Piso de altura das duas portas do "Monte seu PC".
+ * Piso de altura do banner.
  *
- * O mesmo valor nos dois cards, de propósito: eles vivem numa grade de duas
- * fileiras `1fr` e precisam terminar na mesma altura. Um mínimo diferente em
- * cada um desempata a fileira e volta o degrau que existia antes.
+ * No desktop quem manda é a coluna ao lado: o banner estica até a altura das
+ * duas fileiras de produto. O piso só vale no celular, onde a coluna fica
+ * sozinha e sem altura para herdar.
  */
-const PORTA_MIN_H = "clamp(320px, 68vw, 400px)";
+const BANNER_MIN_H = "clamp(300px, 62vw, 380px)";
 
 interface DealsHighlightProps {
   label?: string;
@@ -62,15 +64,32 @@ export function DealsHighlight({
   const { addItem } = useCart();
   const { addFavorite } = useFavorites();
 
-  const products = useMemo(() => {
+  /**
+   * Oito produtos, sempre — a grade é 4×2 e um buraco na segunda fileira salta
+   * aos olhos.
+   *
+   * A lista curada nem sempre entrega oito: `getShowcaseProducts` corta quem não
+   * tem foto usável, e hoje a pasta térmica (id 27) cai nesse filtro, deixando a
+   * vitrine com sete. Em vez de caçar o id quebrado a cada mudança de catálogo,
+   * a lista se completa sozinha com os primeiros da vitrine que ainda não estão
+   * nela. Os curados continuam vindo primeiro e na ordem escrita.
+   */
+  const vitrine = useMemo(() => {
     const visible = getShowcaseProducts(allProducts);
-    const resolved = productIds
+    const curados = productIds
       .map((id) => visible.find((p) => p.id === id))
       .filter(Boolean) as Product[];
-    return resolved.slice(0, 8);
-  }, [productIds]);
 
-  const rest = products.slice(1, 7); // 6 products (3 cols × 2 rows)
+    const escolhidos = curados.slice(0, 8);
+    if (escolhidos.length < 8) {
+      const jaTem = new Set(escolhidos.map((p) => p.id));
+      for (const p of visible) {
+        if (escolhidos.length === 8) break;
+        if (!jaTem.has(p.id)) escolhidos.push(p);
+      }
+    }
+    return escolhidos;
+  }, [productIds]);
 
   /* Contagem e preço de entrada das builds prontas vêm do catálogo. O card
      anterior trazia "+200 itens" chumbado no código — o número real era 280. */
@@ -115,16 +134,33 @@ export function DealsHighlight({
         {/* Header */}
         <SectionHeader eyebrow={label} title={title} size="sm" weight={600} className="mb-10" />
 
-        {/* Grid: products (left) + featured (right) */}
-        <div className="grid gap-5 md:gap-6 lg:grid-cols-[2fr_1fr]">
-          {/* LEFT: 6 products in 3 cols × 2 rows */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
-            {rest.map((product, i) => (
+        {/*
+          Grade densa: oito produtos em quatro colunas à esquerda, um banner em
+          pé à direita.
+
+          Antes eram seis produtos em três colunas e DOIS banners empilhados na
+          direita. Ficava enorme: cada card passava de 340px, e a coluna da
+          direita virava meio metro de altura para dizer duas frases. A seção
+          inteira empurrava o resto da home para baixo da dobra.
+
+          Quatro colunas resolvem pela densidade, não por encolher card no
+          braço: a mesma largura mostra 8 produtos em vez de 6, cada card cai
+          para ~244px sem perder foto, preço nem botão de compra, e a seção
+          inteira sai de ~1500px para 1096px de altura.
+
+          `2.6fr_1fr` dá ~27% ao banner (399px a 1600). Não é arredondado à toa:
+          com `3fr_1fr` (24%) a arte ficava estreita demais para o assunto, e
+          passando de 30% os cards começam a sufocar.
+        */}
+        <div className="grid gap-4 md:gap-5 lg:grid-cols-[2.6fr_1fr]">
+          {/* ESQUERDA: 8 produtos — 2 colunas no celular, 4 do md para cima. */}
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
+            {vitrine.map((product, i) => (
               <motion.div
                 key={product.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.45, delay: 0.05 * i }}
+                transition={{ duration: 0.45, delay: 0.04 * i }}
               >
                 <ProductCard
                   product={product}
@@ -137,146 +173,109 @@ export function DealsHighlight({
             ))}
           </div>
 
-          {/* RIGHT: as duas portas do "Monte seu PC" que sobram fora do quiz —
-              montar e comprar pronto. Em coluna única a altura acompanhava as
-              duas fileiras de produto e sobravam ~525px de foto sem função. */}
-          <motion.div
+          {/*
+            DIREITA: um banner só, na altura das duas fileiras de produto.
+
+            É um SLOT DE ARTE. O conteúdo abaixo (texto + botões sobre a foto) é
+            o que existe hoje, mas o destino é receber uma peça fechada do
+            marketing — quando ela chegar, troca-se `BANNER_ARTE` e apagam-se as
+            camadas de texto; o enquadramento e a proporção não mudam.
+
+            Proporção: a coluna é 1/4 da grade e a altura vem das duas fileiras
+            de produto ao lado, então a arte precisa ser VERTICAL (algo perto de
+            3:4). Arte horizontal aqui vai sobrar nas laterais ou cortar o
+            assunto.
+          */}
+          <motion.a
+            href="/monte-seu-pc?inicio=quiz"
+            onClick={(e) => { e.preventDefault(); navigate("/monte-seu-pc?inicio=quiz"); }}
+            data-keep-dark
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.55, delay: 0.15 }}
-            /* Grade de duas fileiras `1fr`, não flex: com `flex-[1.2]` e
-               `flex-1` o card do quiz ficava 20% mais alto que o de builds, e
-               no celular, onde a coluna não tem altura para repartir, cada um
-               parava na própria altura de conteúdo. Duas fileiras iguais casam
-               a altura nos dois casos, pelo maior conteúdo. */
-            className="grid h-full grid-rows-2 gap-5 md:gap-6"
-          >
-          <div
-            data-keep-dark
             /* `stroke-hover-red` é o hover de banner do sistema (mesmo de
-               BannerDuo e InRealLifeSection): o anel vermelho é
-               o estado de HOVER. Aqui ele estava como borda e brilho fixos, o
-               que obrigava a inventar um segundo realce por cima. */
-            className="stroke-hover-red group/quiz relative flex min-h-0 flex-col justify-between overflow-hidden border border-white/10 p-7 md:p-9"
-            style={{
-              background:
-                "radial-gradient(circle at 25% 15%, rgba(255,90,80,0.35) 0%, transparent 55%), radial-gradient(circle at 80% 85%, rgba(225,6,0,0.4) 0%, transparent 55%), linear-gradient(135deg, #b00500 0%, #6e0200 50%, #2a0000 100%)",
-              borderRadius: "var(--radius-card-xl)",
-              /* Sem `boxShadow` inline: estilo inline vence a regra de
-                 `.stroke-hover-red:hover` e o anel nunca aparecia. Os outros
-                 banners do sistema também não têm sombra em repouso. */
-              /* Mesmo piso do card de baixo — as duas fileiras da grade são
-                 `1fr`, então um mínimo diferente desempataria a altura. */
-              minHeight: PORTA_MIN_H,
-            }}
+               BannerDuo e InRealLifeSection): o anel vermelho é o estado de
+               HOVER, não de repouso. */
+            className="stroke-hover-red group/banner relative flex min-h-0 flex-col justify-end overflow-hidden border border-white/10 p-7 md:p-8"
+            style={{ borderRadius: "var(--radius-card-xl)", minHeight: BANNER_MIN_H }}
+            aria-label="Monte seu PC — responder 3 perguntas"
           >
-            {/* Faint grid texture */}
+            {/* A arte ocupa o card inteiro. */}
+            <ImageWithFallback
+              src={BANNER_ARTE}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover/banner:scale-[1.04]"
+              style={{ objectPosition: "100% 52%" }}
+            />
+            {/* Escurecimento neutro, sem tingir: a foto já é vermelha e um
+                degradê vermelho por cima chapava tudo num bloco só. Preto puro
+                segura a legibilidade e deixa a cor da arte aparecer. */}
             <div
-              className="pointer-events-none absolute inset-0 opacity-[0.06]"
+              className="pointer-events-none absolute inset-0"
               style={{
-                backgroundImage:
-                  "linear-gradient(rgba(var(--foreground-rgb), 0.9) 1px, transparent 1px), linear-gradient(90deg, rgba(var(--foreground-rgb), 0.9) 1px, transparent 1px)",
-                backgroundSize: "44px 44px",
+                background:
+                  "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 34%, rgba(0,0,0,0.72) 68%, rgba(0,0,0,0.94) 100%)",
               }}
             />
 
-            {/* Foto ocupando o card inteiro. Ela é vertical, então acompanha a
-                coluna sem esticar. O degradê por cima é o que mantém a frase
-                legível: opaco no topo, abrindo para a foto na metade de baixo. */}
-            <div className="pointer-events-none absolute inset-0">
-              <ImageWithFallback
-                src={BUILD_PHOTO}
-                alt=""
-                aria-hidden
-                className="h-full w-full object-cover"
-                style={{ objectPosition: "88% 58%" }}
-              />
-              {/* Escurecimento neutro, sem tingir: a foto já é vermelha e o
-                  degradê vermelho por cima chapava tudo num bloco só. Preto
-                  puro segura a legibilidade e deixa a cor da foto aparecer. */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.8) 38%, rgba(0,0,0,0.62) 66%, rgba(0,0,0,0.28) 100%)",
-                }}
-              />
-            </div>
-
-            {/*
-              O CTA lidera pelo quiz, que é o caminho de menor esforço — e o que
-              a própria página de montagem marca como POPULAR. "Montar meu PC"
-              falava só com quem já sabe as peças, que é a minoria.
-
-              O link secundário existe para não fechar a porta dos outros dois
-              caminhos: quem já sabe o que quer não precisa passar pelo quiz.
-            */}
             <div className="relative">
-              {/* Sem eyebrow o card não dizia para onde levava, e destoava do
-                  resto da home, onde todo bloco abre com `// ALGUMA COISA`. */}
-              <div
-                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 mb-5"
+              {/* Sem eyebrow o banner não diz para onde leva, e destoa do resto
+                  da home, onde todo bloco abre com `// ALGUMA COISA`. */}
+              <span
+                className="mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5"
                 style={{
                   background: "rgba(255,255,255,0.12)",
                   border: "1px solid rgba(255,255,255,0.25)",
                   backdropFilter: "blur(8px)",
+                  fontFamily: "var(--font-family-inter)",
+                  fontSize: "var(--text-caption)",
+                  fontWeight: 700,
+                  letterSpacing: "0.14em",
+                  color: "#fff",
+                  textTransform: "uppercase",
                 }}
               >
-                <Zap size={11} strokeWidth={2.4} className="text-ink-strong" />
-                <span
-                  style={{
-                    fontFamily: "var(--font-family-inter)",
-                    fontSize: "var(--text-caption)",
-                    fontWeight: 700,
-                    letterSpacing: "0.14em",
-                    color: "#fff",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  // MONTE SEU PC
-                </span>
-              </div>
+                <Zap size={11} strokeWidth={2.4} /> // Monte seu PC
+              </span>
 
               <h3
                 className="text-ink-strong"
                 style={{
                   fontFamily: "var(--font-family-figtree)",
-                  fontSize: "clamp(30px, 2.8vw, 42px)",
+                  fontSize: "clamp(24px, 1.9vw, 32px)",
                   fontWeight: 800,
-                  lineHeight: 1.02,
+                  lineHeight: 1.05,
                   letterSpacing: "-0.03em",
-                  textShadow: "0 4px 24px rgba(0,0,0,0.55)",
+                  textShadow: "0 4px 24px rgba(0,0,0,0.6)",
                 }}
               >
                 Não sabe<br />qual PC comprar?
               </h3>
 
               <p
-                className="mt-4"
+                className="mt-3"
                 style={{
                   fontFamily: "var(--font-family-inter)",
                   fontSize: "var(--text-sm)",
                   color: "rgba(255,255,255,0.82)",
                   lineHeight: 1.5,
-                  maxWidth: "280px",
-                  textShadow: "0 2px 12px rgba(0,0,0,0.6)",
+                  textShadow: "0 2px 12px rgba(0,0,0,0.7)",
                 }}
               >
-                A gente pergunta, você responde. No fim sai a máquina certa pro que você joga.
+                Responde 3 perguntas e sai com a máquina certa — ou vê as {setups.length} builds
+                prontas{setupFrom ? `, a partir de ${setupFrom.price}` : ""}.
               </p>
 
-              {/* "Responder 3 perguntas" em vez de "Fazer o quiz": o quiz tem
-                  três passos, e dizer o tamanho antes do clique tira o medo de
-                  compromisso aberto. Largura cheia porque é a única ação
-                  principal do bloco. */}
-              <Link
-                to="/monte-seu-pc?inicio=quiz"
-                className="group/cta mt-7 flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 py-4 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              {/* Pílula, não `<button>`: o card inteiro já é o link, e um botão
+                  dentro de âncora é HTML inválido. */}
+              <span
+                className="mt-5 inline-flex items-center gap-2 whitespace-nowrap rounded-full px-5 py-3"
                 style={{
                   background: "#ffffff",
                   color: "#1a0000",
                   fontFamily: "var(--font-family-inter)",
-                  fontSize: "var(--text-sm)",
+                  fontSize: "var(--text-caption)",
                   fontWeight: 800,
                   letterSpacing: "0.06em",
                   textTransform: "uppercase",
@@ -284,131 +283,10 @@ export function DealsHighlight({
                 }}
               >
                 Responder 3 perguntas
-                <ArrowRight size={15} strokeWidth={2.6} className="transition-transform group-hover/cta:translate-x-1" />
-              </Link>
-
-              {/* Era um link de 11px em 78% de opacidade sobre foto: existia
-                  para não fechar a porta de quem já sabe o que quer, e ninguém
-                  via. Como botão fantasma, tem alvo de toque e contraste. */}
-              <Link
-                to="/monte-seu-pc?inicio=builder"
-                className="mt-3 flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/35 bg-black/35 px-6 py-3.5 transition-colors duration-200 hover:border-white/70 hover:bg-black/55"
-                style={{
-                  backdropFilter: "blur(8px)",
-                  color: "#fff",
-                  fontFamily: "var(--font-family-inter)",
-                  fontSize: "var(--text-caption)",
-                  fontWeight: 700,
-                  letterSpacing: "0.05em",
-                  textTransform: "uppercase",
-                }}
-              >
-                Já sei, montar do zero
-              </Link>
-            </div>
-          </div>
-
-          {/*
-            Terceira porta: quem não quer escolher peça nenhuma.
-
-            O card inteiro navega, mas NÃO é um `<a>` envolvendo tudo: dentro de
-            um link, arrastar o cursor inicia arraste de link e o texto deixa de
-            ser selecionável — o card de cima selecionava, este não. Aqui o
-            container é `div` com `onClick`, e quem carrega a semântica de link
-            (teclado, leitor de tela, abrir em nova aba) é o "Ver setups
-            prontos" lá embaixo, que é `<Link>` de verdade.
-          */}
-          <div
-            data-keep-dark
-            onClick={(e) => {
-              // Não navega quando o clique foi o fim de uma seleção de texto,
-              // nem quando saiu de dentro do próprio link do CTA.
-              if (window.getSelection()?.toString()) return;
-              if ((e.target as HTMLElement).closest("a")) return;
-              navigate("/computadores/setups/");
-            }}
-            className="stroke-hover-red group/setup relative flex min-h-0 cursor-pointer flex-col justify-end overflow-hidden border border-white/10 p-7 md:p-9"
-            style={{
-              borderRadius: "var(--radius-card-xl)",
-              minHeight: PORTA_MIN_H,
-            }}
-          >
-            <ImageWithFallback
-              src={SETUP_PHOTO}
-              alt=""
-              aria-hidden
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover/setup:scale-[1.04]"
-              style={{ objectPosition: "97% 62%" }}
-            />
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 34%, rgba(0,0,0,0.6) 68%, rgba(0,0,0,0.92) 100%)",
-              }}
-            />
-
-            <div className="relative">
-              <span
-                className="mb-3 block"
-                style={{
-                  fontFamily: "var(--font-family-inter)",
-                  fontSize: "var(--text-caption)",
-                  fontWeight: 700,
-                  letterSpacing: "0.14em",
-                  color: "rgba(255,255,255,0.6)",
-                  textTransform: "uppercase",
-                }}
-              >
-                // BUILDS PRONTAS
+                <ArrowRight size={14} strokeWidth={2.6} className="transition-transform group-hover/banner:translate-x-1" />
               </span>
-
-              <h3
-                className="text-ink-strong"
-                style={{
-                  fontFamily: "var(--font-family-figtree)",
-                  fontSize: "clamp(24px, 2vw, 30px)",
-                  fontWeight: 800,
-                  lineHeight: 1.05,
-                  letterSpacing: "-0.025em",
-                  textShadow: "0 4px 20px rgba(0,0,0,0.7)",
-                }}
-              >
-                Não quer montar nada?
-              </h3>
-
-              <p
-                className="mt-2.5"
-                style={{
-                  fontFamily: "var(--font-family-inter)",
-                  fontSize: "var(--text-sm)",
-                  color: "rgba(255,255,255,0.8)",
-                  lineHeight: 1.5,
-                  textShadow: "0 2px 12px rgba(0,0,0,0.7)",
-                }}
-              >
-                {setups.length} setups montados e testados
-                {setupFrom ? `, a partir de ${setupFrom.price}` : ""}. Compra num clique, como qualquer produto.
-              </p>
-
-              <Link
-                to="/computadores/setups/"
-                className="mt-5 inline-flex w-fit items-center gap-2 underline-offset-4 hover:underline"
-                style={{
-                  fontFamily: "var(--font-family-inter)",
-                  fontSize: "var(--text-sm)",
-                  fontWeight: 800,
-                  letterSpacing: "0.05em",
-                  color: "#fff",
-                  textTransform: "uppercase",
-                }}
-              >
-                Ver setups prontos
-                <ArrowRight size={15} strokeWidth={2.6} className="transition-transform group-hover/setup:translate-x-1" />
-              </Link>
             </div>
-          </div>
-          </motion.div>
+          </motion.a>
         </div>
       </div>
     </section>
