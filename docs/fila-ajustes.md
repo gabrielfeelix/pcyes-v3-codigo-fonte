@@ -279,12 +279,20 @@ busca — mexer numa obriga a revisitar a outra.
   > aviso; a saída foi marcar o elemento com `data-cookie-bar` e achá-lo por seletor. Envolver
   > num `<div ref>` **não** resolve — o aviso passa a apontar para o `div`.
 
-- **[ ] Deploy pela CLI não configurado.** O README aponta para
-  `pcyes-v3-codigo-fonte.vercel.app`, mas a conta Vercel logada na máquina (`gabfeelix1-7902`,
-  time `freela1`) não tem projeto nenhum, e não há `.vercel/` nem workflow no `.github/`. Ou o
-  projeto vive em outra conta, ou o deploy sai da integração com o GitHub. Precisa de
-  `vercel link` (interativo) ou da conta certa. **Não dá para resolver sozinho** — o comando
-  é interativo e depende de qual conta é a certa.
+- **[x] Deploy: não precisa de CLI, sai do `git push`.** Ficou tempo demais anotado como
+  bloqueado por um diagnóstico que era só conta errada. A CLI estava logada em
+  `gabfeelix1-7902` (time `freela1`), que não tem projeto nenhum. A conta certa é
+  **`gabrielbarbosa-8923`**, e nela o `pcyes-v3-codigo-fonte` existe com integração de GitHub
+  ligada no `main`.
+
+  Ou seja: **`git push origin main` já publica**. Medido — commit às 09:18:42, deploy de
+  produção criado às 09:18:46, quatro segundos depois. Não há `.vercel/` no repositório e não
+  precisa haver; `vercel link` também não.
+
+  > Se o link publicado mostrar código velho, o problema NÃO é o deploy: é `vercel whoami`
+  > apontando para outra conta (aí a CLI mente sobre o estado) ou cache do navegador. Confira
+  > pelo conteúdo, não pela CLI — `vercel inspect https://pcyes-v3-codigo-fonte.vercel.app`
+  > mostra a hora do deploy de produção em `created`.
 
 ---
 
