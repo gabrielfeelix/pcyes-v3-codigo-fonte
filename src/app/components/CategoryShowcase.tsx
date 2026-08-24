@@ -31,8 +31,11 @@ interface CategoryDef {
   category: string;
   /** Rótulo de subcategoria; ausente = categoria inteira. */
   subLabel?: string;
-  /** object-position da imagem — reenquadra para o produto aparecer. */
-  imgPos?: string;
+  /** Arte ambientada definitiva. Quando presente, substitui o palco. */
+  arte?: string;
+  /** Recorte da arte para o celular, se o quadro pedir um mais fechado. */
+  arteMobile?: string;
+
 }
 
 /* Ordem = encaixe no bento (ver BENTO_SPAN): Gabinetes (hero 2×2) → Cadeiras
@@ -42,64 +45,70 @@ const CATEGORY_DEFS: CategoryDef[] = [
     label: "Gabinetes",
     teaser: "Fluxo de ar e vitrine",
     href: "/gabinetes/",
-    lifestyle: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=1600&q=85&auto=format&fit=crop",
+    lifestyle: "https://cdn.oderco.com.br/produtos/252558/3F00DCAA20BD6D04E0630300A8C06874",
     category: "Gabinetes",
+    arte: "/categorias/gabinetes-desktop.png",
   },
   {
     label: "Cadeiras Gamer",
     teaser: "Ergonomia de maratona",
     href: "/cadeiras/cadeiras-gamer/",
-    lifestyle: "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=1200&q=85&auto=format&fit=crop",
+    lifestyle: "https://cdn.oderco.com.br/produtos/299948/3C1B41C611E7F40EE0630300A8C0C57C",
     category: "Cadeiras",
     subLabel: "Cadeiras Gamer",
+    arte: "/categorias/cadeiras-desktop.png",
   },
   {
     label: "Mouses",
     teaser: "Precisão e alto polling",
     href: "/perifericos/mouses/",
-    lifestyle: "https://images.unsplash.com/photo-1629429408209-1f912961dbd8?w=1200&q=85&auto=format&fit=crop",
+    lifestyle: "https://cdn.oderco.com.br/produtos/199396/3F2E42F714EE871CE0630300A8C048F6",
     category: "Periféricos",
     subLabel: "Mouses",
+    arte: "/categorias/mouses-desktop.png",
   },
   {
     label: "Headsets",
     teaser: "Áudio imersivo",
     href: "/perifericos/headsets/",
-    lifestyle: "https://images.unsplash.com/photo-1599669454699-248893623440?w=1200&q=85&auto=format&fit=crop",
+    lifestyle: "https://cdn.oderco.com.br/produtos/307806/48313F6103512D92E0630300A8C04D73",
     category: "Periféricos",
     subLabel: "Headsets e Fones",
+    arte: "/categorias/headsets-desktop.png",
   },
   {
     label: "Monitores",
     teaser: "Alta taxa de atualização",
     href: "/monitores/",
-    lifestyle: "https://images.unsplash.com/photo-1547119957-637f8679db1e?w=1200&q=85&auto=format&fit=crop",
+    lifestyle: "https://cdn.oderco.com.br/produtos/209949/1029001B37618397E0630300A8C069C3",
     category: "Monitores",
-    imgPos: "center 28%",
+    arte: "/categorias/monitores-desktop.png",
   },
   {
     label: "Microfones",
     teaser: "Broadcast e stream",
     href: "/streaming/microfones/",
-    lifestyle: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=1200&q=85&auto=format&fit=crop",
+    lifestyle: "https://cdn.oderco.com.br/produtos/332488/4D4C20FBD0EEAEB4E0630300A8C0FF35",
     category: "Streaming",
     subLabel: "Microfones",
-    imgPos: "center 82%",
+    arte: "/categorias/microfones-desktop.png",
   },
   {
     label: "Teclados",
     teaser: "Mecânicos, switches e RGB",
     href: "/perifericos/teclados/",
-    lifestyle: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=1200&q=85&auto=format&fit=crop",
+    lifestyle: "https://cdn.oderco.com.br/produtos/286139/47CD45D3569E8A3EE0630300A8C0C7F2",
     category: "Periféricos",
     subLabel: "Teclados",
+    arte: "/categorias/teclados-desktop.png",
   },
   {
     label: "Placas de Vídeo",
     teaser: "Ray tracing e DLSS",
     href: "/placas-de-video/",
-    lifestyle: "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=1200&q=85&auto=format&fit=crop",
+    lifestyle: "https://cdn.oderco.com.br/produtos/305499/47A45C4DC546919FE0630300A8C07C9A",
     category: "Placas de Vídeo",
+    arte: "/categorias/placas-desktop.png",
   },
 ];
 
@@ -154,7 +163,34 @@ const BENTO_SPAN_MOBILE = [
   "col-span-2 row-span-4", // Placas — fechamento, 204px
 ];
 
+/**
+ * Palco provisório, para enquanto a arte final não chega.
+ *
+ * A foto do catálogo vem recortada, com fundo transparente, então sozinha num
+ * card escuro ela fica igual a qualquer listagem de produto. O palco simula uma
+ * bancada: parede ao fundo, linha de horizonte, reflexo embaixo.
+ *
+ * Quando a categoria ganha `arte`, nada disso é desenhado: a peça definitiva já
+ * traz o próprio ambiente e preenche o quadro inteiro.
+ */
+const PALCO =
+  "linear-gradient(180deg, #101015 0%, #101015 56%, #1c1c24 56.4%, #101014 100%)";
+
 function BentoCell({ cat, index }: { cat: Category; index: number }) {
+  const temArte = Boolean(cat.arte);
+
+  const fotoDoCatalogo = (extra?: React.CSSProperties) => (
+    <ImageWithFallback
+      src={cat.lifestyle}
+      alt={cat.label}
+      /* Respiro em pixel, não em porcentagem: padding percentual no CSS é
+         sempre calculado sobre a LARGURA, mesmo no topo e na base, então num
+         quadro deitado 22% virava quase metade da altura e esmagava o produto. */
+      className="absolute inset-0 h-full w-full object-contain pt-9 pb-3 px-3 md:pt-12 md:pb-4 md:px-5 transition-transform duration-700 ease-out group-hover:scale-[1.12]"
+      style={{ objectPosition: "center bottom", ...extra }}
+    />
+  );
+
   return (
     <Link
       to={cat.href}
@@ -163,15 +199,62 @@ function BentoCell({ cat, index }: { cat: Category; index: number }) {
       className={`bento-cell group relative overflow-hidden rounded-[var(--radius-card-md)] md:rounded-[var(--radius-card-lg)] ${BENTO_SPAN_MOBILE[index] ?? "row-span-3"} ${BENTO_SPAN_MD[index] ?? "md:col-span-1 md:row-span-1"}`}
       style={{
         border: "1px solid rgba(var(--foreground-rgb), 0.08)",
-        background: "var(--surface-1)",
+        background: temArte ? "var(--surface-1)" : PALCO,
       }}
     >
-      <ImageWithFallback
-        src={cat.lifestyle}
-        alt={cat.label}
-        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
-        style={{ objectPosition: cat.imgPos ?? "center" }}
-      />
+      {temArte ? (
+        /* Arte definitiva: já vem ambientada, então preenche o quadro inteiro.
+           `<picture>` para o celular receber o recorte mais fechado quando
+           houver um; sem ele, a mesma arte serve as duas telas. */
+        <picture>
+          {cat.arteMobile && <source media="(max-width: 767px)" srcSet={cat.arteMobile} />}
+          <img
+            src={cat.arte}
+            alt={cat.label}
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+          />
+        </picture>
+      ) : (
+        <>
+          {/* Luz de fundo batendo na parede, atrás do produto. */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(70% 55% at 50% 46%, rgba(255,60,40,0.22) 0%, transparent 68%)",
+            }}
+          />
+          {/* Linha do horizonte, onde a parede encontra a bancada. */}
+          <div
+            className="pointer-events-none absolute inset-x-0"
+            style={{
+              top: "56%",
+              height: "1px",
+              background:
+                "linear-gradient(90deg, transparent 0%, rgba(255,120,100,0.35) 50%, transparent 100%)",
+            }}
+          />
+          {/* Reflexo: a mesma foto espelhada, apagando conforme desce. */}
+          <div
+            className="pointer-events-none absolute inset-x-0 overflow-hidden opacity-[0.22]"
+            style={{
+              top: "56%",
+              height: "44%",
+              maskImage: "linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 72%)",
+              WebkitMaskImage: "linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 72%)",
+            }}
+          >
+            <div className="absolute inset-x-0 top-0" style={{ height: "230%", transform: "scaleY(-1)" }}>
+              {fotoDoCatalogo({ transform: "scale(1.04)" })}
+            </div>
+          </div>
+          {fotoDoCatalogo({
+            transform: "scale(1.04)",
+            filter: "drop-shadow(0 16px 20px rgba(0,0,0,0.7))",
+          })}
+        </>
+      )}
       {/* Véu curto só atrás do texto — topo e base leves, meio limpo.
           No mobile vai mais fraco: o tile é pequeno, então a mesma faixa de
           degradê cobre proporcionalmente muito mais da foto. */}
