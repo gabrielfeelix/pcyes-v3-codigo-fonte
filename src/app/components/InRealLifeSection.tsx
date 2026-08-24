@@ -94,10 +94,29 @@ const posts: Post[] = [
 ];
 
 export function InRealLifeSection() {
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  /* Guarda o índice, e não o post, porque o modal navega entre criadores:
+     com o índice em mãos o anterior e o próximo saem de uma conta. */
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const selectedPost = selectedIdx === null ? null : posts[selectedIdx];
   const scrollRef = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
+
+  /* Circular: do último volta pro primeiro. Quem está vendo um feed espera
+     continuar deslizando, não bater numa parede. */
+  const goToPost = (dir: -1 | 1) =>
+    setSelectedIdx((i) => (i === null ? i : (i + dir + posts.length) % posts.length));
+
+  useEffect(() => {
+    if (selectedIdx === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedIdx(null);
+      else if (e.key === "ArrowLeft") goToPost(-1);
+      else if (e.key === "ArrowRight") goToPost(1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [selectedIdx]);
 
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -187,7 +206,11 @@ export function InRealLifeSection() {
               letterSpacing: "-0.02em",
             }}
           >
-            Setups reais, peças reais
+            {/* A frase tem dois tempos separados pela vírgula. Solta, a quebra
+                do celular caía depois de "tem", deixando a conjunção órfã no fim
+                de uma linha e "PCYES" sozinho na outra. */}
+            <span className="block md:inline">Onde tem performance,</span>{" "}
+            tem PCYES
           </h2>
           <p
             className="mt-3 max-w-xl"
@@ -198,7 +221,7 @@ export function InRealLifeSection() {
               lineHeight: 1.5,
             }}
           >
-            Criadores brasileiros usando periférico e componente PCYES no setup do dia a dia. Clique numa foto pra conhecer quem está por trás.
+            A rotina dos criadores brasileiros que vivem de hardware, jogo e transmissão. Clique numa foto pra conhecer quem está por trás.
           </p>
         </motion.div>
 
@@ -240,7 +263,7 @@ export function InRealLifeSection() {
                 border: "1px solid rgba(var(--foreground-rgb), 0.08)",
                 boxShadow: "var(--shadow-card-hairline)",
               }}
-              onClick={() => setSelectedPost(post)}
+              onClick={() => setSelectedIdx(i)}
             >
               <ImageWithFallback
                 src={post.image}
@@ -283,7 +306,7 @@ export function InRealLifeSection() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-[80] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
-            onClick={() => setSelectedPost(null)}
+            onClick={() => setSelectedIdx(null)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -294,19 +317,47 @@ export function InRealLifeSection() {
               style={{ borderRadius: "var(--radius-card)" }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Esquerda: a foto, sem marcação nenhuma por cima. */}
+              {/* Esquerda: a foto, com as setas para trocar de criador sem
+                  precisar fechar e reabrir o modal. `key` no elemento animado
+                  faz a foto atravessar um fade a cada troca. */}
               <div className="md:w-[60%] flex-shrink-0 relative max-h-[40vh] md:max-h-none overflow-hidden">
-                <ImageWithFallback
-                  src={selectedPost.image}
-                  alt={`Setup de @${selectedPost.username}`}
-                  className="w-full h-full object-cover md:min-h-[520px]"
-                />
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedPost.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.22 }}
+                    className="h-full w-full"
+                  >
+                    <ImageWithFallback
+                      src={selectedPost.image}
+                      alt={`Setup de @${selectedPost.username}`}
+                      className="w-full h-full object-cover md:min-h-[520px]"
+                    />
+                  </motion.div>
+                </AnimatePresence>
+
+                <button
+                  onClick={() => goToPost(-1)}
+                  aria-label="Criador anterior"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white backdrop-blur-sm transition-all hover:bg-black/80 hover:scale-105 active:scale-95 cursor-pointer"
+                >
+                  <ChevronLeft size={18} aria-hidden="true" />
+                </button>
+                <button
+                  onClick={() => goToPost(1)}
+                  aria-label="Próximo criador"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white backdrop-blur-sm transition-all hover:bg-black/80 hover:scale-105 active:scale-95 cursor-pointer"
+                >
+                  <ChevronRight size={18} aria-hidden="true" />
+                </button>
               </div>
 
               {/* Direita: quem é a pessoa. */}
               <div className="md:w-[40%] p-6 md:p-8 flex flex-col overflow-y-auto">
                 <button
-                  onClick={() => setSelectedPost(null)}
+                  onClick={() => setSelectedIdx(null)}
                   aria-label="Fechar"
                   className="self-end flex h-11 w-11 items-center justify-center text-foreground/30 hover:text-foreground transition-colors cursor-pointer mb-4"
                 >
@@ -314,6 +365,7 @@ export function InRealLifeSection() {
                 </button>
 
                 <span
+                  key={`user-${selectedPost.id}`}
                   className="text-foreground"
                   style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl, 22px)", fontWeight: 700, letterSpacing: "-0.02em" }}
                 >
@@ -338,6 +390,26 @@ export function InRealLifeSection() {
                 >
                   {selectedPost.about}
                 </p>
+
+                {/* Rodapé: diz onde a pessoa está na sequência e repete a
+                    navegação em texto, para quem não associou as setas da foto
+                    a trocar de criador. `mt-auto` cola no fim da coluna. */}
+                <div className="mt-auto flex items-center justify-between gap-4 pt-8">
+                  <span
+                    className="text-foreground/30"
+                    style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", letterSpacing: "0.06em" }}
+                  >
+                    {selectedIdx! + 1} de {posts.length} criadores
+                  </span>
+                  <button
+                    onClick={() => goToPost(1)}
+                    className="inline-flex min-h-[44px] items-center gap-1.5 text-foreground/55 transition-colors hover:text-foreground cursor-pointer"
+                    style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
+                  >
+                    Próximo
+                    <ChevronRight size={14} aria-hidden="true" />
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
