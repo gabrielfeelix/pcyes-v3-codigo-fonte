@@ -29,67 +29,67 @@ interface Post {
 const posts: Post[] = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1758410473598-ef957adbf57b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBnYW1pbmclMjBzZXR1cCUyMGhlYWRzZXQlMjBrZXlib2FyZHxlbnwxfHx8fDE3NzM4NDQ2ODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "setupbr_",
-    role: "Montagem e organização de cabo",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/FalleN_IEM_Chicago_%2848353708812%29_%28cropped%29.jpg/960px-FalleN_IEM_Chicago_%2848353708812%29_%28cropped%29.jpg",
+    username: "fallen",
+    role: "Counter-Strike, capitão e AWPer",
     about:
-      "Documenta montagem de PC do zero há seis anos, sempre pensando em quem está montando a primeira máquina. Ficou conhecido pelos vídeos de organização de cabo, onde cada escolha leva em conta quem vai abrir o gabinete de novo daqui a dois anos.",
+      "Gabriel Toledo, o nome mais conhecido do Counter-Strike brasileiro. Capitaneou a geração que levou o país a dois títulos de Major e fundou a Games Academy para formar jogador novo. Segue competindo em alto nível mais de uma década depois da estreia.",
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1715078795172-c1636d5bc845?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYW4lMjB1c2luZyUyMGNvbXB1dGVyJTIwZGVzayUyMHNldHVwJTIwZGFya3xlbnwxfHx8fDE3NzM4NDQ2ODJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "techzera",
-    role: "Teste de hardware em bancada",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/IEM_Katowice_2019_IMG_1137_%2847347473382%29.jpg/960px-IEM_Katowice_2019_IMG_1137_%2847347473382%29.jpg",
+    username: "coldzera",
+    role: "Counter-Strike, dois anos como melhor do mundo",
     about:
-      "Publica os números antes da opinião. Roda a mesma bateria de teste em toda peça que passa pela bancada, o que acabou virando uma base de comparação que a audiência consulta mais do que a própria análise. Prefere setup de trabalho a setup de vitrine.",
+      "Marcelo David foi eleito o melhor jogador do mundo em 2016 e 2017, feito que nenhum outro brasileiro repetiu. Ficou marcado pelo salto com AWP contra a Team Liquid, jogada que virou pôster do Counter-Strike competitivo.",
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1638741631188-a42a58d5499c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmZW1hbGUlMjBnYW1lciUyMGRlc2t0b3AlMjBtb25pdG9yJTIwZGFyayUyMGFtYmllbnR8ZW58MXx8fHwxNzczODQ1MTQ3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "gamergirlbr",
-    role: "FPS competitivo e rotina de treino",
+    image: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Nobru_no_PodDelas_2026.png",
+    username: "nobru",
+    role: "Free Fire, jogador e fundador da Fluxo",
     about:
-      "Mostra a rotina que sustenta o competitivo: treino de mira, ajuste de sensibilidade e mesa montada para sessão longa. Fala bastante de ergonomia, assunto que costuma ficar de fora do conteúdo de setup e que aparece cedo em quem joga muitas horas seguidas.",
+      "Bruno Goes saiu do competitivo de Free Fire para montar a própria organização. A Fluxo nasceu em 2021 e virou uma das casas mais seguidas do país, com time em várias modalidades e uma base de audiência que acompanha o dia a dia da equipe.",
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1619190324856-af3f6eb55601?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHJlYW1lciUyMG1pY3JvcGhvbmUlMjB3ZWJjYW0lMjBzZXR1cHxlbnwxfHx8fDE3NzM4NDQ2ODJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "streamerbr",
-    role: "Transmissão ao vivo e áudio",
+    image: "https://upload.wikimedia.org/wikipedia/commons/2/22/Alanzoka_2021.png",
+    username: "alanzoka",
+    role: "Streamer, maior canal de games da Twitch BR",
     about:
-      "Virou referência em áudio de live entre quem está começando. Ensina a montar captação decente sem sala tratada, aproveitando o que o quarto já oferece em vez de pedir investimento em acústica antes de qualquer outra coisa.",
+      "Alan Ferreira transmite quase todo dia há mais de dez anos e construiu o maior canal de jogos do Brasil na Twitch. O formato mudou pouco nesse tempo: sessão longa, jogo do começo ao fim e conversa com o chat sem roteiro.",
   },
   {
     id: 5,
-    image: "https://images.unsplash.com/photo-1767589908215-f583b894c9d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjB0eXBpbmclMjBtZWNoYW5pY2FsJTIwa2V5Ym9hcmQlMjBjbG9zZXVwfGVufDF8fHx8MTc3Mzg0NDY4M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "keybfanatic",
-    role: "Teclado mecânico e customização",
+    image: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Casimiro.png",
+    username: "casimiro",
+    role: "Streamer e narração esportiva",
     about:
-      "Documenta cada troca de switch, lubrificação e ajuste de estabilizador. Mantém um comparativo público de som por switch que já passou de duzentas entradas, construído gravando sempre no mesmo microfone e na mesma distância.",
+      "Casimiro Miguel levou a narração de futebol para a Twitch e transformou reação ao vivo em formato de massa. Quebrou recorde de audiência simultânea no Brasil transmitindo jogo com direito de exibição, algo que streamer nenhum tinha feito por aqui.",
   },
   {
     id: 6,
-    image: "https://images.unsplash.com/photo-1760612484753-2311a768798a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYW1lciUyMHdlYXJpbmclMjBoZWFkcGhvbmVzJTIwcGxheWluZyUyMGRhcmslMjByb29tfGVufDF8fHx8MTc3Mzg0NDY4M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "neonsetup",
-    role: "Iluminação e ambientação",
+    image: "https://upload.wikimedia.org/wikipedia/commons/a/af/Cellbit_com_seu_cachorrinho_%28Eredin%29.png",
+    username: "cellbit",
+    role: "Streamer, RPG e investigação",
     about:
-      "Trata o setup como cenário: luz de fundo, temperatura de cor e o quanto de RGB cabe antes de cansar a vista. Ensina a calibrar iluminação pela câmera, e não pelo olho, porque o que fica bonito ao vivo costuma estourar na foto.",
+      "Rafael Lange começou com teoria de jogo de terror e acabou criando um formato próprio de RPG narrado ao vivo. As campanhas dele reúnem centenas de milhares de pessoas por sessão e renderam livro, série e turnê presencial.",
   },
   {
     id: 7,
-    image: "https://images.unsplash.com/photo-1624749076719-52c184a2e2e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBzaXR0aW5nJTIwZ2FtaW5nJTIwY2hhaXIlMjBkZXNrfGVufDF8fHx8MTc3Mzg0NDY4NHww&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "cleansetup",
-    role: "Minimalismo e mesa limpa",
+    image: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Luba-2017.png",
+    username: "luba",
+    role: "YouTube, gameplay e humor",
     about:
-      "Defende que setup bom é aquele que some enquanto a pessoa trabalha. Monta com poucas peças, cabo fora de vista e paleta reduzida a duas cores, provando que dá para ter máquina forte sem transformar a mesa em vitrine.",
+      "Um dos canais de games mais antigos ainda ativos no YouTube brasileiro. Ficou conhecido pela edição rápida e pelo humor em cima da própria gameplay, fórmula que atravessou mais de uma geração de público.",
   },
   {
     id: 8,
-    image: "https://images.unsplash.com/photo-1684488624316-774ea1824d97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMG1hbiUyMHN0cmVhbWluZyUyMGNvbXB1dGVyJTIwUkdCJTIwbGlnaHRzfGVufDF8fHx8MTc3Mzg0NDY4NHww&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "rgbmaster_",
-    role: "RGB e sincronização de iluminação",
+    image: "https://upload.wikimedia.org/wikipedia/commons/3/34/PlayHard_na_Brasil_Game_Show_2016.png",
+    username: "brunoplayhard",
+    role: "YouTube, gameplay e comunidade",
     about:
-      "Sincroniza a luz do gabinete, do periférico e da fita de LED sem depender de cinco programas abertos ao mesmo tempo. Publica preset pronto para quem quer o resultado sem passar pela configuração inteira.",
+      "Bruno Bittencourt está entre os primeiros criadores de conteúdo de games do país a viver disso. Mantém a mesma linha desde o começo, com série longa de gameplay comentada e presença constante nos eventos de jogo do Brasil.",
   },
 ];
 
