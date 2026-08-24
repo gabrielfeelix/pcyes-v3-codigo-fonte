@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
@@ -129,6 +129,36 @@ export function InRealLifeSection() {
     return () => window.removeEventListener("keydown", onKey);
   }, [selectedIdx]);
 
+  /**
+   * Carrossel infinito.
+   *
+   * A lista é repetida três vezes e a rolagem começa na cópia do meio. Quando
+   * a posição se afasta demais do centro, ela volta uma cópia inteira: como as
+   * três são idênticas, o salto cai exatamente sobre a mesma imagem e não
+   * aparece. Assim a seta da direita nunca trava no fim, a da esquerda nunca
+   * trava no começo, e a rolagem automática do celular deixa de dar aquele
+   * pulo ao voltar para a primeira foto.
+   */
+  const LOOP = 3;
+  const items = useMemo(() => Array.from({ length: LOOP }, () => posts).flat(), []);
+
+  const normalizeLoop = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const seg = el.scrollWidth / LOOP;
+    if (seg <= 0) return;
+    if (el.scrollLeft < seg * 0.5) el.scrollLeft += seg;
+    else if (el.scrollLeft > seg * 1.5) el.scrollLeft -= seg;
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollLeft = el.scrollWidth / LOOP;
+    el.addEventListener("scroll", normalizeLoop, { passive: true });
+    return () => el.removeEventListener("scroll", normalizeLoop);
+  }, [normalizeLoop]);
+
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
     const amount = scrollRef.current.clientWidth * 0.6;
@@ -159,17 +189,21 @@ export function InRealLifeSection() {
     el.addEventListener("touchend", scheduleResume, { passive: true });
     el.addEventListener("touchcancel", scheduleResume, { passive: true });
 
+    /* O deslocamento se acumula fora do elemento e só é aplicado quando passa
+       de um pixel inteiro. `scrollLeft` arredonda o valor recebido, então
+       somar 0,35 a cada quadro direto nele não saía do lugar: lia 2043,
+       gravava 2043,35 e o navegador guardava 2043 de novo. A rolagem
+       automática ficava parada. */
+    let acc = 0;
     const step = () => {
       if (!paused) {
-        const maxScroll = el.scrollWidth - el.clientWidth;
-        if (maxScroll <= 0) {
-          raf = requestAnimationFrame(step);
-          return;
-        }
-        if (el.scrollLeft + SPEED >= maxScroll) {
-          el.scrollLeft = 0;
-        } else {
-          el.scrollLeft += SPEED;
+        acc += SPEED;
+        if (acc >= 1) {
+          const inteiro = Math.floor(acc);
+          acc -= inteiro;
+          /* Sem reset manual no fim: quem devolve a posição é o normalizeLoop,
+             e ele faz isso sobre uma cópia idêntica, sem pulo visível. */
+          el.scrollLeft += inteiro;
         }
       }
       raf = requestAnimationFrame(step);
@@ -261,20 +295,20 @@ export function InRealLifeSection() {
           className="flex overflow-x-auto scrollbar-hide gap-4"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {posts.map((post, i) => (
+          {items.map((post, i) => (
             <motion.div
-              key={post.id}
+              key={`${post.id}-${Math.floor(i / posts.length)}`}
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, delay: i * 0.05 }}
+              transition={{ duration: 0.5, delay: (i % posts.length) * 0.05 }}
               className="stroke-hover-red flex-shrink-0 w-[240px] md:w-[300px] aspect-[3/4] relative group/card cursor-pointer overflow-hidden"
               style={{
                 borderRadius: "var(--radius-card-lg)",
                 border: "1px solid rgba(var(--foreground-rgb), 0.08)",
                 boxShadow: "var(--shadow-card-hairline)",
               }}
-              onClick={() => setSelectedIdx(i)}
+              onClick={() => setSelectedIdx(i % posts.length)}
             >
               <ImageWithFallback
                 src={post.image}
