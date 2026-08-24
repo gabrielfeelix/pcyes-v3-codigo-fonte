@@ -1,24 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
-import { X, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { useCart } from "./CartContext";
 
-interface TaggedProduct {
-  name: string;
-  price: string;
-  image: string;
-  /** Position of the dot on the image (percentage) */
-  x: number;
-  y: number;
-}
-
+/**
+ * Feed de influenciador, não vitrine.
+ *
+ * A versão anterior marcava produto na foto e vendia direto do modal. Foi
+ * removida de propósito: manter marcação por coordenada exige alguém repassando
+ * X e Y a cada troca de foto, e no Magento isso vira campo customizado, tela de
+ * administração e SKU amarrado a ponto na imagem. O bloco passa a ser o que já
+ * era na prática, uma parede de fotos de gente usando produto PCYES, e o modal
+ * conta quem é a pessoa.
+ *
+ * O histórico guarda a versão com produto marcado, caso valha a pena voltar.
+ */
 interface Post {
   id: number;
   image: string;
   username: string;
-  products: TaggedProduct[];
+  /** O que a pessoa faz, em uma linha. Aparece embaixo do @. */
+  role: string;
+  /** Texto do "Sobre". Um parágrafo, tom de apresentação. */
+  about: string;
 }
 
 const posts: Post[] = [
@@ -26,83 +31,71 @@ const posts: Post[] = [
     id: 1,
     image: "https://images.unsplash.com/photo-1758410473598-ef957adbf57b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBnYW1pbmclMjBzZXR1cCUyMGhlYWRzZXQlMjBrZXlib2FyZHxlbnwxfHx8fDE3NzM4NDQ2ODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
     username: "setupbr_",
-    products: [
-      { name: "Headset Fallen 7.1", price: "R$ 279,90", image: "https://images.unsplash.com/photo-1673669231301-09baa4d7761b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYW1pbmclMjBoZWFkc2V0JTIwZGFyayUyMGJhY2tncm91bmR8ZW58MXx8fHwxNzczODM5Nzk1fDA&ixlib=rb-4.1.0&q=80&w=400", x: 50, y: 22 },
-      { name: "Teclado Striker RGB", price: "R$ 349,90", image: "https://images.unsplash.com/photo-1718803448073-90ebd0d982e0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWNoYW5pY2FsJTIwa2V5Ym9hcmQlMjBjbG9zZXVwJTIwZGFya3xlbnwxfHx8fDE3NzM4Mzk3OTZ8MA&ixlib=rb-4.1.0&q=80&w=400", x: 55, y: 72 },
-      { name: "Mouse Cobra V2", price: "R$ 189,90", image: "https://images.unsplash.com/photo-1768561327952-119a4c9c76f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYW1pbmclMjBtb3VzZSUyMGRhcmslMjBtaW5pbWFsfGVufDF8fHx8MTc3MzgzOTc5NHww&ixlib=rb-4.1.0&q=80&w=400", x: 78, y: 68 },
-    ],
+    role: "Montagem e organização de cabo",
+    about:
+      "Documenta montagem de PC do zero há seis anos, sempre pensando em quem está montando a primeira máquina. Ficou conhecido pelos vídeos de organização de cabo, onde cada escolha leva em conta quem vai abrir o gabinete de novo daqui a dois anos.",
   },
   {
     id: 2,
     image: "https://images.unsplash.com/photo-1715078795172-c1636d5bc845?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYW4lMjB1c2luZyUyMGNvbXB1dGVyJTIwZGVzayUyMHNldHVwJTIwZGFya3xlbnwxfHx8fDE3NzM4NDQ2ODJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
     username: "techzera",
-    products: [
-      { name: "Monitor Ultrawide 34\"", price: "R$ 2.199,90", image: "https://images.unsplash.com/photo-1604329051903-d89ddd523330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQQyUyMGJhdHRsZXN0YXRpb24lMjB1bHRyYXdpZGUlMjBtb25pdG9yfGVufDF8fHx8MTc3Mzg0MzU5OXww&ixlib=rb-4.1.0&q=80&w=400", x: 50, y: 30 },
-      { name: "Deskpad RGB Pro", price: "R$ 149,90", image: "https://images.unsplash.com/photo-1713012003065-7ca32db003ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxSR0IlMjBtb3VzZXBhZCUyMGRlc2slMjBtYXQlMjBkYXJrfGVufDF8fHx8MTc3Mzg0MDQwOXww&ixlib=rb-4.1.0&q=80&w=400", x: 50, y: 75 },
-    ],
+    role: "Teste de hardware em bancada",
+    about:
+      "Publica os números antes da opinião. Roda a mesma bateria de teste em toda peça que passa pela bancada, o que acabou virando uma base de comparação que a audiência consulta mais do que a própria análise. Prefere setup de trabalho a setup de vitrine.",
   },
   {
     id: 3,
     image: "https://images.unsplash.com/photo-1638741631188-a42a58d5499c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmZW1hbGUlMjBnYW1lciUyMGRlc2t0b3AlMjBtb25pdG9yJTIwZGFyayUyMGFtYmllbnR8ZW58MXx8fHwxNzczODQ1MTQ3fDA&ixlib=rb-4.1.0&q=80&w=1080",
     username: "gamergirlbr",
-    products: [
-      { name: "Headset Fallen 7.1", price: "R$ 279,90", image: "https://images.unsplash.com/photo-1673669231301-09baa4d7761b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYW1pbmclMjBoZWFkc2V0JTIwZGFyayUyMGJhY2tncm91bmR8ZW58MXx8fHwxNzczODM5Nzk1fDA&ixlib=rb-4.1.0&q=80&w=400", x: 45, y: 18 },
-      { name: "Gabinete Spectrum Pro", price: "R$ 599,90", image: "https://images.unsplash.com/photo-1695120485648-0b6eed4707aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMGNhc2UlMjB0b3dlciUyMGRhcmt8ZW58MXx8fHwxNzczODM5Nzk1fDA&ixlib=rb-4.1.0&q=80&w=400", x: 20, y: 60 },
-    ],
+    role: "FPS competitivo e rotina de treino",
+    about:
+      "Mostra a rotina que sustenta o competitivo: treino de mira, ajuste de sensibilidade e mesa montada para sessão longa. Fala bastante de ergonomia, assunto que costuma ficar de fora do conteúdo de setup e que aparece cedo em quem joga muitas horas seguidas.",
   },
   {
     id: 4,
     image: "https://images.unsplash.com/photo-1619190324856-af3f6eb55601?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHJlYW1lciUyMG1pY3JvcGhvbmUlMjB3ZWJjYW0lMjBzZXR1cHxlbnwxfHx8fDE3NzM4NDQ2ODJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
     username: "streamerbr",
-    products: [
-      { name: "Studio X Microfone", price: "R$ 489,90", image: "https://images.unsplash.com/photo-1579870946215-8284f1a47c9a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaWNyb3Bob25lJTIwY29uZGVuc2VyJTIwc3R1ZGlvJTIwZGFya3xlbnwxfHx8fDE3NzM4NDA0MTB8MA&ixlib=rb-4.1.0&q=80&w=400", x: 48, y: 35 },
-      { name: "Monitor PCYES 27\"", price: "R$ 1.599,90", image: "https://images.unsplash.com/photo-1604329051903-d89ddd523330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQQyUyMGJhdHRsZXN0YXRpb24lMjB1bHRyYXdpZGUlMjBtb25pdG9yfGVufDF8fHx8MTc3Mzg0MzU5OXww&ixlib=rb-4.1.0&q=80&w=400", x: 72, y: 25 },
-      { name: "Teclado Striker RGB", price: "R$ 349,90", image: "https://images.unsplash.com/photo-1718803448073-90ebd0d982e0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWNoYW5pY2FsJTIwa2V5Ym9hcmQlMjBjbG9zZXVwJTIwZGFya3xlbnwxfHx8fDE3NzM4Mzk3OTZ8MA&ixlib=rb-4.1.0&q=80&w=400", x: 40, y: 78 },
-    ],
+    role: "Transmissão ao vivo e áudio",
+    about:
+      "Virou referência em áudio de live entre quem está começando. Ensina a montar captação decente sem sala tratada, aproveitando o que o quarto já oferece em vez de pedir investimento em acústica antes de qualquer outra coisa.",
   },
   {
     id: 5,
     image: "https://images.unsplash.com/photo-1767589908215-f583b894c9d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjB0eXBpbmclMjBtZWNoYW5pY2FsJTIwa2V5Ym9hcmQlMjBjbG9zZXVwfGVufDF8fHx8MTc3Mzg0NDY4M3ww&ixlib=rb-4.1.0&q=80&w=1080",
     username: "keybfanatic",
-    products: [
-      { name: "Teclado Striker TKL", price: "R$ 299,90", image: "https://images.unsplash.com/photo-1718803448073-90ebd0d982e0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWNoYW5pY2FsJTIwa2V5Ym9hcmQlMjBjbG9zZXVwJTIwZGFya3xlbnwxfHx8fDE3NzM4Mzk3OTZ8MA&ixlib=rb-4.1.0&q=80&w=400", x: 50, y: 55 },
-    ],
+    role: "Teclado mecânico e customização",
+    about:
+      "Documenta cada troca de switch, lubrificação e ajuste de estabilizador. Mantém um comparativo público de som por switch que já passou de duzentas entradas, construído gravando sempre no mesmo microfone e na mesma distância.",
   },
   {
     id: 6,
     image: "https://images.unsplash.com/photo-1760612484753-2311a768798a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYW1lciUyMHdlYXJpbmclMjBoZWFkcGhvbmVzJTIwcGxheWluZyUyMGRhcmslMjByb29tfGVufDF8fHx8MTc3Mzg0NDY4M3ww&ixlib=rb-4.1.0&q=80&w=1080",
     username: "neonsetup",
-    products: [
-      { name: "Headset Fallen 7.1", price: "R$ 279,90", image: "https://images.unsplash.com/photo-1673669231301-09baa4d7761b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYW1pbmclMjBoZWFkc2V0JTIwZGFyayUyMGJhY2tncm91bmR8ZW58MXx8fHwxNzczODM5Nzk1fDA&ixlib=rb-4.1.0&q=80&w=400", x: 50, y: 20 },
-      { name: "Mouse Cobra V2", price: "R$ 189,90", image: "https://images.unsplash.com/photo-1768561327952-119a4c9c76f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYW1pbmclMjBtb3VzZSUyMGRhcmslMjBtaW5pbWFsfGVufDF8fHx8MTc3MzgzOTc5NHww&ixlib=rb-4.1.0&q=80&w=400", x: 70, y: 65 },
-    ],
+    role: "Iluminação e ambientação",
+    about:
+      "Trata o setup como cenário: luz de fundo, temperatura de cor e o quanto de RGB cabe antes de cansar a vista. Ensina a calibrar iluminação pela câmera, e não pelo olho, porque o que fica bonito ao vivo costuma estourar na foto.",
   },
   {
     id: 7,
     image: "https://images.unsplash.com/photo-1624749076719-52c184a2e2e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBzaXR0aW5nJTIwZ2FtaW5nJTIwY2hhaXIlMjBkZXNrfGVufDF8fHx8MTc3Mzg0NDY4NHww&ixlib=rb-4.1.0&q=80&w=1080",
     username: "cleansetup",
-    products: [
-      { name: "Cadeira Titan Elite", price: "R$ 1.899,90", image: "https://images.unsplash.com/photo-1757194455393-8e3134d4ce19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYW1pbmclMjBjaGFpciUyMGVyZ29ub21pYyUyMGRhcmt8ZW58MXx8fHwxNzczODQwNDA4fDA&ixlib=rb-4.1.0&q=80&w=400", x: 45, y: 55 },
-      { name: "Monitor PCYES 27\"", price: "R$ 1.599,90", image: "https://images.unsplash.com/photo-1604329051903-d89ddd523330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxQQyUyMGJhdHRsZXN0YXRpb24lMjB1bHRyYXdpZGUlMjBtb25pdG9yfGVufDF8fHx8MTc3Mzg0MzU5OXww&ixlib=rb-4.1.0&q=80&w=400", x: 52, y: 22 },
-    ],
+    role: "Minimalismo e mesa limpa",
+    about:
+      "Defende que setup bom é aquele que some enquanto a pessoa trabalha. Monta com poucas peças, cabo fora de vista e paleta reduzida a duas cores, provando que dá para ter máquina forte sem transformar a mesa em vitrine.",
   },
   {
     id: 8,
     image: "https://images.unsplash.com/photo-1684488624316-774ea1824d97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMG1hbiUyMHN0cmVhbWluZyUyMGNvbXB1dGVyJTIwUkdCJTIwbGlnaHRzfGVufDF8fHx8MTc3Mzg0NDY4NHww&ixlib=rb-4.1.0&q=80&w=1080",
     username: "rgbmaster_",
-    products: [
-      { name: "Gabinete Spectrum Pro", price: "R$ 599,90", image: "https://images.unsplash.com/photo-1695120485648-0b6eed4707aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMGNhc2UlMjB0b3dlciUyMGRhcmt8ZW58MXx8fHwxNzczODM5Nzk1fDA&ixlib=rb-4.1.0&q=80&w=400", x: 25, y: 50 },
-      { name: "Cooler Galaxy 360mm", price: "R$ 699,90", image: "https://images.unsplash.com/photo-1630831506636-5209d7349db9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMHBvd2VyJTIwc3VwcGx5JTIwdW5pdCUyMGRhcmt8ZW58MXx8fHwxNzczODM5Nzk2fDA&ixlib=rb-4.1.0&q=80&w=400", x: 30, y: 32 },
-      { name: "Teclado Striker RGB", price: "R$ 349,90", image: "https://images.unsplash.com/photo-1718803448073-90ebd0d982e0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWNoYW5pY2FsJTIwa2V5Ym9hcmQlMjBjbG9zZXVwJTIwZGFya3xlbnwxfHx8fDE3NzM4Mzk3OTZ8MA&ixlib=rb-4.1.0&q=80&w=400", x: 60, y: 80 },
-    ],
+    role: "RGB e sincronização de iluminação",
+    about:
+      "Sincroniza a luz do gabinete, do periférico e da fita de LED sem depender de cinco programas abertos ao mesmo tempo. Publica preset pronto para quem quer o resultado sem passar pela configuração inteira.",
   },
 ];
 
 export function InRealLifeSection() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const [highlightedProduct, setHighlightedProduct] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { addItem } = useCart();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
 
@@ -162,15 +155,6 @@ export function InRealLifeSection() {
     };
   }, []);
 
-  const handleAddToCart = (product: TaggedProduct) => {
-    addItem({
-      id: product.name.toLowerCase().replace(/\s/g, "-"),
-      name: product.name,
-      price: product.price,
-      image: product.image,
-    });
-  };
-
   return (
     <section className="px-5 py-16 md:px-[72px] md:py-20" style={{ background: "var(--surface-0)" }}>
       <div className="mx-auto w-full" style={{ maxWidth: "1600px" }}>
@@ -214,7 +198,7 @@ export function InRealLifeSection() {
               lineHeight: 1.5,
             }}
           >
-            Periféricos e componentes PCYES presentes nos melhores setups do Brasil. Clique pra explorar.
+            Criadores brasileiros usando periférico e componente PCYES no setup do dia a dia. Clique numa foto pra conhecer quem está por trás.
           </p>
         </motion.div>
 
@@ -256,43 +240,32 @@ export function InRealLifeSection() {
                 border: "1px solid rgba(var(--foreground-rgb), 0.08)",
                 boxShadow: "var(--shadow-card-hairline)",
               }}
-              onClick={() => { setSelectedPost(post); setHighlightedProduct(null); }}
+              onClick={() => setSelectedPost(post)}
             >
               <ImageWithFallback
                 src={post.image}
-                alt={post.username}
+                alt={`Setup de @${post.username}`}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105"
               />
 
-              {/* Hover overlay with dots preview */}
-              <div className="absolute inset-0 bg-black/40 opacity-100 md:opacity-0 md:group-hover/card:opacity-100 transition-opacity duration-400">
-                {/* Mini dots */}
-                {post.products.map((_, pi) => (
-                  <div
-                    key={pi}
-                    className="absolute w-6 h-6 rounded-full bg-white/90 flex items-center justify-center shadow-lg"
-                    style={{
-                      left: `${post.products[pi].x}%`,
-                      top: `${post.products[pi].y}%`,
-                      transform: "translate(-50%, -50%)",
-                      fontFamily: "var(--font-family-inter)",
-                      fontSize: "var(--text-caption)",
-                      fontWeight: "var(--font-weight-medium)",
-                      color: "#000",
-                    }}
-                  >
-                    {pi + 1}
-                  </div>
-                ))}
-              </div>
-
-              {/* Username at bottom */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent opacity-100 md:opacity-0 md:group-hover/card:opacity-100 transition-opacity duration-400">
+              {/* Véu só na base, atrás do @. Antes o card inteiro escurecia para
+                  dar contraste aos pontos de produto, que não existem mais. */}
+              <div className="absolute inset-x-0 bottom-0 p-4 pt-10 bg-gradient-to-t from-black/75 via-black/35 to-transparent">
                 <span
-                  className="text-ink"
-                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "var(--font-weight-medium)" }}
+                  className="block text-ink-strong"
+                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}
                 >
                   @{post.username}
+                </span>
+                <span
+                  className="mt-0.5 block"
+                  style={{
+                    fontFamily: "var(--font-family-inter)",
+                    fontSize: "var(--text-caption)",
+                    color: "rgba(255,255,255,0.62)",
+                  }}
+                >
+                  {post.role}
                 </span>
               </div>
             </motion.div>
@@ -321,164 +294,50 @@ export function InRealLifeSection() {
               style={{ borderRadius: "var(--radius-card)" }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Left — image with dots */}
+              {/* Esquerda: a foto, sem marcação nenhuma por cima. */}
               <div className="md:w-[60%] flex-shrink-0 relative max-h-[40vh] md:max-h-none overflow-hidden">
                 <ImageWithFallback
                   src={selectedPost.image}
-                  alt={selectedPost.username}
+                  alt={`Setup de @${selectedPost.username}`}
                   className="w-full h-full object-cover md:min-h-[520px]"
                 />
-
-                {/* Numbered dots on the image */}
-                {selectedPost.products.map((product, pi) => (
-                  <button
-                    key={pi}
-                    className="absolute flex h-11 w-11 cursor-pointer items-center justify-center"
-                    style={{
-                      left: `${product.x}%`,
-                      top: `${product.y}%`,
-                      transform: "translate(-50%, -50%)",
-                    }}
-                    onClick={() => setHighlightedProduct(highlightedProduct === pi ? null : pi)}
-                    onMouseEnter={() => setHighlightedProduct(pi)}
-                    onMouseLeave={() => setHighlightedProduct(null)}
-                  >
-                    <span
-                      className={`transition-all duration-300 ${highlightedProduct === pi
-                        ? "w-9 h-9 bg-primary shadow-[0_0_20px_rgba(var(--primary-rgb,255,255,255),0.4)]"
-                        : "w-7 h-7 bg-white/90 hover:bg-white hover:scale-110 shadow-lg"
-                        } rounded-full flex items-center justify-center`}
-                      style={{
-                        fontFamily: "var(--font-family-inter)",
-                        fontSize: highlightedProduct === pi ? "13px" : "12px",
-                        fontWeight: "var(--font-weight-semibold)",
-                        color: highlightedProduct === pi ? "#fff" : "#000",
-                      }}
-                    >
-                      {pi + 1}
-                    </span>
-                  </button>
-                ))}
-
-                {/* Pulsing animation rings */}
-                {selectedPost.products.map((product, pi) => (
-                  <div
-                    key={`ring-${pi}`}
-                    className="absolute pointer-events-none"
-                    style={{
-                      left: `${product.x}%`,
-                      top: `${product.y}%`,
-                      transform: "translate(-50%, -50%)",
-                    }}
-                  >
-                    <span className="absolute inset-0 w-7 h-7 rounded-full bg-white/20 animate-ping" style={{ animationDuration: "2.5s", left: "-14px", top: "-14px" }} />
-                  </div>
-                ))}
               </div>
 
-              {/* Right — product list */}
+              {/* Direita: quem é a pessoa. */}
               <div className="md:w-[40%] p-6 md:p-8 flex flex-col overflow-y-auto">
-                {/* Close */}
                 <button
                   onClick={() => setSelectedPost(null)}
+                  aria-label="Fechar"
                   className="self-end flex h-11 w-11 items-center justify-center text-foreground/30 hover:text-foreground transition-colors cursor-pointer mb-4"
                 >
                   <X size={20} />
                 </button>
 
-                {/* Username */}
                 <span
-                  className="text-foreground/40 mb-1"
-                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
+                  className="text-foreground"
+                  style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl, 22px)", fontWeight: 700, letterSpacing: "-0.02em" }}
                 >
                   @{selectedPost.username}
                 </span>
-
-                {/* Section label */}
                 <span
-                  className="text-foreground/20 block mb-6 tracking-wider"
-                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "var(--font-weight-medium)" }}
+                  className="text-foreground/45 mt-1"
+                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
                 >
-                  PRODUTOS NA IMAGEM
+                  {selectedPost.role}
                 </span>
 
-                {/* Products list */}
-                <div className="space-y-3 flex-1">
-                  {selectedPost.products.map((product, pi) => (
-                    <motion.div
-                      key={product.name}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: pi * 0.08 }}
-                      className={`flex items-center gap-4 p-3 border transition-all duration-300 cursor-pointer ${highlightedProduct === pi
-                        ? "border-primary/40 bg-primary/5"
-                        : "border-foreground/8 hover:border-foreground/15"
-                        }`}
-                      style={{ borderRadius: "var(--radius-card)" }}
-                      onMouseEnter={() => setHighlightedProduct(pi)}
-                      onMouseLeave={() => setHighlightedProduct(null)}
-                    >
-                      {/* Number badge */}
-                      <div
-                        className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center transition-colors duration-300 ${highlightedProduct === pi ? "bg-primary text-ink-strong" : "bg-foreground/10 text-foreground/50"
-                          }`}
-                        style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "var(--font-weight-semibold)" }}
-                      >
-                        {pi + 1}
-                      </div>
-
-                      {/* Product image */}
-                      <div className="w-14 h-14 flex-shrink-0 overflow-hidden bg-foreground/5" style={{ borderRadius: "var(--radius)" }}>
-                        <ImageWithFallback
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-
-                      {/* Info */}
-                      <div className="flex-1 min-w-0">
-                        <p
-                          className={`truncate transition-colors duration-300 ${highlightedProduct === pi ? "text-foreground" : "text-foreground/80"
-                            }`}
-                          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: "var(--font-weight-medium)" }}
-                        >
-                          {product.name}
-                        </p>
-                        <p
-                          className="text-foreground/35"
-                          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
-                        >
-                          {product.price}
-                        </p>
-                      </div>
-
-                      {/* Add to cart button */}
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
-                        className="flex-shrink-0 w-11 h-11 md:w-9 md:h-9 rounded-full border border-foreground/15 text-foreground/40 hover:text-foreground hover:border-foreground/40 transition-all duration-300 cursor-pointer flex items-center justify-center"
-                        title="Comprar"
-                      >
-                        <ShoppingCart size={14} />
-                      </button>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Add all CTA */}
-                <button
-                  onClick={() => selectedPost.products.forEach(p => handleAddToCart(p))}
-                  className="mt-6 w-full py-3 border border-foreground/15 text-foreground/60 hover:text-foreground hover:border-foreground/40 transition-all duration-300 cursor-pointer flex items-center justify-center gap-2"
-                  style={{
-                    borderRadius: "var(--radius-button)",
-                    fontFamily: "var(--font-family-inter)",
-                    fontSize: "var(--text-caption)",
-                    fontWeight: "var(--font-weight-medium)",
-                  }}
+                <span
+                  className="text-foreground/25 block mt-7 mb-3 tracking-wider"
+                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
                 >
-                  <ShoppingCart size={14} />
-                  Comprar todos
-                </button>
+                  SOBRE
+                </span>
+                <p
+                  className="text-foreground/70"
+                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.65 }}
+                >
+                  {selectedPost.about}
+                </p>
               </div>
             </motion.div>
           </motion.div>
