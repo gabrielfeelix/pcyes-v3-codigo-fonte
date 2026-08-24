@@ -176,7 +176,10 @@ export function CartPage() {
   if (items.length === 0) {
     return (
       <>
-        <div className="pt-[80px] md:pt-[88px]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 200px)" }}>
+        <div
+          className="pt-[calc(72px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))]"
+          style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 200px)" }}
+        >
           <div className="mx-auto flex max-w-[640px] flex-col items-center px-5 py-24 text-center">
             <div
               className="mb-8 flex h-24 w-24 items-center justify-center rounded-full"
@@ -237,7 +240,14 @@ export function CartPage() {
 
   return (
     <>
-      <div className="pt-[80px] md:pt-[88px]" style={{ background: "var(--surface-0)", minHeight: "100vh" }}>
+      {/* A navbar é fixa e mede 65px no celular e 142px no desktop. O respiro
+          antigo era 80/88px chumbado, menor que a barra no desktop, então o
+          "Continuar comprando" entrava por baixo dela. Segue a mesma conta do
+          resto do site, somando a altura da faixa de aviso quando ela existe. */}
+      <div
+        className="pt-[calc(72px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))]"
+        style={{ background: "var(--surface-0)", minHeight: "100vh" }}
+      >
         <div className="mx-auto max-w-[1320px] px-5 py-8 pb-24 md:px-8 md:py-10 lg:pb-10">
           {/* Breadcrumb */}
           <Link

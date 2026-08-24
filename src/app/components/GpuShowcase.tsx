@@ -48,15 +48,6 @@ const COMPARISONS: Comparison[] = [
     metric: "+72% FPS",
     scene: "/assets/mario.webp",
   },
-  {
-    id: "rtx-3060-w",
-    productId: 435,
-    newName: "RTX 3060 White",
-    previousName: "RTX 2060",
-    tagline: "Build clean + Ray Tracing",
-    metric: "+45% FPS",
-    scene: "/assets/rdr2.webp",
-  },
 ];
 
 /* O lado "antes" simula uma placa mais fraca, não uma foto fora de foco.
@@ -212,7 +203,9 @@ export function GpuShowcase() {
                   setActiveIdx(i);
                   setPos(52);
                 }}
-                className="relative rounded-full px-5 py-2.5 min-h-[44px] transition-all duration-300 cursor-pointer"
+                /* Respiro menor no celular: com `px-5` as três placas não cabem
+                   numa linha só de 350px e a última cai sozinha embaixo. */
+                className="relative rounded-full px-3.5 md:px-5 py-2.5 min-h-[44px] whitespace-nowrap transition-all duration-300 cursor-pointer"
                 style={{
                   background: isActive
                     ? "linear-gradient(135deg, rgba(225,6,0,0.18) 0%, rgba(225,6,0,0.06) 100%)"
@@ -315,8 +308,11 @@ export function GpuShowcase() {
                 border: "1px solid rgba(var(--foreground-rgb), 0.1)",
               }}
             >
+              {/* O rótulo some no celular: com ele os dois selos de baixo se
+                  encontram no meio do card e o texto de um passa por cima do
+                  outro. O nome da placa sozinho já diz de que lado é. */}
               <span
-                className="text-[var(--text-caption)] md:text-[var(--text-caption)]"
+                className="hidden md:inline text-[var(--text-caption)]"
                 style={{
                   fontFamily: "var(--font-family-inter)",
                   fontWeight: 500,
@@ -328,7 +324,7 @@ export function GpuShowcase() {
                 Geração anterior
               </span>
               <span
-                className="text-ink-strong text-[var(--text-caption)] md:text-[var(--text-sm)]"
+                className="text-ink-strong text-[10px] md:text-[var(--text-sm)]"
                 style={{
                   fontFamily: "var(--font-family-figtree)",
                   fontWeight: 700,
@@ -349,7 +345,7 @@ export function GpuShowcase() {
               }}
             >
               <span
-                className="text-[var(--text-caption)] md:text-[var(--text-caption)]"
+                className="hidden md:inline text-[var(--text-caption)]"
                 style={{
                   fontFamily: "var(--font-family-inter)",
                   fontWeight: 500,
@@ -361,7 +357,7 @@ export function GpuShowcase() {
                 Nova geração
               </span>
               <span
-                className="text-[var(--text-caption)] md:text-[var(--text-sm)]"
+                className="text-[10px] md:text-[var(--text-sm)]"
                 style={{
                   fontFamily: "var(--font-family-figtree)",
                   fontWeight: 700,
@@ -373,21 +369,26 @@ export function GpuShowcase() {
             </div>
           </div>
 
-          {/* Metric badge top-center */}
-          <div className="pointer-events-none absolute top-3 md:top-5 left-1/2 z-20 -translate-x-1/2 max-w-[90vw]">
+          {/* Metric badge top-center.
+              No celular a pílula é arredondada, não circular: com `rounded-full`
+              e o texto em duas linhas o raio virava meia-lua e comia os cantos
+              do texto. A fonte cai para 10px e o respiro interno sobe, senão a
+              frase quebra em três linhas coladas na borda. */}
+          <div className="pointer-events-none absolute top-3 md:top-5 left-1/2 z-20 -translate-x-1/2 w-[86%] md:w-auto md:max-w-[90%]">
             <div
-              className="rounded-full px-2.5 md:px-3.5 py-1 md:py-1.5 backdrop-blur-md"
+              className="rounded-2xl md:rounded-full px-4 md:px-3.5 py-2 md:py-1.5 backdrop-blur-md"
               style={{
-                background: "rgba(0, 0, 0, 0.55)",
+                background: "rgba(0, 0, 0, 0.62)",
                 border: "1px solid rgba(var(--foreground-rgb), 0.1)",
               }}
             >
               <span
-                className="text-[var(--text-caption)] md:text-[var(--text-caption)] whitespace-normal md:whitespace-nowrap text-center block"
+                className="text-[10px] md:text-[var(--text-caption)] whitespace-normal md:whitespace-nowrap text-center block"
                 style={{
                   fontFamily: "var(--font-family-inter)",
                   fontWeight: 700,
-                  letterSpacing: "0.12em",
+                  letterSpacing: "0.08em",
+                  lineHeight: 1.45,
                   color: "#ffffff",
                 }}
               >

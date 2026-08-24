@@ -17,9 +17,25 @@ import { CartAnnouncer } from "./CartAnnouncer";
 export function RootLayout() {
   const { pathname } = useLocation();
 
+  const showAnnouncement =
+    pathname !== "/checkout" && pathname !== "/carrinho" && pathname !== "/monte-seu-pc";
+  const showNavbar = pathname !== "/checkout" && pathname !== "/monte-seu-pc";
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
+
+  /* `--announce-h` nasce em 40px no tema e é a AnnouncementBar que a mantém
+     atualizada. Nas rotas onde a faixa não é renderizada ninguém zera a
+     variável: num acesso direto a /carrinho ela continua em 40px, a navbar
+     (que se posiciona por ela) desce 40px sem motivo e o conteúdo da página
+     passa por baixo do cabeçalho. Quem decide se a faixa existe é este
+     layout, então é aqui que a altura zera. */
+  useEffect(() => {
+    if (!showAnnouncement) {
+      document.documentElement.style.setProperty("--announce-h", "0px");
+    }
+  }, [showAnnouncement]);
 
   return (
     <ThemeProvider>
@@ -35,8 +51,8 @@ export function RootLayout() {
                 >
                   Pular para o conteúdo principal
                 </a>
-                {pathname !== "/checkout" && pathname !== "/carrinho" && pathname !== "/monte-seu-pc" && <AnnouncementBar />}
-                {pathname !== "/checkout" && pathname !== "/monte-seu-pc" && <Navbar />}
+                {showAnnouncement && <AnnouncementBar />}
+                {showNavbar && <Navbar />}
                 <div data-page-light-scope className="contents">
                   {pathname !== "/checkout" && <CartDrawer />}
                   <AuthModal />

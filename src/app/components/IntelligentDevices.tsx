@@ -198,7 +198,11 @@ export function IntelligentDevices() {
               letterSpacing: "-0.025em",
             }}
           >
-            Tecnologia para{" "}
+            {/* No celular "Tecnologia para" fica sozinho na primeira linha e a
+                palavra que troca fica sozinha embaixo. Deixando as duas na mesma
+                frase, a quebra caía no meio da palavra rotativa e mudava de
+                lugar a cada troca, porque cada uma tem um comprimento. */}
+            <span className="block md:inline">Tecnologia para</span>{" "}
             <GlitchWord word={GLITCH_WORDS[wordIdx]} />
           </h2>
         </div>
@@ -212,7 +216,16 @@ export function IntelligentDevices() {
           <div className="md:hidden relative">
             <div
               ref={railRef}
-              className="flex items-start gap-5 overflow-x-auto -mx-5 px-5 pb-2 [mask-image:linear-gradient(to_right,black_calc(100%-56px),transparent)] snap-x snap-mandatory"
+              /* `pt-5`: o círculo ativo cresce e ganha anel e brilho vermelho
+                 que passam ~27px além dos 72px do botão. Como a trilha rola na
+                 horizontal, o navegador também corta na vertical, e sem respiro
+                 no topo o brilho aparecia decepado.
+
+                 `scroll-pl-6`: com `snap-mandatory` o navegador encosta o
+                 primeiro item na borda do scroll e come o `px`, jogando o
+                 círculo para fora da tela. O scroll-padding é o que o snap
+                 respeita. */
+              className="flex items-start gap-5 overflow-x-auto -mx-5 px-6 scroll-pl-6 pt-5 pb-4 [mask-image:linear-gradient(to_right,black_calc(100%-56px),transparent)] snap-x snap-mandatory"
               style={{ scrollbarWidth: "none" }}
               role="tablist"
               aria-label="Categorias inteligentes"
