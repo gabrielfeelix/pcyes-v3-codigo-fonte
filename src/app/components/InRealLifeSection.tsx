@@ -272,23 +272,16 @@ export function InRealLifeSection() {
               />
 
               {/* Véu só na base, atrás do @. Antes o card inteiro escurecia para
-                  dar contraste aos pontos de produto, que não existem mais. */}
+                  dar contraste aos pontos de produto, que não existem mais.
+
+                  Só o @ aqui: a função da pessoa fica para o modal. No card ela
+                  competia com a foto, que é o que deve puxar o clique. */}
               <div className="absolute inset-x-0 bottom-0 p-4 pt-10 bg-gradient-to-t from-black/75 via-black/35 to-transparent">
                 <span
                   className="block text-ink-strong"
                   style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}
                 >
                   @{post.username}
-                </span>
-                <span
-                  className="mt-0.5 block"
-                  style={{
-                    fontFamily: "var(--font-family-inter)",
-                    fontSize: "var(--text-caption)",
-                    color: "rgba(255,255,255,0.62)",
-                  }}
-                >
-                  {post.role}
                 </span>
               </div>
             </motion.div>
