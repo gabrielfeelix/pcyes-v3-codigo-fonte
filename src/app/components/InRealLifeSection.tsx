@@ -29,6 +29,54 @@ interface Post {
 const posts: Post[] = [
   {
     id: 1,
+    image: "/influencers/alanzoka.png",
+    username: "alanzoka",
+    role: "Streamer, maior canal de games da Twitch BR",
+    about:
+      "Alan Ferreira transmite quase todo dia há mais de dez anos e construiu o maior canal de jogos do Brasil na Twitch. O formato mudou pouco nesse tempo: sessão longa, jogo do começo ao fim e conversa com o chat sem roteiro.",
+  },
+  {
+    id: 2,
+    image: "/influencers/yoda.png",
+    username: "yoda",
+    role: "League of Legends, campeão do CBLOL",
+    about:
+      "Felipe Noronha saiu do competitivo de League of Legends, onde foi campeão do CBLOL em 2017, e virou um dos streamers mais assistidos do país. Fundou a SehLoiro, rede que reúne criadores de conteúdo, e leva a mesma leitura de jogo do palco para a transmissão.",
+  },
+  {
+    id: 3,
+    image: "/influencers/sofiaespanha.png",
+    username: "sofiaespanha",
+    role: "Valorant e conteúdo IRL, criadora da FURIA",
+    about:
+      "Sofia Espanha faz parte do time de criadores da FURIA e reúne milhões de seguidores entre TikTok e Twitch. Alterna partida de Valorant com transmissão de react e conteúdo do dia a dia, formato que trouxe muita gente de fora do público de jogo para o competitivo.",
+  },
+  {
+    id: 4,
+    image: "/influencers/nobru.png",
+    username: "nobru",
+    role: "Free Fire, jogador e fundador da Fluxo",
+    about:
+      "Bruno Goes saiu do competitivo de Free Fire para montar a própria organização. A Fluxo nasceu em 2021 e virou uma das casas mais seguidas do país, com time em várias modalidades e uma base que acompanha o dia a dia da equipe.",
+  },
+  {
+    id: 5,
+    image: "/influencers/luba.png",
+    username: "luba",
+    role: "YouTube, gameplay e humor",
+    about:
+      "Um dos canais de games mais antigos ainda ativos no YouTube brasileiro. Ficou conhecido pela edição rápida e pelo humor em cima da própria gameplay, fórmula que atravessou mais de uma geração de público.",
+  },
+  {
+    id: 6,
+    image: "/influencers/muca.png",
+    username: "mucahd",
+    role: "Minecraft, construção e desafio",
+    about:
+      "Muca produz série longa de Minecraft, entre mega construção e desafio, e faz parte da Creative Squad. Mantém canal separado só para as transmissões ao vivo, onde a construção acontece do zero na frente de quem está assistindo.",
+  },
+  {
+    id: 7,
     image: "https://commons.wikimedia.org/wiki/Special:FilePath/IEM_2015_San_Jose_Day_1_-_70.jpg?width=900",
     username: "fallen",
     role: "Counter-Strike, capitão e AWPer",
@@ -36,60 +84,12 @@ const posts: Post[] = [
       "Gabriel Toledo, o nome mais conhecido do Counter-Strike brasileiro. Capitaneou a geração que levou o país a dois títulos de Major e fundou a Games Academy para formar jogador novo. Segue competindo em alto nível mais de uma década depois da estreia.",
   },
   {
-    id: 2,
+    id: 8,
     image: "https://commons.wikimedia.org/wiki/Special:FilePath/BETWAY_AIM_CHALLENGE_COLDZERA_screenshot.jpg?width=900",
     username: "coldzera",
     role: "Counter-Strike, dois anos como melhor do mundo",
     about:
       "Marcelo David foi eleito o melhor jogador do mundo em 2016 e 2017, feito que nenhum outro brasileiro repetiu. Ficou marcado pelo salto com AWP contra a Team Liquid, jogada que virou pôster do Counter-Strike competitivo.",
-  },
-  {
-    id: 3,
-    image: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Nobru_no_PodDelas_2026.png",
-    username: "nobru",
-    role: "Free Fire, jogador e fundador da Fluxo",
-    about:
-      "Bruno Goes saiu do competitivo de Free Fire para montar a própria organização. A Fluxo nasceu em 2021 e virou uma das casas mais seguidas do país, com time em várias modalidades e uma base de audiência que acompanha o dia a dia da equipe.",
-  },
-  {
-    id: 4,
-    image: "https://upload.wikimedia.org/wikipedia/commons/2/22/Alanzoka_2021.png",
-    username: "alanzoka",
-    role: "Streamer, maior canal de games da Twitch BR",
-    about:
-      "Alan Ferreira transmite quase todo dia há mais de dez anos e construiu o maior canal de jogos do Brasil na Twitch. O formato mudou pouco nesse tempo: sessão longa, jogo do começo ao fim e conversa com o chat sem roteiro.",
-  },
-  {
-    id: 5,
-    image: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Casimiro.png",
-    username: "casimiro",
-    role: "Streamer e narração esportiva",
-    about:
-      "Casimiro Miguel levou a narração de futebol para a Twitch e transformou reação ao vivo em formato de massa. Quebrou recorde de audiência simultânea no Brasil transmitindo jogo com direito de exibição, algo que streamer nenhum tinha feito por aqui.",
-  },
-  {
-    id: 6,
-    image: "https://upload.wikimedia.org/wikipedia/commons/a/af/Cellbit_com_seu_cachorrinho_%28Eredin%29.png",
-    username: "cellbit",
-    role: "Streamer, RPG e investigação",
-    about:
-      "Rafael Lange começou com teoria de jogo de terror e acabou criando um formato próprio de RPG narrado ao vivo. As campanhas dele reúnem centenas de milhares de pessoas por sessão e renderam livro, série e turnê presencial.",
-  },
-  {
-    id: 7,
-    image: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Luba-2017.png",
-    username: "luba",
-    role: "YouTube, gameplay e humor",
-    about:
-      "Um dos canais de games mais antigos ainda ativos no YouTube brasileiro. Ficou conhecido pela edição rápida e pelo humor em cima da própria gameplay, fórmula que atravessou mais de uma geração de público.",
-  },
-  {
-    id: 8,
-    image: "https://upload.wikimedia.org/wikipedia/commons/3/34/PlayHard_na_Brasil_Game_Show_2016.png",
-    username: "brunoplayhard",
-    role: "YouTube, gameplay e comunidade",
-    about:
-      "Bruno Bittencourt está entre os primeiros criadores de conteúdo de games do país a viver disso. Mantém a mesma linha desde o começo, com série longa de gameplay comentada e presença constante nos eventos de jogo do Brasil.",
   },
 ];
 
