@@ -29,7 +29,7 @@ interface Post {
 const posts: Post[] = [
   {
     id: 1,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/FalleN_IEM_Chicago_%2848353708812%29_%28cropped%29.jpg/960px-FalleN_IEM_Chicago_%2848353708812%29_%28cropped%29.jpg",
+    image: "https://commons.wikimedia.org/wiki/Special:FilePath/IEM_2015_San_Jose_Day_1_-_70.jpg?width=900",
     username: "fallen",
     role: "Counter-Strike, capitão e AWPer",
     about:
@@ -37,7 +37,7 @@ const posts: Post[] = [
   },
   {
     id: 2,
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/IEM_Katowice_2019_IMG_1137_%2847347473382%29.jpg/960px-IEM_Katowice_2019_IMG_1137_%2847347473382%29.jpg",
+    image: "https://commons.wikimedia.org/wiki/Special:FilePath/BETWAY_AIM_CHALLENGE_COLDZERA_screenshot.jpg?width=900",
     username: "coldzera",
     role: "Counter-Strike, dois anos como melhor do mundo",
     about:
