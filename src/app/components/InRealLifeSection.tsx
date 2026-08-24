@@ -24,6 +24,14 @@ interface Post {
   role: string;
   /** Texto do "Sobre". Um parágrafo, tom de apresentação. */
   about: string;
+  /**
+   * Reenquadramento da foto, no formato do `object-position`.
+   *
+   * O quadro é em pé e boa parte das fotos vem deitada, então o corte central
+   * pode deixar a pessoa espremida na beirada. Só preencher quando o padrão
+   * não servir.
+   */
+  imgPos?: string;
 }
 
 const posts: Post[] = [
@@ -38,6 +46,9 @@ const posts: Post[] = [
   {
     id: 2,
     image: "/influencers/yoda.png",
+    /* Foto deitada e ele está bem na direita do enquadramento: sem puxar, o
+       corte em pé pega só a bancada e corta o rosto. */
+    imgPos: "80% center",
     username: "yoda",
     role: "League of Legends, campeão do CBLOL",
     about:
@@ -269,6 +280,7 @@ export function InRealLifeSection() {
                 src={post.image}
                 alt={`Setup de @${post.username}`}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105"
+                style={{ objectPosition: post.imgPos ?? "center" }}
               />
 
               {/* Véu só na base, atrás do @. Antes o card inteiro escurecia para
@@ -327,6 +339,7 @@ export function InRealLifeSection() {
                       src={selectedPost.image}
                       alt={`Setup de @${selectedPost.username}`}
                       className="w-full h-full object-cover md:min-h-[520px]"
+                      style={{ objectPosition: selectedPost.imgPos ?? "center" }}
                     />
                   </motion.div>
                 </AnimatePresence>
