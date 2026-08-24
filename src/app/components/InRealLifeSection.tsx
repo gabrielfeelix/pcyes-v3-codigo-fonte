@@ -131,27 +131,68 @@ export function InRealLifeSection() {
   const LOOP = 3;
   const items = useMemo(() => Array.from({ length: LOOP }, () => posts).flat(), []);
 
+  /* Enquanto uma rolagem suave está em curso, ninguém pode tocar no
+     `scrollLeft`: escrever nele no meio do caminho mata a animação, e a
+     normalização passa a brigar com ela. Foi o que fazia a seta andar suave
+     duas vezes e na terceira dar um tranco para trás. */
+  const rolandoRef = useRef(false);
+  const fimDaRolagem = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /**
+   * Largura de uma cópia da lista.
+   *
+   * Não é `scrollWidth / 3`: a lista tem um espaçamento entre cada par de
+   * cards, e o último não tem espaçamento depois dele, então a divisão dá
+   * 5px a menos que o período real. Costurando por esse valor a imagem
+   * escorregava um pouco a cada volta, e o erro se somava. Medir a distância
+   * entre o primeiro card de uma cópia e o da cópia seguinte dá o período
+   * exato.
+   */
+  const larguraDaCopia = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return 0;
+    const c = el.children;
+    if (c.length <= posts.length) return el.scrollWidth / LOOP;
+    return (c[posts.length] as HTMLElement).offsetLeft - (c[0] as HTMLElement).offsetLeft;
+  }, []);
+
   const normalizeLoop = useCallback(() => {
     const el = scrollRef.current;
-    if (!el) return;
-    const seg = el.scrollWidth / LOOP;
+    if (!el || rolandoRef.current) return;
+    const seg = larguraDaCopia();
     if (seg <= 0) return;
     if (el.scrollLeft < seg * 0.5) el.scrollLeft += seg;
     else if (el.scrollLeft > seg * 1.5) el.scrollLeft -= seg;
-  }, []);
+  }, [larguraDaCopia]);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollLeft = el.scrollWidth / LOOP;
+    el.scrollLeft = larguraDaCopia();
     el.addEventListener("scroll", normalizeLoop, { passive: true });
-    return () => el.removeEventListener("scroll", normalizeLoop);
-  }, [normalizeLoop]);
+    return () => {
+      el.removeEventListener("scroll", normalizeLoop);
+      if (fimDaRolagem.current) clearTimeout(fimDaRolagem.current);
+    };
+  }, [normalizeLoop, larguraDaCopia]);
 
   const scroll = (dir: "left" | "right") => {
-    if (!scrollRef.current) return;
-    const amount = scrollRef.current.clientWidth * 0.6;
-    scrollRef.current.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
+    const el = scrollRef.current;
+    if (!el) return;
+    const seg = larguraDaCopia();
+    const delta = (dir === "left" ? -1 : 1) * el.clientWidth * 0.6;
+
+    /* Recentra ANTES de animar, olhando onde a rolagem vai parar. O salto de
+       uma cópia inteira acontece com a lista parada e cai sobre a mesma
+       imagem, então não aparece, e a animação seguinte corre inteira. */
+    const alvo = el.scrollLeft + delta;
+    if (alvo < seg * 0.5) el.scrollLeft += seg;
+    else if (alvo > seg * 1.5) el.scrollLeft -= seg;
+
+    rolandoRef.current = true;
+    el.scrollBy({ left: delta, behavior: "smooth" });
+    if (fimDaRolagem.current) clearTimeout(fimDaRolagem.current);
+    fimDaRolagem.current = setTimeout(() => { rolandoRef.current = false; }, 700);
   };
 
   useEffect(() => {
