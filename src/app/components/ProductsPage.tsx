@@ -1630,11 +1630,16 @@ export function ProductsPage() {
                       const preOrderInfo = getPreOrderInfo(displayProduct.id);
 
                       return (
+                        /* Coluna esticada: o conteúdo abaixo da foto tem altura
+                           variável (título de uma ou duas linhas, selo de setup,
+                           chip de switch, cor, preço com ou sem riscado), então
+                           sem isso o botão de comprar parava numa altura
+                           diferente em cada card e a grade ficava torta. */
                         <motion.div key={`grid-${product.id}`} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                           transition={{ duration: 0.3, delay: Math.min(i * 0.025, 0.35) }}
-                          className="group relative"
+                          className="group relative flex h-full flex-col"
                         >
-                          <div className={`relative overflow-hidden mb-4 aspect-[5/6] transition-all duration-300 deal-card-img ${displayProduct.inStock === false ? 'opacity-60 grayscale-[0.5]' : ''}`} style={{ borderRadius: "var(--radius-card-lg)", background: "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.10) 0%, rgba(var(--foreground-rgb), 0.03) 100%)", border: "1px solid rgba(var(--foreground-rgb), 0.08)" }}>
+                          <div className={`relative shrink-0 overflow-hidden mb-4 aspect-[5/6] transition-all duration-300 deal-card-img ${displayProduct.inStock === false ? 'opacity-60 grayscale-[0.5]' : ''}`} style={{ borderRadius: "var(--radius-card-lg)", background: "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.10) 0%, rgba(var(--foreground-rgb), 0.03) 100%)", border: "1px solid rgba(var(--foreground-rgb), 0.08)" }}>
                             {/* Inner shine */}
                             <div className="pointer-events-none absolute inset-0 z-[1]" style={{ background: "radial-gradient(circle at 30% 25%, rgba(var(--foreground-rgb), 0.06) 0%, transparent 55%)", borderRadius: "var(--radius-card-lg)" }} />
                             <Link to={`/produto/${displayProduct.id}`} className="block h-full">
@@ -1707,14 +1712,17 @@ export function ProductsPage() {
                           </div>
 
                           {/* Product info */}
-                          <div className="mt-4 px-1">
+                          <div className="mt-4 px-1 flex flex-1 flex-col">
                             <SetupTierBadge product={displayProduct} />
                             <Link to={`/produto/${displayProduct.id}`}>
                               {/* Duas linhas também no desktop: o nome do setup
                                   carrega placa e resolução no fim, que é
                                   justamente o que `line-clamp-1` cortava. */}
                               <h3 className="line-clamp-2 text-ink-strong"
-                                style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 600, lineHeight: 1.3, letterSpacing: "-0.01em" }}>
+                                /* `minHeight` de duas linhas: com uma linha só o
+                                   preço subia e ficava desencontrado do card ao
+                                   lado. */
+                                style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 600, lineHeight: 1.3, letterSpacing: "-0.01em", minHeight: "2.6em" }}>
                                 {displayProduct.name}
                               </h3>
                             </Link>
@@ -1778,8 +1786,8 @@ export function ProductsPage() {
                                 Desktop uses the floating hover pill above instead. */}
                             <button
                               onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToCart(displayProduct); }}
-                              className="lg:hidden mt-3 flex w-full items-center justify-center gap-2 rounded-full py-2.5 cursor-pointer"
-                              style={{ background: "var(--gradient-buy)", color: "white", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700, letterSpacing: "0.04em", boxShadow: "var(--shadow-buy-cta-sm)" }}
+                              className="lg:hidden mt-auto pt-3 flex w-full items-center justify-center gap-2 rounded-full cursor-pointer"
+                              style={{ background: "var(--gradient-buy)", color: "white", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700, letterSpacing: "0.04em", boxShadow: "var(--shadow-buy-cta-sm)", paddingTop: "10px", paddingBottom: "10px" }}
                             >
                               <ShoppingCart size={15} strokeWidth={2} /> Comprar
                             </button>
