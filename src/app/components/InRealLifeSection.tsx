@@ -24,72 +24,83 @@ interface Post {
   role: string;
   /** Texto do "Sobre". Um parágrafo, tom de apresentação. */
   about: string;
+  /**
+   * Reenquadramento da foto, no formato do `object-position`.
+   *
+   * O quadro é em pé e boa parte das fotos vem deitada, então o corte central
+   * pode deixar a pessoa espremida na beirada. Só preencher quando o padrão
+   * não servir.
+   */
+  imgPos?: string;
 }
 
 const posts: Post[] = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1758410473598-ef957adbf57b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBnYW1pbmclMjBzZXR1cCUyMGhlYWRzZXQlMjBrZXlib2FyZHxlbnwxfHx8fDE3NzM4NDQ2ODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "setupbr_",
-    role: "Montagem e organização de cabo",
+    image: "/influencers/alanzoka.png",
+    username: "alanzoka",
+    role: "Streamer, maior canal de games da Twitch BR",
     about:
-      "Documenta montagem de PC do zero há seis anos, sempre pensando em quem está montando a primeira máquina. Ficou conhecido pelos vídeos de organização de cabo, onde cada escolha leva em conta quem vai abrir o gabinete de novo daqui a dois anos.",
+      "Alan Ferreira transmite quase todo dia há mais de dez anos e construiu o maior canal de jogos do Brasil na Twitch. O formato mudou pouco nesse tempo: sessão longa, jogo do começo ao fim e conversa com o chat sem roteiro.",
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1715078795172-c1636d5bc845?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYW4lMjB1c2luZyUyMGNvbXB1dGVyJTIwZGVzayUyMHNldHVwJTIwZGFya3xlbnwxfHx8fDE3NzM4NDQ2ODJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "techzera",
-    role: "Teste de hardware em bancada",
+    image: "/influencers/yoda.png",
+    /* Foto deitada e ele está bem na direita do enquadramento: sem puxar, o
+       corte em pé pega só a bancada e corta o rosto. */
+    imgPos: "80% center",
+    username: "yoda",
+    role: "League of Legends, campeão do CBLOL",
     about:
-      "Publica os números antes da opinião. Roda a mesma bateria de teste em toda peça que passa pela bancada, o que acabou virando uma base de comparação que a audiência consulta mais do que a própria análise. Prefere setup de trabalho a setup de vitrine.",
+      "Felipe Noronha saiu do competitivo de League of Legends, onde foi campeão do CBLOL em 2017, e virou um dos streamers mais assistidos do país. Fundou a SehLoiro, rede que reúne criadores de conteúdo, e leva a mesma leitura de jogo do palco para a transmissão.",
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1638741631188-a42a58d5499c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmZW1hbGUlMjBnYW1lciUyMGRlc2t0b3AlMjBtb25pdG9yJTIwZGFyayUyMGFtYmllbnR8ZW58MXx8fHwxNzczODQ1MTQ3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "gamergirlbr",
-    role: "FPS competitivo e rotina de treino",
+    image: "/influencers/sofiaespanha.png",
+    username: "sofiaespanha",
+    role: "Valorant e conteúdo IRL, criadora da FURIA",
     about:
-      "Mostra a rotina que sustenta o competitivo: treino de mira, ajuste de sensibilidade e mesa montada para sessão longa. Fala bastante de ergonomia, assunto que costuma ficar de fora do conteúdo de setup e que aparece cedo em quem joga muitas horas seguidas.",
+      "Sofia Espanha faz parte do time de criadores da FURIA e reúne milhões de seguidores entre TikTok e Twitch. Alterna partida de Valorant com transmissão de react e conteúdo do dia a dia, formato que trouxe muita gente de fora do público de jogo para o competitivo.",
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1619190324856-af3f6eb55601?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHJlYW1lciUyMG1pY3JvcGhvbmUlMjB3ZWJjYW0lMjBzZXR1cHxlbnwxfHx8fDE3NzM4NDQ2ODJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "streamerbr",
-    role: "Transmissão ao vivo e áudio",
+    image: "/influencers/nobru.png",
+    username: "nobru",
+    role: "Free Fire, jogador e fundador da Fluxo",
     about:
-      "Virou referência em áudio de live entre quem está começando. Ensina a montar captação decente sem sala tratada, aproveitando o que o quarto já oferece em vez de pedir investimento em acústica antes de qualquer outra coisa.",
+      "Bruno Goes saiu do competitivo de Free Fire para montar a própria organização. A Fluxo nasceu em 2021 e virou uma das casas mais seguidas do país, com time em várias modalidades e uma base que acompanha o dia a dia da equipe.",
   },
   {
     id: 5,
-    image: "https://images.unsplash.com/photo-1767589908215-f583b894c9d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjB0eXBpbmclMjBtZWNoYW5pY2FsJTIwa2V5Ym9hcmQlMjBjbG9zZXVwfGVufDF8fHx8MTc3Mzg0NDY4M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "keybfanatic",
-    role: "Teclado mecânico e customização",
+    image: "/influencers/luba.png",
+    username: "luba",
+    role: "YouTube, gameplay e humor",
     about:
-      "Documenta cada troca de switch, lubrificação e ajuste de estabilizador. Mantém um comparativo público de som por switch que já passou de duzentas entradas, construído gravando sempre no mesmo microfone e na mesma distância.",
+      "Um dos canais de games mais antigos ainda ativos no YouTube brasileiro. Ficou conhecido pela edição rápida e pelo humor em cima da própria gameplay, fórmula que atravessou mais de uma geração de público.",
   },
   {
     id: 6,
-    image: "https://images.unsplash.com/photo-1760612484753-2311a768798a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYW1lciUyMHdlYXJpbmclMjBoZWFkcGhvbmVzJTIwcGxheWluZyUyMGRhcmslMjByb29tfGVufDF8fHx8MTc3Mzg0NDY4M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "neonsetup",
-    role: "Iluminação e ambientação",
+    image: "/influencers/muca.png",
+    username: "mucahd",
+    role: "Minecraft, construção e desafio",
     about:
-      "Trata o setup como cenário: luz de fundo, temperatura de cor e o quanto de RGB cabe antes de cansar a vista. Ensina a calibrar iluminação pela câmera, e não pelo olho, porque o que fica bonito ao vivo costuma estourar na foto.",
+      "Muca produz série longa de Minecraft, entre mega construção e desafio, e faz parte da Creative Squad. Mantém canal separado só para as transmissões ao vivo, onde a construção acontece do zero na frente de quem está assistindo.",
   },
   {
     id: 7,
-    image: "https://images.unsplash.com/photo-1624749076719-52c184a2e2e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBzaXR0aW5nJTIwZ2FtaW5nJTIwY2hhaXIlMjBkZXNrfGVufDF8fHx8MTc3Mzg0NDY4NHww&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "cleansetup",
-    role: "Minimalismo e mesa limpa",
+    image: "https://commons.wikimedia.org/wiki/Special:FilePath/IEM_2015_San_Jose_Day_1_-_70.jpg?width=900",
+    username: "fallen",
+    role: "Counter-Strike, capitão e AWPer",
     about:
-      "Defende que setup bom é aquele que some enquanto a pessoa trabalha. Monta com poucas peças, cabo fora de vista e paleta reduzida a duas cores, provando que dá para ter máquina forte sem transformar a mesa em vitrine.",
+      "Gabriel Toledo, o nome mais conhecido do Counter-Strike brasileiro. Capitaneou a geração que levou o país a dois títulos de Major e fundou a Games Academy para formar jogador novo. Segue competindo em alto nível mais de uma década depois da estreia.",
   },
   {
     id: 8,
-    image: "https://images.unsplash.com/photo-1684488624316-774ea1824d97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMG1hbiUyMHN0cmVhbWluZyUyMGNvbXB1dGVyJTIwUkdCJTIwbGlnaHRzfGVufDF8fHx8MTc3Mzg0NDY4NHww&ixlib=rb-4.1.0&q=80&w=1080",
-    username: "rgbmaster_",
-    role: "RGB e sincronização de iluminação",
+    image: "https://commons.wikimedia.org/wiki/Special:FilePath/BETWAY_AIM_CHALLENGE_COLDZERA_screenshot.jpg?width=900",
+    username: "coldzera",
+    role: "Counter-Strike, dois anos como melhor do mundo",
     about:
-      "Sincroniza a luz do gabinete, do periférico e da fita de LED sem depender de cinco programas abertos ao mesmo tempo. Publica preset pronto para quem quer o resultado sem passar pela configuração inteira.",
+      "Marcelo David foi eleito o melhor jogador do mundo em 2016 e 2017, feito que nenhum outro brasileiro repetiu. Ficou marcado pelo salto com AWP contra a Team Liquid, jogada que virou pôster do Counter-Strike competitivo.",
   },
 ];
 
@@ -344,6 +355,7 @@ export function InRealLifeSection() {
                 src={post.image}
                 alt={`Setup de @${post.username}`}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105"
+                style={{ objectPosition: post.imgPos ?? "center" }}
               />
 
               {/* Véu só na base, atrás do @. Antes o card inteiro escurecia para
@@ -402,6 +414,7 @@ export function InRealLifeSection() {
                       src={selectedPost.image}
                       alt={`Setup de @${selectedPost.username}`}
                       className="w-full h-full object-cover md:min-h-[520px]"
+                      style={{ objectPosition: selectedPost.imgPos ?? "center" }}
                     />
                   </motion.div>
                 </AnimatePresence>
