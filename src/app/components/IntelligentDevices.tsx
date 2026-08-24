@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
 import {
   Armchair,
+  ChevronLeft,
   ChevronRight,
   Cpu,
   Fan,
@@ -142,12 +143,41 @@ export function IntelligentDevices() {
     return visibleCatalog.filter(cat.match).slice(0, 5);
   }, [visibleCatalog, activeCategories, safeActiveCat]);
 
-  const advanceRailMobile = () => {
+  /**
+   * Setas da trilha no celular.
+   *
+   * Antes só existia a seta da direita, e ao chegar no fim ela voltava para o
+   * começo. Quem passasse do Headsets não tinha como voltar sem arrastar com o
+   * dedo, e o card do Hardware, primeiro da fila, ficava inalcançável pelo
+   * botão. Agora são duas setas, cada uma some na ponta em que não faz nada.
+   */
+  const [railPos, setRailPos] = useState({ atStart: true, atEnd: false });
+
+  const updateRailPos = React.useCallback(() => {
     const el = railRef.current;
     if (!el) return;
-    const step = el.clientWidth * 0.75;
-    const nearEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
-    el.scrollTo({ left: nearEnd ? 0 : el.scrollLeft + step, behavior: "smooth" });
+    setRailPos({
+      atStart: el.scrollLeft <= 4,
+      atEnd: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4,
+    });
+  }, []);
+
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+    updateRailPos();
+    el.addEventListener("scroll", updateRailPos, { passive: true });
+    window.addEventListener("resize", updateRailPos);
+    return () => {
+      el.removeEventListener("scroll", updateRailPos);
+      window.removeEventListener("resize", updateRailPos);
+    };
+  }, [updateRailPos, activeCategories.length]);
+
+  const scrollRail = (dir: -1 | 1) => {
+    const el = railRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth * 0.75, behavior: "smooth" });
   };
 
   return (
@@ -225,8 +255,12 @@ export function IntelligentDevices() {
                  primeiro item na borda do scroll e come o `px`, jogando o
                  círculo para fora da tela. O scroll-padding é o que o snap
                  respeita. */
-              className="flex items-start gap-5 overflow-x-auto -mx-5 px-6 scroll-pl-6 pt-5 pb-4 [mask-image:linear-gradient(to_right,black_calc(100%-56px),transparent)] snap-x snap-mandatory"
-              style={{ scrollbarWidth: "none" }}
+              className="flex items-start gap-5 overflow-x-auto -mx-5 px-6 scroll-pl-6 pt-5 pb-4 snap-x snap-mandatory"
+              style={{
+                scrollbarWidth: "none",
+                /* O esmaecido só existe do lado que ainda tem conteúdo escondido. */
+                maskImage: `linear-gradient(to right, ${railPos.atStart ? "black 0" : "transparent 0, black 56px"}, ${railPos.atEnd ? "black 100%" : "black calc(100% - 56px), transparent 100%"})`,
+              }}
               role="tablist"
               aria-label="Categorias inteligentes"
             >
@@ -284,15 +318,26 @@ export function IntelligentDevices() {
                 );
               })}
             </div>
-            {/* Right chevron advances the rail by ~75% viewport. Wraps around at the end. */}
-            <button
-              type="button"
-              onClick={advanceRailMobile}
-              aria-label="Ver mais categorias"
-              className="absolute right-1 top-[28px] z-10 flex h-10 w-10 items-center justify-center rounded-full border border-edge bg-black/55 text-ink backdrop-blur-md transition-colors hover:border-primary/50 hover:text-ink-strong hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 cursor-pointer"
-            >
-              <ChevronRight size={18} strokeWidth={2.2} aria-hidden="true" />
-            </button>
+            {!railPos.atStart && (
+              <button
+                type="button"
+                onClick={() => scrollRail(-1)}
+                aria-label="Ver categorias anteriores"
+                className="absolute left-1 top-[45px] z-10 flex h-10 w-10 items-center justify-center rounded-full border border-edge bg-black/55 text-ink backdrop-blur-md transition-colors hover:border-primary/50 hover:text-ink-strong hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 cursor-pointer"
+              >
+                <ChevronLeft size={18} strokeWidth={2.2} aria-hidden="true" />
+              </button>
+            )}
+            {!railPos.atEnd && (
+              <button
+                type="button"
+                onClick={() => scrollRail(1)}
+                aria-label="Ver mais categorias"
+                className="absolute right-1 top-[45px] z-10 flex h-10 w-10 items-center justify-center rounded-full border border-edge bg-black/55 text-ink backdrop-blur-md transition-colors hover:border-primary/50 hover:text-ink-strong hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 cursor-pointer"
+              >
+                <ChevronRight size={18} strokeWidth={2.2} aria-hidden="true" />
+              </button>
+            )}
           </div>
 
           {/* Desktop / tablet layout */}
