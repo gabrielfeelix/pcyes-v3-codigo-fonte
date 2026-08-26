@@ -23,13 +23,20 @@ import { formatBRL, parseBRL } from "../../utils/format";
 export type GiftGoal =
   | { kind: "subtotal"; target: number }
   | { kind: "distinct"; target: number }
-  | { kind: "eligible"; target: number; productIds: number[] };
+  /* Duas campanhas de "itens específicos" que parecem uma só e não são:
+     - `categoria` — qualquer peça de um recorte grande (3 periféricos). A lista
+       tem centenas de itens: mostrá-los é impossível, então a régua serve, e o
+       que muda em relação à de quantidade é só qual produto conta.
+     - `produtos`  — SKUs nomeados (leve ESTE headset e ESTE teclado). A lista é
+       curta e é a informação principal: sem ver quais são, a pessoa não tem
+       como cumprir. Aí a régua sobra e a lista vira o progresso. */
+  | { kind: "eligible"; target: number; scope: "categoria" | "produtos"; productIds: number[] };
 
 export interface GiftCampaign {
   id: string;
   /** Frase da campanha, usada quando o brinde ainda não foi liberado. */
   headline: string;
-  /** Como chamar os elegíveis no botão que leva à listagem: "periféricos". */
+  /** Como chamar os elegíveis: "periféricos". Vira o rótulo da meta na régua. */
   catalogNoun?: string;
   goal: GiftGoal;
   /** Um id = brinde entra direto no carrinho; dois ou mais = modal de escolha. */
@@ -46,8 +53,14 @@ export interface GiftProgress {
   ratio: number;
   /** "Faltam R$ 300,20" / "Falta 1 produto diferente" / "Meta batida". */
   remainingLabel: string;
-  /** `null` na meta de subtotal — lá o progresso não tem casas. */
+  /** `null` fora da meta `eligible` com escopo `produtos`. */
   slots: GiftSlot[] | null;
+  /** Quanto já foi cumprido e o total da meta, para as metas contáveis. */
+  counted: { done: number; target: number } | null;
+  /** Rótulo do fim da régua: "R$ 1.500" / "3 produtos" / "3 periféricos". */
+  goalLabel: string;
+  /** Os produtos exigidos, na campanha de SKUs nomeados. */
+  required: { product: Product; inCart: boolean }[] | null;
   /** Elegíveis que ainda NÃO estão no carrinho. `null` fora da meta `eligible`. */
   missing: Product[] | null;
   /** Produtos que podem ser escolhidos como brinde. */
@@ -86,15 +99,13 @@ export const GIFT_CAMPAIGNS: Record<string, GiftCampaign> = {
     goal: { kind: "distinct", target: 3 },
     giftIds: [296, 27, 322],
   },
-  itens: {
-    id: "itens",
-    // "destes" apontaria para as fotos na tela, mas a vitrine é AMOSTRA: a
-    // campanha pode ter 138 elegíveis e mostrar 6. A contagem real mora no
-    // botão que leva à listagem.
-    headline: "Leve 3 periféricos da campanha e ganhe um brinde",
+  categoria: {
+    id: "categoria",
+    headline: "Leve 3 periféricos e ganhe um brinde",
     catalogNoun: "periféricos",
     goal: {
       kind: "eligible",
+      scope: "categoria",
       target: 3,
       productIds: idsBySubcategory([
         "Mouse",
@@ -107,6 +118,20 @@ export const GIFT_CAMPAIGNS: Record<string, GiftCampaign> = {
         "Fone Gamer",
         "Apoio de Pulso",
       ]),
+    },
+    giftIds: [296],
+  },
+  itens: {
+    id: "itens",
+    // Aqui "destes" aponta mesmo para as fotos na tela: são três SKUs
+    // nomeados, e a lista cabe inteira.
+    headline: "Leve estes 3 produtos e ganhe um brinde",
+    catalogNoun: "produtos",
+    goal: {
+      kind: "eligible",
+      scope: "produtos",
+      target: 3,
+      productIds: [333, 173, 72],
     },
     giftIds: [296],
   },
@@ -170,65 +195,76 @@ export function computeGiftProgress(campaign: GiftCampaign, paidItems: CartItem[
   if (campaign.goal.kind === "subtotal") {
     const { target } = campaign.goal;
     const subtotal = paidItems.reduce((sum, i) => sum + parseBRL(i.price) * i.quantity, 0);
-    const missingValue = Math.max(0, target - subtotal);
+    const left = Math.max(0, target - subtotal);
     return {
       ...base,
       unlocked: subtotal >= target,
       ratio: Math.min(1, target > 0 ? subtotal / target : 1),
       remainingLabel:
-        missingValue > 0 ? `Faltam ${formatBRL(missingValue)} para ganhar um brinde` : "Você liberou um brinde",
+        left > 0 ? `Faltam ${formatBRL(left)} para ganhar um brinde` : "Você liberou um brinde",
       slots: null,
+      counted: null,
+      goalLabel: formatBRL(target),
       missing: null,
+      required: null,
     };
   }
 
   const { target } = campaign.goal;
   const eligibleIds = campaign.goal.kind === "eligible" ? campaign.goal.productIds : null;
+  const scope = campaign.goal.kind === "eligible" ? campaign.goal.scope : null;
 
-  // Um item por vaga, na ordem em que entrou no carrinho. Quantidade não conta:
-  // o que preenche vaga é ser um produto que ainda não estava lá.
-  const counted = paidItems.filter((item) => !eligibleIds || eligibleIds.includes(item.id));
+  /* Conta PRODUTO DIFERENTE, não unidade: três do mesmo mouse valem um. */
   const seen = new Set<number>();
   const occupants: CartItem[] = [];
-  for (const item of counted) {
+  for (const item of paidItems) {
+    if (eligibleIds && !eligibleIds.includes(item.id)) continue;
     if (seen.has(item.id)) continue;
     seen.add(item.id);
     occupants.push(item);
   }
 
-  const slots: GiftSlot[] = Array.from({ length: target }, (_, i) => {
-    const item = occupants[i];
-    return item ? { filled: true, item } : { filled: false };
-  });
+  const done = Math.min(occupants.length, target);
+  const left = target - done;
+  const unlocked = done >= target;
 
-  const filled = Math.min(occupants.length, target);
-  const left = target - filled;
+  const noun = campaign.catalogNoun ?? "produtos";
+  const singular = noun.replace(/s$/, "");
+  const goalLabel = `${target} ${noun}`;
 
-  /* Elegíveis que faltam, do mais barato para o mais caro. A vitrine mostra só
-     o começo desta lista: no momento de fechar uma meta, o que serve é a peça
-     que a fecha gastando menos — ordenar por popularidade otimizaria outra
-     coisa. */
+  /* Campanha de SKUs nomeados: a lista É o progresso. Sem ver quais são, não
+     há como cumprir — então não existe régua aqui, existe checklist. */
+  const required =
+    scope === "produtos"
+      ? resolve(eligibleIds ?? []).map((product) => ({ product, inCart: seen.has(product.id) }))
+      : null;
+
+  const slots: GiftSlot[] | null = null;
+
   const missing =
-    eligibleIds !== null
-      ? resolve(eligibleIds)
+    scope === "categoria"
+      ? resolve(eligibleIds ?? [])
           .filter((product) => !seen.has(product.id))
           .sort((a, b) => a.priceNum - b.priceNum)
       : null;
 
-  const noun = eligibleIds
-    ? plural(left, "peça", "peças")
-    : plural(left, "produto", "produtos");
-  const verb = plural(left, "Falta", "Faltam");
+  const remainingLabel = unlocked
+    ? "Você liberou um brinde"
+    : scope === "produtos"
+      ? `${plural(left, "Falta", "Faltam")} ${left} ${plural(left, "produto", "produtos")} da lista`
+      : eligibleIds
+        ? `${plural(left, "Falta", "Faltam")} ${left} ${plural(left, singular, noun)} para ganhar um brinde`
+        : `${plural(left, "Falta", "Faltam")} ${left} ${plural(left, "produto diferente", "produtos diferentes")} para ganhar um brinde`;
 
   return {
     ...base,
-    unlocked: filled >= target,
-    ratio: target > 0 ? filled / target : 1,
-    remainingLabel:
-      left > 0
-        ? `${verb} ${left} ${noun}${eligibleIds ? " da campanha" : " diferente" + (left === 1 ? "" : "s")}`
-        : "Você liberou um brinde",
+    unlocked,
+    ratio: target > 0 ? done / target : 1,
+    remainingLabel,
     slots,
+    counted: { done, target },
+    goalLabel,
     missing,
+    required,
   };
 }

@@ -1,10 +1,9 @@
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { motion } from "motion/react";
 import { AlertCircle, Check, Copy, Gift, Receipt, Send, Sparkles, Trash2 } from "lucide-react";
 import type { PcyesPointsTx } from "../AuthContext";
 import { PcyesCoin } from "../PcyesCoin";
-import { RarityLadder } from "./RarityLadder";
 import {
   EARN_RULES,
   EXPIRY_DAYS,
@@ -17,131 +16,14 @@ import {
 import { formatBRL } from "../../../utils/format";
 
 /**
- * Peças do programa de pontos, compartilhadas pelas três versões de tela.
- *
- * Elas existem separadas porque as versões diferem no ARRANJO, não no
- * conteúdo: a mesma carteira aparece inteira numa página só, dividida entre
- * hub e extrato, ou dentro de uma página de programa. Escrever cada peça três
- * vezes garantiria que as três divergissem na primeira correção.
+ * Peças do programa de pontos, uma por assunto: saldo, regras de ganho,
+ * indicação e extrato. Cada uma é o conteúdo de uma sub-aba, e nenhuma sabe
+ * onde está montada.
  */
 
 const surface = "rounded-card-sm border border-foreground/8 bg-foreground/[0.02]";
 
-/* ══ Carteira: quem você é + quanto você tem, num objeto só ═════════════ */
-
-/**
- * O hero da aba.
- *
- * Antes eram DOIS cards lado a lado: o da escada, na cor do degrau, e o do
- * saldo, sempre dourado. Dourado é a cor do Lendário — um Raro via um card
- * dourado que não queria dizer nada, e as duas cores disputavam a primeira
- * olhada sem que nenhuma vencesse.
- *
- * Viraram um objeto. A escada é a faixa de cima (rank), o saldo é o corpo
- * (moeda). O ouro fica só na moeda, onde ele significa "ponto"; a cor do
- * degrau governa o resto do card. Uma leitura de cima para baixo: quem eu
- * sou → quanto eu tenho → o que dá para fazer com isso.
- */
-export function PointsWallet({
-  points,
-  history,
-  lifetime,
-  children,
-}: {
-  points: number;
-  history: PcyesPointsTx[];
-  lifetime: number;
-  /** Ação principal — o que fazer com o saldo. */
-  children?: ReactNode;
-}) {
-  const next = expiringSoon(history)[0];
-
-  return (
-    <div
-      className="mb-4 overflow-hidden"
-      style={{
-        borderRadius: "var(--radius-card-md)",
-        background: "rgba(var(--foreground-rgb), 0.02)",
-        border: "1px solid rgba(var(--foreground-rgb), 0.08)",
-      }}
-    >
-      {/* faixa 1 — rank */}
-      <div className="px-5 pt-5 md:px-6 md:pt-6">
-        <RarityLadder lifetimePoints={lifetime} />
-      </div>
-
-      <div className="mx-5 my-5 border-t border-foreground/8 md:mx-6" />
-
-      {/* faixa 2 — moeda */}
-      <div className="flex flex-wrap items-end justify-between gap-4 px-5 pb-5 md:px-6 md:pb-6">
-        <div className="flex items-center gap-3.5">
-          <PcyesCoin size={44} />
-          <div>
-            <p
-              className="text-foreground/50"
-              style={{
-                fontFamily: "var(--font-family-inter)",
-                fontSize: "var(--text-caption)",
-                fontWeight: 700,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-              }}
-            >
-              Disponível
-            </p>
-            <p
-              className="flex items-baseline gap-2 tabular-nums"
-              style={{
-                fontFamily: "var(--font-family-figtree)",
-                fontSize: "var(--text-h3)",
-                fontWeight: 700,
-                lineHeight: 1,
-                color: "#facc15",
-                textShadow: "0 0 24px rgba(250,204,21,0.35)",
-              }}
-            >
-              {points.toLocaleString("pt-BR")}
-              <span
-                className="text-foreground/60"
-                style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-base)", fontWeight: 500 }}
-              >
-                = {formatBRL(pointsToBRL(points))}
-              </span>
-            </p>
-            <p
-              className="mt-1 text-foreground/50"
-              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
-            >
-              Abate até 30% do valor do pedido
-            </p>
-          </div>
-        </div>
-        {children}
-      </div>
-
-      {/* Vencimento: a única informação urgente da tela, então tem faixa
-          própria no fim do card, não um chip dentro de outro bloco. */}
-      {next && (
-        <div className="flex items-center gap-2 border-t border-foreground/8 px-5 py-2.5 md:px-6">
-          {/* Tarja amarela de largura cheia para 100 pts era alarme de incêndio
-              para um aviso de geladeira. O ícone marca a urgência; o texto não
-              precisa gritar junto. */}
-          <AlertCircle size={13} className="flex-shrink-0 text-yellow-500" />
-          <p
-            className="text-foreground/60"
-            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
-          >
-            {next.tx.amount.toLocaleString("pt-BR")} pts vencem em {next.days} {next.days === 1 ? "dia" : "dias"}
-            {" · "}
-            {new Date(next.tx.expiresAt!).toLocaleDateString("pt-BR")}
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ══ Saldo (V1 e V2) ════════════════════════════════════════════════════ */
+/* ══ Saldo ══════════════════════════════════════════════════════════════ */
 
 export function BalanceCard({
   points,

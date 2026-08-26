@@ -33,6 +33,7 @@ import { BrindePill, GiftProgressBlock, Price, PreOrderPill } from "./section";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { useGiftCampaign } from "../lib/useGiftCampaign";
+import { EarnPreview } from "./points/EarnPreview";
 import { toast } from "sonner";
 
 export function CartPage() {
@@ -862,6 +863,10 @@ export function CartPage() {
                   <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
                     ou 10× de {formatBRL(total / 10)} sem juros
                   </p>
+                  {/* Dentro do card de total, porque é sobre ESTE pedido. */}
+                  <div className="mt-3 border-t border-foreground/8 pt-3">
+                    <EarnPreview amount={total} />
+                  </div>
                 </div>
 
                 {/* CTA */}

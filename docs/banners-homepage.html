@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>PCYES V3 — Banners da homepage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  @page { size: 210mm 297mm; margin: 0; }
+
+  :root {
+    --red: #d92218;
+    --ink: #17171c;
+    --ink-cover: #0f0f13;
+    --body: #4b4b54;
+    --muted: #71717a;
+    --footer: #505864;
+    --panel: #f4f4f5;
+    --line: #e4e4e7;
+    --rule: #17171c;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    font-family: "Figtree", system-ui, sans-serif;
+    color: var(--body);
+    -webkit-font-smoothing: antialiased;
+    background: #fff;
+  }
+
+  .page {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    padding: 34pt 45pt 30pt;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  .folio {
+    position: absolute;
+    right: 45pt;
+    bottom: 18pt;
+    font-family: "Figtree", sans-serif;
+    font-size: 8pt;
+    color: var(--footer);
+  }
+
+  /* ── cabeçalho de página ────────────────────────────────────────────── */
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 7.4pt;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin: 0 0 6pt;
+  }
+  h1.page-title {
+    font-size: 20pt;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin: 0 0 5pt;
+  }
+  .page-sub {
+    font-size: 8.4pt;
+    color: var(--muted);
+    margin: 0 0 11pt;
+  }
+  .rule { border-top: 1.1pt solid var(--rule); margin: 0 0 13pt; }
+
+  p.lead {
+    font-size: 9.6pt;
+    line-height: 1.5;
+    color: var(--body);
+    margin: 0 0 14pt;
+  }
+  p.lead strong, .note p strong { color: var(--ink); font-weight: 600; }
+
+  /* ── prints ─────────────────────────────────────────────────────────── */
+  .shots { display: flex; gap: 11pt; align-items: flex-start; margin-bottom: 6pt; }
+  .shot { flex: 1 1 auto; }
+  .shot .frame {
+    background: #121214;
+    border-radius: 6pt;
+    height: 132pt;
+    padding: 8pt 10pt;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .shot .frame.tight { padding: 0; height: auto; }
+  .shot .frame img { max-width: 100%; max-height: 100%; width: auto; display: block; border-radius: 3pt; }
+  .shot .frame.tight img { width: 100%; max-height: none; }
+  .caption {
+    font-size: 7.5pt;
+    line-height: 1.4;
+    color: var(--muted);
+    margin: 5pt 0 0;
+  }
+  .caption b { color: var(--ink); font-weight: 600; }
+
+  /* ── painel de proporções ───────────────────────────────────────────── */
+  h2.block {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 14pt 0 5pt;
+  }
+  h2.block + p.block-lead { margin-top: 0; }
+  p.block-lead {
+    font-size: 9pt;
+    line-height: 1.5;
+    color: var(--body);
+    margin: 0 0 10pt;
+  }
+  p.block-lead strong { color: var(--ink); font-weight: 600; }
+
+  .ratios {
+    background: var(--panel);
+    border-radius: 6pt;
+    padding: 16pt 20pt 14pt;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 12pt;
+  }
+  .ratio { text-align: center; }
+  .ratio .box {
+    margin: 0 auto 8pt;
+    border-radius: 3pt;
+    background: rgba(217, 34, 24, 0.09);
+    border: 1pt solid rgba(217, 34, 24, 0.75);
+  }
+  .ratio.portrait .box {
+    background: rgba(51, 74, 199, 0.10);
+    border-color: rgba(51, 74, 199, 0.65);
+  }
+  .ratio .value {
+    font-size: 9.6pt;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .ratio .label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 6.9pt;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 2pt;
+  }
+  .ratio .dim {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 6.9pt;
+    color: var(--body);
+    margin-top: 2pt;
+  }
+
+  /* ── tabelas ────────────────────────────────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; margin: 6pt 0 4pt; }
+  thead th {
+    background: var(--panel);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 6.9pt;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 5pt 7pt;
+  }
+  tbody td {
+    font-size: 8.4pt;
+    color: var(--body);
+    padding: 6pt 7pt;
+    border-bottom: 0.6pt solid var(--line);
+    vertical-align: baseline;
+  }
+  tbody tr:last-child td { border-bottom: 0.6pt solid var(--line); }
+  td.name { color: var(--ink); font-weight: 600; }
+  td.mono, th.mono { font-family: "IBM Plex Mono", monospace; font-weight: 500; color: var(--ink); }
+  td.num, th.num { text-align: right; }
+  td.dim { font-family: "IBM Plex Mono", monospace; font-weight: 500; color: var(--ink); }
+
+  /* ── notas de rodapé de página ──────────────────────────────────────── */
+  .note { margin-top: 11pt; }
+  .note h3 {
+    font-size: 9.4pt;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 5pt;
+  }
+  .note p {
+    font-size: 9pt;
+    line-height: 1.5;
+    color: var(--body);
+    margin: 0 0 8pt;
+  }
+  .note p:last-child { margin-bottom: 0; }
+
+  /* ── capa ───────────────────────────────────────────────────────────── */
+  .cover { display: flex; flex-direction: column; justify-content: flex-start; padding-top: 176pt; }
+  .cover .kicker {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12pt;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    color: var(--red);
+    margin: 0 0 24pt;
+  }
+  .cover h1 {
+    font-size: 37pt;
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--ink-cover);
+    margin: 0 0 22pt;
+    max-width: 380pt;
+  }
+  .cover p.deck {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: var(--body);
+    margin: 0 0 30pt;
+    max-width: 360pt;
+  }
+  .cover .tick { width: 52pt; border-top: 2pt solid var(--red); margin-bottom: 34pt; }
+  .cover .stats {
+    display: flex;
+    gap: 0;
+    border-top: 0.8pt solid var(--line);
+    padding-top: 14pt;
+  }
+  .cover .stat { flex: 1 1 0; }
+  .cover .stat .k {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 7.2pt;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6pt;
+  }
+  .cover .stat .v {
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  /* ── fechamento ─────────────────────────────────────────────────────── */
+  .totals { display: flex; gap: 14pt; margin: 0 0 12pt; }
+  .totals .t {
+    flex: 1 1 0;
+    background: var(--panel);
+    border-radius: 6pt;
+    padding: 9pt 12pt 10pt;
+  }
+  .totals .t .n {
+    font-size: 20pt;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 5pt;
+  }
+  .totals .t .d {
+    font-size: 7.6pt;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+  ol.steps { margin: 4pt 0 0; padding-left: 14pt; }
+  ol.steps li { font-size: 9pt; line-height: 1.45; color: var(--body); margin-bottom: 2pt; }
+</style>
+</head>
+<body>
+
+<!-- ─────────────────────────────── 1 · CAPA ─────────────────────────────── -->
+<section class="page cover">
+  <div class="kicker">PCYES · V3</div>
+  <h1>Banners da<br>homepage</h1>
+  <p class="deck">Os espaços de imagem da home e do menu do topo, com print de onde
+  cada um fica, a proporção no computador e no celular, e a dimensão de arquivo a
+  criar. Toda a arte que está no site hoje é rascunho.</p>
+  <div class="tick"></div>
+  <div class="stats">
+    <div class="stat"><div class="k">Espaços de imagem</div><div class="v">6</div></div>
+    <div class="stat"><div class="k">Artes a criar</div><div class="v">44</div></div>
+    <div class="stat"><div class="k">Data</div><div class="v">26 · 08 · 2026</div></div>
+  </div>
+  <div class="folio">Página 1 de 8</div>
+</section>
+
+<!-- ──────────────────── 2 · ÍCONES DO MENU (NOVA PÁGINA) ─────────────────── -->
+<section class="page">
+  <div class="eyebrow">Menu do topo · 14 recortes</div>
+  <h1 class="page-title">Ícones do menu de categorias</h1>
+  <p class="page-sub">Fileira de discos que abre ao passar o mouse nas abas do topo</p>
+  <div class="rule"></div>
+
+  <p class="lead">Cada aba do topo abre uma fileira de discos, um por subcategoria, com a foto do
+  produto recortada por cima. É a primeira imagem de produto que a pessoa vê, antes mesmo de rolar
+  a home. <strong>Só existe no computador</strong>: no celular o menu é lista de texto.</p>
+
+  <div class="shots">
+    <div class="shot">
+      <div class="frame tight"><img src="banners-homepage.assets/menu-desktop.jpg" alt="Menu Hardware aberto"></div>
+      <p class="caption"><b>No computador</b>, aba Hardware. O último disco não tem arte e cai num ícone de grade.</p>
+    </div>
+  </div>
+
+  <div class="shots">
+    <div class="shot" style="flex: 0 0 330pt;">
+      <div class="frame tight"><img src="banners-homepage.assets/menu-desktop-perifericos.jpg" alt="Menu Periféricos aberto"></div>
+      <p class="caption"><b>Aba Periféricos</b>, com as fotos de catálogo que estão no ar hoje.
+      Escalas diferentes entre si e peça preta somindo no fundo escuro.</p>
+    </div>
+    <div class="shot">
+      <div class="frame tight"><img src="banners-homepage.assets/menu-mobile.jpg" alt="Menu no celular"></div>
+      <p class="caption"><b>No celular</b>, lista de texto. Não usa imagem.</p>
+    </div>
+  </div>
+
+  <h2 class="block">Um tamanho só, quadrado</h2>
+  <p class="block-lead">O disco tem tamanho fixo, não muda com a largura da tela. A arte é maior
+  que o disco, vaza de propósito para fora dele e ainda cresce 5% com o mouse por cima.</p>
+
+  <div class="ratios" style="padding: 10pt 20pt 9pt;">
+    <div class="ratio">
+      <div class="box" style="width: 38pt; height: 38pt;"></div>
+      <div class="value">1 : 1</div>
+      <div class="label">Disco</div>
+      <div class="dim">118 × 118</div>
+    </div>
+    <div class="ratio">
+      <div class="box" style="width: 46pt; height: 46pt;"></div>
+      <div class="value">1 : 1</div>
+      <div class="label">Arte na tela</div>
+      <div class="dim">144 × 144</div>
+    </div>
+    <div class="ratio">
+      <div class="box" style="width: 48pt; height: 48pt;"></div>
+      <div class="value">1 : 1</div>
+      <div class="label">Com o mouse</div>
+      <div class="dim">151 × 151</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Aba do topo</th>
+        <th class="num">Discos</th>
+        <th>O que usa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="name">Hardware</td><td class="num">6</td><td>Placas de Vídeo, SSD e HD, Refrigeração, Gabinetes, Monitores, Fontes</td></tr>
+      <tr><td class="name">Periféricos</td><td class="num">6</td><td>Teclados, Mouse, Mousepads, Cadeiras, Headsets, Streaming</td></tr>
+      <tr><td class="name">Computadores</td><td class="num">2</td><td>Mini PC e PCYES One</td></tr>
+      <tr><td class="name">Drivers e manuais</td><td class="num">6</td><td>Repete a arte das outras abas, não pede peça nova</td></tr>
+    </tbody>
+  </table>
+  <p class="caption" style="margin-top: 4pt;">PC Gamer e Collab ficam de fora: usam cena de PC
+  pronto e banner de marca parceira, arte que já existe.</p>
+
+  <h2 class="block">O que entregar</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Peça</th>
+        <th>Dimensão</th>
+        <th>Proporção</th>
+        <th class="num">Qtd.</th>
+        <th>Formato</th>
+        <th>Peso máximo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="name">Recorte de categoria</td>
+        <td class="dim">320 × 320</td>
+        <td>1 : 1</td>
+        <td class="num">14</td>
+        <td>PNG</td>
+        <td>60 KB</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <h3>Fundo transparente e mesma escala</h3>
+    <p>Único espaço que pede PNG: a arte entra solta sobre um disco translúcido, sem moldura. O
+    produto ocupa 88% do quadrado, centralizado, com folga igual nos quatro lados — é o que faz
+    teclado, mouse e gabinete parecerem do mesmo tamanho na fileira. O disco é claro no tema escuro
+    e escuro no claro: peça preta pede luz de contorno para não sumir.</p>
+  </div>
+  <div class="folio">Página 2 de 8</div>
+</section>
+
+<!-- ─────────────────────────── 3 · TOPO DA HOME ─────────────────────────── -->
+<section class="page">
+  <div class="eyebrow">Banner 1 de 5 · Prioridade máxima</div>
+  <h1 class="page-title">Topo da home</h1>
+  <p class="page-sub">Primeira coisa que a pessoa vê ao entrar no site</p>
+  <div class="rule"></div>
+
+  <p class="lead">Três artes em rodízio automático, trocando a cada 6,5 segundos. A arte ativa
+  ocupa 82% da largura da tela e as vizinhas aparecem escurecidas nas beiradas. No computador o
+  quadro é deitado, no celular é em pé.</p>
+
+  <div class="shots">
+    <div class="shot" style="flex: 0 0 330pt;">
+      <div class="frame"><img src="banners-homepage.assets/topo-desktop.jpg" alt="Topo da home no computador"></div>
+      <p class="caption"><b>No computador</b>, quadro deitado.</p>
+    </div>
+    <div class="shot">
+      <div class="frame"><img src="banners-homepage.assets/topo-mobile.jpg" alt="Topo da home no celular"></div>
+      <p class="caption"><b>No celular</b>, quadro em pé. Precisa de arte própria, senão a arte
+      deitada é cortada pelo meio.</p>
+    </div>
+  </div>
+
+  <div class="ratios" style="margin-top: 12pt;">
+    <div class="ratio">
+      <div class="box" style="width: 62pt; height: 28pt;"></div>
+      <div class="value">2,19 : 1</div>
+      <div class="label">Tela 1440</div>
+      <div class="dim">1181 × 540</div>
+    </div>
+    <div class="ratio">
+      <div class="box" style="width: 62pt; height: 24pt;"></div>
+      <div class="value">2,62 : 1</div>
+      <div class="label">Tela 1920</div>
+      <div class="dim">1574 × 600</div>
+    </div>
+    <div class="ratio">
+      <div class="box" style="width: 62pt; height: 18pt;"></div>
+      <div class="value">3,50 : 1</div>
+      <div class="label">Tela 2560</div>
+      <div class="dim">2099 × 600</div>
+    </div>
+    <div class="ratio portrait">
+      <div class="box" style="width: 40pt; height: 57pt;"></div>
+      <div class="value">0,70 : 1</div>
+      <div class="label">Celular</div>
+      <div class="dim">320 × 460</div>
+    </div>
+  </div>
+
+  <h2 class="block">O que entregar</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Peça</th><th>Dimensão</th><th>Proporção</th><th class="num">Qtd.</th><th>Formato</th><th>Peso máximo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="name">Arte de computador</td><td class="dim">2560 × 1067</td><td>2,40 : 1</td><td class="num">3</td><td>WebP</td><td>250 KB</td></tr>
+      <tr><td class="name">Arte de celular</td><td class="dim">1080 × 1560</td><td>0,69 : 1</td><td class="num">3</td><td>WebP</td><td>180 KB</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <h3>Zona segura</h3>
+    <p>A altura do espaço trava em 600 pixels e a largura acompanha o tamanho da tela, então em
+    monitor grande o quadro estica até 3,5 para 1. Chamada, botão e logo precisam caber na faixa
+    central de 2560 por 730 pixels. Fora dela a arte é decorativa e pode ser cortada.</p>
+    <p>Nas laterais, deixar 4% de folga, porque as setas do carrossel passam por cima da arte. O
+    corte é puxado pelo alto da imagem, então vale posicionar o assunto principal um pouco acima
+    do centro.</p>
+  </div>
+  <div class="folio">Página 3 de 8</div>
+</section>
+
+<!-- ────────────────────── 4 · BANNER DO BLOCO DE DROPS ──────────────────── -->
+<section class="page">
+  <div class="eyebrow">Banner 2 de 5</div>
+  <h1 class="page-title">Banner do bloco de drops</h1>
+  <p class="page-sub">Coluna da direita do bloco Drops mais cobiçados, ao lado dos oito produtos</p>
+  <div class="rule"></div>
+
+  <p class="lead">No computador o banner acompanha a altura das duas fileiras de produto e fica
+  bem em pé, quase o dobro de altura em relação à largura. No celular a grade quebra e ele deita.
+  São dois enquadramentos opostos, então precisa de duas artes.</p>
+
+  <div class="shots">
+    <div class="shot" style="flex: 0 0 230pt;">
+      <div class="frame"><img src="banners-homepage.assets/drops-desktop.jpg" alt="Banner de drops no computador"></div>
+      <p class="caption"><b>No computador</b>, em pé.</p>
+    </div>
+    <div class="shot">
+      <div class="frame"><img src="banners-homepage.assets/drops-mobile.jpg" alt="Banner de drops no celular"></div>
+      <p class="caption"><b>No celular</b>, deitado.</p>
+    </div>
+  </div>
+
+  <div class="ratios" style="margin-top: 12pt;">
+    <div class="ratio portrait">
+      <div class="box" style="width: 30pt; height: 62pt;"></div>
+      <div class="value">0,48 : 1</div>
+      <div class="label">Tela 1440</div>
+      <div class="dim">354 × 741</div>
+    </div>
+    <div class="ratio portrait">
+      <div class="box" style="width: 37pt; height: 67pt;"></div>
+      <div class="value">0,55 : 1</div>
+      <div class="label">Tela 1920</div>
+      <div class="dim">439 × 800</div>
+    </div>
+    <div class="ratio">
+      <div class="box" style="width: 62pt; height: 53pt;"></div>
+      <div class="value">1,17 : 1</div>
+      <div class="label">Celular</div>
+      <div class="dim">350 × 300</div>
+    </div>
+  </div>
+
+  <h2 class="block">O que entregar</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Peça</th><th>Dimensão</th><th>Proporção</th><th class="num">Qtd.</th><th>Formato</th><th>Peso máximo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="name">Arte de computador</td><td class="dim">900 × 1800</td><td>0,50 : 1</td><td class="num">1</td><td>WebP</td><td>200 KB</td></tr>
+      <tr><td class="name">Arte de celular</td><td class="dim">1050 × 900</td><td>1,17 : 1</td><td class="num">1</td><td>WebP</td><td>150 KB</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <h3>Direção de arte</h3>
+    <p>O espaço convida quem não entende de peça a montar o próprio PC, então a arte deve mostrar
+    o resultado: a máquina pronta, ligada, em cima da mesa. Evitar interior de gabinete e evitar
+    nome de linha escrito na cena, porque o banner é genérico.</p>
+    <p>Sobre a arte entra um escurecido preto do topo para a base, mais a chamada e o botão. Se a
+    peça já vier com chamada e botão desenhados, é só avisar que essas camadas saem. O banner fica
+    escuro mesmo com o site no tema claro.</p>
+  </div>
+  <div class="folio">Página 4 de 8</div>
+</section>
+
+<!-- ───────────────────── 5 · MOSAICO DE CATEGORIAS ──────────────────────── -->
+<section class="page">
+  <div class="eyebrow">Banner 3 de 5 · 8 quadros, 3 tamanhos</div>
+  <h1 class="page-title">Mosaico de categorias</h1>
+  <p class="page-sub">Bloco Equipamentos por categoria</p>
+  <div class="rule"></div>
+
+  <p class="lead">Mosaico de quadros encaixados, sem rolagem. Oito quadros em três tamanhos:
+  Gabinetes ocupa o grande, Cadeiras e Microfones ficam em pé, e os outros cinco entram nos
+  pequenos.</p>
+
+  <div class="shots">
+    <div class="shot" style="flex: 0 0 330pt;">
+      <div class="frame"><img src="banners-homepage.assets/mosaico-desktop.jpg" alt="Mosaico no computador"></div>
+      <p class="caption"><b>No computador</b>, quatro colunas. Os quadros menores não são
+      quadrados, são deitados.</p>
+    </div>
+    <div class="shot">
+      <div class="frame"><img src="banners-homepage.assets/mosaico-mobile.jpg" alt="Mosaico no celular"></div>
+      <p class="caption"><b>No celular</b>, duas colunas.</p>
+    </div>
+  </div>
+
+  <h2 class="block">Três tamanhos de quadro</h2>
+  <p class="block-lead">Não existe versão de computador e versão de celular: cada quadro mantém a
+  orientação nas duas telas, então <strong>uma arte serve as duas</strong>. Os retângulos abaixo
+  estão na proporção certa e no tamanho relativo real.</p>
+
+  <div class="ratios">
+    <div class="ratio">
+      <div class="box" style="width: 68pt; height: 41pt;"></div>
+      <div class="value">1,65 : 1</div>
+      <div class="label">Grande</div>
+      <div class="dim">1600 × 970</div>
+    </div>
+    <div class="ratio portrait">
+      <div class="box" style="width: 34pt; height: 47pt;"></div>
+      <div class="value">0,73 : 1</div>
+      <div class="label">Em pé</div>
+      <div class="dim">800 × 1100</div>
+    </div>
+    <div class="ratio">
+      <div class="box" style="width: 38pt; height: 25pt;"></div>
+      <div class="value">1,53 : 1</div>
+      <div class="label">Pequeno</div>
+      <div class="dim">900 × 590</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Quadro</th><th>Categorias que usam</th><th class="num">Qtd.</th><th class="num">Proporção na tela</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="name">Grande</td><td>Gabinetes</td><td class="num">1</td><td class="num">1,36:1 a 2,00:1</td></tr>
+      <tr><td class="name">Em pé</td><td>Cadeiras Gamer, Microfones</td><td class="num">2</td><td class="num">0,54:1 a 0,98:1</td></tr>
+      <tr><td class="name">Pequeno</td><td>Mouses, Headsets, Monitores, Teclados, Placas de Vídeo</td><td class="num">5</td><td class="num">1,13:1 a 2,04:1</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="block">O que entregar</h2>
+  <table>
+    <thead>
+      <tr><th>Quadro</th><th>Dimensão</th><th>Proporção</th><th class="num">Qtd.</th><th>Formato</th><th>Peso máximo</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="name">Grande</td><td class="dim">1600 × 970</td><td>1,65 : 1</td><td class="num">1</td><td>WebP</td><td>180 KB</td></tr>
+      <tr><td class="name">Em pé</td><td class="dim">800 × 1100</td><td>0,73 : 1</td><td class="num">2</td><td>WebP</td><td>140 KB</td></tr>
+      <tr><td class="name">Pequeno</td><td class="dim">900 × 590</td><td>1,53 : 1</td><td class="num">5</td><td>WebP</td><td>110 KB</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <h3>Deixar 25% de folga em volta</h3>
+    <p>Cada quadro muda de proporção entre o celular e o monitor grande, então a dimensão sugerida
+    fica no meio do caminho e o corte chega a comer um quarto da imagem nos extremos. O produto
+    precisa estar bem centralizado, com 25% de folga em todas as bordas.</p>
+    <p>O nome da categoria e a contagem de itens entram por cima, no canto superior esquerdo,
+    então evitar detalhe importante nos primeiros 20% da altura.</p>
+  </div>
+  <div class="folio">Página 5 de 8</div>
+</section>
+
+<!-- ──────────────────── 6 · PLACA DE VÍDEO, ANTES E DEPOIS ──────────────── -->
+<section class="page">
+  <div class="eyebrow">Banner 4 de 5 · 3 cenas</div>
+  <h1 class="page-title">Placa de vídeo, antes e depois</h1>
+  <p class="page-sub">Bloco com comparador que desliza sobre a cena de jogo</p>
+  <div class="rule"></div>
+
+  <p class="lead">Uma cena de jogo dividida ao meio por uma alça que a pessoa arrasta. O lado
+  esquerdo simula a placa antiga, com menos definição e menos cor, e o direito mostra a cena
+  realçada. A mesma imagem também aparece bem desfocada como fundo do bloco inteiro.</p>
+
+  <div class="shots">
+    <div class="shot" style="flex: 0 0 330pt;">
+      <div class="frame"><img src="banners-homepage.assets/gpu-desktop.jpg" alt="Comparador no computador"></div>
+      <p class="caption"><b>No computador</b>, quadro bem panorâmico.</p>
+    </div>
+    <div class="shot">
+      <div class="frame"><img src="banners-homepage.assets/gpu-mobile.jpg" alt="Comparador no celular"></div>
+      <p class="caption"><b>No celular</b>, quadro quase quadrado.</p>
+    </div>
+  </div>
+
+  <div class="ratios" style="margin-top: 12pt;">
+    <div class="ratio">
+      <div class="box" style="width: 84pt; height: 36pt;"></div>
+      <div class="value">21 : 9</div>
+      <div class="label">Computador</div>
+      <div class="dim">2,33 : 1</div>
+    </div>
+    <div class="ratio">
+      <div class="box" style="width: 56pt; height: 42pt;"></div>
+      <div class="value">4 : 3</div>
+      <div class="label">Celular</div>
+      <div class="dim">1,33 : 1</div>
+    </div>
+  </div>
+
+  <h2 class="block">O que entregar</h2>
+  <table>
+    <thead>
+      <tr><th>Peça</th><th>Dimensão</th><th>Proporção</th><th class="num">Qtd.</th><th>Formato</th><th>Peso máximo</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="name">Cena de computador</td><td class="dim">2560 × 1097</td><td>21 : 9</td><td class="num">3</td><td>WebP</td><td>400 KB</td></tr>
+      <tr><td class="name">Cena de celular</td><td class="dim">1200 × 900</td><td>4 : 3</td><td class="num">3</td><td>WebP</td><td>220 KB</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <h3>Enquadramento</h3>
+    <p>Este é o único espaço com proporção fixa, que não muda conforme o tamanho da tela. Em
+    compensação os dois formatos são bem distantes um do outro: o panorâmico do computador e o
+    quase quadrado do celular.</p>
+    <p>Se a decisão for entregar um arquivo só por cena, fazer no formato panorâmico de 2560 por
+    1097 e compor o assunto dentro da faixa central de 1463 por 1097 pixels, que é exatamente o
+    pedaço que o celular vai recortar.</p>
+  </div>
+  <div class="folio">Página 6 de 8</div>
+</section>
+
+<!-- ───────────────────── 7 · GALERIA DE CRIADORES ───────────────────────── -->
+<section class="page">
+  <div class="eyebrow">Banner 5 de 5 · 8 fotos</div>
+  <h1 class="page-title">Galeria de criadores</h1>
+  <p class="page-sub">Bloco PCYES In Real Life</p>
+  <div class="rule"></div>
+
+  <p class="lead">Carrossel horizontal de fotos de criador, com o @ por cima da foto. Clicar abre
+  a foto em tamanho grande com uma apresentação da pessoa ao lado. É o único espaço em que
+  computador e celular usam a mesma proporção, 3 por 4 em pé nos dois.</p>
+
+  <div class="shots">
+    <div class="shot" style="flex: 0 0 330pt;">
+      <div class="frame"><img src="banners-homepage.assets/irl-desktop.jpg" alt="Galeria no computador"></div>
+      <p class="caption"><b>No computador</b>, fotos de 300 por 400 pixels.</p>
+    </div>
+    <div class="shot">
+      <div class="frame"><img src="banners-homepage.assets/irl-mobile.jpg" alt="Galeria no celular"></div>
+      <p class="caption"><b>No celular</b>, fotos de 240 por 320 pixels. Mesma proporção.</p>
+    </div>
+  </div>
+
+  <table style="margin-top: 12pt;">
+    <thead>
+      <tr><th>Onde aparece</th><th>No computador</th><th>No celular</th><th class="num">Proporção</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="name">Foto do carrossel</td><td class="dim">300 × 400 px</td><td class="dim">240 × 320 px</td><td class="num">3 : 4</td></tr>
+      <tr><td class="name">Foto aberta em grande</td><td>576 px de largura</td><td>largura total da tela</td><td class="num">variável</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="block">O que entregar</h2>
+  <table>
+    <thead>
+      <tr><th>Peça</th><th>Dimensão</th><th>Proporção</th><th class="num">Qtd.</th><th>Formato</th><th>Peso máximo</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="name">Foto de criador</td><td class="dim">1200 × 1600</td><td>3 : 4</td><td class="num">8</td><td>WebP</td><td>250 KB</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <h3>Um arquivo serve os dois usos</h3>
+    <p>A mesma imagem alimenta a foto pequena do carrossel e a foto aberta em grande, então o
+    tamanho tem que ser pensado pela maior das duas. A dimensão sugerida dá quatro vezes o tamanho
+    da foto do carrossel e cobre a foto aberta com folga.</p>
+    <p>A base da foto recebe um escurecido onde entra o @ da pessoa, então evitar detalhe
+    importante nos últimos 20% da altura.</p>
+    <h3 style="margin-top: 11pt;">O que a foto precisa mostrar</h3>
+    <p>Pessoa e equipamento no mesmo quadro: headset na cabeça, monitor ou teclado à vista, mesa
+    aparecendo. Retrato de rosto cortado no ombro não sustenta o bloco, porque não conta que ali
+    existe um setup. A promessa da seção é rotina de uso, e é a foto que precisa provar isso.</p>
+  </div>
+  <div class="folio">Página 7 de 8</div>
+</section>
+
+<!-- ─────────────────────────── 8 · FECHAMENTO ───────────────────────────── -->
+<section class="page">
+  <div class="eyebrow">Fechamento</div>
+  <h1 class="page-title">Lista completa e padrões</h1>
+  <div class="rule" style="margin-top: 11pt;"></div>
+
+  <div class="totals">
+    <div class="t"><div class="n">6</div><div class="d">espaços de imagem</div></div>
+    <div class="t"><div class="n">44</div><div class="d">artes a criar</div></div>
+    <div class="t"><div class="n">3</div><div class="d">formatos de quadro só no mosaico</div></div>
+    <div class="t"><div class="n">0</div><div class="d">aproveitáveis do que está no ar hoje</div></div>
+  </div>
+
+  <p class="block-lead">Tudo que está no site hoje nesses espaços é imagem de rascunho, colocada só
+  para mostrar o layout de pé. Nenhuma peça se aproveita, então todas as 44 são criação nova. Foto
+  de produto de listagem não entra nesta lista: essa já existe e está certa.</p>
+
+  <h2 class="block">Tudo que precisa ser criado</h2>
+  <table>
+    <thead>
+      <tr><th>Espaço</th><th>Dimensão</th><th>Proporção</th><th class="num">Qtd.</th><th>O que é a peça</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="name">Ícones do menu do topo</td><td class="dim">320 × 320</td><td>1 : 1</td><td class="num">14</td><td>Recorte de produto, fundo transparente</td></tr>
+      <tr><td class="name">Topo da home, computador</td><td class="dim">2560 × 1067</td><td>2,40 : 1</td><td class="num">3</td><td>Campanha, deitada</td></tr>
+      <tr><td class="name">Topo da home, celular</td><td class="dim">1080 × 1560</td><td>0,69 : 1</td><td class="num">3</td><td>A mesma campanha, em pé</td></tr>
+      <tr><td class="name">Drops, computador</td><td class="dim">900 × 1800</td><td>0,50 : 1</td><td class="num">1</td><td>Convite para montar o PC</td></tr>
+      <tr><td class="name">Drops, celular</td><td class="dim">1050 × 900</td><td>1,17 : 1</td><td class="num">1</td><td>O mesmo convite, deitado</td></tr>
+      <tr><td class="name">Categorias, quadro grande</td><td class="dim">1600 × 970</td><td>1,65 : 1</td><td class="num">1</td><td>Gabinetes</td></tr>
+      <tr><td class="name">Categorias, quadro em pé</td><td class="dim">800 × 1100</td><td>0,73 : 1</td><td class="num">2</td><td>Cadeiras e Microfones</td></tr>
+      <tr><td class="name">Categorias, quadro pequeno</td><td class="dim">900 × 590</td><td>1,53 : 1</td><td class="num">5</td><td>Mouses, Headsets, Monitores, Teclados e Placas</td></tr>
+      <tr><td class="name">Placa de vídeo, computador</td><td class="dim">2560 × 1097</td><td>21 : 9</td><td class="num">3</td><td>Cena de jogo, panorâmica</td></tr>
+      <tr><td class="name">Placa de vídeo, celular</td><td class="dim">1200 × 900</td><td>4 : 3</td><td class="num">3</td><td>A mesma cena, quase quadrada</td></tr>
+      <tr><td class="name">Galeria de setups</td><td class="dim">1200 × 1600</td><td>3 : 4</td><td class="num">8</td><td>Foto de criador com o setup à mostra</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="block">Padrão para toda peça</h2>
+  <p class="block-lead" style="margin-bottom: 5pt;"><strong>Formato:</strong> WebP com qualidade
+  entre 80 e 85. PNG só quando a arte tiver fundo transparente de verdade, que é o caso dos ícones
+  do menu.</p>
+  <p class="block-lead" style="margin-bottom: 5pt;"><strong>Tamanho:</strong> exportar sempre no
+  dobro do maior tamanho que o espaço ocupa na tela. Nunca aumentar arte pequena, porque ampliar
+  borra.</p>
+  <p class="block-lead" style="margin-bottom: 5pt;"><strong>Cor:</strong> sRGB. O site tem tema
+  claro e tema escuro, e a arte não muda junto, então precisa funcionar sobre os dois.</p>
+  <p class="block-lead" style="margin-bottom: 5pt;"><strong>Texto na arte:</strong> evitar sempre
+  que possível. A proporção de quase todo espaço muda conforme o tamanho da tela, então chamada
+  embutida é a primeira coisa a ser cortada. Onde for inevitável, manter na zona segura indicada
+  na página do banner.</p>
+  <p class="block-lead" style="margin-bottom: 5pt;"><strong>Peso:</strong> respeitar o limite
+  indicado em cada página. As peças que aparecem antes da primeira rolagem somadas devem ficar
+  abaixo de 700 KB.</p>
+  <p class="block-lead"><strong>Nome do arquivo:</strong> espaço, variação e versão, tudo minúsculo
+  e separado por hífen. Por exemplo: topo-performance-celular.webp</p>
+
+  <h2 class="block">Ordem sugerida</h2>
+  <ol class="steps">
+    <li>As duas versões do topo da home. É a primeira imagem que a pessoa vê e a que mais pesa na velocidade da página.</li>
+    <li>Os 14 ícones do menu do topo, que aparecem antes de qualquer rolagem.</li>
+    <li>As 8 artes de categoria, que ocupam um bloco inteiro acima da dobra.</li>
+    <li>As 8 fotos da galeria de criadores.</li>
+    <li>Cenas de placa de vídeo e banner de drops, nas duas versões de cada.</li>
+  </ol>
+  <div class="folio">Página 8 de 8</div>
+</section>
+
+</body>
+</html>

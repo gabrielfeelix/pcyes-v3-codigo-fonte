@@ -29,7 +29,7 @@ import {
 } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { searchProducts } from "../../utils/search";
-import { DiscountBadge, InstallmentLine, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge, SpecChip, GiftProgressBlock } from "./section";
+import { DiscountBadge, InstallmentLine, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge, SpecChip } from "./section";
 import { SEO } from "./SEO";
 import { getListingSeo } from "../lib/listingSeo";
 import { getShowcase, getShowcasePath, matchesShowcase } from "../lib/showcases";
@@ -389,18 +389,21 @@ export function ProductsPage() {
      filtro que a pessoa escolheu — por isso não vira chip removível nem entra
      em activeFilterCount. Difere do showcase em uma coisa: sai `noindex`, que
      campanha é temporária e não deve deixar URL indexada para trás. */
-  const {
-    progress: giftProgress,
-    giftItem,
-    isSingleGift,
-    openModal: openGiftModal,
-    campaignId,
-    setCampaignId,
-  } = useGiftCampaign({ autoOpen: false });
+  /* A listagem não mostra o bloco de progresso — a tela de categoria é para
+     escolher produto, e um painel de campanha por cima disso é outra tarefa
+     pedindo atenção no meio da escolha. O que sobra aqui da campanha é o
+     RECORTE do catálogo, que é serviço, não anúncio. */
+  const { progress: giftProgress, campaignId } = useGiftCampaign({ autoOpen: false });
+  /* Duas coisas diferentes, e antes eram uma só:
+     - `campaignHere` — a pessoa chegou pelo bloco do carrinho, então o
+       progresso acompanha ela aqui. Vale para QUALQUER meta.
+     - `campaignCut`  — o catálogo é recortado. Só faz sentido quando a
+       campanha tem lista de elegíveis por CATEGORIA; na meta de quantidade
+       todo produto conta, e recortar mentiria. */
+  const campaignHere = searchParams.get("campanha") === campaignId && Boolean(giftProgress);
+  const goal = giftProgress?.campaign.goal;
   const campaignCut =
-    searchParams.get("campanha") === campaignId && giftProgress?.campaign.goal.kind === "eligible"
-      ? giftProgress.campaign.goal.productIds
-      : null;
+    campaignHere && goal?.kind === "eligible" && goal.scope === "categoria" ? goal.productIds : null;
   /* Echo-guard: the query string this component last wrote to the URL itself.
      The URL→state effect skips re-hydrating when it sees its own echo, which
      stops the URL↔state sync from ping-ponging (URL/cursor flicker). */
@@ -1393,7 +1396,7 @@ export function ProductsPage() {
             : undefined
         }
         ogType="website"
-        robots={campaignCut || refinementCount > 0 ? "noindex" : "index"}
+        robots={campaignHere || refinementCount > 0 ? "noindex" : "index"}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
@@ -1454,7 +1457,7 @@ export function ProductsPage() {
                 letterSpacing: "-0.02em",
               }}
             >
-              {campaignCut
+              {campaignHere
                 ? giftProgress?.campaign.headline
                 : showcase
                 ? showcase.h1
@@ -1471,8 +1474,10 @@ export function ProductsPage() {
                 maxWidth: "720px",
               }}
             >
-              {campaignCut
-                ? "Escolha as peças que fecham a campanha. O progresso abaixo acompanha o que já está no carrinho."
+              {campaignHere
+                /* Nada de "o progresso abaixo": o bloco de campanha não vive
+                   nesta tela. Aqui o texto só diz o que a listagem recorta. */
+                ? "Estes são os produtos que valem para a campanha. O que faltar aparece no seu carrinho."
                 : showcase
                 ? showcase.intro
                 : activeCategoryLabel
@@ -1480,25 +1485,6 @@ export function ProductsPage() {
                   : "Catálogo completo PCYES. Hardware, periféricos, setups gamer e mais."}
             </p>
           </header>
-
-          {/* Progresso da campanha, colado na listagem que ela recorta. Sem
-              isto, quem clica em "ver os N da campanha" no carrinho cai numa
-              listagem comum e perde o fio: não sabe mais quantas vagas faltam
-              nem quais peças já contou. */}
-          {campaignCut && giftProgress && (
-            <div className="mb-6 md:mb-8">
-              <GiftProgressBlock
-                progress={giftProgress}
-                giftItem={giftItem}
-                variant="page"
-                canChoose={!isSingleGift}
-                onChoose={openGiftModal}
-                staticSlots
-                campaignId={campaignId}
-                onCampaignChange={setCampaignId}
-              />
-            </div>
-          )}
 
           {/* ── Top control bar — full width above sidebar+grid ── */}
           <div className="flex flex-col gap-4 mb-6 pb-4 border-b border-foreground/10 xl:flex-row xl:items-center xl:justify-between">

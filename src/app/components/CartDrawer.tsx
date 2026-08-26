@@ -14,6 +14,7 @@ import { getPreOrderInfo } from "./PreOrderData";
 import { formatBRL, parseBRL } from "../../utils/format";
 import { maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { useGiftCampaign } from "../lib/useGiftCampaign";
+import { EarnPreview } from "./points/EarnPreview";
 import { toast } from "sonner";
 
 const USER_PCYES_POINTS = 1479;
@@ -201,6 +202,10 @@ export function CartDrawer() {
                   <span className="text-foreground/50" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>Total</span>
                   <Price value={total} label="Total" className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: "var(--font-weight-medium)" }} />
                 </div>
+
+                {/* Colado no total, porque é sobre ESTE pedido. O saldo que a
+                    pessoa já tem mora no topo e responde outra pergunta. */}
+                <EarnPreview amount={total} />
 
                 <button
                   className="w-full py-4 rounded-full text-ink-strong transition-transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"

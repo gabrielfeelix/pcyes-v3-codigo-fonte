@@ -1,84 +1,27 @@
-import { useState, useSyncExternalStore, type ReactNode } from "react";
-import { Link } from "react-router";
+import { useState, type ReactNode } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, Receipt, Send, Sparkles, Wallet } from "lucide-react";
+import { Receipt, Send, Sparkles, Wallet } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { UserData } from "../AuthContext";
 import { PcyesCoin } from "../PcyesCoin";
 import { RarityLadder } from "./RarityLadder";
-import {
-  BalanceCard,
-  EarnRules,
-  ExpiryNote,
-  PointsLedger,
-  PointsSummaryLine,
-  PointsWallet,
-  ReferralPanel,
-} from "./PointsPieces";
+import { BalanceCard, EarnRules, ExpiryNote, PointsLedger, PointsSummaryLine, ReferralPanel } from "./PointsPieces";
 import { getTierProgress, lifetimeFrom, pointsToBRL } from "../../lib/pcyesPoints";
-import { POINTS_VERSIONS, pointsVersionStore } from "../../lib/pointsVersion";
 import { formatBRL } from "../../../utils/format";
 
 /**
- * A aba PCYES Points do perfil, em três arranjos.
+ * A aba PCYES Points do perfil.
  *
- * O que NÃO muda: ao abrir a aba, a escada de raridade aparece primeiro e
- * fica. É a resposta para "onde estou e o que falta".
+ * A escada de raridade abre a aba e fica fixa acima das sub-abas — é a
+ * resposta para "onde estou e o que falta", e ela não sai de vista quando a
+ * aba troca. Abaixo, o programa é recortado por assunto: Saldo, Como ganhar,
+ * Indique e Extrato.
  *
- * - **V1** — uma página. Tudo empilhado, um scroll, nenhuma navegação.
- * - **V2** — abas POR ASSUNTO, o recorte do /dev limpo: Saldo · Como ganhar ·
- *   Indique · Extrato.
- * - **V3** — carteira no topo (rank + saldo + ação) e duas abas embaixo:
- *   Ganhar · Extrato. A pergunta mais frequente ("quanto eu tenho?") não é
- *   uma aba, é a primeira coisa da tela; só o que exige leitura demorada fica
- *   atrás de navegação.
+ * O recorte por assunto veio do módulo do /dev, que separava as mesmas quatro
+ * coisas em abas de navegador antigo. O que mudou aqui é a gramática: as
+ * sub-abas usam o padrão que já existe em Favoritos, e a régua de degraus
+ * ganhou cor de raridade, medalhão e o que cada degrau entrega.
  */
-
-export function usePointsVersion() {
-  return useSyncExternalStore(
-    pointsVersionStore.subscribe,
-    pointsVersionStore.getSnapshot,
-    pointsVersionStore.getSnapshot,
-  );
-}
-
-/** Seletor de versão — some no build de produção junto com o store. */
-export function VersionSwitcher() {
-  const current = usePointsVersion();
-  if (!import.meta.env.DEV) return null;
-
-  return (
-    <div className="mb-4 rounded-card-sm border border-dashed border-foreground/12 bg-foreground/[0.02] p-2">
-      <div className="flex flex-wrap items-center gap-1">
-        <span
-          className="mr-1 text-foreground/25"
-          style={{ fontFamily: "var(--font-family-inter)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.14em" }}
-        >
-          TESTE
-        </span>
-        {POINTS_VERSIONS.map((version) => (
-          <button
-            key={version.id}
-            onClick={() => pointsVersionStore.set(version.id)}
-            aria-pressed={current === version.id}
-            title={version.hint}
-            className={`cursor-pointer rounded-pill px-2.5 py-1 transition-colors ${
-              current === version.id
-                ? "bg-primary/15 text-primary"
-                : "text-foreground/35 hover:bg-foreground/[0.05] hover:text-foreground/70"
-            }`}
-            style={{ fontFamily: "var(--font-family-inter)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.08em" }}
-          >
-            {version.label}
-          </button>
-        ))}
-      </div>
-      <p className="mt-1.5 px-1 text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "10px" }}>
-        {POINTS_VERSIONS.find((v) => v.id === current)?.hint}
-      </p>
-    </div>
-  );
-}
 
 /* ══ Sub-abas — padrão do design system ═════════════════════════════════ */
 
@@ -180,45 +123,38 @@ function LadderHeader({ lifetime }: { lifetime: number }) {
   );
 }
 
-/* ══ V1 — tudo em uma página ════════════════════════════════════════════ */
+/* ══ Entrada ══════════════════════════════════════════════════════════ */
 
-function VersionOne({ user }: { user: UserData }) {
-  const history = user.pcyesPointsHistory ?? [];
-  const lifetime = lifetimeFrom(history);
-
-  return (
-    <>
-      <LadderHeader lifetime={lifetime} />
-      <div className="mb-3">
-        <BalanceCard points={user.pcyesPoints ?? 0} history={history} />
-      </div>
-      <div className="mb-3">
-        <EarnRules lifetimePoints={lifetime} />
-      </div>
-      <div className="mb-3">
-        <ReferralPanel email={user.email} />
-      </div>
-      <div className="mb-3">
-        <PointsLedger history={history} />
-      </div>
-      <div className="mb-3">
-        <PointsSummaryLine history={history} />
-      </div>
-      <ExpiryNote />
-    </>
-  );
-}
-
-/* ══ V2 — abas por assunto ══════════════════════════════════════════════ */
-
-function VersionTwo({ user }: { user: UserData }) {
+export function PointsTab({ user }: { user: UserData }) {
   const history = user.pcyesPointsHistory ?? [];
   const lifetime = lifetimeFrom(history);
   const points = user.pcyesPoints ?? 0;
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+    >
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
+        <h2
+          className="flex items-center gap-2 text-foreground"
+          style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 500 }}
+        >
+          <PcyesCoin size={20} />
+          PCYES Points
+        </h2>
+        <p
+          className="text-foreground/55"
+          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
+        >
+          {points.toLocaleString("pt-BR")} pts · {formatBRL(pointsToBRL(points))}
+        </p>
+      </div>
+
       <LadderHeader lifetime={lifetime} />
+
       <SubTabs
         label="Seções do PCYES Points"
         tabs={[
@@ -263,119 +199,6 @@ function VersionTwo({ user }: { user: UserData }) {
           },
         ]}
       />
-    </>
-  );
-}
-
-/* ══ V3 — carteira no topo, duas abas embaixo ═══════════════════════════ */
-
-function VersionThree({ user }: { user: UserData }) {
-  const history = user.pcyesPointsHistory ?? [];
-  const lifetime = lifetimeFrom(history);
-  const points = user.pcyesPoints ?? 0;
-
-  return (
-    <>
-      {/* A pergunta que traz a pessoa aqui — "quanto eu tenho e dá pra usar
-          em quê?" — é respondida antes de qualquer navegação, junto com o
-          rank. Só o que exige leitura demorada fica atrás de aba. */}
-      <PointsWallet points={points} history={history} lifetime={lifetime}>
-        <Link
-          to="/produtos?promo=1"
-          /* Contorno, não preenchimento. O número dourado é o herói do card;
-             uma pílula vermelha cheia do mesmo tamanho ao lado dele criava dois
-             heróis e nenhum. Aqui a ação continua achável sem disputar. */
-          className="inline-flex items-center gap-1.5 rounded-pill border border-primary/40 px-5 py-2.5 text-primary transition-colors hover:bg-primary/10"
-          style={{
-            fontFamily: "var(--font-family-inter)",
-            fontSize: "var(--text-caption)",
-            fontWeight: 800,
-            letterSpacing: "0.06em",
-          }}
-        >
-          USAR NUMA COMPRA
-          <ArrowRight size={13} />
-        </Link>
-      </PointsWallet>
-
-      <SubTabs
-        label="Seções do PCYES Points"
-        tabs={[
-          {
-            id: "ganhar",
-            label: "Ganhar mais",
-            icon: Sparkles,
-            render: () => (
-              <>
-                <div className="mb-3">
-                  <EarnRules lifetimePoints={lifetime} />
-                </div>
-                <div className="mb-3">
-                  <ReferralPanel email={user.email} />
-                </div>
-                <ExpiryNote />
-              </>
-            ),
-          },
-          {
-            id: "extrato",
-            label: "Extrato",
-            icon: Receipt,
-            count: String(history.length),
-            render: () => (
-              <>
-                <div className="mb-3">
-                  <PointsLedger history={history} />
-                </div>
-                <PointsSummaryLine history={history} />
-              </>
-            ),
-          },
-        ]}
-      />
-    </>
-  );
-}
-
-/* ══ Entrada ════════════════════════════════════════════════════════════ */
-
-export function PointsTab({ user }: { user: UserData }) {
-  const version = usePointsVersion();
-  const points = user.pcyesPoints ?? 0;
-
-  return (
-    <motion.div
-      key={`points-${version}`}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
-    >
-      <VersionSwitcher />
-
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
-        <h2
-          className="flex items-center gap-2 text-foreground"
-          style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 500 }}
-        >
-          <PcyesCoin size={20} />
-          PCYES Points
-        </h2>
-        {/* Na V3 o saldo é o hero: repetir aqui seria dizer o mesmo número
-            duas vezes em 200px de distância. */}
-        {version !== "3" && (
-          <p
-            className="text-foreground/55"
-            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
-          >
-            {points.toLocaleString("pt-BR")} pts · {formatBRL(pointsToBRL(points))}
-          </p>
-        )}
-      </div>
-
-      {version === "1" && <VersionOne user={user} />}
-      {version === "2" && <VersionTwo user={user} />}
-      {version === "3" && <VersionThree user={user} />}
     </motion.div>
   );
 }

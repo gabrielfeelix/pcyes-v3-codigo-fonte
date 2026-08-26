@@ -7,7 +7,6 @@ import { FavoritesProvider } from "./FavoritesContext";
 import { CartDrawer } from "./CartDrawer";
 import { AuthModal } from "./AuthModal";
 import { CookieConsent } from "./CookieConsent";
-import { WelcomePopup } from "./WelcomePopup";
 import { Navbar } from "./Navbar";
 import { AnnouncementBar } from "./AnnouncementBar";
 import { ThemeProvider } from "./ThemeProvider";
@@ -56,7 +55,11 @@ export function RootLayout() {
                 <div data-page-light-scope className="contents">
                   {pathname !== "/checkout" && <CartDrawer />}
                   <AuthModal />
-                  <WelcomePopup />
+                  {/* Convite de cadastro DESLIGADO temporariamente a pedido do
+                      cliente, para avaliar as telas sem ele por cima. O
+                      componente segue inteiro em ./WelcomePopup — religar é
+                      apagar este comentário e descomentar a linha. */}
+                  {/* <WelcomePopup /> */}
                   <CookieConsent />
                   {/* O aviso de cookies é `fixed bottom-0`: sem reservar a altura
                       dele, o rodapé da página e o fim do card de compra ficam

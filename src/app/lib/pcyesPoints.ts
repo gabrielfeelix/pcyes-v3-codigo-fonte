@@ -22,8 +22,10 @@ export interface PointsTier {
   min: number;
   /** Cor da raridade: medalhão, régua e halo saem daqui. */
   color: string;
-  /** Quanto rende comprando neste degrau. Sai também na lista de regras. */
+  /** Quanto rende comprando neste degrau, escrito. Sai na lista de regras. */
   rate: string;
+  /** O mesmo, em número: pontos por R$ 10 gastos. */
+  ratePer10: number;
   /** O que o degrau entrega ALÉM da taxa. É o motivo de subir. */
   perks: string[];
 }
@@ -35,6 +37,7 @@ export const POINT_TIERS: PointsTier[] = [
     min: 0,
     color: "#94a3b8",
     rate: "1 pt a cada R$ 10",
+    ratePer10: 1,
     perks: ["Cupom de boas-vindas"],
   },
   {
@@ -43,6 +46,7 @@ export const POINT_TIERS: PointsTier[] = [
     min: 1000,
     color: "#38bdf8",
     rate: "1,5 pt a cada R$ 10",
+    ratePer10: 1.5,
     perks: ["Frete grátis acima de R$ 199"],
   },
   {
@@ -51,6 +55,7 @@ export const POINT_TIERS: PointsTier[] = [
     min: 5000,
     color: "#a855f7",
     rate: "2 pt a cada R$ 10",
+    ratePer10: 2,
     perks: ["Acesso antecipado a pré-vendas"],
   },
   {
@@ -59,6 +64,7 @@ export const POINT_TIERS: PointsTier[] = [
     min: 10000,
     color: "#facc15",
     rate: "2,5 pt a cada R$ 10",
+    ratePer10: 2.5,
     perks: ["Brinde exclusivo por trimestre"],
   },
   {
@@ -67,6 +73,7 @@ export const POINT_TIERS: PointsTier[] = [
     min: 20000,
     color: "#e10600",
     rate: "3 pt a cada R$ 10",
+    ratePer10: 3,
     perks: ["Fila prioritária de GPU", "Concierge dedicado"],
   },
 ];
@@ -172,3 +179,14 @@ export const referralCode = (email: string) =>
   email.split("@")[0].replace(/[^a-z0-9]/gi, "").slice(0, 8).toUpperCase() || "PCYES";
 
 export const referralUrl = (email: string) => `https://pcyes.com.br/r/${referralCode(email)}`;
+
+/** Pontos que um pedido de `amount` reais rende no degrau informado. */
+export const pointsForOrder = (amount: number, tier: PointsTier) =>
+  Math.floor((amount / 10) * tier.ratePer10);
+
+/**
+ * O degrau de quem está comprando. Sem sessão, todo mundo entra como Comum —
+ * é a taxa que a pessoa teria ao criar a conta, então não promete a mais.
+ */
+export const tierFor = (history: PcyesPointsTx[] | undefined) =>
+  getTierProgress(lifetimeFrom(history ?? [])).current;
