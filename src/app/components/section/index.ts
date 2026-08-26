@@ -17,3 +17,4 @@ export { Price } from "./Price";
 export { PriceBlock, InstallmentLine } from "./PriceBlock";
 export { SetupTierBadge } from "./SetupTierBadge";
 export { ScrollFade } from "./ScrollFade";
+export { GiftProgressBlock } from "./GiftProgressBlock";

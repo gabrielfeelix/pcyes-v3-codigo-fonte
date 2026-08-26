@@ -34,6 +34,7 @@ import { SEO } from "./SEO";
 import { getListingSeo } from "../lib/listingSeo";
 import { getShowcase, getShowcasePath, matchesShowcase } from "../lib/showcases";
 import { getCategoryUrl } from "../lib/slug";
+import { useGiftCampaign } from "../lib/useGiftCampaign";
 import { CategorySeoBlock } from "./CategorySeoBlock";/* Tags que descrevem PERSONA e FAIXA do setup. Persona já é o recorte da
    vitrine; faixa tem seção própria — nenhuma das duas volta na lista genérica
    de atributos. */
@@ -382,6 +383,27 @@ function PriceRangeSlider({
 
 export function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  /* Recorte por CAMPANHA de brinde (`?campanha=itens`).
+     Mesma natureza do `showcase` logo abaixo: é a PÁGINA que recorta, não um
+     filtro que a pessoa escolheu — por isso não vira chip removível nem entra
+     em activeFilterCount. Difere do showcase em uma coisa: sai `noindex`, que
+     campanha é temporária e não deve deixar URL indexada para trás. */
+  /* A listagem não mostra o bloco de progresso — a tela de categoria é para
+     escolher produto, e um painel de campanha por cima disso é outra tarefa
+     pedindo atenção no meio da escolha. O que sobra aqui da campanha é o
+     RECORTE do catálogo, que é serviço, não anúncio. */
+  const { progress: giftProgress, campaignId } = useGiftCampaign({ autoOpen: false });
+  /* Duas coisas diferentes, e antes eram uma só:
+     - `campaignHere` — a pessoa chegou pelo bloco do carrinho, então o
+       progresso acompanha ela aqui. Vale para QUALQUER meta.
+     - `campaignCut`  — o catálogo é recortado. Só faz sentido quando a
+       campanha tem lista de elegíveis por CATEGORIA; na meta de quantidade
+       todo produto conta, e recortar mentiria. */
+  const campaignHere = searchParams.get("campanha") === campaignId && Boolean(giftProgress);
+  const goal = giftProgress?.campaign.goal;
+  const campaignCut =
+    campaignHere && goal?.kind === "eligible" && goal.scope === "categoria" ? goal.productIds : null;
   /* Echo-guard: the query string this component last wrote to the URL itself.
      The URL→state effect skips re-hydrating when it sees its own echo, which
      stops the URL↔state sync from ping-ponging (URL/cursor flicker). */
@@ -616,6 +638,7 @@ export function ProductsPage() {
     /* Recorte da vitrine: é a PÁGINA, não um filtro escolhido pelo usuário —
        por isso não entra em activeFilterCount (senão a vitrine sairia noindex)
        nem vira chip removível (remover "Gamer" em /pc-gamer/ não faz sentido). */
+    if (campaignCut) result = result.filter((p) => campaignCut.includes(p.id));
     if (showcase) result = result.filter((p) => matchesShowcase(showcase, p));
     if (selectedCategories.size > 0) result = result.filter((p) => selectedCategories.has(getProductCategory(p)));
     if (selectedFeaturedCategories.size > 0) {
@@ -664,7 +687,7 @@ export function ProductsPage() {
     if (inStockOnly) result = result.filter((p) => p.inStock !== false);
 
     return result;
-  }, [showcase, selectedCategories, selectedFeaturedCategories, selectedSubcategories, selectedTags, selectedAttributes, selectedBrands, selectedSizes, onlyDiscount, selectedDiscounts, selectedRatings, inStockOnly, searchOrder]);
+  }, [campaignCut, showcase, selectedCategories, selectedFeaturedCategories, selectedSubcategories, selectedTags, selectedAttributes, selectedBrands, selectedSizes, onlyDiscount, selectedDiscounts, selectedRatings, inStockOnly, searchOrder]);
 
   const priceBounds = useMemo(() => {
     const productsForPrice = selectedColors.size > 0
@@ -1373,7 +1396,7 @@ export function ProductsPage() {
             : undefined
         }
         ogType="website"
-        robots={refinementCount > 0 ? "noindex" : "index"}
+        robots={campaignHere || refinementCount > 0 ? "noindex" : "index"}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
@@ -1434,7 +1457,9 @@ export function ProductsPage() {
                 letterSpacing: "-0.02em",
               }}
             >
-              {showcase
+              {campaignHere
+                ? giftProgress?.campaign.headline
+                : showcase
                 ? showcase.h1
                 : initialSubcategory
                   ? `${initialSubcategory} ${activeCategoryLabel}`
@@ -1449,7 +1474,11 @@ export function ProductsPage() {
                 maxWidth: "720px",
               }}
             >
-              {showcase
+              {campaignHere
+                /* Nada de "o progresso abaixo": o bloco de campanha não vive
+                   nesta tela. Aqui o texto só diz o que a listagem recorta. */
+                ? "Estes são os produtos que valem para a campanha. O que faltar aparece no seu carrinho."
+                : showcase
                 ? showcase.intro
                 : activeCategoryLabel
                   ? `Confira a linha completa de ${initialSubcategory ? `${initialSubcategory.toLowerCase()} ${activeCategoryLabel.toLowerCase()}` : activeCategoryLabel.toLowerCase()} PCYES. Garantia oficial, frete grátis acima de R$ 299, até 12x sem juros.`

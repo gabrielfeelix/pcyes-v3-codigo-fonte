@@ -21,6 +21,9 @@ import { Footer } from "./Footer";
 import { getPrimaryProductImage, getVisibleCatalogProducts } from "./productPresentation";
 import { CardBrandLogo } from "./CardBrandLogo";
 import { PcyesCoin } from "./PcyesCoin";
+import { PointsTab } from "./points/PointsTab";
+import { RarityLadder } from "./points/RarityLadder";
+import { POINT_TIERS, getTierProgress, lifetimeFrom } from "../lib/pcyesPoints";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { ReviewModal } from "./ReviewModal";
 
@@ -97,24 +100,6 @@ const STATUS_MAP = {
   delivered: { label: "Entregue", color: "text-green-500", bg: "bg-green-500/10", icon: Check },
   cancelled: { label: "Cancelado", color: "text-red-400", bg: "bg-red-400/10", icon: XIcon },
 };
-
-const TIERS = [
-  { level: 1, name: "Recruta",  minOrders: 0,  benefit: "Cupom 5% boas-vindas" },
-  { level: 2, name: "Soldado",  minOrders: 2,  benefit: "Frete grátis acima de R$199" },
-  { level: 3, name: "Veterano", minOrders: 5,  benefit: "Acesso antecipado a pré-vendas" },
-  { level: 4, name: "Elite",    minOrders: 10, benefit: "Cashback 2% + brindes exclusivos" },
-  { level: 5, name: "Lendário", minOrders: 20, benefit: "Concierge dedicado + early access GPUs" },
-];
-
-function getTier(ordersCount: number) {
-  const current = [...TIERS].reverse().find((t) => ordersCount >= t.minOrders) ?? TIERS[0];
-  const next = TIERS.find((t) => t.minOrders > ordersCount);
-  const progress = next
-    ? Math.min(1, (ordersCount - current.minOrders) / (next.minOrders - current.minOrders))
-    : 1;
-  const ordersToNext = next ? next.minOrders - ordersCount : 0;
-  return { current, next, progress, ordersToNext };
-}
 
 export function ProfilePage() {
   const {
@@ -226,7 +211,11 @@ export function ProfilePage() {
   const favoriteProducts = getVisibleCatalogProducts(allProducts).filter((p) => favorites.has(p.id));
 
   const activeOrders = user.orders.filter((o) => o.status === "processing" || o.status === "shipped").length;
-  const tier = getTier(user.orders.length);
+  /* Uma escada só no perfil, movida por pontos acumulados. Antes havia duas
+     — esta, por número de pedidos, e a de raridade dentro da aba de pontos —
+     com dois "Lendário" querendo dizer coisas diferentes. */
+  const lifetimePoints = lifetimeFrom(user.pcyesPointsHistory ?? []);
+  const tier = getTierProgress(lifetimePoints);
 
   return (
     <div className="pt-[calc(56px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))]">
@@ -240,8 +229,8 @@ export function ProfilePage() {
                   {user.name.charAt(0)}
                 </span>
               </div>
-              <span className="absolute -bottom-1 -right-1 px-1.5 py-0.5 bg-primary text-primary-foreground flex items-center gap-0.5" style={{ borderRadius: "var(--radius-card)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.06em", boxShadow: "0 4px 12px rgba(255,43,46,0.4)" }}>
-                <Sparkles size={8} className="fill-white" /> Nv. {tier.current.level}
+              <span className="absolute -bottom-1 -right-1 flex items-center gap-0.5 px-1.5 py-0.5 text-black/80" style={{ borderRadius: "var(--radius-card)", background: tier.current.color, fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.06em", boxShadow: `0 4px 12px ${tier.current.color}66` }}>
+                <Sparkles size={8} className="fill-white" /> {tier.current.name}
               </span>
             </div>
             <div>
@@ -249,7 +238,7 @@ export function ProfilePage() {
                 E aí, {user.name.split(" ")[0]}
               </h1>
               <p className="text-foreground/60 flex items-center gap-1.5" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
-                <span className="text-primary font-semibold">{tier.current.name}</span>
+                <span className="font-semibold" style={{ color: tier.current.color }}>{tier.current.name}</span>
                 <span className="text-foreground/35">·</span>
                 <span>{user.email}</span>
               </p>
@@ -601,9 +590,12 @@ export function ProfilePage() {
                     ];
                     const missionsDone = missions.filter((m) => m.done).length;
                     const missionsPending = missions.filter((m) => !m.done);
-                    const missionBoost = missionsDone * 0.5;
-                    const effectiveOrders = user.orders.length + missionBoost;
-                    const dynamicTier = getTier(effectiveOrders);
+                    /* Missão virou ponto. Antes ela dava "XP" numa escala que
+                       só existia neste card; agora credita na mesma moeda do
+                       resto do programa, senão a pessoa completa a missão e o
+                       degrau dela não anda. */
+                    const missionPoints = missionsDone * 100;
+                    const dynamicTier = tier;
 
                     return (
                   <div className="mb-3 overflow-hidden" style={{ borderRadius: "var(--radius-card-sm)", background: isDark ? "rgba(var(--foreground-rgb), 0.02)" : "rgba(0,0,0,0.015)", border: isDark ? "1px solid rgba(var(--foreground-rgb), 0.06)" : "1px solid rgba(0,0,0,0.06)" }}>
@@ -621,18 +613,18 @@ export function ProfilePage() {
 
                     <div className="flex flex-wrap items-center justify-between gap-2 md:gap-3 px-5 pt-4 pb-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(56,189,248,0.12)" }}>
-                          <Sparkles size={16} style={{ color: "#38bdf8", fill: "rgba(56,189,248,0.2)" }} />
+                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full" style={{ background: `${dynamicTier.current.color}1f` }}>
+                          <Sparkles size={16} style={{ color: dynamicTier.current.color }} />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 600 }}>{dynamicTier.current.name}</span>
-                            <span className="px-2 py-0.5 text-ink-strong" style={{ borderRadius: "var(--radius-pill)", background: "linear-gradient(90deg, #0ea5e9 0%, #38bdf8 100%)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.08em" }}>NV. {dynamicTier.current.level}</span>
+                            <span className="px-2 py-0.5 text-black/80" style={{ borderRadius: "var(--radius-pill)", background: dynamicTier.current.color, fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.08em" }}>{lifetimePoints.toLocaleString("pt-BR")} PTS</span>
                           </div>
                           <p className="text-foreground/60 mt-0.5" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
                             {dynamicTier.next
-                              ? `${dynamicTier.ordersToNext.toFixed(1).replace(".0", "")} ${dynamicTier.ordersToNext === 1 ? "ponto" : "pontos"} pro ${dynamicTier.next.name}`
-                              : "Você atingiu o nível máximo!"}
+                              ? `${dynamicTier.toNext.toLocaleString("pt-BR")} pts para ${dynamicTier.next.name}`
+                              : "Topo da escada"}
                           </p>
                         </div>
                       </div>
@@ -644,14 +636,11 @@ export function ProfilePage() {
                       )}
                     </div>
 
-                    {/* Progress bar XP (cyan/azul, não compete com primary nem com points dourados) */}
                     <div className="px-5 pb-4">
-                      <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ background: isDark ? "rgba(var(--foreground-rgb), 0.06)" : "rgba(0,0,0,0.06)" }}>
-                        <div className="h-full rounded-full transition-all duration-700" style={{ width: `${Math.max(dynamicTier.progress, dynamicTier.next ? 0.22 : 1) * 100}%`, background: "linear-gradient(90deg, #0ea5e9 0%, #38bdf8 50%, #67e8f9 100%)", boxShadow: "0 0 10px rgba(56,189,248,0.45)" }} />
-                      </div>
+                      <RarityLadder lifetimePoints={lifetimePoints} variant="compact" />
                       <p className="mt-2 text-foreground/45" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
                         {user.orders.length} {user.orders.length === 1 ? "pedido" : "pedidos"} · {missionsDone} {missionsDone === 1 ? "missão" : "missões"} concluída{missionsDone === 1 ? "" : "s"}
-                        {missionBoost > 0 && <span style={{ color: "#38bdf8" }}> · +{missionBoost} XP de bônus</span>}
+                        {missionPoints > 0 && <span style={{ color: dynamicTier.current.color }}> · +{missionPoints} pts de missões</span>}
                       </p>
                     </div>
 
@@ -661,7 +650,7 @@ export function ProfilePage() {
                         <div className="flex items-center justify-between mb-2.5">
                           <p className="text-foreground/65" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" }}>Missões pra avançar</p>
                           <span className="text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                            {missionsDone}/{missions.length} · +0.5 XP cada
+                            {missionsDone}/{missions.length} · +100 pts cada
                           </span>
                         </div>
                         <div className="space-y-1.5">
@@ -672,7 +661,7 @@ export function ProfilePage() {
                             >
                               <div className="w-4 h-4 rounded-full border-2 flex-shrink-0 transition-colors group-hover/task:border-sky-400" style={{ borderColor: "rgba(56,189,248,0.4)" }} />
                               <p className="text-foreground/80 flex-1 text-left" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 500 }}>{task.label}</p>
-                              <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.06em", color: "#38bdf8" }}>+0.5 XP</span>
+                              <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.06em", color: dynamicTier.current.color }}>+100 pts</span>
                               <ChevronRight size={13} className="text-foreground/35 group-hover/task:text-sky-400 group-hover/task:translate-x-0.5 transition-all" />
                             </button>
                           ))}
@@ -686,21 +675,21 @@ export function ProfilePage() {
                         Benefícios
                       </p>
                       <div className="space-y-1">
-                        {TIERS.map((t) => {
-                          const unlocked = user.orders.length >= t.minOrders;
-                          const isCurrent = t.level === dynamicTier.current.level;
+                        {POINT_TIERS.map((t) => {
+                          const unlocked = lifetimePoints >= t.min;
+                          const isCurrent = t.id === dynamicTier.current.id;
                           return (
-                            <div key={t.level} className="flex items-center gap-2.5 py-1.5">
+                            <div key={t.id} className="flex items-center gap-2.5 py-1.5">
                               {unlocked ? (
-                                <Check size={13} className="text-green-500 flex-shrink-0" />
+                                <Check size={13} className="flex-shrink-0" style={{ color: t.color }} />
                               ) : (
-                                <div className="w-[13px] h-[13px] rounded-full border border-foreground/25 flex-shrink-0" />
+                                <div className="h-[13px] w-[13px] flex-shrink-0 rounded-full border border-foreground/25" />
                               )}
-                              <p className={`${unlocked ? "text-foreground" : "text-foreground/35"} flex-1 min-w-0`} style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: isCurrent ? 600 : 500 }}>
-                                {t.benefit}
+                              <p className={`${unlocked ? "text-foreground" : "text-foreground/35"} min-w-0 flex-1`} style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: isCurrent ? 600 : 500 }}>
+                                {[t.rate, ...t.perks].join(" · ")}
                               </p>
-                              <span className={`${unlocked ? "text-green-500" : "text-foreground/30"} flex-shrink-0`} style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, letterSpacing: "0.04em" }}>
-                                {unlocked ? t.name : `${t.name} · ${t.minOrders}+`}
+                              <span className="flex-shrink-0" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.04em", color: unlocked ? t.color : "rgba(var(--foreground-rgb), 0.3)" }}>
+                                {unlocked ? t.name : `${t.name} · ${t.min.toLocaleString("pt-BR")}`}
                               </span>
                             </div>
                           );
@@ -1254,141 +1243,7 @@ export function ProfilePage() {
                 </motion.div>
               )}
 
-              {activeTab === "points" && (() => {
-                const history = user.pcyesPointsHistory ?? [];
-                const totalEarned = history.filter((h) => h.amount > 0).reduce((acc, h) => acc + h.amount, 0);
-                const totalSpent = -history.filter((h) => h.amount < 0).reduce((acc, h) => acc + h.amount, 0);
-                const nextExpiring = history.filter((h) => h.expiresAt && h.amount > 0).sort((a, b) => new Date(a.expiresAt!).getTime() - new Date(b.expiresAt!).getTime())[0];
-                const today = new Date(2026, 4, 18);
-                const daysToExpire = nextExpiring ? Math.ceil((new Date(nextExpiring.expiresAt!).getTime() - today.getTime()) / (1000 * 60 * 60 * 24)) : 0;
-                return (
-                  <motion.div key="points" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
-                    <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
-                      <h2 className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: "var(--font-weight-medium)" }}>PCYES Points</h2>
-                      <p className="text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>1 pt = R$ 0,10 · Use até 30% por pedido</p>
-                    </div>
-
-                    {/* Hero saldo */}
-                    <div className="relative mb-3 overflow-hidden p-6" style={{ borderRadius: "var(--radius-card-md)", background: "linear-gradient(135deg, rgba(250,204,21,0.10) 0%, rgba(180,83,9,0.05) 50%, rgba(255,43,46,0.03) 100%)", border: "1px solid rgba(250,204,21,0.28)" }}>
-                      <div className="flex items-center gap-4 mb-4">
-                        <PcyesCoin size={56} />
-                        <div className="flex-1">
-                          <p style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#facc15" }}>Saldo disponível</p>
-                          <p style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-h3)", fontWeight: 700, lineHeight: 1, color: "#facc15", textShadow: "0 0 24px rgba(250,204,21,0.4)" }}>
-                            {(user.pcyesPoints ?? 0).toLocaleString("pt-BR")}
-                          </p>
-                          <p className="text-foreground/65 mt-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                            Equivale a <span className="text-foreground font-semibold">R$ {((user.pcyesPoints ?? 0) * 0.1).toFixed(2).replace(".", ",")}</span> em desconto
-                          </p>
-                        </div>
-                      </div>
-
-                      {nextExpiring && daysToExpire > 0 && daysToExpire <= 60 && (
-                        <div className="flex items-center gap-2 p-3 mt-3" style={{ borderRadius: "var(--radius-card-sm)", background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.22)" }}>
-                          <AlertCircle size={14} className="text-yellow-500 flex-shrink-0" />
-                          <p className="text-yellow-500" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                            {nextExpiring.amount} pts vencem em {daysToExpire} {daysToExpire === 1 ? "dia" : "dias"} · {new Date(nextExpiring.expiresAt!).toLocaleDateString("pt-BR")}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Stats grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
-                      <div className="p-4" style={{ borderRadius: "var(--radius-card-sm)", background: isDark ? "rgba(var(--foreground-rgb), 0.02)" : "rgba(0,0,0,0.015)", border: isDark ? "1px solid rgba(var(--foreground-rgb), 0.06)" : "1px solid rgba(0,0,0,0.06)" }}>
-                        <p className="text-foreground/55 mb-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" }}>Acumulado</p>
-                        <p className="text-foreground flex items-baseline gap-1" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 600 }}>
-                          {totalEarned} <span className="text-foreground/55" style={{ fontSize: "var(--text-caption)", fontWeight: 500 }}>pts</span>
-                        </p>
-                      </div>
-                      <div className="p-4" style={{ borderRadius: "var(--radius-card-sm)", background: isDark ? "rgba(var(--foreground-rgb), 0.02)" : "rgba(0,0,0,0.015)", border: isDark ? "1px solid rgba(var(--foreground-rgb), 0.06)" : "1px solid rgba(0,0,0,0.06)" }}>
-                        <p className="text-foreground/55 mb-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" }}>Resgatado</p>
-                        <p className="text-foreground flex items-baseline gap-1" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 600 }}>
-                          {totalSpent} <span className="text-foreground/55" style={{ fontSize: "var(--text-caption)", fontWeight: 500 }}>pts</span>
-                        </p>
-                      </div>
-                      <div className="p-4 col-span-2 md:col-span-1" style={{ borderRadius: "var(--radius-card-sm)", background: isDark ? "rgba(var(--foreground-rgb), 0.02)" : "rgba(0,0,0,0.015)", border: isDark ? "1px solid rgba(var(--foreground-rgb), 0.06)" : "1px solid rgba(0,0,0,0.06)" }}>
-                        <p className="text-foreground/55 mb-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" }}>Próximo pedido pode usar até</p>
-                        <p className="text-foreground flex items-baseline gap-1" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 600 }}>
-                          {Math.min(user.pcyesPoints ?? 0, 480)} <span className="text-foreground/55" style={{ fontSize: "var(--text-caption)", fontWeight: 500 }}>pts</span>
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Como funciona */}
-                    <div className="p-5 mb-3" style={{ borderRadius: "var(--radius-card-sm)", background: isDark ? "rgba(var(--foreground-rgb), 0.02)" : "rgba(0,0,0,0.015)", border: isDark ? "1px solid rgba(var(--foreground-rgb), 0.06)" : "1px solid rgba(0,0,0,0.06)" }}>
-                      <p className="text-foreground mb-3" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" }}>Como ganhar mais</p>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        {[
-                          { icon: ShoppingCart, title: "Cada compra", desc: "1 pt a cada R$ 10 gastos" },
-                          { icon: Star, title: "Avaliar produtos", desc: "+5 pts por avaliação" },
-                          { icon: Share2, title: "Indicar amigos", desc: "+50 pts quando o amigo compra" },
-                        ].map((item) => (
-                          <div key={item.title} className="flex items-start gap-2.5 p-3" style={{ borderRadius: "var(--radius-card-sm)", background: isDark ? "rgba(var(--foreground-rgb), 0.015)" : "rgba(0,0,0,0.01)" }}>
-                            <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(250,204,21,0.12)" }}>
-                              <item.icon size={13} style={{ color: "#facc15" }} />
-                            </div>
-                            <div className="min-w-0">
-                              <p className="text-foreground" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "var(--font-weight-medium)" }}>{item.title}</p>
-                              <p className="text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>{item.desc}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Histórico */}
-                    <div className="overflow-hidden" style={{ borderRadius: "var(--radius-card-sm)", background: isDark ? "rgba(var(--foreground-rgb), 0.02)" : "rgba(0,0,0,0.015)", border: isDark ? "1px solid rgba(var(--foreground-rgb), 0.06)" : "1px solid rgba(0,0,0,0.06)" }}>
-                      <div className="px-5 py-3 flex items-center justify-between" style={{ borderBottom: isDark ? "1px solid rgba(var(--foreground-rgb), 0.04)" : "1px solid rgba(0,0,0,0.04)" }}>
-                        <p className="text-foreground" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" }}>Histórico</p>
-                        <p className="text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>{history.length} {history.length === 1 ? "transação" : "transações"}</p>
-                      </div>
-                      {history.length === 0 ? (
-                        <div className="text-center py-12 px-6">
-                          <PcyesCoin size={40} />
-                          <p className="text-foreground/55 mt-3" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>Nenhuma transação ainda</p>
-                        </div>
-                      ) : (
-                        <div>
-                          {history.map((tx, idx) => {
-                            const isPositive = tx.amount > 0;
-                            const txDate = new Date(tx.date);
-                            const txTypeMap = {
-                              earn: { label: "Ganhou", color: "text-green-500" },
-                              bonus: { label: "Bônus", color: "text-yellow-500" },
-                              spend: { label: "Resgatou", color: "text-foreground/65" },
-                              expire: { label: "Expirou", color: "text-red-400" },
-                            };
-                            const txStyle = txTypeMap[tx.type];
-                            return (
-                              <div key={tx.id} className="flex items-center gap-3 px-5 py-3" style={{ borderTop: idx > 0 ? (isDark ? "1px solid rgba(var(--foreground-rgb), 0.03)" : "1px solid rgba(0,0,0,0.03)") : undefined }}>
-                                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: isPositive ? "rgba(34,197,94,0.10)" : "rgba(239,68,68,0.08)" }}>
-                                  {isPositive ? <Sparkles size={13} className="text-green-500" /> : <Receipt size={13} className="text-foreground/70" />}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-0.5">
-                                    <p className="text-foreground truncate" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: "var(--font-weight-medium)" }}>{tx.description}</p>
-                                    <span className={`${txStyle.color} flex-shrink-0`} style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                                      {txStyle.label}
-                                    </span>
-                                  </div>
-                                  <p className="text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                                    {txDate.toLocaleDateString("pt-BR")} · {txDate.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
-                                    {tx.expiresAt && isPositive && ` · vence em ${new Date(tx.expiresAt).toLocaleDateString("pt-BR")}`}
-                                  </p>
-                                </div>
-                                <p className={`flex-shrink-0 ${isPositive ? "text-green-500" : "text-foreground/65"}`} style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 700 }}>
-                                  {isPositive ? "+" : ""}{tx.amount} <span style={{ fontSize: "var(--text-caption)", fontWeight: 600 }}>pts</span>
-                                </p>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                );
-              })()}
+              {activeTab === "points" && <PointsTab user={user} />}
 
               {activeTab === "favorites" && (
                 <motion.div key="favorites" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>

@@ -106,14 +106,21 @@ const MOCK_USER: UserData = {
   cpf: "123.456.789-00",
   birthday: "1996-08-22",
   updatedAt: "2026-03-15T10:30:00",
-  pcyesPoints: 480,
+  /* Saldo e histórico BATEM: 1.679 ganhos − 80 resgatados − 120 vencidos =
+     1.479. Antes o seed dizia 480 de saldo com um histórico que somava 399, e
+     a divergência passava porque nenhuma tela mostrava os dois juntos. A de
+     pontos agora mostra, e o erro apareceria na primeira olhada. */
+  pcyesPoints: 1479,
   pcyesPointsHistory: [
-    { id: "tx-006", date: "2026-04-05 22:35", type: "earn", amount: 60, description: "Compra: Spectrum Pro Gabinete", orderId: "PCY-2026-003", expiresAt: "2027-04-05" },
-    { id: "tx-005", date: "2026-04-02 12:15", type: "earn", amount: 50, description: "Compra: Teclado + Deskpad", orderId: "PCY-2026-002", expiresAt: "2027-04-02" },
-    { id: "tx-004", date: "2026-03-28 15:45", type: "earn", amount: 19, description: "Compra: Cobra V2 Mouse", orderId: "PCY-2026-001", expiresAt: "2027-03-28" },
-    { id: "tx-003", date: "2026-03-22 10:00", type: "bonus", amount: 100, description: "Bônus: aniversário PCYES", expiresAt: "2026-06-22" },
-    { id: "tx-002", date: "2026-03-15 14:20", type: "spend", amount: -80, description: "Resgate aplicado em pedido anterior" },
-    { id: "tx-001", date: "2026-02-20 09:00", type: "bonus", amount: 250, description: "Bônus de boas-vindas", expiresAt: "2026-08-20" },
+    { id: "tx-009", date: "2026-05-02 19:10", type: "earn", amount: 700, description: "Compra: Setup Apex", orderId: "PCY-2026-004", expiresAt: "2027-05-02" },
+    { id: "tx-008", date: "2026-04-20 08:30", type: "bonus", amount: 500, description: "Indicação: Marina fechou o 1º pedido", expiresAt: "2027-04-20" },
+    { id: "tx-007", date: "2026-04-05 22:35", type: "earn", amount: 60, description: "Compra: Spectrum Pro Gabinete", orderId: "PCY-2026-003", expiresAt: "2027-04-05" },
+    { id: "tx-006", date: "2026-04-02 12:15", type: "earn", amount: 50, description: "Compra: Teclado + Deskpad", orderId: "PCY-2026-002", expiresAt: "2027-04-02" },
+    { id: "tx-005", date: "2026-03-28 15:45", type: "earn", amount: 19, description: "Compra: Cobra V2 Mouse", orderId: "PCY-2026-001", expiresAt: "2027-03-28" },
+    { id: "tx-004", date: "2026-03-22 10:00", type: "bonus", amount: 100, description: "Bônus: aniversário PCYES", expiresAt: "2026-06-22" },
+    { id: "tx-003", date: "2026-03-15 14:20", type: "spend", amount: -80, description: "Resgate aplicado em pedido anterior" },
+    { id: "tx-002", date: "2026-03-01 03:00", type: "expire", amount: -120, description: "Pontos de 2025 venceram sem uso" },
+    { id: "tx-001", date: "2026-02-20 09:00", type: "bonus", amount: 250, description: "Bônus de boas-vindas", expiresAt: "2027-02-20" },
   ],
   addresses: [
     { id: "1", label: "Casa", street: "Av. Paranavaí", number: "1906", complement: "Sala 3", neighborhood: "Parque Industrial", city: "Maringá", state: "PR", cep: "87070-130", isDefault: true },

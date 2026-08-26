@@ -364,7 +364,7 @@ export function CheckoutPage() {
   const [couponError, setCouponError] = useState("");
   const [couponOpen, setCouponOpen] = useState(false);
   const [pointsOpen, setPointsOpen] = useState(false);
-  const userPoints = 480;
+  const userPoints = 1479;
   const [orderConfirmed, setOrderConfirmed] = useState(false);
   const [confirmedSnapshot, setConfirmedSnapshot] = useState<{
     items: typeof items;
