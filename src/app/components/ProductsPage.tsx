@@ -29,11 +29,12 @@ import {
 } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { searchProducts } from "../../utils/search";
-import { DiscountBadge, InstallmentLine, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge, SpecChip } from "./section";
+import { DiscountBadge, InstallmentLine, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge, SpecChip, GiftProgressBlock } from "./section";
 import { SEO } from "./SEO";
 import { getListingSeo } from "../lib/listingSeo";
 import { getShowcase, getShowcasePath, matchesShowcase } from "../lib/showcases";
 import { getCategoryUrl } from "../lib/slug";
+import { useGiftCampaign } from "../lib/useGiftCampaign";
 import { CategorySeoBlock } from "./CategorySeoBlock";/* Tags que descrevem PERSONA e FAIXA do setup. Persona já é o recorte da
    vitrine; faixa tem seção própria — nenhuma das duas volta na lista genérica
    de atributos. */
@@ -382,6 +383,24 @@ function PriceRangeSlider({
 
 export function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  /* Recorte por CAMPANHA de brinde (`?campanha=itens`).
+     Mesma natureza do `showcase` logo abaixo: é a PÁGINA que recorta, não um
+     filtro que a pessoa escolheu — por isso não vira chip removível nem entra
+     em activeFilterCount. Difere do showcase em uma coisa: sai `noindex`, que
+     campanha é temporária e não deve deixar URL indexada para trás. */
+  const {
+    progress: giftProgress,
+    giftItem,
+    isSingleGift,
+    openModal: openGiftModal,
+    campaignId,
+    setCampaignId,
+  } = useGiftCampaign({ autoOpen: false });
+  const campaignCut =
+    searchParams.get("campanha") === campaignId && giftProgress?.campaign.goal.kind === "eligible"
+      ? giftProgress.campaign.goal.productIds
+      : null;
   /* Echo-guard: the query string this component last wrote to the URL itself.
      The URL→state effect skips re-hydrating when it sees its own echo, which
      stops the URL↔state sync from ping-ponging (URL/cursor flicker). */
@@ -616,6 +635,7 @@ export function ProductsPage() {
     /* Recorte da vitrine: é a PÁGINA, não um filtro escolhido pelo usuário —
        por isso não entra em activeFilterCount (senão a vitrine sairia noindex)
        nem vira chip removível (remover "Gamer" em /pc-gamer/ não faz sentido). */
+    if (campaignCut) result = result.filter((p) => campaignCut.includes(p.id));
     if (showcase) result = result.filter((p) => matchesShowcase(showcase, p));
     if (selectedCategories.size > 0) result = result.filter((p) => selectedCategories.has(getProductCategory(p)));
     if (selectedFeaturedCategories.size > 0) {
@@ -664,7 +684,7 @@ export function ProductsPage() {
     if (inStockOnly) result = result.filter((p) => p.inStock !== false);
 
     return result;
-  }, [showcase, selectedCategories, selectedFeaturedCategories, selectedSubcategories, selectedTags, selectedAttributes, selectedBrands, selectedSizes, onlyDiscount, selectedDiscounts, selectedRatings, inStockOnly, searchOrder]);
+  }, [campaignCut, showcase, selectedCategories, selectedFeaturedCategories, selectedSubcategories, selectedTags, selectedAttributes, selectedBrands, selectedSizes, onlyDiscount, selectedDiscounts, selectedRatings, inStockOnly, searchOrder]);
 
   const priceBounds = useMemo(() => {
     const productsForPrice = selectedColors.size > 0
@@ -1373,7 +1393,7 @@ export function ProductsPage() {
             : undefined
         }
         ogType="website"
-        robots={refinementCount > 0 ? "noindex" : "index"}
+        robots={campaignCut || refinementCount > 0 ? "noindex" : "index"}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
@@ -1434,7 +1454,9 @@ export function ProductsPage() {
                 letterSpacing: "-0.02em",
               }}
             >
-              {showcase
+              {campaignCut
+                ? giftProgress?.campaign.headline
+                : showcase
                 ? showcase.h1
                 : initialSubcategory
                   ? `${initialSubcategory} ${activeCategoryLabel}`
@@ -1449,13 +1471,34 @@ export function ProductsPage() {
                 maxWidth: "720px",
               }}
             >
-              {showcase
+              {campaignCut
+                ? "Escolha as peças que fecham a campanha. O progresso abaixo acompanha o que já está no carrinho."
+                : showcase
                 ? showcase.intro
                 : activeCategoryLabel
                   ? `Confira a linha completa de ${initialSubcategory ? `${initialSubcategory.toLowerCase()} ${activeCategoryLabel.toLowerCase()}` : activeCategoryLabel.toLowerCase()} PCYES. Garantia oficial, frete grátis acima de R$ 299, até 12x sem juros.`
                   : "Catálogo completo PCYES. Hardware, periféricos, setups gamer e mais."}
             </p>
           </header>
+
+          {/* Progresso da campanha, colado na listagem que ela recorta. Sem
+              isto, quem clica em "ver os N da campanha" no carrinho cai numa
+              listagem comum e perde o fio: não sabe mais quantas vagas faltam
+              nem quais peças já contou. */}
+          {campaignCut && giftProgress && (
+            <div className="mb-6 md:mb-8">
+              <GiftProgressBlock
+                progress={giftProgress}
+                giftItem={giftItem}
+                variant="page"
+                canChoose={!isSingleGift}
+                onChoose={openGiftModal}
+                staticSlots
+                campaignId={campaignId}
+                onCampaignChange={setCampaignId}
+              />
+            </div>
+          )}
 
           {/* ── Top control bar — full width above sidebar+grid ── */}
           <div className="flex flex-col gap-4 mb-6 pb-4 border-b border-foreground/10 xl:flex-row xl:items-center xl:justify-between">

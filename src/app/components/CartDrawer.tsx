@@ -1,23 +1,22 @@
-import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
-import { X, ShoppingCart, Trash2, Check, Gift, Sparkles } from "lucide-react";
+import { X, ShoppingCart, Trash2, Check, Gift } from "lucide-react";
 import { useCart } from "./CartContext";
 import { artFitClass } from "../lib/setupImages";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { allProducts } from "./productsData";
-import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
+import { getPrimaryProductImage } from "./productPresentation";
 import { PcyesCoin } from "./PcyesCoin";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
-import { BrindePill, Price, PreOrderPill, QtyStepper, ScrollFade } from "./section";
+import { BrindePill, GiftProgressBlock, Price, PreOrderPill, QtyStepper, ScrollFade } from "./section";
 import { useFocusTrap } from "../lib/useFocusTrap";
 import { getPreOrderInfo } from "./PreOrderData";
 import { formatBRL, parseBRL } from "../../utils/format";
-import { GIFT_THRESHOLD, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
+import { maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
+import { useGiftCampaign } from "../lib/useGiftCampaign";
 import { toast } from "sonner";
 
-const USER_PCYES_POINTS = 480;
+const USER_PCYES_POINTS = 1479;
 
 export function CartDrawer() {
   const { items, isOpen, setIsOpen, removeItem, restoreItem, updateQuantity, totalItems, lastAdded, setGiftItem, clearCart } = useCart();
@@ -36,79 +35,30 @@ export function CartDrawer() {
   // Foco preso no drawer enquanto aberto; Escape fecha; foco volta ao gatilho.
   const drawerRef = useFocusTrap<HTMLDivElement>(isOpen, () => setIsOpen(false));
 
-  const [giftModalOpen, setGiftModalOpen] = useState(false);
-  const [giftDismissed, setGiftDismissed] = useState(false);
-  const [selectedGiftId, setSelectedGiftId] = useState<number | null>(null);
+  const {
+    progress: giftProgress,
+    campaignId,
+    setCampaignId,
+    paidItems,
+    giftItem,
+    isSingleGift,
+    modalOpen: giftModalOpen,
+    openModal: openGiftModal,
+    closeModal: closeGiftModal,
+    selectedGiftId,
+    setSelectedGiftId,
+    confirmGift,
+  } = useGiftCampaign({ autoOpen: true });
 
   const parsePrice = parseBRL;
   const formatPrice = formatBRL;
   const formatInt = (n: number) => n.toLocaleString("pt-BR");
 
-  const paidItems = items.filter((item) => !item.isGift);
-  const giftItem = items.find((item) => item.isGift) ?? null;
   const subtotal = paidItems.reduce((sum, i) => sum + parsePrice(i.price) * i.quantity, 0);
   const maxPointsRedeem = maxRedeemablePoints(USER_PCYES_POINTS, subtotal);
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
   const pointsValue = pointsToBRL(pointsUsed);
   const total = Math.max(0, subtotal - pointsValue);
-  const giftUnlocked = subtotal >= GIFT_THRESHOLD;
-  const giftProgress = Math.min(100, (subtotal / GIFT_THRESHOLD) * 100);
-  const remainingForGift = Math.max(0, GIFT_THRESHOLD - subtotal);
-
-  const giftOptions = useMemo(
-    () => {
-      const uniqueCategories = new Set<string>();
-      return getShowcaseProducts(allProducts)
-        .sort((a, b) => a.priceNum - b.priceNum)
-        .filter((product) => {
-          if (uniqueCategories.has(product.category)) return false;
-          uniqueCategories.add(product.category);
-          return true;
-        })
-        .slice(0, 3);
-    },
-    [],
-  );
-
-  // Só abre o modal de brinde na BORDA de subida do subtotal (cruzou o limite
-  // ao adicionar item) — nunca só por reabrir o drawer com o carrinho já acima.
-  const prevUnlockedRef = useRef<boolean | null>(null);
-  useEffect(() => {
-    // Primeira execução: registra o estado atual sem disparar nada.
-    if (prevUnlockedRef.current === null) prevUnlockedRef.current = giftUnlocked;
-
-    if (!giftUnlocked) {
-      if (giftItem) setGiftItem(null);
-      setGiftModalOpen(false);
-      setGiftDismissed(false);
-      prevUnlockedRef.current = false;
-      return;
-    }
-
-    const justCrossed = prevUnlockedRef.current === false;
-    prevUnlockedRef.current = true;
-
-    if (justCrossed && !giftItem && !giftDismissed) {
-      setGiftModalOpen(true);
-    }
-  }, [giftDismissed, giftItem, giftUnlocked, setGiftItem]);
-
-  const confirmGift = () => {
-    const product = giftOptions.find((item) => item.id === selectedGiftId);
-    if (!product) return;
-
-    setGiftItem({
-      id: product.id,
-      name: product.name,
-      price: "R$ 0,00",
-      image: getPrimaryProductImage(product),
-      isGift: true,
-      originalPrice: product.price,
-    });
-    setGiftModalOpen(false);
-    setSelectedGiftId(null);
-  };
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -156,66 +106,20 @@ export function CartDrawer() {
               </button>
             </div>
 
-            {paidItems.length > 0 && (
+            {paidItems.length > 0 && giftProgress && (
               <div className="border-b border-foreground/5 px-7 py-3.5">
-                <div className={`overflow-hidden rounded-card-md border ${giftUnlocked ? "border-primary/18 bg-primary/[0.06]" : "border-foreground/8 bg-foreground/[0.03]"}`}>
-                  <div className="px-4 py-3.5">
-                    {/* items-center: com o texto em uma linha só, alinhar pelo topo
-                        deixava a frase alta e o ícone "sobrando" embaixo. */}
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/[0.08] text-primary">
-                          <Gift size={15} />
-                        </div>
-                        {/* Uma linha só. Antes eram título + descrição dizendo a mesma
-                            coisa (o valor do limite já aparece na régua abaixo e o
-                            botão já diz a ação), o que inchava a altura do bloco. */}
-                        <p className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: "600", lineHeight: 1.25 }}>
-                          {giftUnlocked
-                            ? giftItem
-                              ? "Brinde adicionado ao carrinho"
-                              : "Você liberou um brinde"
-                            : `Faltam ${formatPrice(remainingForGift)} para ganhar um brinde`}
-                        </p>
-                      </div>
-                      {giftUnlocked && (
-                        <button
-                          onClick={() => { setGiftDismissed(false); setGiftModalOpen(true); }}
-                          className="text-primary hover:opacity-80 transition-opacity cursor-pointer"
-                          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "700", letterSpacing: "0.08em" }}
-                        >
-                          {giftItem ? "TROCAR" : "ESCOLHER"}
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="mt-3">
-                      <div className="h-1.5 overflow-hidden rounded-full bg-foreground/6">
-                        <motion.div
-                          initial={false}
-                          animate={{ width: `${giftProgress}%` }}
-                          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                          className="h-full rounded-full bg-linear-to-r from-primary to-primary/65"
-                        />
-                      </div>
-                      <div className="mt-1.5 flex items-center justify-between">
-                        <span className="text-foreground/25" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "600", letterSpacing: "0.12em" }}>
-                          0
-                        </span>
-                        <span className={`flex items-center gap-1.5 ${giftUnlocked ? "text-primary" : "text-foreground/35"}`} style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "700", letterSpacing: "0.12em" }}>
-                          <Sparkles size={11} />
-                          BRINDE
-                        </span>
-                        <span className="text-foreground/25" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "600", letterSpacing: "0.12em" }}>
-                          {formatPrice(GIFT_THRESHOLD)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <GiftProgressBlock
+                  progress={giftProgress}
+                  giftItem={giftItem}
+                  variant="drawer"
+                  canChoose={!isSingleGift}
+                  onChoose={openGiftModal}
+                  onNavigate={() => setIsOpen(false)}
+                  campaignId={campaignId}
+                  onCampaignChange={setCampaignId}
+                />
               </div>
             )}
-
             <ScrollFade className="flex-1 overflow-y-auto px-7 py-5" label="Itens do carrinho">
               {items.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center text-center">
@@ -346,7 +250,7 @@ export function CartDrawer() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                onClick={() => { setGiftModalOpen(false); setGiftDismissed(true); setSelectedGiftId(null); }}
+                onClick={closeGiftModal}
                 /* Acima do próprio drawer do carrinho (z-[111]). */
                 className="fixed inset-0 z-[120] flex items-end justify-center bg-black/70 backdrop-blur-md p-0 md:items-center md:p-6"
               >
@@ -376,10 +280,10 @@ export function CartDrawer() {
                           Escolha seu presente
                         </h3>
                         <p className="mt-3 max-w-[560px] text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "clamp(12px, 3.4vw, 14px)", lineHeight: 1.6 }}>
-                          Você atingiu {formatPrice(GIFT_THRESHOLD)}. Selecione um produto pra entrar no carrinho com selo de presente e valor zerado.
+                          {giftProgress?.campaign.headline}. Selecione um produto pra entrar no carrinho com selo de presente e valor zerado.
                         </p>
                       </div>
-                      <button onClick={() => { setGiftModalOpen(false); setGiftDismissed(true); }} aria-label="Fechar oferta de brinde" className="flex h-11 w-11 md:h-10 md:w-10 items-center justify-center rounded-full border border-edge text-ink-muted transition-colors hover:text-ink-strong hover:bg-white/[0.06] cursor-pointer flex-shrink-0">
+                      <button onClick={closeGiftModal} aria-label="Fechar oferta de brinde" className="flex h-11 w-11 md:h-10 md:w-10 items-center justify-center rounded-full border border-edge text-ink-muted transition-colors hover:text-ink-strong hover:bg-white/[0.06] cursor-pointer flex-shrink-0">
                         <X size={16} />
                       </button>
                     </div>
@@ -387,7 +291,7 @@ export function CartDrawer() {
 
                   <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 md:px-9 md:py-8">
                     <div className="grid gap-4 md:grid-cols-3 md:gap-5">
-                    {giftOptions.map((product) => {
+                    {(giftProgress?.gifts ?? []).map((product) => {
                       const isSelected = selectedGiftId === product.id;
                       return (
                       <button
@@ -468,7 +372,7 @@ export function CartDrawer() {
 
                   <div className="flex items-center justify-between border-t border-edge-subtle px-6 py-5 md:px-9 md:py-6">
                     <button
-                      onClick={() => { setGiftModalOpen(false); setGiftDismissed(true); setSelectedGiftId(null); }}
+                      onClick={closeGiftModal}
                       className="inline-flex items-center cursor-pointer text-ink-muted transition-colors hover:text-ink min-h-[44px] px-3 md:min-h-[24px] md:px-0"
                       style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, letterSpacing: "0.06em" }}
                     >

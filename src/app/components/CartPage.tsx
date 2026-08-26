@@ -29,9 +29,10 @@ import { Footer } from "./Footer";
 import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
-import { BrindePill, Price, PreOrderPill } from "./section";
+import { BrindePill, GiftProgressBlock, Price, PreOrderPill } from "./section";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
-import { COUPONS, GIFT_THRESHOLD, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
+import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
+import { useGiftCampaign } from "../lib/useGiftCampaign";
 import { toast } from "sonner";
 
 export function CartPage() {
@@ -55,26 +56,29 @@ export function CartPage() {
   const [cepLoading, setCepLoading] = useState(false);
   const [shippingOptions, setShippingOptions] = useState<{ id: string; label: string; eta: string; price: number }[] | null>(null);
   const [selectedShipping, setSelectedShipping] = useState<string | null>(null);
-  const [giftModalOpen, setGiftModalOpen] = useState(false);
-  const [giftDismissed, setGiftDismissed] = useState(false);
-  const [selectedGiftId, setSelectedGiftId] = useState<number | null>(null);
-
-  const giftItem = items.find((item) => item.isGift) ?? null;
-  const paidItems = items.filter((item) => !item.isGift);
-  const giftOptions = useMemo(() => {
-    const cats = new Set<string>();
-    return getShowcaseProducts(allProducts)
-      .sort((a, b) => a.priceNum - b.priceNum)
-      .filter((p) => {
-        if (cats.has(p.category)) return false;
-        cats.add(p.category);
-        return true;
-      })
-      .slice(0, 3);
-  }, []);
+  // Aqui o modal NÃO abre sozinho ao cruzar a meta (autoOpen: false): na página
+  // inteira o bloco de brinde está visível o tempo todo, então um modal por
+  // cima seria interrupção sem ganho. No drawer é o contrário — lá o bloco
+  // pode estar fora de vista.
+  const {
+    progress: giftProgress,
+    campaignId,
+    setCampaignId,
+    paidItems,
+    giftItem,
+    unlocked: giftUnlocked,
+    isSingleGift,
+    modalOpen: giftModalOpen,
+    openModal: openGiftModal,
+    closeModal: closeGiftModal,
+    swapGift,
+    selectedGiftId,
+    setSelectedGiftId,
+    confirmGift,
+  } = useGiftCampaign({ autoOpen: false });
 
   // PCYES Points (state vem do context)
-  const userPoints = 480;
+  const userPoints = 1479;
 
   const subtotal = useMemo(
     () =>
@@ -98,41 +102,9 @@ export function CartPage() {
   const pointsValue = pointsToBRL(pointsUsed);
   const baseAfterPoints = subtotal - discountValue + shippingPrice - pointsValue;
   const pixDiscount = baseAfterPoints * 0.1;
-  const giftProgress = Math.min(100, (subtotal / GIFT_THRESHOLD) * 100);
-  const giftUnlocked = subtotal >= GIFT_THRESHOLD;
   const total = baseAfterPoints;
   const totalPix = total - pixDiscount;
 
-  useEffect(() => {
-    if (!giftUnlocked && giftItem) {
-      setGiftItem(null);
-      setGiftModalOpen(false);
-      setGiftDismissed(false);
-      return;
-    }
-    if (!giftUnlocked) {
-      setGiftDismissed(false);
-      setGiftModalOpen(false);
-      return;
-    }
-    // Na CartPage o modal de brinde NÃO abre sozinho: se o brinde já está no
-    // carrinho mostra só o item; senão mostra o CTA pra escolher (abre no clique).
-  }, [giftDismissed, giftItem, giftUnlocked, paidItems.length, setGiftItem]);
-
-  const confirmGift = () => {
-    const product = giftOptions.find((g) => g.id === selectedGiftId);
-    if (!product) return;
-    setGiftItem({
-      id: product.id,
-      name: product.name,
-      price: "R$ 0,00",
-      image: getPrimaryProductImage(product),
-      isGift: true,
-      originalPrice: product.price,
-    });
-    setGiftModalOpen(false);
-    setSelectedGiftId(null);
-  };
 
   useEffect(() => {
     const d = cep.replace(/\D/g, "");
@@ -294,52 +266,22 @@ export function CartPage() {
             </button>
           </div>
 
-          {/* Gift unlocked CTA (after threshold) */}
-          {giftUnlocked && !giftItem && (
-            <div
-              className="mb-6 flex flex-wrap items-center justify-between gap-3 overflow-hidden p-4 md:p-5"
-              style={{
-                borderRadius: "var(--radius-card-md)",
-                background: "linear-gradient(135deg, rgba(225,6,0,0.10) 0%, rgba(255,36,25,0.04) 100%)",
-                border: "1px solid rgba(225,6,0,0.32)",
-                boxShadow: "0 18px 38px -16px rgba(225,6,0,0.45)",
-              }}
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-ink-strong"
-                  style={{
-                    background: "var(--gradient-brand)",
-                    boxShadow: "0 8px 20px -4px rgba(225,6,0,0.55)",
-                  }}
-                >
-                  <Gift size={16} strokeWidth={2.2} />
-                </div>
-                <div>
-                  <p className="text-primary" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase" }}>
-                    Brinde desbloqueado
-                  </p>
-                  <p className="text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
-                    Escolha um presente cortesia PCYES.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => { setGiftDismissed(false); setGiftModalOpen(true); }}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-full px-5 py-2.5 text-ink-strong transition-transform hover:scale-[1.03] active:scale-[0.98] min-h-[44px] md:min-h-[24px]"
-                style={{
-                  background: "var(--gradient-brand)",
-                  fontFamily: "var(--font-family-inter)",
-                  fontSize: "var(--text-caption)",
-                  fontWeight: 800,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  boxShadow: "0 12px 26px -10px rgba(225,6,0,0.6)",
-                }}
-              >
-                <Gift size={13} strokeWidth={2.4} />
-                Escolher brinde
-              </button>
+          {/* Progresso da campanha de brinde. Enquanto o brinde não está no
+              carrinho, este bloco é o estado inteiro — barra (meta de valor)
+              ou vagas (meta de quantidade), com a vitrine dos elegíveis já
+              aberta, que aqui a coluna comporta. Com o brinde escolhido, o
+              cartão verde abaixo assume. */}
+          {giftProgress && !giftItem && (
+            <div className="mb-6">
+              <GiftProgressBlock
+                progress={giftProgress}
+                giftItem={giftItem}
+                variant="page"
+                canChoose={!isSingleGift}
+                onChoose={openGiftModal}
+                campaignId={campaignId}
+                onCampaignChange={setCampaignId}
+              />
             </div>
           )}
 
@@ -369,49 +311,12 @@ export function CartPage() {
                 </div>
               </div>
               <button
-                onClick={() => { setGiftItem(null); setGiftDismissed(false); setGiftModalOpen(true); }}
+                onClick={swapGift}
                 className="inline-flex items-center cursor-pointer text-ink-muted transition-colors hover:text-ink-strong min-h-[44px] px-3 md:min-h-[24px] md:px-0"
                 style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
               >
                 Trocar
               </button>
-            </div>
-          )}
-
-          {/* Gift progress bar */}
-          {!giftUnlocked && (
-            <div
-              className="mb-6 overflow-hidden p-4 md:p-5"
-              style={{ borderRadius: "var(--radius-card-md)", background: cardBg, border: cardBorder }}
-            >
-              <div className="flex items-center justify-between gap-3 mb-3">
-                <div className="flex items-center gap-2.5">
-                  <div
-                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-ink-strong"
-                    style={{
-                      background: "var(--gradient-brand)",
-                      boxShadow: "var(--shadow-medallion)",
-                    }}
-                  >
-                    <Gift size={15} strokeWidth={2.2} />
-                  </div>
-                  <p style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "rgba(var(--foreground-rgb), 0.78)" }}>
-                    Falta <span className="text-ink-strong font-bold">{formatBRL(GIFT_THRESHOLD - subtotal)}</span> pra desbloquear um brinde
-                  </p>
-                </div>
-              </div>
-              <div className="relative h-1.5 overflow-hidden rounded-full" style={{ background: "rgba(var(--foreground-rgb), 0.06)" }}>
-                <motion.div
-                  className="h-full rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${giftProgress}%` }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  style={{
-                    background: "linear-gradient(90deg, #22c55e 0%, #34d399 100%)",
-                    boxShadow: "0 0 12px rgba(34,197,94,0.5)",
-                  }}
-                />
-              </div>
             </div>
           )}
 
@@ -992,7 +897,7 @@ export function CartPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => { setGiftModalOpen(false); setGiftDismissed(true); setSelectedGiftId(null); }}
+            onClick={closeGiftModal}
             className="fixed inset-0 z-[80] flex items-end justify-center bg-black/70 p-0 backdrop-blur-md md:items-center md:p-6"
           >
             <motion.div
@@ -1021,11 +926,11 @@ export function CartPage() {
                       Escolha seu presente
                     </h3>
                     <p className="mt-3 max-w-[560px] text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "clamp(12px, 3.4vw, 14px)", lineHeight: 1.6 }}>
-                      Você atingiu {formatBRL(GIFT_THRESHOLD)}. Selecione um produto pra entrar no carrinho com selo de presente e valor zerado.
+                      {giftProgress?.campaign.headline}. Selecione um produto pra entrar no carrinho com selo de presente e valor zerado.
                     </p>
                   </div>
                   <button
-                    onClick={() => { setGiftModalOpen(false); setGiftDismissed(true); }}
+                    onClick={closeGiftModal}
                     className="flex h-11 w-11 md:h-10 md:w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full border border-edge text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink-strong"
                     aria-label="Fechar"
                   >
@@ -1036,7 +941,7 @@ export function CartPage() {
 
               <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 md:px-9 md:py-8">
                 <div className="grid gap-4 md:grid-cols-3 md:gap-5">
-                  {giftOptions.map((product) => {
+                  {(giftProgress?.gifts ?? []).map((product) => {
                     const isSelected = selectedGiftId === product.id;
                     return (
                       <button
@@ -1119,7 +1024,7 @@ export function CartPage() {
 
               <div className="flex items-center justify-between border-t border-edge-subtle px-6 py-5 md:px-9 md:py-6">
                 <button
-                  onClick={() => { setGiftModalOpen(false); setGiftDismissed(true); setSelectedGiftId(null); }}
+                  onClick={closeGiftModal}
                   className="inline-flex items-center cursor-pointer text-ink-muted transition-colors hover:text-ink min-h-[44px] px-3 md:min-h-[24px] md:px-0"
                   style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, letterSpacing: "0.06em" }}
                 >
