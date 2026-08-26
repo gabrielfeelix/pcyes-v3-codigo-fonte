@@ -3,64 +3,72 @@ import { useEffect } from "react";
 /**
  * VLibras — tradutor de Libras (Língua Brasileira de Sinais) do governo federal
  * (gov.br), gratuito. Injeta o widget oficial: um botão flutuante à direita que
- * abre o avatar 3D (Ícaro) e traduz texto/imagens da página para Libras.
+ * abre o avatar 3D e traduz o conteúdo da página para Libras.
  *
  * Doc: https://www.gov.br/governodigital/pt-br/vlibras
- * O plugin adiciona sua própria marcação `[vw]` no <body> e um botão fixo.
+ *
+ * A partir da v7.8 o plugin mudou de arquitetura: ele não lê mais a marcação
+ * `[vw]` / `[vw-access-button]` no DOM (isso era a v4/v5). O loader agora
+ * monta sozinho um `#vlibras-access-wrapper` com shadow root, e só baixa o
+ * app pesado (`vlibras-plugin-app.js`) quando o usuário pede — via clique no
+ * botão ou via `window.VLibrasWidget.open()`.
+ *
+ * Consequência prática: a marcação manual antiga era ignorada (o botão que
+ * `openVLibras` procurava nunca existia, então o tradutor não abria) e o
+ * `new VLibras.Widget(...)` renderizava um segundo botão. Aqui apenas
+ * carregamos o loader e escondemos o botão padrão — o gatilho é o ícone de
+ * acessibilidade do header, que chama `openVLibras`.
  */
 
 const PLUGIN_SRC = "https://vlibras.gov.br/app/vlibras-plugin.js";
-const PLUGIN_APP = "https://vlibras.gov.br/app";
+const SCRIPT_ID = "vlibras-plugin";
 
 declare global {
   interface Window {
-    VLibras?: { Widget: new (app: string) => unknown };
+    VLibrasWidget?: {
+      /** Baixa (na 1ª vez) e abre o tradutor. */
+      open?: () => void;
+      /** Botão flutuante padrão criado pelo loader. */
+      initBtn?: HTMLElement;
+    };
   }
 }
 
-/** Abre/ativa o tradutor de Libras (dispara o botão de acesso do widget). */
+/**
+ * Abre/ativa o tradutor de Libras.
+ *
+ * O app do VLibras só é baixado no primeiro `open()`, então o widget pode
+ * levar um instante para aparecer — é o comportamento oficial (lazy).
+ */
 export function openVLibras() {
-  const btn = document.querySelector<HTMLElement>(
-    "#vlibras-root [vw-access-button]",
-  );
-  btn?.click();
+  window.VLibrasWidget?.open?.();
 }
 
 export function VLibras() {
   useEffect(() => {
     // Evita injeção dupla (StrictMode / re-montagem do layout).
-    if (document.getElementById("vlibras-root")) return;
+    if (document.getElementById(SCRIPT_ID)) return;
 
-    // Esconde o botão flutuante padrão (fica fora da tela, mas ainda clicável
-    // via JS) — o gatilho fica no ícone de acessibilidade do header.
+    /* O botão flutuante do plugin vive dentro de um shadow root, fora do
+       alcance do CSS da página. Escondemos o host: o wrapper inteiro sai de
+       cena, mas continua no DOM e clicável via `VLibrasWidget.open()`. */
     const style = document.createElement("style");
     style.id = "vlibras-style";
     style.textContent = `
-      #vlibras-root [vw-access-button] {
+      #vlibras-access-wrapper {
         position: fixed !important;
         left: -9999px !important;
         top: -9999px !important;
-        opacity: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
       }`;
     document.head.appendChild(style);
 
-    const root = document.createElement("div");
-    root.id = "vlibras-root";
-    root.setAttribute("vw", "");
-    root.className = "enabled";
-    root.innerHTML = `
-      <div vw-access-button class="active"></div>
-      <div vw-plugin-wrapper>
-        <div class="vw-plugin-top-wrapper"></div>
-      </div>`;
-    document.body.appendChild(root);
-
     const script = document.createElement("script");
+    script.id = SCRIPT_ID;
     script.src = PLUGIN_SRC;
     script.async = true;
-    script.onload = () => {
-      if (window.VLibras) new window.VLibras.Widget(PLUGIN_APP);
-    };
     document.body.appendChild(script);
   }, []);
 
