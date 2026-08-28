@@ -7,10 +7,18 @@ export interface PreOrderInfo {
   highlight: string;
 }
 
+/**
+ * ATENÇÃO: `releaseDate` no PASSADO mata o contador.
+ *
+ * O card de pré-venda troca a contagem regressiva por "Já disponível" assim que
+ * a data vence (`countdown.isLive`). Com datas fixas isso acontece sozinho com
+ * o tempo: em agosto/2026 dez dos quinze itens já tinham vencido e só um punhado
+ * ainda contava. Ao revisar o protótipo, empurre as datas vencidas para frente.
+ */
 export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   {
     productId: 500,
-    releaseDate: "2026-07-15T20:00:00",
+    releaseDate: "2026-10-08T20:00:00",
     preOrderPrice: "R$ 8.999,00",
     reservedUnits: 1247,
     totalUnits: 3000,
@@ -18,7 +26,7 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   },
   {
     productId: 433,
-    releaseDate: "2026-06-10T19:00:00",
+    releaseDate: "2026-09-12T19:00:00",
     preOrderPrice: "R$ 2.499,00",
     reservedUnits: 642,
     totalUnits: 1500,
@@ -26,7 +34,7 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   },
   {
     productId: 446,
-    releaseDate: "2026-06-22T18:00:00",
+    releaseDate: "2026-09-18T18:00:00",
     preOrderPrice: "R$ 1.099,00",
     reservedUnits: 312,
     totalUnits: 800,
@@ -34,7 +42,7 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   },
   {
     productId: 164,
-    releaseDate: "2026-06-05T19:00:00",
+    releaseDate: "2026-09-08T19:00:00",
     preOrderPrice: "R$ 2.199,00",
     reservedUnits: 720,
     totalUnits: 800,
@@ -50,7 +58,7 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   },
   {
     productId: 30,
-    releaseDate: "2026-08-10T20:00:00",
+    releaseDate: "2026-10-28T20:00:00",
     preOrderPrice: "R$ 5.499,00",
     reservedUnits: 410,
     totalUnits: 500,
@@ -66,7 +74,7 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   },
   {
     productId: 43,
-    releaseDate: "2026-06-30T19:00:00",
+    releaseDate: "2026-09-25T19:00:00",
     preOrderPrice: "R$ 4.299,00",
     reservedUnits: 188,
     totalUnits: 250,
@@ -74,7 +82,7 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   },
   {
     productId: 233,
-    releaseDate: "2026-07-08T18:00:00",
+    releaseDate: "2026-10-02T18:00:00",
     preOrderPrice: "R$ 799,00",
     reservedUnits: 540,
     totalUnits: 1200,
@@ -82,7 +90,7 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   },
   {
     productId: 250,
-    releaseDate: "2026-08-25T20:00:00",
+    releaseDate: "2026-11-20T20:00:00",
     preOrderPrice: "R$ 1.299,00",
     reservedUnits: 220,
     totalUnits: 700,
@@ -98,7 +106,7 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   },
   {
     productId: 262,
-    releaseDate: "2026-07-22T19:00:00",
+    releaseDate: "2026-10-16T19:00:00",
     preOrderPrice: "R$ 1.499,00",
     reservedUnits: 612,
     totalUnits: 700,
@@ -122,7 +130,7 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   },
   {
     productId: 38,
-    releaseDate: "2026-08-18T19:00:00",
+    releaseDate: "2026-11-06T19:00:00",
     preOrderPrice: "R$ 3.799,00",
     reservedUnits: 268,
     totalUnits: 400,
