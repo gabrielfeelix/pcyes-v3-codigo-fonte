@@ -26,7 +26,8 @@ import { getPreOrderInfo } from "./PreOrderData";
 import type { PreOrderInfo } from "./PreOrderData";
 import { PreOrderBanner, useCountdown } from "./PreOrderBanner";
 import { CTAButton, DiscountBadge, PriceBlock, QtyStepper } from "./section";
-import { PointsChip, PointsEarnLine } from "./points/ProductPoints";
+import { PointsChip } from "./points/ProductPoints";
+import { EarnPreview } from "./points/EarnPreview";
 import { SEO } from "./SEO";
 import { getProductSlug, getProductUrl } from "../lib/slug";
 import {
@@ -1028,7 +1029,7 @@ function StickyPriceCard({
             <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </button>
 
-          <PointsEarnLine amount={product.priceNum * qty} className="mt-3" />
+          <EarnPreview amount={product.priceNum * qty} label="Este produto rende" className="mt-3" />
         </div>
 
         {/* Stock indicator */}
@@ -1294,7 +1295,9 @@ function MobilePurchaseFlow({
           </button>
         )}
 
-        {!isPreOrder && <PointsEarnLine amount={product.priceNum * qty} className="mb-5 -mt-2" />}
+        {!isPreOrder && (
+          <EarnPreview amount={product.priceNum * qty} label="Este produto rende" className="mb-5 -mt-2" />
+        )}
 
         {isPreOrder && (
           <div className="mt-4 mb-5">

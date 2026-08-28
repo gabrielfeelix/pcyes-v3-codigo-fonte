@@ -1,6 +1,8 @@
 export function PcyesCoin({ size = 18 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden>
+    /* `shrink-0`: dentro de um flex apertado a moeda achatava e virava um
+       ovalzinho sem brilho — foi o que aconteceu no chip da PDP. */
+    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden className="shrink-0">
       <defs>
         <radialGradient id="pcoin-grad-shared" cx="35%" cy="30%" r="80%">
           <stop offset="0%" stopColor="#fde68a" />
