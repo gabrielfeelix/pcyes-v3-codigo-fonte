@@ -6,6 +6,11 @@ import { formatBRL } from "../../../utils/format";
 /**
  * Quanto este pedido vai render em pontos.
  *
+ * Uma frase só, sem separador: o "·" que existia entre os pontos e o valor em
+ * reais ficava órfão no começo da segunda linha toda vez que o bloco era
+ * estreito (o card de compra da PDP quebra sempre). Sem glifo de separação, a
+ * frase pode quebrar em qualquer palavra sem ficar torta.
+ *
  * Vive no rodapé do carrinho, colado no total, porque é sobre ESTE pedido —
  * o saldo que a pessoa já tem aparece no topo e responde outra pergunta. Uma
  * linha só: o número, e o que ele vale. Sem card, sem borda, sem CTA: é uma
@@ -54,7 +59,7 @@ export function EarnPreview({ amount, label = "Este pedido rende", className = "
         className="text-foreground/35"
         style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
       >
-        · {formatBRL(pointsToBRL(points))} na próxima compra
+        que valem {formatBRL(pointsToBRL(points))} na próxima compra
       </span>
     </p>
   );
