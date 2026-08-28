@@ -5952,7 +5952,7 @@ export function MonteSeuPcPage() {
           "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,43,46,0.07) 0%, transparent 55%), radial-gradient(ellipse 60% 40% at 50% 100%, rgba(255,43,46,0.04) 0%, transparent 60%), linear-gradient(180deg, #0a0a0c 0%, #080808 40%, #0a0a0c 100%)",
       }}
     >
-      <SEO title="Monte seu PC" description="Monte seu PC gamer ou workstation PCYES peça a peça. Compatibilidade garantida, montagem profissional, frete grátis acima de R$ 299 e até 12x sem juros." canonicalPath="/monte-seu-pc/" />
+      <SEO title="Monte seu PC" description="Monte seu PC gamer ou workstation PCYES peça a peça. Compatibilidade garantida, montagem profissional, frete grátis acima de R$ 299 e até 10x sem juros." canonicalPath="/monte-seu-pc/" />
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.025]"
         style={{

@@ -287,7 +287,7 @@ export function ReviewModal({ open, onClose, orderId, items, onSubmit }: Props) 
             <div className="mt-5 inline-flex items-center gap-2 px-4 py-2.5" style={{ borderRadius: "var(--radius-card-sm)", background: "rgba(250,204,21,0.10)", border: "1px solid rgba(250,204,21,0.28)" }}>
               <Sparkles size={14} style={{ color: "#facc15" }} />
               <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#facc15" }}>
-                +{earnedPoints} PCYES Points creditados
+                +{earnedPoints} PC Points creditados
               </span>
             </div>
             <div className="mt-6">

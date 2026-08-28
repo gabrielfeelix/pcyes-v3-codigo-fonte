@@ -6,7 +6,7 @@ type Feature = { icon: LucideIcon; title: string; desc: string };
 
 const features: Feature[] = [
   { icon: Truck,        title: "Frete grátis",       desc: "Acima de R$ 299 pra todo Brasil" },
-  { icon: CreditCard,   title: "Até 12x sem juros",  desc: "Em todos os cartões" },
+  { icon: CreditCard,   title: "Até 10x sem juros",  desc: "Em todos os cartões" },
   { icon: ShieldCheck,  title: "Compra 100% segura", desc: "Pagamento criptografado" },
   { icon: RefreshCcw,   title: "Troca grátis",       desc: "7 dias para devolver" },
 ];

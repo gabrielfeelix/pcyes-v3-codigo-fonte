@@ -357,7 +357,6 @@ export function ProductCarousel({
                   return (
                     <PriceBlock
                       priceNum={dp.priceNum}
-                      price={dp.price}
                       oldPrice={dp.oldPrice}
                       oldPriceNum={dp.oldPriceNum}
                     />

@@ -10,7 +10,7 @@ import { getTierProgress, lifetimeFrom, pointsToBRL } from "../../lib/pcyesPoint
 import { formatBRL } from "../../../utils/format";
 
 /**
- * A aba PCYES Points do perfil.
+ * A aba PC Points do perfil.
  *
  * A escada de raridade abre a aba e fica fixa acima das sub-abas — é a
  * resposta para "onde estou e o que falta", e ela não sai de vista quando a
@@ -143,7 +143,7 @@ export function PointsTab({ user }: { user: UserData }) {
           style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 500 }}
         >
           <PcyesCoin size={20} />
-          PCYES Points
+          PC Points
         </h2>
         <p
           className="text-foreground/55"
@@ -156,7 +156,7 @@ export function PointsTab({ user }: { user: UserData }) {
       <LadderHeader lifetime={lifetime} />
 
       <SubTabs
-        label="Seções do PCYES Points"
+        label="Seções do PC Points"
         tabs={[
           {
             id: "saldo",

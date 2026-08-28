@@ -22,7 +22,7 @@ export function HomePage() {
     <>
       <SEO
         title="Hardware, periféricos e setups gamer"
-        description="Loja oficial PCYES. Mouses, teclados, headsets, placas de vídeo, PCs gamer, monte seu setup. Frete grátis acima de R$ 299. Até 12x sem juros."
+        description="Loja oficial PCYES. Mouses, teclados, headsets, placas de vídeo, PCs gamer, monte seu setup. Frete grátis acima de R$ 299. Até 10x sem juros."
         canonicalPath="/"
         ogType="website"
         jsonLd={{

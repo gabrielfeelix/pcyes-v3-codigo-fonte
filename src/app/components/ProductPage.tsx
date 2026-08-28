@@ -26,6 +26,7 @@ import { getPreOrderInfo } from "./PreOrderData";
 import type { PreOrderInfo } from "./PreOrderData";
 import { PreOrderBanner, useCountdown } from "./PreOrderBanner";
 import { CTAButton, DiscountBadge, PriceBlock, QtyStepper } from "./section";
+import { PointsChip, PointsEarnLine } from "./points/ProductPoints";
 import { SEO } from "./SEO";
 import { getProductSlug, getProductUrl } from "../lib/slug";
 import {
@@ -678,7 +679,7 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
   }, [open]);
 
   const pixPrice = priceNum * 0.9;
-  const installments = Array.from({ length: 12 }, (_, i) => ({
+  const installments = Array.from({ length: 10 }, (_, i) => ({
     n: i + 1,
     value: priceNum / (i + 1),
   }));
@@ -813,7 +814,7 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
                   >
                     <div className="grid grid-cols-2 divide-x divide-foreground/6">
                       <div className="divide-y divide-foreground/6">
-                        {installments.slice(0, 6).map((inst) => (
+                        {installments.slice(0, 5).map((inst) => (
                           <div
                             key={inst.n}
                             className="flex items-center justify-between px-3.5 py-2.5"
@@ -834,7 +835,7 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
                         ))}
                       </div>
                       <div className="divide-y divide-foreground/6">
-                        {installments.slice(6, 12).map((inst) => (
+                        {installments.slice(5, 10).map((inst) => (
                           <div
                             key={inst.n}
                             className="flex items-center justify-between px-3.5 py-2.5"
@@ -1011,10 +1012,10 @@ function StickyPriceCard({
           >
             <span aria-hidden="true">
               ou <span className="text-foreground font-semibold">{product.price}</span> em até{" "}
-              <span className="text-foreground font-semibold">12× {formatBRL(installment)}</span> sem juros
+              <span className="text-foreground font-semibold">10× {formatBRL(installment)}</span> sem juros
             </span>
             <span className="sr-only">
-              ou {formatBRLSpoken(product.priceNum)} em até 12 vezes de {formatBRLSpoken(installment)} sem juros
+              ou {formatBRLSpoken(product.priceNum)} em até 10 vezes de {formatBRLSpoken(installment)} sem juros
             </span>
           </p>
 
@@ -1026,6 +1027,8 @@ function StickyPriceCard({
             Ver opções de pagamento
             <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </button>
+
+          <PointsEarnLine amount={product.priceNum * qty} className="mt-3" />
         </div>
 
         {/* Stock indicator */}
@@ -1272,10 +1275,10 @@ function MobilePurchaseFlow({
           >
             <span aria-hidden="true">
               ou <span className="text-foreground font-bold">{product.price}</span> em até{" "}
-              <span className="text-foreground font-bold">12x de {formatBRL(installment)}</span> sem juros no cartão
+              <span className="text-foreground font-bold">10x de {formatBRL(installment)}</span> sem juros no cartão
             </span>
             <span className="sr-only">
-              ou {formatBRLSpoken(product.priceNum)} em até 12 vezes de {formatBRLSpoken(installment)} sem juros no cartão
+              ou {formatBRLSpoken(product.priceNum)} em até 10 vezes de {formatBRLSpoken(installment)} sem juros no cartão
             </span>
           </p>
         )}
@@ -1290,6 +1293,8 @@ function MobilePurchaseFlow({
             <ArrowUpRight size={12} />
           </button>
         )}
+
+        {!isPreOrder && <PointsEarnLine amount={product.priceNum * qty} className="mb-5 -mt-2" />}
 
         {isPreOrder && (
           <div className="mt-4 mb-5">
@@ -2883,7 +2888,7 @@ export function ProductPage() {
     : 0;
 
   const pixPrice = product.priceNum * 0.9;
-  const installment = product.priceNum / 12;
+  const installment = product.priceNum / 10;
   const preOrderInfo = getPreOrderInfo(product.id);
 
   const cartPayload = () => ({
@@ -2934,7 +2939,7 @@ export function ProductPage() {
     <div className="pt-[calc(56px+var(--announce-h))] md:pt-[calc(142px+var(--announce-h))] notebook:pt-[calc(92px+var(--announce-h))]">
       <SEO
         title={product.name}
-        description={`Compre ${product.name} na PCYES. ${product.price ? `Por ${product.price}.` : ""} Frete grátis acima de R$ 299, até 12x sem juros.`}
+        description={`Compre ${product.name} na PCYES. ${product.price ? `Por ${product.price}.` : ""} Frete grátis acima de R$ 299, até 10x sem juros.`}
         canonicalPath={getProductUrl(product)}
         image={getPrimaryProductImage(product)}
         ogType="product"
@@ -3173,6 +3178,9 @@ export function ProductPage() {
               >
                 {product.reviews} avaliações
               </span>
+              {/* Quanto este produto rende — na mesma linha que a página já usa
+                  para qualificar o produto, e antes do bloco de compra. */}
+              <PointsChip amount={product.priceNum} />
               {product.sku && (
                 <>
                   <span className="text-foreground/15">·</span>
@@ -3393,7 +3401,6 @@ export function ProductPage() {
                       <PriceBlock
                         className="mt-3"
                         priceNum={rProduct.priceNum}
-                        price={rProduct.price}
                         oldPrice={rProduct.oldPrice}
                         oldPriceNum={rProduct.oldPriceNum}
                       />

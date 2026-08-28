@@ -40,7 +40,7 @@ export function EarnPreview({ amount }: { amount: number }) {
           color: "#facc15",
         }}
       >
-        {points.toLocaleString("pt-BR")} PCYES Points
+        {points.toLocaleString("pt-BR")} PC Points
       </span>
       <span
         className="text-foreground/35"

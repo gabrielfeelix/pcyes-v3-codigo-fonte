@@ -14,7 +14,7 @@ export { QtyStepper } from "./QtyStepper";
 export { QuickAddButton } from "./QuickAddButton";
 export { CarouselNavButton } from "./CarouselNavButton";
 export { Price } from "./Price";
-export { PriceBlock, InstallmentLine } from "./PriceBlock";
+export { PriceBlock, InstallmentLine, PixLabel, pixPriceOf, PIX_RATE, INSTALLMENTS } from "./PriceBlock";
 export { SetupTierBadge } from "./SetupTierBadge";
 export { ScrollFade } from "./ScrollFade";
 export { GiftProgressBlock } from "./GiftProgressBlock";

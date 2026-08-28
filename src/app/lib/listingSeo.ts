@@ -66,7 +66,7 @@ export function getListingSeo({ category, subcategoryLabel, products }: ListingS
   } else {
     parts.push(`${label} PCYES.`);
   }
-  parts.push("Garantia oficial, frete grátis acima de R$ 299 e até 12x sem juros.");
+  parts.push("Garantia oficial, frete grátis acima de R$ 299 e até 10x sem juros.");
 
   return {
     title: trimTo(title, SEO_TITLE_MAX),

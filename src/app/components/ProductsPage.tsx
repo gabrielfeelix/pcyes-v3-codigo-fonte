@@ -29,7 +29,8 @@ import {
 } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { searchProducts } from "../../utils/search";
-import { DiscountBadge, InstallmentLine, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge, SpecChip } from "./section";
+import { DiscountBadge, InstallmentLine, PixLabel, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge, SpecChip, pixPriceOf } from "./section";
+import { formatBRL as formatMoney } from "../../utils/format";
 import { SEO } from "./SEO";
 import { getListingSeo } from "../lib/listingSeo";
 import { getShowcase, getShowcasePath, matchesShowcase } from "../lib/showcases";
@@ -1481,7 +1482,7 @@ export function ProductsPage() {
                 : showcase
                 ? showcase.intro
                 : activeCategoryLabel
-                  ? `Confira a linha completa de ${initialSubcategory ? `${initialSubcategory.toLowerCase()} ${activeCategoryLabel.toLowerCase()}` : activeCategoryLabel.toLowerCase()} PCYES. Garantia oficial, frete grátis acima de R$ 299, até 12x sem juros.`
+                  ? `Confira a linha completa de ${initialSubcategory ? `${initialSubcategory.toLowerCase()} ${activeCategoryLabel.toLowerCase()}` : activeCategoryLabel.toLowerCase()} PCYES. Garantia oficial, frete grátis acima de R$ 299, até 10x sem juros.`
                   : "Catálogo completo PCYES. Hardware, periféricos, setups gamer e mais."}
             </p>
           </header>
@@ -1805,7 +1806,6 @@ export function ProductsPage() {
                               <PriceBlock
                                 scale="catalog"
                                 priceNum={displayProduct.priceNum}
-                                price={displayProduct.price}
                                 oldPrice={displayProduct.oldPrice}
                                 oldPriceNum={displayProduct.oldPriceNum}
                               />
@@ -1860,8 +1860,10 @@ export function ProductsPage() {
                                 {displayProduct.name}
                               </p>
                             </Link>
-                            <div className="flex items-baseline gap-2 sm:gap-4">
-                              <p className="text-foreground text-lg sm:text-xl leading-none" style={{ fontFamily: "var(--font-family-inter)", fontWeight: "700" }}>{displayProduct.price}</p>
+                            {/* Preço em destaque é o do PIX, igual ao card e à PDP. */}
+                            <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap">
+                              <p className="text-foreground text-lg sm:text-xl leading-none" style={{ fontFamily: "var(--font-family-inter)", fontWeight: "700" }}>{formatMoney(pixPriceOf(displayProduct.priceNum))}</p>
+                              <PixLabel scale="catalog" />
                               {displayProduct.oldPrice && <p className="text-foreground/40 line-through text-sm" style={{ fontFamily: "var(--font-family-inter)" }}>{displayProduct.oldPrice}</p>}
                             </div>
                             <InstallmentLine scale="catalog" priceNum={displayProduct.priceNum} className="mt-1" />

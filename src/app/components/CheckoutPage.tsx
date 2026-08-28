@@ -1510,7 +1510,7 @@ export function CheckoutPage() {
                       {/* Traditional methods */}
                       <div className="grid grid-cols-1 gap-3 md:grid-cols-3 mb-6">
                         <PaymentOption icon={<PixLogo size={18} />} label="Pix" description="Aprovação instantânea · 10% OFF" badge="-10%" active={payment === "pix"} onClick={() => setPayment("pix")} color="#22c55e" accentBg="rgba(34,197,94,0.14)" />
-                        <PaymentOption icon={<CreditCard size={18} strokeWidth={2} />} label="Cartão" description="Até 12x · seu cartão salvo" active={payment === "credit"} onClick={() => setPayment("credit")} />
+                        <PaymentOption icon={<CreditCard size={18} strokeWidth={2} />} label="Cartão" description="Até 10x · seu cartão salvo" active={payment === "credit"} onClick={() => setPayment("credit")} />
                         <PaymentOption icon={<Wallet size={18} strokeWidth={2} />} label="Boleto" description="Vence em 3 dias úteis" active={payment === "boleto"} onClick={() => setPayment("boleto")} />
                       </div>
 
@@ -2040,7 +2040,7 @@ export function CheckoutPage() {
                   </AnimatePresence>
                 </div>
 
-                {/* PCYES Points inline (CheckoutPage) */}
+                {/* PC Points inline (CheckoutPage) */}
                 <div
                   className={`mb-4 overflow-hidden rounded-card-sm transition-colors ${
                     pointsApplied
@@ -2056,7 +2056,7 @@ export function CheckoutPage() {
                     <span className="flex items-center gap-2">
                       <PcyesCoinSmall />
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.78)" }}>
-                        PCYES Points
+                        PC Points
                       </span>
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, color: "rgba(var(--foreground-rgb), 0.4)" }}>
                         {userPoints} pts
@@ -2114,7 +2114,7 @@ export function CheckoutPage() {
                   {pointsValue > 0 && (
                     <div className="flex items-center justify-between">
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "#facc15", fontWeight: 600 }}>
-                        PCYES Points
+                        PC Points
                       </span>
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "#facc15", fontWeight: 700 }}>
                         −{formatBRL(pointsValue)}

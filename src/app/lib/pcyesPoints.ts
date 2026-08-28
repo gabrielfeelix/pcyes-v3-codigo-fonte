@@ -1,7 +1,7 @@
 import type { PcyesPointsTx } from "../components/AuthContext";
 
 /**
- * Programa PCYES Points — escada, regras e contas, em um lugar só.
+ * Programa PC Points — escada, regras e contas, em um lugar só.
  *
  * O perfil tinha DUAS escadas de nível que não conversavam: `TIERS` em
  * ProfilePage (Recruta → Lendário, movida por número de pedidos, na Visão

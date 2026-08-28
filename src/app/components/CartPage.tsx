@@ -78,7 +78,7 @@ export function CartPage() {
     confirmGift,
   } = useGiftCampaign({ autoOpen: false });
 
-  // PCYES Points (state vem do context)
+  // PC Points (state vem do context)
   const userPoints = 1479;
 
   const subtotal = useMemo(
@@ -714,7 +714,7 @@ export function CartPage() {
                   )}
                 </AnimatePresence>
 
-                {/* PCYES Points */}
+                {/* PC Points */}
                 <div
                   className={`mb-5 overflow-hidden rounded-card-sm transition-colors ${
                     pointsApplied
@@ -730,7 +730,7 @@ export function CartPage() {
                     <span className="flex items-center gap-2">
                       <PcyesCoin size={20} />
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.78)" }}>
-                        PCYES Points
+                        PC Points
                       </span>
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, color: "rgba(var(--foreground-rgb), 0.4)" }}>
                         {userPoints} pts
@@ -836,7 +836,7 @@ export function CartPage() {
                   {pointsValue > 0 && (
                     <div className="flex items-center justify-between">
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "#facc15", fontWeight: 600 }}>
-                        PCYES Points
+                        PC Points
                       </span>
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "#facc15", fontWeight: 700 }}>
                         <span aria-hidden="true">−{formatBRL(pointsValue)}</span>

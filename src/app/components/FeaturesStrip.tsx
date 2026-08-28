@@ -5,7 +5,7 @@ import { Truck, Shield, CreditCard, Headphones } from "lucide-react";
 const features = [
   { icon: Truck, title: "Frete grátis", desc: "Compras acima de R$ 299" },
   { icon: Shield, title: "Garantia estendida", desc: "Até 3 anos de cobertura" },
-  { icon: CreditCard, title: "12x sem juros", desc: "Em todos os cartões" },
+  { icon: CreditCard, title: "10x sem juros", desc: "Em todos os cartões" },
   { icon: Headphones, title: "Suporte 24/7", desc: "Atendimento especializado" },
 ];
 

@@ -85,7 +85,7 @@ type Tab = "overview" | "orders" | "points" | "favorites" | "addresses" | "data"
 const TABS: { key: Tab; icon: typeof Package; label: string; short: string }[] = [
   { key: "overview",  icon: LayoutDashboard, label: "Visão Geral",     short: "Visão"       },
   { key: "orders",    icon: Package,         label: "Meus Pedidos",    short: "Pedidos"     },
-  { key: "points",    icon: Sparkles,        label: "PCYES Points",    short: "Points"      },
+  { key: "points",    icon: Sparkles,        label: "PC Points",    short: "Points"      },
   { key: "favorites", icon: Heart,           label: "Favoritos",       short: "Favoritos"   },
   { key: "addresses", icon: MapPin,          label: "Endereços",       short: "Endereços"   },
   { key: "data",      icon: User,            label: "Dados Pessoais",  short: "Dados"       },
@@ -258,7 +258,7 @@ export function ProfilePage() {
             <div className="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3 py-1.5" style={{ borderRadius: "var(--radius-card-sm)", background: isDark ? "linear-gradient(135deg, rgba(250,204,21,0.10) 0%, rgba(180,83,9,0.04) 100%)" : "linear-gradient(135deg, rgba(250,204,21,0.16) 0%, rgba(180,83,9,0.06) 100%)", border: "1px solid rgba(250,204,21,0.28)" }}>
               <PcyesCoin size={28} />
               <div>
-                <p style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#facc15" }}>PCYES Points</p>
+                <p style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#facc15" }}>PC Points</p>
                 <p style={{ fontFamily: "var(--font-family-figtree)", fontWeight: 700, lineHeight: 1.1, color: "#facc15", textShadow: "0 0 18px rgba(250,204,21,0.35)", fontSize: "var(--text-lg)" }} className="sm:text-[var(--text-xl)]">
                   {(user.pcyesPoints ?? 0).toLocaleString("pt-BR")}
                 </p>
@@ -697,7 +697,7 @@ export function ProfilePage() {
                       </div>
                     </div>
 
-                    {/* Callout PCYES Points */}
+                    {/* Callout PC Points */}
                     {(user.pcyesPoints ?? 0) > 0 && (
                       <button onClick={() => setProfileTab("points")}
                         className="group cursor-pointer w-full flex items-center gap-3 px-5 py-3 transition-all hover:brightness-110"
@@ -835,7 +835,7 @@ export function ProfilePage() {
                       );
                     })()}
 
-                    {/* PCYES Points card no grid */}
+                    {/* PC Points card no grid */}
                     {(user.pcyesPoints ?? 0) > 0 && (
                       <button onClick={() => setProfileTab("points")}
                         className="group cursor-pointer text-left p-5 transition-all relative overflow-hidden md:col-span-2"
@@ -848,7 +848,7 @@ export function ProfilePage() {
                         <div className="flex items-center gap-4">
                           <PcyesCoin size={44} />
                           <div className="flex-1 min-w-0">
-                            <p style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#facc15" }}>PCYES Points</p>
+                            <p style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#facc15" }}>PC Points</p>
                             <div className="flex items-baseline gap-2">
                               <p style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, color: "#facc15", textShadow: "0 0 18px rgba(250,204,21,0.4)" }}>
                                 {(user.pcyesPoints ?? 0).toLocaleString("pt-BR")}

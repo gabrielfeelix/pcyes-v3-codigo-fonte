@@ -1,7 +1,7 @@
 import { formatBRL, formatBRLSpoken } from "../../../utils/format";
 
 /**
- * Bloco de preço do card — preço anterior, preço e parcela.
+ * Bloco de preço do card — preço anterior, preço à vista e parcela.
  *
  * Existia copiado em quatro lugares (ProductCard, o card inline da listagem, o
  * carrossel da home e os relacionados da PDP) com o mesmo desenho e a mesma
@@ -13,23 +13,33 @@ import { formatBRL, formatBRLSpoken } from "../../../utils/format";
  *   card    — preço `--text-lg`, parcela `--text-caption`
  *   catalog — preço `--text-xl`, parcela `--text-sm`
  *
- * `price`/`oldPrice` aceitam o texto já formatado que vem do dado do produto;
- * sem eles o valor é formatado aqui. A fala sai sempre do número.
+ * PREÇO EM DESTAQUE É O DO PIX. A PDP já mostrava o valor com os 10% do PIX no
+ * número grande e o card mostrava o valor cheio: quem clicava via o preço cair
+ * sozinho na próxima tela. Agora as duas telas dizem o mesmo número, no mesmo
+ * formato do resto do varejo brasileiro:
  *
- * VERDE DE ECONOMIA (`--save`): quando há preço anterior, o percentual sai em
- * verde ao lado do preço. Antes o card não tinha verde nenhum — o desconto só
- * existia como selo vermelho sobre a foto, e vermelho no card já significa
- * outras três coisas (marca, oferta, pré-venda). Verde é o que faz o olho
- * registrar "estou economizando" antes de ler o número.
+ *   R$ 530,88            (riscado, preço anterior)
+ *   R$ 404,91  à vista no PIX
+ *   10x de R$ 44,99 sem juros no cartão
  *
- * Um verde só: a palavra PIX chegou a sair em verde também e os dois, em linhas
- * coladas, disputavam a atenção. O desconto ganhou.
+ * O percentual "% OFF" que ficava ao lado do preço saiu daqui — o selo sobre a
+ * foto (`DiscountBadge`) já carrega esse número, derivado dos mesmos dois
+ * preços, e a linha do lado do valor agora responde uma pergunta melhor:
+ * quanto custa pagando à vista.
  *
- * O percentual é DERIVADO dos dois preços, nunca escrito à mão: card e selo da
- * foto sempre concordam, e ninguém precisa lembrar de atualizar os dois.
+ * UM VERDE SÓ (`--save`): o verde está no "à vista no PIX" e em mais nada. Ele
+ * chegou a existir no percentual e no PIX ao mesmo tempo, em linhas coladas, e
+ * os dois disputavam a atenção.
  */
 
 type PriceScale = "card" | "catalog";
+
+/** Os 10% do PIX. Mesma conta de `getPixPrice` em productEnhancements. */
+export const PIX_RATE = 0.9;
+export const pixPriceOf = (priceNum: number) => Math.round(priceNum * PIX_RATE * 100) / 100;
+
+/** Parcelamento máximo da loja. Não temos 12x. */
+export const INSTALLMENTS = 10;
 
 const SCALE: Record<PriceScale, { price: string; installment: string; alpha: number }> = {
   card: { price: "var(--text-lg)", installment: "var(--text-caption)", alpha: 0.55 },
@@ -43,14 +53,13 @@ interface InstallmentLineProps {
 }
 
 /**
- * "No PIX ou 10x de R$ X" — visual e falado.
+ * "10x de R$ X sem juros no cartão" — visual e falado.
  *
- * Sem destaque no "PIX", de propósito: chegou a sair em verde junto com o
- * percentual e ficaram dois verdes em linhas coladas, competindo. O verde no
- * card é UM só, e é o do desconto — que é o que precisa ser visto primeiro.
+ * A parcela sai do preço CHEIO, não do preço do PIX: quem parcela no cartão não
+ * tem o desconto à vista, e prometer a parcela menor seria mentira no checkout.
  */
-export function InstallmentLine({ priceNum, scale = "card", className = "mt-1.5" }: InstallmentLineProps) {
-  const parcela = priceNum / 10;
+export function InstallmentLine({ priceNum, scale = "card", className = "mt-1" }: InstallmentLineProps) {
+  const parcela = priceNum / INSTALLMENTS;
   const cfg = SCALE[scale];
 
   return (
@@ -62,17 +71,43 @@ export function InstallmentLine({ priceNum, scale = "card", className = "mt-1.5"
         color: `rgba(var(--foreground-rgb), ${cfg.alpha})`,
       }}
     >
-      <span aria-hidden="true">No PIX ou 10x de {formatBRL(parcela)}</span>
-      <span className="sr-only">No PIX ou 10 vezes de {formatBRLSpoken(parcela)}</span>
+      <span aria-hidden="true">
+        {INSTALLMENTS}x de {formatBRL(parcela)} sem juros no cartão
+      </span>
+      <span className="sr-only">
+        {INSTALLMENTS} vezes de {formatBRLSpoken(parcela)} sem juros no cartão
+      </span>
     </p>
   );
 }
 
+interface PixLabelProps {
+  scale?: PriceScale;
+}
+
+/** "à vista no PIX" — a etiqueta que explica o número grande. */
+export function PixLabel({ scale = "card" }: PixLabelProps) {
+  return (
+    <span
+      className="leading-none whitespace-nowrap"
+      style={{
+        fontFamily: "var(--font-family-inter)",
+        fontSize: SCALE[scale].installment,
+        fontWeight: 700,
+        color: "var(--save)",
+        letterSpacing: "0.01em",
+      }}
+    >
+      à vista no PIX
+    </span>
+  );
+}
+
 interface PriceBlockProps {
+  /** Preço cheio do produto. O valor em destaque é derivado dele (PIX). */
   priceNum: number;
-  /** Texto já formatado do dado; sem ele, formata a partir de `priceNum`. */
-  price?: string;
   oldPriceNum?: number;
+  /** Texto já formatado do preço anterior; sem ele, formata a partir do número. */
   oldPrice?: string;
   scale?: PriceScale;
   className?: string;
@@ -80,7 +115,6 @@ interface PriceBlockProps {
 
 export function PriceBlock({
   priceNum,
-  price,
   oldPriceNum,
   oldPrice,
   scale = "card",
@@ -88,14 +122,7 @@ export function PriceBlock({
 }: PriceBlockProps) {
   const cfg = SCALE[scale];
   const hasOld = Boolean(oldPrice) || (oldPriceNum !== undefined && oldPriceNum > priceNum);
-
-  /* Derivado, nunca escrito à mão — o mesmo cálculo do selo sobre a foto.
-     Só sai quando há número: com `oldPrice` apenas como texto não dá para
-     calcular, e um "OFF" sem percentual não informa nada. */
-  const off =
-    oldPriceNum !== undefined && oldPriceNum > priceNum
-      ? Math.round(((oldPriceNum - priceNum) / oldPriceNum) * 100)
-      : 0;
+  const pix = pixPriceOf(priceNum);
 
   return (
     <div className={className}>
@@ -123,8 +150,8 @@ export function PriceBlock({
         </p>
       )}
 
-      {/* `items-baseline`: o percentual é bem menor que o preço, e alinhado pelo
-          centro ele flutuava acima da linha dos algarismos. */}
+      {/* `items-baseline`: a etiqueta do PIX é bem menor que o preço, e alinhada
+          pelo centro ela flutuava acima da linha dos algarismos. */}
       <div className="flex flex-wrap items-baseline gap-x-2">
         <p
           className="text-ink-strong leading-none"
@@ -135,28 +162,11 @@ export function PriceBlock({
             letterSpacing: "-0.015em",
           }}
         >
-          <span aria-hidden="true">{price ?? formatBRL(priceNum)}</span>
-          <span className="sr-only">{formatBRLSpoken(priceNum)}</span>
+          <span aria-hidden="true">{formatBRL(pix)}</span>
+          <span className="sr-only">{formatBRLSpoken(pix)} à vista no PIX</span>
         </p>
 
-        {off > 0 && (
-          /* Texto puro, sem pílula: o selo sobre a foto já é uma pílula, e duas
-             a dois centímetros uma da outra brigam. Aqui a cor basta.
-             O "OFF" fica junto do número e não só na cor — WCAG 1.4.1 pede que
-             a informação não dependa de cor sozinha. */
-          <span
-            className="leading-none"
-            style={{
-              fontFamily: "var(--font-family-inter)",
-              fontSize: cfg.installment,
-              fontWeight: 700,
-              color: "var(--save)",
-              letterSpacing: "0.01em",
-            }}
-          >
-            {off}% OFF
-          </span>
-        )}
+        <PixLabel scale={scale} />
       </div>
 
       <InstallmentLine priceNum={priceNum} scale={scale} />
