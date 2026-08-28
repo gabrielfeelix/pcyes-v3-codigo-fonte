@@ -42,7 +42,7 @@ import {
 } from "./SetupWorkloadsBlock";
 import { SetupStoryIntro, SetupStoryClose } from "./SetupStorySections";
 import { getComponentImage, artFitClass, setupArtVariant } from "../lib/setupImages";
-import { formatCep, formatBRLSpoken } from "../../utils/format";
+import { formatCep, formatBRLSpoken, parseBRL } from "../../utils/format";
 import { isValidCep } from "../../utils/cep";
 import { RestockNotify } from "./RestockNotify";
 import { DiscontinuedNotice } from "./DiscontinuedNotice";
@@ -1295,9 +1295,13 @@ function MobilePurchaseFlow({
           </button>
         )}
 
-        {!isPreOrder && (
-          <EarnPreview amount={product.priceNum * qty} label="Este produto rende" className="mb-5 -mt-2" />
-        )}
+        {/* Vale para pré-venda também: reservar rende pontos igual. Na
+            pré-venda a base é o preço de pré-venda, não o preço de tabela. */}
+        <EarnPreview
+          amount={(isPreOrder ? parseBRL(preOrderInfo!.preOrderPrice ?? product.price) : product.priceNum) * qty}
+          label="Este produto rende"
+          className={isPreOrder ? "mt-4" : "mb-5 -mt-2"}
+        />
 
         {isPreOrder && (
           <div className="mt-4 mb-5">

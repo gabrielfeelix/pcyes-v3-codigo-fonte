@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Rocket, Lock, CalendarDays, Sparkles, ShieldCheck } from "lucide-react";
 import type { PreOrderInfo } from "./PreOrderData";
+import { EarnPreview } from "./points/EarnPreview";
+import { parseBRL } from "../../utils/format";
 
 type Props = {
   info: PreOrderInfo;
@@ -311,6 +313,15 @@ export function PreOrderBanner({ info, productPrice, onReserve, variant = "card"
           >
             Pagamento parcelado · sem cobrança até o envio
           </p>
+
+          {/* Pré-venda rende PC Points como qualquer compra — a linha existia
+              no card normal e no fluxo mobile, e só aqui não. A conta é sobre o
+              preço de pré-venda, que é o que vai ser cobrado. */}
+          <EarnPreview
+            amount={parseBRL(info.preOrderPrice ?? productPrice)}
+            label="Este produto rende"
+            className="mt-2.5"
+          />
         </div>
 
         {/* CTA */}
