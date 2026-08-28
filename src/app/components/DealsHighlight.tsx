@@ -166,6 +166,13 @@ export function DealsHighlight({
                   product={product}
                   variant="grid"
                   favorite
+                  /* Vitrine de deals sem selo de desconto é vitrine muda: o
+                     card mostrava só o preço, enquanto as outras faixas de
+                     oferta (FlashDealsStrip) marcam a foto. Produto com
+                     `oldPriceNum` usa o desconto real; o resto deriva os 18%
+                     da convenção da casa e sai como 15%. Pré-venda não entra —
+                     ali a pílula de pré-venda ocupa o mesmo canto. */
+                  emphasizeDiscount
                   onAdd={handleAdd}
                   onFavorite={handleFavorite}
                 />
