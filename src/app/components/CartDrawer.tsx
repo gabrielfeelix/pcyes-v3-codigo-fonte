@@ -6,7 +6,7 @@ import { useCart } from "./CartContext";
 import { artFitClass } from "../lib/setupImages";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { getPrimaryProductImage } from "./productPresentation";
-import { PcyesCoin } from "./PcyesCoin";
+import { PointsPill } from "./points/PointsPill";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
 import { BrindePill, GiftProgressBlock, Price, PreOrderPill, QtyStepper, ScrollFade } from "./section";
 import { useFocusTrap } from "../lib/useFocusTrap";
@@ -93,10 +93,7 @@ export function CartDrawer() {
                 <span className="sr-only" role="status" aria-live="polite">
                   {totalItems} {totalItems === 1 ? "item" : "itens"} no carrinho
                 </span>
-                <span className="flex items-center gap-1 px-2 py-0.5 bg-yellow-500/10 text-yellow-500/70" style={{ borderRadius: "var(--radius-pill)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                  <PcyesCoin size={14} />
-                  {formatInt(USER_PCYES_POINTS)}
-                </span>
+                <PointsPill>{formatInt(USER_PCYES_POINTS)}</PointsPill>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
