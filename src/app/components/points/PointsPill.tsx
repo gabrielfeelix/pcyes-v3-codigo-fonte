@@ -24,8 +24,14 @@ export function PointsPill({
 }) {
   return (
     <span
-      className={`flex items-center gap-1 px-2 py-0.5 bg-yellow-500/10 text-yellow-500/70 ${className}`}
+      className={`flex items-center gap-1 px-2 py-0.5 ${className}`}
       style={{
+        /* Ouro CHATO de propósito: valor fechado, não alfa. Com
+           `text-yellow-500/70` a pílula lia dourado vivo sobre o painel do
+           drawer e marrom apagado sobre o preto da PDP — mesmo componente,
+           duas aparências. */
+        background: "rgba(250,204,21,0.12)",
+        color: "#facc15",
         borderRadius: "var(--radius-pill)",
         fontFamily: "var(--font-family-inter)",
         fontSize: "var(--text-caption)",
