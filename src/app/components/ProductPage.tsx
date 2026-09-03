@@ -2513,14 +2513,20 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
                 </div>
 
                 {/* A recompensa vem antes do formulário: é a resposta para
-                    "por que eu gastaria cinco minutos escrevendo isso". */}
+                    "por que eu gastaria cinco minutos escrevendo isso". O
+                    "ao enviar" existe porque dentro do formulário a pergunta
+                    já não é se rende, é quando cai — e o título do modal já
+                    diz "Avaliar", então repetir o verbo aqui não paga. */}
                 <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mb-6 pb-5 border-b border-foreground/8">
                   <PcyesCoin size={15} />
                   <span className="text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                    Avalie e ganhe
+                    Ganhe
                   </span>
                   <span className="tabular-nums" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#facc15" }}>
                     {REVIEW_POINTS} PC Points
+                  </span>
+                  <span className="text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                    ao enviar
                   </span>
                 </p>
 
