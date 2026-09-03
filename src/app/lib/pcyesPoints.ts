@@ -136,7 +136,7 @@ export const EARN_RULES: EarnRule[] = [
   {
     id: "compra",
     title: "Comprar",
-    detail: "Creditado quando o pedido é entregue.",
+    detail: "Creditado 24h após o pedido ser entregue.",
     reward: "",
     fromTier: true,
     action: { label: "Ver ofertas", to: "/produtos?promo=1" },

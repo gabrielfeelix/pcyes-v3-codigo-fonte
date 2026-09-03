@@ -36,6 +36,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
+import { EarnPreview } from "./points/EarnPreview";
 import { toast } from "sonner";
 
 type Step = 0 | 1 | 2 | 3;
@@ -1040,6 +1041,19 @@ export function CheckoutPage() {
                     <ArrowRight size={13} strokeWidth={2.4} />
                   </Link>
                 </div>
+
+                {/* O ponto não cai junto com a compra: cai 24h depois da
+                    entrega (`EARN_RULES` em lib/pcyesPoints). Sem essa linha,
+                    quem compra abre o perfil no mesmo dia, não acha o saldo e
+                    acha que o programa não pagou. O prazo é dito inteiro —
+                    "na entrega" sozinho gera o mesmo suporte um dia depois.
+                    Fica DEPOIS do total porque é consequência dele, e apagado
+                    porque é recado, não conquista. */}
+                <EarnPreview
+                  amount={snap.total}
+                  note="creditados 24h após a entrega"
+                  className="mt-5 border-t border-white/5 pt-5"
+                />
               </motion.div>
             )}
           </div>

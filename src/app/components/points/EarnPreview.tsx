@@ -22,10 +22,16 @@ import { pointsForOrder, tierFor } from "../../lib/pcyesPoints";
  * `label` existe porque a PDP usa a MESMA linha antes de existir pedido: lá o
  * sujeito é o produto, não o pedido. Só a palavra muda — desenho, cor, câmbio
  * e conta continuam vindo daqui, que é o que mantém carrinho e PDP idênticos.
+ *
+ * `note` é o rabicho apagado depois do número, para quando a tela precisa
+ * dizer QUANDO o ponto cai. Só a confirmação de pedido usa por enquanto: é a
+ * única tela onde a compra já aconteceu e a pessoa pode ir procurar o saldo.
+ * Antes do pedido existir, prometer prazo é ruído.
  */
-export function EarnPreview({ amount, label = "Este pedido rende", className = "" }: {
+export function EarnPreview({ amount, label = "Este pedido rende", note, className = "" }: {
   amount: number;
   label?: string;
+  note?: string;
   className?: string;
 }) {
   const { user } = useAuth();
@@ -54,6 +60,14 @@ export function EarnPreview({ amount, label = "Este pedido rende", className = "
       >
         {points.toLocaleString("pt-BR")} PC Points
       </span>
+      {note && (
+        <span
+          className="text-foreground/35"
+          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
+        >
+          {note}
+        </span>
+      )}
     </p>
   );
 }
