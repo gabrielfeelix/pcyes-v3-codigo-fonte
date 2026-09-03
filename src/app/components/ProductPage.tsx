@@ -6,7 +6,7 @@ import {
   ShoppingCart, Heart, Star, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Truck,
   Check, Share2, MapPin, CreditCard, Banknote, QrCode,
   Loader2, ArrowUpRight, Zap, X, Clock, Info,
-  Rocket, CalendarDays, ShieldCheck, ZoomIn, Settings2,
+  Rocket, CalendarDays, ShieldCheck, ZoomIn, Settings2, ImagePlus,
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "./ui/sheet";
@@ -28,6 +28,8 @@ import { PreOrderBanner, useCountdown } from "./PreOrderBanner";
 import { CTAButton, DiscountBadge, PriceBlock, QtyStepper } from "./section";
 import { PointsChip } from "./points/ProductPoints";
 import { EarnPreview } from "./points/EarnPreview";
+import { PcyesCoin } from "./PcyesCoin";
+import { REVIEW_POINTS, pointsToBRL } from "../lib/pcyesPoints";
 import { SEO } from "./SEO";
 import { getProductSlug, getProductUrl } from "../lib/slug";
 import {
@@ -1810,8 +1812,73 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
   const [isReviewModalOpen, setReviewModalOpen] = useState(false);
   const [newReviewRating, setNewReviewRating] = useState(0);
   const [newReviewText, setNewReviewText] = useState("");
+  const [newReviewName, setNewReviewName] = useState("");
+  const [newReviewTitle, setNewReviewTitle] = useState("");
+  const [newReviewPhotos, setNewReviewPhotos] = useState<{ url: string; name: string }[]>([]);
+  const reviewPhotoInputRef = useRef<HTMLInputElement>(null);
 
-  const reviews = [
+  /* Fotos da avaliação: os limites são os mesmos que o Magento aceita no
+     upload de review (5 arquivos, 2 MB, JPG/PNG/WebP/GIF). Ficam em constante
+     porque a mesma regra é dita para a pessoa embaixo do botão — se o limite
+     mudar, o texto muda junto. */
+  const MAX_REVIEW_PHOTOS = 5;
+  const MAX_REVIEW_PHOTO_BYTES = 2 * 1024 * 1024;
+  const REVIEW_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+  const addReviewPhotos = (files: FileList | null) => {
+    if (!files) return;
+    const room = MAX_REVIEW_PHOTOS - newReviewPhotos.length;
+    if (room <= 0) {
+      toast.error(`Máximo de ${MAX_REVIEW_PHOTOS} fotos.`);
+      return;
+    }
+    const accepted: { url: string; name: string }[] = [];
+    let rejected = false;
+    Array.from(files).slice(0, room).forEach((file) => {
+      if (!REVIEW_PHOTO_TYPES.includes(file.type) || file.size > MAX_REVIEW_PHOTO_BYTES) {
+        rejected = true;
+        return;
+      }
+      accepted.push({ url: URL.createObjectURL(file), name: file.name });
+    });
+    if (rejected) toast.error("Aceitamos JPG, PNG, WebP ou GIF de até 2 MB.");
+    if (accepted.length) setNewReviewPhotos((prev) => [...prev, ...accepted]);
+  };
+
+  const removeReviewPhoto = (index: number) =>
+    setNewReviewPhotos((prev) => {
+      URL.revokeObjectURL(prev[index].url);
+      return prev.filter((_, i) => i !== index);
+    });
+
+  const resetReviewForm = () => {
+    setNewReviewRating(0);
+    setNewReviewText("");
+    setNewReviewName("");
+    setNewReviewTitle("");
+    setNewReviewPhotos((prev) => {
+      prev.forEach((photo) => URL.revokeObjectURL(photo.url));
+      return [];
+    });
+  };
+
+  const closeReviewModal = () => {
+    setReviewModalOpen(false);
+    resetReviewForm();
+  };
+
+  /* As URLs de preview seguram o arquivo em memória enquanto existirem; sem
+     revogar ao desmontar, sair da página com o modal aberto vaza as fotos.
+     Deps vazias de propósito: só roda no desmonte, lendo o valor mais recente
+     pela ref — com `newReviewPhotos` na dependência, a cleanup do efeito
+     anterior revogava a URL da foto que acabou de ser adicionada. */
+  const newReviewPhotosRef = useRef(newReviewPhotos);
+  newReviewPhotosRef.current = newReviewPhotos;
+  useEffect(() => () => newReviewPhotosRef.current.forEach((photo) => URL.revokeObjectURL(photo.url)), []);
+
+  const reviewRewardBRL = formatBRL(pointsToBRL(REVIEW_POINTS));
+
+  const [reviews, setReviews] = useState([
     {
       id: 1,
       user: "Ricardo M.",
@@ -1883,7 +1950,8 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
       ],
       likes: 5
     },
-  ];
+  ]);
+  const hasReviews = reviews.length > 0;
 
   const mediaReviews = reviews.filter((review) => review.images?.length);
   const customerPhotos = mediaReviews.flatMap((review) =>
@@ -1933,6 +2001,40 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
     }, 0);
   };
 
+  const submitReview = () => {
+    if (newReviewRating === 0) {
+      toast.error("Escolha uma nota de 1 a 5 estrelas.");
+      return;
+    }
+    if (!newReviewText.trim()) {
+      toast.error("Escreva o que você achou do produto.");
+      return;
+    }
+    const today = new Date();
+    const date = `${today.toLocaleDateString("pt-BR", { day: "2-digit" })} ${today.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")} ${today.getFullYear()}`;
+    const title = newReviewTitle.trim();
+    setReviews((prev) => [
+      {
+        id: Date.now(),
+        user: newReviewName.trim() || "Anônimo",
+        rating: newReviewRating,
+        date,
+        comment: title ? `${title} — ${newReviewText.trim()}` : newReviewText.trim(),
+        verified: true,
+        images: newReviewPhotos.map((photo) => photo.url),
+        likes: 0,
+      },
+      ...prev,
+    ]);
+    toast.success("Avaliação enviada.");
+    setReviewModalOpen(false);
+    setNewReviewRating(0);
+    setNewReviewText("");
+    setNewReviewName("");
+    setNewReviewTitle("");
+    setNewReviewPhotos([]);
+  };
+
   const filters = [
     { key: "recent" as const, label: "Recentes" },
     { key: "relevant" as const, label: "Mais relevantes" },
@@ -1953,6 +2055,10 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
 
   return (
     <section ref={sectionRef} className="py-16 md:py-20 border-t border-foreground/5 bg-foreground/[0.01] scroll-mt-[96px]">
+      {/* Sem nenhuma avaliação, a página não tem resumo, filtro nem lista para
+          mostrar: as três colunas viram molduras vazias encostadas na esquerda.
+          O vazio troca o layout inteiro por um convite centrado. */}
+      {hasReviews ? (
       <div className="max-w-[1760px] mx-auto">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
           {/* Summary */}
@@ -2000,6 +2106,18 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
             <button onClick={() => setReviewModalOpen(true)} className="w-full mt-10 py-3.5 border border-foreground/10 hover:border-foreground/25 text-foreground transition-all font-semibold cursor-pointer" style={{ borderRadius: "var(--radius-button)", fontSize: "var(--text-sm)" }}>
               Escrever uma avaliação
             </button>
+            <p className="mt-2.5 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5">
+              <PcyesCoin size={14} />
+              <span className="text-foreground/45" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                Ganhe
+              </span>
+              <span className="tabular-nums" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#facc15" }}>
+                {REVIEW_POINTS} PC Points
+              </span>
+              <span className="text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                avaliando este produto
+              </span>
+            </p>
           </div>
 
           {/* List */}
@@ -2201,6 +2319,42 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
           </div>
         </div>
       </div>
+      ) : (
+        <div className="max-w-[600px] mx-auto px-6 text-center">
+          <div className="flex items-center justify-center gap-1.5 mb-6" aria-hidden>
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={18} className="text-foreground/12" />
+            ))}
+          </div>
+          <h2 className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-2xl)", fontWeight: 600 }}>
+            Ninguém avaliou esse produto ainda
+          </h2>
+          <p className="mt-3 mx-auto text-foreground/50" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-base)", maxWidth: "46ch", lineHeight: 1.6 }}>
+            Se você já usou, conta como foi no seu setup. O que você escrever é o que a próxima pessoa vai ler antes de decidir.
+          </p>
+          <button
+            onClick={() => setReviewModalOpen(true)}
+            className="mt-8 px-7 py-3.5 bg-primary text-primary-foreground font-semibold transition-all hover:bg-primary/90 cursor-pointer"
+            style={{ borderRadius: "var(--radius-button)", fontSize: "var(--text-sm)" }}
+          >
+            Escrever a primeira avaliação
+          </button>
+          {/* O incentivo vive colado no botão: é o motivo de clicar, não um
+              aviso solto no rodapé da seção. */}
+          <p className="mt-4 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5">
+            <PcyesCoin size={15} />
+            <span className="text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+              Ganhe
+            </span>
+            <span className="tabular-nums" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#facc15" }}>
+              {REVIEW_POINTS} PC Points
+            </span>
+            <span className="text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+              avaliando este produto. Valem <span className="tabular-nums text-foreground/75" style={{ fontWeight: 600 }}>{reviewRewardBRL}</span> na próxima compra
+            </span>
+          </p>
+        </div>
+      )}
 
       <AnimatePresence>
         {selectedMedia && selectedReview && selectedImage && (
@@ -2332,7 +2486,7 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
-              onClick={() => setReviewModalOpen(false)}
+              onClick={closeReviewModal}
             />
             <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center pointer-events-none md:p-4">
               <motion.div
@@ -2342,62 +2496,159 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
                 transition={{ type: "spring", damping: 28, stiffness: 280 }}
                 className="pointer-events-auto w-full max-w-[500px] max-h-[90vh] overflow-y-auto bg-background border border-foreground/10 shadow-2xl p-6 rounded-t-[20px] md:rounded-[var(--radius-card-lg)]"
               >
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 600 }}>
-                    Escrever Avaliação
-                  </h3>
+                <div className="flex items-start justify-between gap-4 mb-5">
+                  <div className="min-w-0">
+                    <h3 className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 600 }}>
+                      Avaliar produto
+                    </h3>
+                    <p className="text-foreground/45 mt-1 line-clamp-2" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
+                      {product.name}
+                    </p>
+                  </div>
                   <button
-                    onClick={() => setReviewModalOpen(false)}
-                    className="w-11 h-11 md:w-8 md:h-8 flex items-center justify-center rounded-full hover:bg-foreground/8 text-foreground/45 hover:text-foreground transition-all cursor-pointer"
+                    onClick={closeReviewModal}
+                    aria-label="Fechar"
+                    className="w-11 h-11 md:w-8 md:h-8 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-foreground/8 text-foreground/45 hover:text-foreground transition-all cursor-pointer"
                   >
                     <X size={16} strokeWidth={1.8} />
                   </button>
                 </div>
 
-                <div className="space-y-4">
+                {/* A recompensa vem antes do formulário: é a resposta para
+                    "por que eu gastaria cinco minutos escrevendo isso". */}
+                <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mb-6 pb-5 border-b border-foreground/8">
+                  <PcyesCoin size={15} />
+                  <span className="text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                    Avalie e ganhe
+                  </span>
+                  <span className="tabular-nums" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#facc15" }}>
+                    {REVIEW_POINTS} PC Points
+                  </span>
+                  <span className="text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                    que valem <span className="tabular-nums text-foreground/75" style={{ fontWeight: 600 }}>{reviewRewardBRL}</span> na próxima compra
+                  </span>
+                </p>
+
+                <div className="space-y-5">
                   <div>
-                    <label className="block text-foreground/70 mb-2" style={{ fontSize: "var(--text-sm)", fontWeight: 500 }}>Nota</label>
-                    <div className="flex gap-2">
+                    <label className="block text-foreground/70 mb-2" style={{ fontSize: "var(--text-sm)", fontWeight: 500 }}>Sua nota</label>
+                    <div className="flex items-center gap-2">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
                           key={star}
                           onClick={() => setNewReviewRating(star)}
+                          aria-label={`${star} ${star === 1 ? "estrela" : "estrelas"}`}
+                          aria-pressed={star === newReviewRating}
                           className="cursor-pointer transition-transform hover:scale-110 p-1.5 md:p-0 -m-1.5 md:m-0"
                         >
                           <Star size={28} className={star <= newReviewRating ? "fill-[#FFB800] text-[#FFB800]" : "text-foreground/20"} />
                         </button>
                       ))}
+                      {newReviewRating > 0 && (
+                        <span className="ml-2 text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
+                          {["", "Péssimo", "Ruim", "Ok", "Bom", "Excelente"][newReviewRating]}
+                        </span>
+                      )}
                     </div>
                   </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="review-name" className="block text-foreground/70 mb-2" style={{ fontSize: "var(--text-sm)", fontWeight: 500 }}>Seu nome</label>
+                      <input
+                        id="review-name"
+                        type="text"
+                        value={newReviewName}
+                        onChange={(e) => setNewReviewName(e.target.value.slice(0, 40))}
+                        placeholder="Como quer assinar"
+                        className="pcyes-field-ring w-full border border-foreground/12 bg-transparent text-foreground placeholder-foreground/30 px-3 py-2.5 focus:outline-none focus:border-[color:var(--ring)] transition-colors"
+                        style={{ borderRadius: "var(--radius-card)", fontSize: "var(--text-sm)" }}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="review-title" className="block text-foreground/70 mb-2" style={{ fontSize: "var(--text-sm)", fontWeight: 500 }}>Título</label>
+                      <input
+                        id="review-title"
+                        type="text"
+                        value={newReviewTitle}
+                        onChange={(e) => setNewReviewTitle(e.target.value.slice(0, 60))}
+                        placeholder="Resuma sua experiência"
+                        className="pcyes-field-ring w-full border border-foreground/12 bg-transparent text-foreground placeholder-foreground/30 px-3 py-2.5 focus:outline-none focus:border-[color:var(--ring)] transition-colors"
+                        style={{ borderRadius: "var(--radius-card)", fontSize: "var(--text-sm)" }}
+                      />
+                    </div>
+                  </div>
+
                   <div>
-                    <label className="block text-foreground/70 mb-2" style={{ fontSize: "var(--text-sm)", fontWeight: 500 }}>Seu comentário</label>
+                    <label htmlFor="review-text" className="block text-foreground/70 mb-2" style={{ fontSize: "var(--text-sm)", fontWeight: 500 }}>Sua avaliação</label>
+                    {/* `pcyes-field-ring` + borda vermelha no foco: sem isso o
+                        anel global de foco desenhava um segundo retângulo 2px
+                        para fora da borda do campo, e o textarea aparecia com
+                        dois traços vermelhos concêntricos. */}
                     <textarea
+                      id="review-text"
                       value={newReviewText}
-                      onChange={(e) => setNewReviewText(e.target.value)}
-                      placeholder="Conte-nos o que achou do produto..."
-                      className="w-full h-32 border border-foreground/12 bg-transparent text-foreground placeholder-foreground/30 p-3 focus:border-primary/50 focus:outline-none transition-colors resize-none"
+                      onChange={(e) => setNewReviewText(e.target.value.slice(0, 800))}
+                      placeholder="O que funcionou bem? O que poderia ser melhor?"
+                      className="pcyes-field-ring w-full h-32 border border-foreground/12 bg-transparent text-foreground placeholder-foreground/30 p-3 focus:outline-none focus:border-[color:var(--ring)] transition-colors resize-none"
                       style={{ borderRadius: "var(--radius-card)", fontSize: "var(--text-sm)" }}
                     />
+                    <p className="mt-1.5 text-right text-foreground/30 tabular-nums" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                      {newReviewText.length}/800
+                    </p>
                   </div>
+
+                  <div>
+                    <label className="block text-foreground/70 mb-2" style={{ fontSize: "var(--text-sm)", fontWeight: 500 }}>
+                      Fotos <span className="text-foreground/35" style={{ fontWeight: 400 }}>(opcional)</span>
+                    </label>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {newReviewPhotos.map((photo, index) => (
+                        <div
+                          key={photo.url}
+                          className="relative w-16 h-16 overflow-hidden border border-foreground/10"
+                          style={{ borderRadius: "var(--radius-card-sm)" }}
+                        >
+                          <img src={photo.url} alt={photo.name} className="w-full h-full object-cover" />
+                          <button
+                            onClick={() => removeReviewPhoto(index)}
+                            aria-label={`Remover ${photo.name}`}
+                            className="absolute top-1 right-1 w-5 h-5 flex items-center justify-center rounded-full bg-black/70 text-ink-strong hover:bg-black cursor-pointer transition-colors"
+                          >
+                            <X size={11} strokeWidth={2.2} />
+                          </button>
+                        </div>
+                      ))}
+                      {newReviewPhotos.length < MAX_REVIEW_PHOTOS && (
+                        <button
+                          onClick={() => reviewPhotoInputRef.current?.click()}
+                          className="flex items-center gap-2 px-4 h-16 border border-dashed border-foreground/20 hover:border-foreground/40 text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
+                          style={{ borderRadius: "var(--radius-card-sm)", fontSize: "var(--text-sm)", fontWeight: 500 }}
+                        >
+                          <ImagePlus size={16} strokeWidth={1.8} />
+                          Adicionar fotos
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      ref={reviewPhotoInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      multiple
+                      className="hidden"
+                      onChange={(e) => { addReviewPhotos(e.target.files); e.target.value = ""; }}
+                    />
+                    <p className="mt-2 text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                      Até {MAX_REVIEW_PHOTOS} imagens JPG, PNG, WebP ou GIF de no máximo 2 MB.
+                    </p>
+                  </div>
+
                   <button
-                    onClick={() => {
-                      if (newReviewRating === 0) {
-                        toast.error("Por favor, selecione uma nota.");
-                        return;
-                      }
-                      if (!newReviewText.trim()) {
-                        toast.error("Por favor, escreva um comentário.");
-                        return;
-                      }
-                      toast.success("Avaliação enviada com sucesso!");
-                      setReviewModalOpen(false);
-                      setNewReviewRating(0);
-                      setNewReviewText("");
-                    }}
-                    className="w-full mt-4 py-3 bg-primary text-primary-foreground font-semibold transition-all hover:bg-primary/90 cursor-pointer"
+                    onClick={submitReview}
+                    className="w-full py-3 bg-primary text-primary-foreground font-semibold transition-all hover:bg-primary/90 cursor-pointer"
                     style={{ borderRadius: "var(--radius-button)", fontSize: "var(--text-sm)" }}
                   >
-                    Enviar Avaliação
+                    Enviar avaliação
                   </button>
                 </div>
               </motion.div>

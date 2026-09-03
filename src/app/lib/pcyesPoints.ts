@@ -124,6 +124,14 @@ export interface EarnRule {
   action?: { label: string; to: string };
 }
 
+/**
+ * Quanto rende avaliar um produto. Vive aqui porque a mesma promessa aparece
+ * em três lugares (regra do programa, vazio de avaliações da PDP e o modal de
+ * escrever avaliação); com o número solto em cada tela, um dia eles divergem e
+ * a loja promete valores diferentes pela mesma ação.
+ */
+export const REVIEW_POINTS = 100;
+
 export const EARN_RULES: EarnRule[] = [
   {
     id: "compra",
@@ -137,7 +145,7 @@ export const EARN_RULES: EarnRule[] = [
     id: "avaliacao",
     title: "Avaliar o que comprou",
     detail: "Até 2 avaliações por dia.",
-    reward: "+100 pts",
+    reward: `+${REVIEW_POINTS} pts`,
     action: { label: "Avaliar", to: "/perfil?tab=orders" },
   },
   {
