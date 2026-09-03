@@ -1,7 +1,6 @@
 import { useAuth } from "../AuthContext";
 import { PointsPill } from "./PointsPill";
-import { pointsForOrder, pointsToBRL, tierFor } from "../../lib/pcyesPoints";
-import { formatBRL } from "../../../utils/format";
+import { pointsForOrder, tierFor } from "../../lib/pcyesPoints";
 
 /**
  * Quanto este produto rende, na linha das avaliações da PDP.
@@ -24,7 +23,7 @@ export function PointsChip({ amount, className = "" }: { amount: number; classNa
   return (
     <PointsPill
       className={className}
-      title={`Este produto rende ${label} PC Points — vale ${formatBRL(pointsToBRL(points))} na próxima compra`}
+      title={`Este produto rende ${label} PC Points`}
     >
       <span aria-hidden="true" className="tabular-nums">{label} PC Points</span>
       <span className="sr-only">Este produto rende {label} PC Points</span>

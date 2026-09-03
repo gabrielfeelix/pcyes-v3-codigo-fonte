@@ -29,7 +29,7 @@ import { CTAButton, DiscountBadge, PriceBlock, QtyStepper } from "./section";
 import { PointsChip } from "./points/ProductPoints";
 import { EarnPreview } from "./points/EarnPreview";
 import { PcyesCoin } from "./PcyesCoin";
-import { REVIEW_POINTS, pointsToBRL } from "../lib/pcyesPoints";
+import { REVIEW_POINTS } from "../lib/pcyesPoints";
 import { SEO } from "./SEO";
 import { getProductSlug, getProductUrl } from "../lib/slug";
 import {
@@ -1876,8 +1876,6 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
   newReviewPhotosRef.current = newReviewPhotos;
   useEffect(() => () => newReviewPhotosRef.current.forEach((photo) => URL.revokeObjectURL(photo.url)), []);
 
-  const reviewRewardBRL = formatBRL(pointsToBRL(REVIEW_POINTS));
-
   const [reviews, setReviews] = useState([
     {
       id: 1,
@@ -2350,7 +2348,7 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
               {REVIEW_POINTS} PC Points
             </span>
             <span className="text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-              avaliando este produto. Valem <span className="tabular-nums text-foreground/75" style={{ fontWeight: 600 }}>{reviewRewardBRL}</span> na próxima compra
+              avaliando este produto
             </span>
           </p>
         </div>
@@ -2523,9 +2521,6 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
                   </span>
                   <span className="tabular-nums" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#facc15" }}>
                     {REVIEW_POINTS} PC Points
-                  </span>
-                  <span className="text-foreground/35" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                    que valem <span className="tabular-nums text-foreground/75" style={{ fontWeight: 600 }}>{reviewRewardBRL}</span> na próxima compra
                   </span>
                 </p>
 

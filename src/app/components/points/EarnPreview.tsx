@@ -1,7 +1,6 @@
 import { useAuth } from "../AuthContext";
 import { PcyesCoin } from "../PcyesCoin";
-import { pointsForOrder, pointsToBRL, tierFor } from "../../lib/pcyesPoints";
-import { formatBRL } from "../../../utils/format";
+import { pointsForOrder, tierFor } from "../../lib/pcyesPoints";
 
 /**
  * Quanto este pedido vai render em pontos.
@@ -54,21 +53,6 @@ export function EarnPreview({ amount, label = "Este pedido rende", className = "
         }}
       >
         {points.toLocaleString("pt-BR")} PC Points
-      </span>
-      {/* O valor em reais é o que a frase entrega — era o texto mais apagado
-          da linha e ficava ilegível. Ganha peso e um cinza mais claro, não
-          ouro: o ouro é a moeda do programa ("29 PC Points"), e dois dourados
-          na mesma frase brigam. Hierarquia: ouro = pontos, neutro forte =
-          dinheiro de verdade, apagado = as palavras que ligam os dois. */}
-      <span
-        className="text-foreground/35"
-        style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
-      >
-        que valem{" "}
-        <span className="tabular-nums text-foreground/75" style={{ fontWeight: 600 }}>
-          {formatBRL(pointsToBRL(points))}
-        </span>{" "}
-        na próxima compra
       </span>
     </p>
   );
