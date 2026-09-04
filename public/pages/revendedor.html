@@ -316,6 +316,30 @@ html {
   animation: landingFadeUp 0.8s 0.54s ease both;
 }
 
+.cta-shortcut {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #8a8a8a;
+  animation: landingFadeUp 0.8s 0.62s ease both;
+}
+
+.cta-shortcut a {
+  color: #ff6b6d;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 107, 109, 0.35);
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.cta-shortcut a:hover {
+  color: #ff2b2e;
+  border-bottom-color: #ff2b2e;
+}
+
+.light .cta-shortcut {
+  color: #6b6b6b;
+}
+
 .cta-button::before,
 .submit-button::before {
   content: "";
@@ -1732,6 +1756,13 @@ html {
                 />
               </svg>
             </a>
+            <!-- Atalho pra quem ja tem CNPJ: abre o cadastro PJ direto, sem
+                 passar pelo formulario de contato. O data-auth-open e lido pelo
+                 DynamicHtmlPage, que abre o modal de cadastro na aba certa. -->
+            <p class="cta-shortcut">
+              J&aacute; tem CNPJ?
+              <a href="#" data-auth-open="pj">Criar conta de revenda agora</a>
+            </p>
           </div>
         </div>
       </section>

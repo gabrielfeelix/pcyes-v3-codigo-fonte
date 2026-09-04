@@ -56,6 +56,12 @@ export function useFocusTrap<T extends HTMLElement>(
     }
 
     const onKeyDown = (e: KeyboardEvent) => {
+      /* Select, dropdown e popover do Radix abrem num portal fora do container.
+         Enquanto um deles está aberto ele é quem manda no teclado: sem esta
+         saída, o Escape que deveria só fechar a lista fechava o modal inteiro,
+         e o Tab puxava o foco de volta pra dentro do diálogo. */
+      if (document.querySelector("[data-radix-popper-content-wrapper]")) return;
+
       if (e.key === "Escape") {
         e.stopPropagation();
         onClose?.();

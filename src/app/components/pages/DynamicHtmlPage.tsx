@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
 import { Footer } from "../Footer";
+import { useAuth, type AccountType } from "../AuthContext";
 
 interface DynamicHtmlPageProps {
   htmlPath: string;
@@ -10,6 +11,7 @@ export function DynamicHtmlPage({ htmlPath }: DynamicHtmlPageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [html, setHtml] = useState<string>("");
   const location = useLocation();
+  const { setAuthModalTab, setAuthModalKind, setAuthModalOpen } = useAuth();
 
   useEffect(() => {
     let cancelled = false;
@@ -23,6 +25,29 @@ export function DynamicHtmlPage({ htmlPath }: DynamicHtmlPageProps) {
       cancelled = true;
     };
   }, [htmlPath, location.pathname]);
+
+  /* As landings sao HTML estatico, entao nao dao pra chamar o modal direto.
+     Um [data-auth-open="pf|pj"] em qualquer link dessas paginas abre o cadastro
+     ja na aba certa — hoje usado pelo atalho "ja tem CNPJ?" do /revendedor. */
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      const trigger = target?.closest<HTMLElement>("[data-auth-open]");
+      if (!trigger) return;
+
+      event.preventDefault();
+      const kind = trigger.dataset.authOpen === "pj" ? "pj" : "pf";
+      setAuthModalTab("register");
+      setAuthModalKind(kind as AccountType);
+      setAuthModalOpen(true);
+    };
+
+    container.addEventListener("click", handleClick);
+    return () => container.removeEventListener("click", handleClick);
+  }, [setAuthModalTab, setAuthModalKind, setAuthModalOpen]);
 
   useEffect(() => {
     if (!html || !containerRef.current) return;

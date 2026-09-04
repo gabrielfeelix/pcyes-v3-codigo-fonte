@@ -49,11 +49,38 @@ export interface PcyesPointsTx {
   expiresAt?: string;
 }
 
+/* Conta de revenda vê tabela de atacado; o resto da loja é idêntico. Os campos
+   de empresa só existem quando accountType === "pj". */
+export type AccountType = "pf" | "pj";
+
+export interface CompanyData {
+  cnpj: string;
+  razaoSocial: string;
+  nomeFantasia?: string;
+  /* Vem da Receita e não é editável pelo usuário: é o endereço fiscal, e a
+     entrega da conta PJ só vai pra ele. */
+  endereco: {
+    logradouro: string;
+    complemento?: string;
+    bairro: string;
+    cep: string;
+    municipio: string;
+    uf: string;
+  };
+  inscricaoEstadual?: string;
+  atividadePrincipal: { codigo: string; descricao: string };
+  /* Segmentação nossa, não da Receita: o CNAE diz o que a empresa declara à
+     Receita, isso diz o que ela faz com o produto PCYES. */
+  ramoAtividade: string;
+}
+
 export interface UserData {
   name: string;
   email: string;
   phone: string;
   cpf: string;
+  accountType: AccountType;
+  company?: CompanyData;
   birthday?: string;
   updatedAt?: string;
   avatar?: string;
@@ -70,6 +97,9 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   socialLogin: (provider: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
+  registerCompany: (data: CompanyRegistration) => Promise<void>;
+  /** true quando já existe conta para esse CNPJ. */
+  isCnpjRegistered: (cnpj: string) => Promise<boolean>;
   logout: () => void;
   updateUser: (data: Partial<UserData>) => void;
   /* Address helpers — quando isDefault=true entra, todos outros viram false. */
@@ -86,9 +116,22 @@ interface AuthContextType {
   setAuthModalOpen: (open: boolean) => void;
   authModalTab: "login" | "register";
   setAuthModalTab: (tab: "login" | "register") => void;
+  /* Qual aba do cadastro abre. Login ignora isso — o tipo da conta já está na
+     conta e é o servidor que resolve. */
+  authModalKind: AccountType;
+  setAuthModalKind: (kind: AccountType) => void;
   authRedirect: string | null;
   setAuthRedirect: (path: string | null) => void;
   promptLogin: (redirectTo?: string) => void;
+}
+
+export interface CompanyRegistration {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+  company: CompanyData;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -104,6 +147,7 @@ const MOCK_USER: UserData = {
   email: "joao@email.com",
   phone: "(44) 99999-8888",
   cpf: "123.456.789-00",
+  accountType: "pf",
   birthday: "1996-08-22",
   updatedAt: "2026-03-15T10:30:00",
   /* Saldo e histórico BATEM: 1.679 ganhos − 80 resgatados − 120 vencidos =
@@ -187,6 +231,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserData | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"login" | "register">("login");
+  const [authModalKind, setAuthModalKind] = useState<AccountType>("pf");
   const [authRedirect, setAuthRedirect] = useState<string | null>(null);
 
   const promptLogin = useCallback((redirectTo?: string) => {
@@ -210,6 +255,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = useCallback(async (name: string, email: string, _password: string) => {
     await new Promise((r) => setTimeout(r, 800));
     setUser({ ...MOCK_USER, name, email });
+    setAuthModalOpen(false);
+  }, []);
+
+  /* Protótipo: no Magento isso vira consulta ao customer por taxvat. Estes dois
+     existem pra dar como testar a tela de "já cadastrado". */
+  const isCnpjRegistered = useCallback(async (cnpj: string) => {
+    const digits = cnpj.replace(/\D/g, "");
+    await new Promise((r) => setTimeout(r, 300));
+    return ["11222333000181", "19131243000197"].includes(digits);
+  }, []);
+
+  const registerCompany = useCallback(async (data: CompanyRegistration) => {
+    await new Promise((r) => setTimeout(r, 800));
+    setUser({
+      ...MOCK_USER,
+      name: `${data.firstName} ${data.lastName}`.trim(),
+      email: data.email,
+      phone: data.phone,
+      accountType: "pj",
+      company: data.company,
+    });
     setAuthModalOpen(false);
   }, []);
 
@@ -303,10 +369,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider value={{
       user, isLoggedIn: !!user,
-      login, socialLogin, register, logout, updateUser,
+      login, socialLogin, register, registerCompany, isCnpjRegistered, logout, updateUser,
       addAddress, updateAddress, removeAddress, setDefaultAddress,
       addCard, updateCard, removeCard, setDefaultCard,
       authModalOpen, setAuthModalOpen, authModalTab, setAuthModalTab,
+      authModalKind, setAuthModalKind,
       authRedirect, setAuthRedirect, promptLogin,
     }}>
       {children}
