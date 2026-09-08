@@ -262,6 +262,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthModalOpen(false);
   }, []);
 
+  /* Diferente do login, o cadastro não fecha o modal: quem fecha é o AuthModal,
+     depois de mostrar a tela de sucesso. Sumir na hora deixa a pessoa sem saber
+     se a conta saiu. */
   const register = useCallback(async (data: PersonRegistration) => {
     await new Promise((r) => setTimeout(r, 800));
     setUser({
@@ -272,7 +275,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       phone: data.phone,
       accountType: "pf",
     });
-    setAuthModalOpen(false);
   }, []);
 
   /* Protótipo: no Magento isso vira consulta ao customer por taxvat. Estes dois
@@ -293,7 +295,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       accountType: "pj",
       company: data.company,
     });
-    setAuthModalOpen(false);
   }, []);
 
   const logout = useCallback(() => { setUser(null); setAuthRedirect(null); }, []);
