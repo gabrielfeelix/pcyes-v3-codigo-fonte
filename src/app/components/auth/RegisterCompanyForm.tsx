@@ -3,6 +3,8 @@ import { motion } from "motion/react";
 import { Building2, Mail, Lock, User, Phone, Eye, EyeOff, Loader2, ArrowRight, ArrowLeft, AlertCircle, RotateCw, Check } from "lucide-react";
 import { SearchableSelect } from "./SearchableSelect";
 import { CnpjLookupError, formatCnpj, lookupCnpj, stripCnpj, toTitleCase, type CnpjLookupResult } from "../../lib/cnpj";
+import { PASSWORD_HINT, passwordIssue } from "../../lib/password";
+import { formatPhone } from "../../lib/phone";
 import { useAuth, type CompanyRegistration } from "../AuthContext";
 
 const inputClass =
@@ -28,13 +30,6 @@ const RAMOS = [
   "Uso interno da empresa",
   "Outro",
 ];
-
-function formatPhone(v: string) {
-  const d = v.replace(/\D/g, "").slice(0, 11);
-  if (d.length > 6) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-  if (d.length > 2) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  return d;
-}
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return <span className="block pb-1.5 text-foreground/45" style={captionStyle}>{children}</span>;
@@ -121,6 +116,8 @@ export function RegisterCompanyForm({ submitting, onSubmit, onGoToLogin }: Regis
     }
     if (step === 3) { setStep(4); return; }
 
+    const weak = passwordIssue(password);
+    if (weak) { setError(weak); return; }
     if (password !== confirmation) { setError("As senhas não são iguais."); return; }
     if (!company) return;
 
@@ -330,7 +327,9 @@ export function RegisterCompanyForm({ submitting, onSubmit, onGoToLogin }: Regis
               onChange={(e) => { setConfirmation(e.target.value); setError(null); }}
               className={inputClass} style={inputStyle} />
           </div>
-          <p className="text-foreground/30" style={captionStyle}>Mínimo de 8 caracteres.</p>
+          {/* Some quando o erro aparece: a regra e a mensagem são a mesma frase,
+              e repetir em cinza logo acima do vermelho lê como bug. */}
+          {!error && <p className="text-foreground/40" style={captionStyle}>{PASSWORD_HINT}</p>}
         </>
       )}
 

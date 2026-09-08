@@ -96,7 +96,7 @@ interface AuthContextType {
   isLoggedIn: boolean;
   login: (email: string, password: string) => Promise<void>;
   socialLogin: (provider: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (data: PersonRegistration) => Promise<void>;
   registerCompany: (data: CompanyRegistration) => Promise<void>;
   /** true quando já existe conta para esse CNPJ. */
   isCnpjRegistered: (cnpj: string) => Promise<boolean>;
@@ -123,6 +123,16 @@ interface AuthContextType {
   authRedirect: string | null;
   setAuthRedirect: (path: string | null) => void;
   promptLogin: (redirectTo?: string) => void;
+}
+
+export interface PersonRegistration {
+  firstName: string;
+  lastName: string;
+  cpf: string;
+  email: string;
+  /** Único campo opcional do cadastro PF — vem vazio quando não preenchido. */
+  phone: string;
+  password: string;
 }
 
 export interface CompanyRegistration {
@@ -252,9 +262,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthModalOpen(false);
   }, []);
 
-  const register = useCallback(async (name: string, email: string, _password: string) => {
+  const register = useCallback(async (data: PersonRegistration) => {
     await new Promise((r) => setTimeout(r, 800));
-    setUser({ ...MOCK_USER, name, email });
+    setUser({
+      ...MOCK_USER,
+      name: `${data.firstName} ${data.lastName}`.trim(),
+      email: data.email,
+      cpf: data.cpf,
+      phone: data.phone,
+      accountType: "pf",
+    });
     setAuthModalOpen(false);
   }, []);
 

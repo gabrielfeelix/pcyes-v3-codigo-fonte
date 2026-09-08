@@ -3,8 +3,11 @@ import { useNavigate } from "react-router";
 import { useFocusTrap } from "../lib/useFocusTrap";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
-import { X, Mail, Lock, User, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
-import { useAuth, type AccountType, type CompanyRegistration } from "./AuthContext";
+import { X, Mail, Lock, User, IdCard, Phone, Eye, EyeOff, Loader2, ArrowRight, AlertCircle } from "lucide-react";
+import { useAuth, type AccountType, type CompanyRegistration, type PersonRegistration } from "./AuthContext";
+import { formatCpf, isValidCpf } from "../lib/cpf";
+import { PASSWORD_HINT, passwordIssue } from "../lib/password";
+import { formatPhone, isValidPhone } from "../lib/phone";
 import { SocialButtons } from "./auth/SocialButtons";
 import { RegisterCompanyForm } from "./auth/RegisterCompanyForm";
 import { ForgotPasswordForm } from "./auth/ForgotPasswordForm";
@@ -25,7 +28,11 @@ export function AuthModal() {
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
@@ -58,10 +65,20 @@ export function AuthModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
+    if (authModalTab === "register") {
+      if (!isValidCpf(cpf)) { setError("CPF inválido. Confira os números."); return; }
+      /* Celular é opcional, mas meio celular não é: só cobra quem começou. */
+      if (phone && !isValidPhone(phone)) { setError("Celular incompleto. Use DDD e 9 dígitos."); return; }
+      const weak = passwordIssue(password);
+      if (weak) { setError(weak); return; }
+    }
+
     setLoading(true);
     try {
       if (authModalTab === "login") await login(email, password);
-      else await register(name, email, password);
+      else await register({ firstName, lastName, cpf: formatCpf(cpf), email, phone, password } satisfies PersonRegistration);
       afterAuth();
     } finally { setLoading(false); }
   };
@@ -83,7 +100,7 @@ export function AuthModal() {
     finally { setSocialLoading(null); }
   };
 
-  const reset = () => { setEmail(""); setPassword(""); setName(""); setShowPassword(false); setForgotPassword(false); };
+  const reset = () => { setEmail(""); setPassword(""); setFirstName(""); setLastName(""); setCpf(""); setPhone(""); setError(null); setShowPassword(false); setForgotPassword(false); };
   const dismiss = () => { setAuthModalOpen(false); setAuthRedirect(null); reset(); };
 
   /* Genérico nas duas abas do cadastro: a tab ativa já diz qual é, e trocar o
@@ -176,12 +193,31 @@ export function AuthModal() {
                   {/* Form */}
                   <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-3">
                     {authModalTab === "register" && (
-                      <div className="relative">
-                        <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground/20" />
-                        <input type="text" placeholder="Nome completo" value={name} onChange={(e) => setName(e.target.value)} required
-                          className="w-full pl-10 pr-4 py-3 bg-foreground/[0.03] border border-foreground/8 text-foreground placeholder:text-foreground/20 focus:border-foreground/20 focus:outline-none transition-colors"
-                          style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }} />
-                      </div>
+                      <>
+                        {/* Nome e sobrenome separados porque é assim que a nota
+                            fiscal e o cadastro do Magento pedem — dividir uma
+                            string depois erra em nome composto. */}
+                        <div className="grid grid-cols-2 gap-2.5">
+                          <div className="relative">
+                            <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground/20" aria-hidden="true" />
+                            <input type="text" placeholder="Nome" value={firstName} onChange={(e) => setFirstName(e.target.value)} required
+                              className="w-full pl-10 pr-4 py-3 bg-foreground/[0.03] border border-foreground/8 text-foreground placeholder:text-foreground/20 focus:border-foreground/20 focus:outline-none transition-colors"
+                              style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }} />
+                          </div>
+                          <input type="text" placeholder="Sobrenome" value={lastName} onChange={(e) => setLastName(e.target.value)} required
+                            className="w-full px-4 py-3 bg-foreground/[0.03] border border-foreground/8 text-foreground placeholder:text-foreground/20 focus:border-foreground/20 focus:outline-none transition-colors"
+                            style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }} />
+                        </div>
+                        {/* Tabular-nums porque CPF é conferido dígito a dígito. */}
+                        <div className="relative">
+                          <IdCard size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground/20" aria-hidden="true" />
+                          <input type="text" inputMode="numeric" placeholder="CPF" value={cpf} required
+                            aria-label="CPF" aria-invalid={cpf.length === 14 && !isValidCpf(cpf)}
+                            onChange={(e) => { setCpf(formatCpf(e.target.value)); setError(null); }}
+                            className="w-full pl-10 pr-4 py-3 bg-foreground/[0.03] border border-foreground/8 text-foreground placeholder:text-foreground/20 focus:border-foreground/20 focus:outline-none transition-colors"
+                            style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontVariantNumeric: "tabular-nums" }} />
+                        </div>
+                      </>
                     )}
                     <div className="relative">
                       <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground/20" />
@@ -189,9 +225,21 @@ export function AuthModal() {
                         className="w-full pl-10 pr-4 py-3 bg-foreground/[0.03] border border-foreground/8 text-foreground placeholder:text-foreground/20 focus:border-foreground/20 focus:outline-none transition-colors"
                         style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }} />
                     </div>
+                    {/* Opcional de verdade: serve pra aviso de entrega, não pra
+                        autenticar. Quem não quiser dar o número passa direto. */}
+                    {authModalTab === "register" && (
+                      <div className="relative">
+                        <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground/20" aria-hidden="true" />
+                        <input type="tel" inputMode="numeric" placeholder="Celular (opcional)" value={phone}
+                          aria-label="Celular (opcional)"
+                          onChange={(e) => { setPhone(formatPhone(e.target.value)); setError(null); }}
+                          className="w-full pl-10 pr-4 py-3 bg-foreground/[0.03] border border-foreground/8 text-foreground placeholder:text-foreground/20 focus:border-foreground/20 focus:outline-none transition-colors"
+                          style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontVariantNumeric: "tabular-nums" }} />
+                      </div>
+                    )}
                     <div className="relative">
                       <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground/20" />
-                      <input type={showPassword ? "text" : "password"} placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} required
+                      <input type={showPassword ? "text" : "password"} placeholder="Senha" value={password} onChange={(e) => { setPassword(e.target.value); setError(null); }} required
                         className="w-full pl-10 pr-10 py-3 bg-foreground/[0.03] border border-foreground/8 text-foreground placeholder:text-foreground/20 focus:border-foreground/20 focus:outline-none transition-colors"
                         style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }} />
                       <button type="button" onClick={() => setShowPassword(!showPassword)}
@@ -199,6 +247,20 @@ export function AuthModal() {
                         className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-foreground/20 hover:text-foreground/50 transition-colors cursor-pointer"
                       >{showPassword ? <EyeOff size={15} /> : <Eye size={15} />}</button>
                     </div>
+
+                    {/* Some quando o erro aparece: a regra e a mensagem são a
+                        mesma frase, e cinza logo acima do vermelho lê como bug. */}
+                    {authModalTab === "register" && !error && (
+                      <p className="text-foreground/40" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                        {PASSWORD_HINT}
+                      </p>
+                    )}
+
+                    {error && (
+                      <p role="alert" className="flex items-start gap-2 text-primary" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                        <AlertCircle size={14} className="mt-px shrink-0" aria-hidden="true" />{error}
+                      </p>
+                    )}
 
                     {authModalTab === "login" && (
                       <div className="text-right">
