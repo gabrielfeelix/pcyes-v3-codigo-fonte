@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { motion } from "motion/react";
-import { Lock, Eye, EyeOff, Loader2, ArrowRight, ArrowLeft, AlertCircle, Check } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, ArrowLeft, AlertCircle, Check } from "lucide-react";
 import { useAuth } from "../components/AuthContext";
 import { Footer } from "../components/Footer";
 import { SEO } from "../components/SEO";
@@ -42,17 +42,25 @@ const PREVIEW_DONE = "ok";
 export function ResetPasswordPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const { promptLogin, promptPasswordReset } = useAuth();
+  const { promptLogin } = useAuth();
 
   const token = params.get("token") ?? "";
-  const expired = !token || token === EXPIRED_TOKEN;
 
+  /* Cinco paradas de um caminho só. Pedir link novo mora aqui e não no modal:
+     quem está nesta página já está no meio da recuperação, e abrir um diálogo
+     por cima seria trocar de suporte no meio da tarefa. */
+  const [stage, setStage] = useState<"form" | "expired" | "request" | "sent" | "done">(() =>
+    params.get("estado") === PREVIEW_DONE ? "done"
+      : !token || token === EXPIRED_TOKEN ? "expired"
+      : "form"
+  );
+
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(params.get("estado") === PREVIEW_DONE);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,18 +73,49 @@ export function ResetPasswordPage() {
     setLoading(true);
     try {
       await new Promise((r) => setTimeout(r, 800));
-      setDone(true);
+      setStage("done");
+    } finally { setLoading(false); }
+  };
+
+  const handleRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      await new Promise((r) => setTimeout(r, 700));
+      setStage("sent");
     } finally { setLoading(false); }
   };
 
   const goToLogin = () => { navigate("/"); promptLogin(); };
 
-  const title = expired ? "Link expirado" : done ? "Senha alterada com sucesso" : "Definir uma nova senha";
-  const support = expired
-    ? "O link para definir uma nova senha vale por 30 minutos. Peça outro e a gente manda na hora."
-    : done
-      ? "Use a senha nova para entrar na sua conta."
-      : "Escolha a senha que você vai usar pra entrar na PCYES.";
+  const backToLogin = (
+    <button type="button" onClick={goToLogin}
+      className="mx-auto mt-4 flex items-center justify-center gap-1.5 text-foreground/30 hover:text-foreground/60 transition-colors cursor-pointer"
+      style={captionStyle}
+    ><ArrowLeft size={13} aria-hidden="true" />Voltar pro login</button>
+  );
+
+  const TITLES = {
+    form: "Definir uma nova senha",
+    expired: "Link expirado",
+    request: "Pedir um link novo",
+    sent: "E-mail enviado",
+    done: "Senha alterada com sucesso",
+  } as const;
+
+  const SUPPORT = {
+    form: "Escolha a senha que você vai usar pra entrar na PCYES.",
+    expired: "O link para definir uma nova senha vale por 30 minutos. Peça outro e a gente manda na hora.",
+    request: "Digite o e-mail da sua conta. Enviamos um link para você definir uma nova senha.",
+    /* Confirma o envio sem confirmar a conta. Dizer "e-mail não cadastrado"
+       transformaria a tela num verificador de quem compra na PCYES. */
+    sent: `Se existir uma conta em ${email}, o link para definir uma nova senha está a caminho. Confira também o spam.`,
+    done: "Use a senha nova para entrar na sua conta.",
+  } as const;
+
+  const title = TITLES[stage];
+  const support = SUPPORT[stage];
 
   return (
     <>
@@ -102,11 +141,13 @@ export function ResetPasswordPage() {
             initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
-            {(expired || done) && (
+            {stage !== "form" && stage !== "request" && (
               <span className={`mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-full ${
-                expired ? "bg-primary/10 text-primary" : "bg-emerald-500/15 text-emerald-500"
+                stage === "expired" ? "bg-primary/10 text-primary" : "bg-emerald-500/15 text-emerald-500"
               }`}>
-                {expired ? <AlertCircle size={22} aria-hidden="true" /> : <Check size={22} aria-hidden="true" />}
+                {stage === "expired"
+                  ? <AlertCircle size={22} aria-hidden="true" />
+                  : <Check size={22} aria-hidden="true" />}
               </span>
             )}
 
@@ -128,21 +169,48 @@ export function ResetPasswordPage() {
             </p>
 
             <div className="mx-auto mt-10 w-full max-w-[420px]">
-              {expired ? (
+              {stage === "expired" ? (
                 /* Link vencido não é erro de quem clicou: os 30 minutos são
-                   regra nossa. Por isso a tela não acusa nada, só devolve o
-                   caminho — e o botão reabre o modal já pedindo o e-mail. */
+                   regra nossa. Por isso a tela não acusa nada, só troca de
+                   parada — sem sair da página e sem abrir diálogo por cima. */
                 <>
-                  <button type="button" onClick={() => { navigate("/"); promptPasswordReset(); }}
+                  <button type="button" onClick={() => { setStage("request"); setError(null); }}
                     className="w-full py-3.5 bg-primary text-primary-foreground hover:brightness-110 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                     style={buttonStyle}
                   >Pedir um link novo<ArrowRight size={15} aria-hidden="true" /></button>
-                  <button type="button" onClick={goToLogin}
-                    className="mx-auto mt-4 flex items-center justify-center gap-1.5 text-foreground/30 hover:text-foreground/60 transition-colors cursor-pointer"
-                    style={captionStyle}
-                  ><ArrowLeft size={13} aria-hidden="true" />Voltar pro login</button>
+                  {backToLogin}
                 </>
-              ) : done ? (
+              ) : stage === "request" ? (
+                <form onSubmit={handleRequest} className="space-y-3">
+                  <div className="relative">
+                    <Mail size={15} className={iconClass} aria-hidden="true" />
+                    <input type="email" placeholder="E-mail" value={email} required
+                      aria-label="E-mail"
+                      onChange={(e) => { setEmail(e.target.value); setError(null); }}
+                      className={`${inputClass} pr-4`} style={inputStyle} />
+                  </div>
+
+                  {error && (
+                    <p role="alert" className="flex items-start gap-2 text-primary" style={captionStyle}>
+                      <AlertCircle size={14} className="mt-px shrink-0" aria-hidden="true" />{error}
+                    </p>
+                  )}
+
+                  <button type="submit" disabled={loading}
+                    className="w-full py-3.5 bg-primary text-primary-foreground hover:brightness-110 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    style={buttonStyle}
+                  >
+                    {loading ? <Loader2 size={16} className="animate-spin" /> : (
+                      <>Enviar link<ArrowRight size={15} aria-hidden="true" /></>
+                    )}
+                  </button>
+                  {backToLogin}
+                </form>
+              ) : stage === "sent" ? (
+                /* Sem botão: o próximo passo está na caixa de entrada, não
+                   nesta tela. Só a saída pro login. */
+                backToLogin
+              ) : stage === "done" ? (
                 /* O botão fica, ao contrário da confirmação de cadastro: a
                    pessoa chegou de fora, não estava no meio de nada, e não há
                    destino pra retomar sozinho. */
@@ -191,11 +259,7 @@ export function ResetPasswordPage() {
                       <>Salvar senha<ArrowRight size={15} aria-hidden="true" /></>
                     )}
                   </button>
-
-                  <button type="button" onClick={goToLogin}
-                    className="flex w-full items-center justify-center gap-1.5 pt-1 text-foreground/30 hover:text-foreground/60 transition-colors cursor-pointer"
-                    style={captionStyle}
-                  ><ArrowLeft size={13} aria-hidden="true" />Voltar pro login</button>
+                  {backToLogin}
                 </form>
               )}
             </div>
