@@ -9,11 +9,11 @@ import { useTheme } from "./ThemeProvider";
 import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
 import { PcyesCoin } from "./PcyesCoin";
+import { AccountMenu } from "./AccountMenu";
 import { useFavorites } from "./FavoritesContext";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { HeaderDelivery } from "./HeaderDelivery";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/tooltip";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "./ui/dropdown-menu";
 import { allProducts, type Product } from "./productsData";
 import { getCatalogHref, getPrimaryProductImage, getProductCategory, getProductSubcategory, getProductSwatches, getVisibleCatalogProducts } from "./productPresentation";
 import { getCategoryFromSlug, getCategorySlug, getSubcategorySlug } from "../lib/slug";
@@ -806,8 +806,7 @@ export function Navbar() {
         </Tooltip>
 
         {isLoggedIn ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          <AccountMenu>
               <button aria-label="Minha conta" className={`relative w-10 h-10 flex items-center justify-center transition-colors cursor-pointer group ${iconColor}`}>
                 {/* Gamer scan-frame corners */}
                 <span className="absolute top-1.5 left-1.5 w-[9px] h-[9px] border-t border-l border-current opacity-30 group-hover:opacity-65 transition-opacity duration-200 pointer-events-none" />
@@ -818,14 +817,7 @@ export function Navbar() {
                   <span className="text-primary" style={{ fontSize: "var(--text-caption)", fontFamily: "var(--font-family-inter)", fontWeight: "var(--font-weight-medium)" }}>J</span>
                 </span>
               </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" sideOffset={8} className="min-w-[184px]">
-              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/perfil?tab=orders")}>Meus Pedidos</DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/perfil?tab=data")}>Meus Dados</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer" onClick={() => { logout(); navigate("/"); }}>Sair</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          </AccountMenu>
         ) : (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -1975,8 +1967,12 @@ export function Navbar() {
             <TooltipProvider delayDuration={200}>
               <div className="flex flex-shrink-0 items-center justify-self-end gap-1">
                 {/* Perfil / Login — primeiro item, com rótulo (estilo KaBuM) */}
+                {/* Logado, quem abre é o AccountMenu (DropdownMenuTrigger
+                    asChild); o onClick fica só pro caso deslogado, senão os
+                    dois disparavam e o menu abria já navegando pro perfil. */}
+                <AccountMenu>
                 <button
-                  onClick={handleUserClick}
+                  onClick={isLoggedIn ? undefined : handleUserClick}
                   className={`relative flex h-10 items-center gap-2 pl-1 pr-2 transition-colors cursor-pointer ${iconColor}`}
                   aria-label={isLoggedIn ? "Minha conta" : "Entrar ou cadastrar"}
                 >
@@ -2012,6 +2008,7 @@ export function Navbar() {
                     )}
                   </span>
                 </button>
+                </AccountMenu>
 
                 <Tooltip>
                   <TooltipTrigger asChild>
