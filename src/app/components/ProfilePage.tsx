@@ -101,6 +101,21 @@ const STATUS_MAP = {
   cancelled: { label: "Cancelado", color: "text-red-400", bg: "bg-red-400/10", icon: XIcon },
 };
 
+type OrderFilter = "all" | "active" | "delivered";
+type OrderStatus = "processing" | "shipped" | "delivered" | "cancelled";
+
+const ORDER_FILTERS: { key: OrderFilter; label: string }[] = [
+  { key: "all", label: "Todos" },
+  { key: "active", label: "Em andamento" },
+  { key: "delivered", label: "Entregues" },
+];
+
+function matchesOrderFilter(status: OrderStatus, filter: OrderFilter) {
+  if (filter === "all") return true;
+  if (filter === "delivered") return status === "delivered";
+  return status === "processing" || status === "shipped";
+}
+
 export function ProfilePage() {
   const {
     user, isLoggedIn, setAuthModalOpen, logout, updateUser,
@@ -124,6 +139,13 @@ export function ProfilePage() {
     items: Array<{ category: string; name: string; price: number; image?: string }>;
   }>>([]);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  /* "Em andamento" junta processing e shipped: quem clica ali quer ver o que
+     ainda não chegou, não a etapa interna do pedido. Cancelado não entra em
+     nenhum dos dois — só aparece em Todos, que é onde se procura pedido
+     antigo. */
+  const [orderFilter, setOrderFilter] = useState<OrderFilter>("all");
+  const visibleOrders = (user?.orders ?? []).filter((o) => matchesOrderFilter(o.status, orderFilter));
+
   const [confirmState, setConfirmState] = useState<{ open: boolean; title: string; description?: string; confirmLabel?: string; action?: () => void; destructive?: boolean }>({ open: false, title: "" });
   const [reviewOrderId, setReviewOrderId] = useState<string | null>(null);
   const [reviewedOrders, setReviewedOrders] = useState<Set<string>>(new Set());
@@ -891,13 +913,45 @@ export function ProfilePage() {
                     <>
                       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-5">
                         <h2 className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: "var(--font-weight-medium)" }}>Meus Pedidos</h2>
-                        <div className="flex flex-wrap gap-2">
-                          <button className="inline-flex items-center min-h-[44px] md:min-h-[24px] px-3 py-1.5 text-foreground hover:text-foreground transition-colors text-[var(--text-caption)] cursor-pointer" style={{ borderRadius: "var(--radius-card)", background: isDark ? "rgba(var(--foreground-rgb), 0.04)" : "rgba(0,0,0,0.04)", fontFamily: "var(--font-family-inter)", fontWeight: 600 }}>Todos</button>
-                          <button className="inline-flex items-center min-h-[44px] md:min-h-[24px] px-3 py-1.5 text-foreground/60 hover:text-foreground/80 transition-colors text-[var(--text-caption)] cursor-pointer" style={{ borderRadius: "var(--radius-card)", fontFamily: "var(--font-family-inter)", fontWeight: 600 }}>Em andamento</button>
-                          <button className="inline-flex items-center min-h-[44px] md:min-h-[24px] px-3 py-1.5 text-foreground/60 hover:text-foreground/80 transition-colors text-[var(--text-caption)] cursor-pointer" style={{ borderRadius: "var(--radius-card)", fontFamily: "var(--font-family-inter)", fontWeight: 600 }}>Entregues</button>
+                        {/* A contagem em cada aba evita o clique cego: sem ela
+                            a pessoa filtra pra descobrir que não tem nada. */}
+                        <div role="tablist" aria-label="Filtrar pedidos" className="flex flex-wrap gap-2">
+                          {ORDER_FILTERS.map(({ key, label }) => {
+                            const active = orderFilter === key;
+                            const count = user.orders.filter((o) => matchesOrderFilter(o.status, key)).length;
+                            return (
+                              <button key={key} type="button" role="tab" aria-selected={active}
+                                onClick={() => setOrderFilter(key)}
+                                className={`inline-flex items-center gap-1.5 min-h-[44px] md:min-h-[24px] px-3 py-1.5 transition-colors text-[var(--text-caption)] cursor-pointer ${
+                                  active ? "text-foreground" : "text-foreground/60 hover:text-foreground/80"
+                                }`}
+                                style={{
+                                  borderRadius: "var(--radius-card)",
+                                  background: active ? (isDark ? "rgba(var(--foreground-rgb), 0.04)" : "rgba(0,0,0,0.04)") : undefined,
+                                  fontFamily: "var(--font-family-inter)", fontWeight: 600,
+                                }}
+                              >
+                                {label}
+                                <span className={active ? "text-foreground/45" : "text-foreground/30"}>{count}</span>
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
-                      {user.orders.length === 0 ? (
+                      {user.orders.length > 0 && visibleOrders.length === 0 ? (
+                        /* Vazio de filtro, não de conta: dizer "nenhum pedido
+                           ainda" aqui faria a pessoa achar que perdeu o
+                           histórico. */
+                        <div className="text-center py-16 px-6" style={{ borderRadius: "var(--radius-card-sm)", background: isDark ? "rgba(var(--foreground-rgb), 0.02)" : "rgba(0,0,0,0.015)", border: isDark ? "1px solid rgba(var(--foreground-rgb), 0.06)" : "1px solid rgba(0,0,0,0.06)" }}>
+                          <p className="text-foreground/55" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: "var(--font-weight-medium)" }}>
+                            {orderFilter === "active" ? "Nenhum pedido a caminho" : "Nenhum pedido entregue"}
+                          </p>
+                          <button type="button" onClick={() => setOrderFilter("all")}
+                            className="mt-3 text-primary hover:underline cursor-pointer"
+                            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
+                          >Ver todos os pedidos</button>
+                        </div>
+                      ) : user.orders.length === 0 ? (
                         <div className="text-center py-20 px-6" style={{ borderRadius: "var(--radius-card-sm)", background: isDark ? "rgba(var(--foreground-rgb), 0.02)" : "rgba(0,0,0,0.015)", border: isDark ? "1px solid rgba(var(--foreground-rgb), 0.06)" : "1px solid rgba(0,0,0,0.06)" }}>
                           <Package size={28} className="text-foreground/35 mx-auto mb-4" />
                           <p className="text-foreground/55 mb-2" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: "var(--font-weight-medium)" }}>Nenhum pedido ainda</p>
@@ -906,7 +960,7 @@ export function ProfilePage() {
                         </div>
                       ) : (
                       <div className="space-y-3">
-                        {user.orders.map((order) => {
+                        {visibleOrders.map((order) => {
                           const s = STATUS_MAP[order.status];
                           const datePtBr = (d: string) => new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
                           const lastEvent = order.history?.[0];
