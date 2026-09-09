@@ -69,6 +69,7 @@ const QuemSomosPage = lazyRoute(() => import("./pages/QuemSomosPage").then(m => 
 const PrivacyPage = lazyRoute(() => import("./pages/PrivacyPage").then(m => ({ default: m.PrivacyPage })));
 const WarrantyPage = lazyRoute(() => import("./pages/WarrantyPage").then(m => ({ default: m.WarrantyPage })));
 const TermsPage = lazyRoute(() => import("./pages/TermsPage").then(m => ({ default: m.TermsPage })));
+const ResetPasswordPage = lazyRoute(() => import("./pages/ResetPasswordPage").then(m => ({ default: m.ResetPasswordPage })));
 const NotFoundPage = lazyRoute(() => import("./pages/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
 
 /* Rota de categoria: se o slug não corresponde a nenhuma categoria real
@@ -111,6 +112,7 @@ export const router = createBrowserRouter([
       { path: "politica-de-privacidade", Component: PrivacyPage },
       { path: "politica-de-garantia", Component: WarrantyPage },
       { path: "termos-de-uso", Component: TermsPage },
+      { path: "redefinir-senha", Component: ResetPasswordPage },
 
       /* ── Semantic URL routes (A1) ──
          Order matters: static paths above are matched first by react-router.

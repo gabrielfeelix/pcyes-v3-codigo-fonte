@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
-import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, ArrowLeft, Check, AlertCircle } from "lucide-react";
+import { Mail, Loader2, ArrowRight, ArrowLeft, AlertCircle, Check } from "lucide-react";
 
 const inputClass =
   "w-full pl-10 pr-4 py-3 bg-foreground/[0.03] border border-foreground/8 text-foreground placeholder:text-foreground/20 focus:border-foreground/20 focus:outline-none transition-colors";
@@ -12,78 +12,39 @@ const inputStyle = {
 const iconClass = "absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground/20";
 const captionStyle = { fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" } as const;
 
-/* Protótipo: qualquer código de 6 dígitos passa, menos este, que existe pra
-   dar pra testar a tela de erro. */
-const REJECTED_CODE = "000000";
-const RESEND_SECONDS = 30;
-
 interface ForgotPasswordFormProps {
   onBackToLogin: () => void;
 }
 
-/* Três telas: pede o e-mail, confirma o código, define a senha nova. O código
-   por e-mail mantém a redefinição dentro do modal — link por e-mail jogaria a
-   pessoa pra outra aba e ela não voltaria pro carrinho. */
+/* Duas telas: pede o e-mail e confirma que o link saiu. A senha nova não é
+   definida aqui — o link do e-mail leva pra /redefinir-senha, que é onde o
+   token é conferido. Quem redefine sem token só precisaria adivinhar o e-mail
+   de alguém, então a etapa fora do navegador é a segurança do fluxo. */
 export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
-  const [step, setStep] = useState<"email" | "code" | "password" | "done">("email");
+  const [sent, setSent] = useState(false);
   const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmation, setConfirmation] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [cooldown, setCooldown] = useState(0);
-
-  /* Contagem pro reenvio: sem ela a pessoa clica em "reenviar" três vezes
-     seguidas e recebe três códigos, aí não sabe qual vale. */
-  useEffect(() => {
-    if (cooldown <= 0) return;
-    const timer = setTimeout(() => setCooldown((s) => s - 1), 1000);
-    return () => clearTimeout(timer);
-  }, [cooldown]);
-
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => { if (closeTimer.current) clearTimeout(closeTimer.current); }, []);
-
-  const sendCode = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await new Promise((r) => setTimeout(r, 800));
-      setCooldown(RESEND_SECONDS);
-      setStep("code");
-    } finally { setLoading(false); }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    if (step === "email") { await sendCode(); return; }
-
-    if (step === "code") {
-      if (code === REJECTED_CODE) { setError("Código incorreto. Confira o e-mail e tente de novo."); return; }
-      setLoading(true);
-      try {
-        await new Promise((r) => setTimeout(r, 700));
-        setStep("password");
-      } finally { setLoading(false); }
-      return;
-    }
-
-    if (step === "password") {
-      if (password !== confirmation) { setError("As senhas não são iguais."); return; }
-      setLoading(true);
-      try {
-        await new Promise((r) => setTimeout(r, 800));
-        setStep("done");
-        closeTimer.current = setTimeout(onBackToLogin, 2200);
-      } finally { setLoading(false); }
+    setLoading(true);
+    try {
+      await new Promise((r) => setTimeout(r, 700));
+      setSent(true);
+    } catch {
+      setError("Não deu pra enviar agora. Tenta de novo em instantes.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (step === "done") {
+  /* Confirma o envio sem confirmar a conta. Dizer "e-mail não cadastrado"
+     transformaria esta tela num verificador de quem compra na PCYES: bastaria
+     enfileirar endereços e ler a resposta. O "se existir" custa uma linha e
+     fecha isso. */
+  if (sent) {
     return (
       <div className="px-8 pb-8 pt-2 text-center">
         <motion.span
@@ -92,70 +53,32 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
           className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-500"
         ><Check size={22} aria-hidden="true" /></motion.span>
         <p className="text-foreground" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: "var(--font-weight-medium)" }}>
-          Senha alterada
+          E-mail enviado
         </p>
-        <p className="pt-1 text-foreground/40" style={captionStyle}>Levando você pro login…</p>
+        <p className="px-2 pt-1 text-foreground/40" style={{ ...captionStyle, lineHeight: 1.65 }}>
+          Se existir uma conta em {email}, o link para definir uma nova senha está a caminho.
+          Confira também o spam.
+        </p>
+        <button type="button" onClick={onBackToLogin}
+          className="mx-auto mt-5 flex items-center justify-center gap-1.5 text-foreground/30 hover:text-foreground/60 transition-colors cursor-pointer"
+          style={captionStyle}
+        ><ArrowLeft size={13} aria-hidden="true" />Voltar pro login</button>
       </div>
     );
   }
 
-  const heading = step === "email"
-    ? "Digite o e-mail da sua conta. Enviamos um código de 6 dígitos pra ele."
-    : step === "code"
-      ? `Código enviado para ${email}.`
-      : "Escolha a senha nova.";
-
   return (
     <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-3">
-      <p className="pb-1 text-foreground/40" style={captionStyle}>{heading}</p>
+      <p className="pb-1 text-foreground/40" style={captionStyle}>
+        Digite o e-mail da sua conta. Enviamos um link para você definir uma nova senha.
+      </p>
 
-      {step === "email" && (
-        <div className="relative">
-          <Mail size={15} className={iconClass} aria-hidden="true" />
-          <input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus
-            className={inputClass} style={inputStyle} />
-        </div>
-      )}
-
-      {step === "code" && (
-        <>
-          <input
-            type="text" inputMode="numeric" autoComplete="one-time-code" placeholder="000000" required autoFocus
-            aria-label="Código de 6 dígitos" aria-invalid={!!error}
-            value={code} onChange={(e) => { setCode(e.target.value.replace(/\D/g, "").slice(0, 6)); setError(null); }}
-            className="w-full py-3 text-center bg-foreground/[0.03] border border-foreground/8 text-foreground placeholder:text-foreground/15 focus:border-foreground/20 focus:outline-none transition-colors"
-            style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-lg, 20px)", letterSpacing: "0.4em", textIndent: "0.4em" }}
-          />
-          <div className="text-center">
-            <button type="button" disabled={cooldown > 0 || loading} onClick={() => void sendCode()}
-              className="text-foreground/30 hover:text-primary transition-colors cursor-pointer disabled:cursor-default disabled:hover:text-foreground/30"
-              style={captionStyle}
-            >{cooldown > 0 ? `Reenviar em ${cooldown}s` : "Reenviar código"}</button>
-          </div>
-        </>
-      )}
-
-      {step === "password" && (
-        <>
-          <div className="relative">
-            <Lock size={15} className={iconClass} aria-hidden="true" />
-            <input type={showPassword ? "text" : "password"} placeholder="Nova senha" value={password} required minLength={8} autoFocus
-              onChange={(e) => { setPassword(e.target.value); setError(null); }}
-              className={`${inputClass} pr-10`} style={inputStyle} />
-            <button type="button" onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-              className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-foreground/20 hover:text-foreground/50 transition-colors cursor-pointer"
-            >{showPassword ? <EyeOff size={15} /> : <Eye size={15} />}</button>
-          </div>
-          <div className="relative">
-            <Lock size={15} className={iconClass} aria-hidden="true" />
-            <input type={showPassword ? "text" : "password"} placeholder="Repita a nova senha" value={confirmation} required
-              onChange={(e) => { setConfirmation(e.target.value); setError(null); }}
-              className={inputClass} style={inputStyle} />
-          </div>
-          <p className="text-foreground/30" style={captionStyle}>Mínimo de 8 caracteres.</p>
-        </>
-      )}
+      <div className="relative">
+        <Mail size={15} className={iconClass} aria-hidden="true" />
+        <input type="email" placeholder="E-mail" value={email} required autoFocus
+          onChange={(e) => { setEmail(e.target.value); setError(null); }}
+          className={inputClass} style={inputStyle} />
+      </div>
 
       {error && (
         <p role="alert" className="flex items-start gap-2 text-primary" style={captionStyle}>
@@ -168,7 +91,7 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
         style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: "var(--font-weight-medium)" }}
       >
         {loading ? <Loader2 size={16} className="animate-spin" /> : (
-          <>{step === "email" ? "Enviar código" : step === "code" ? "Confirmar" : "Salvar senha"}<ArrowRight size={15} aria-hidden="true" /></>
+          <>Enviar link<ArrowRight size={15} aria-hidden="true" /></>
         )}
       </button>
 

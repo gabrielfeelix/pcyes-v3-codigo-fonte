@@ -120,9 +120,16 @@ interface AuthContextType {
      conta e é o servidor que resolve. */
   authModalKind: AccountType;
   setAuthModalKind: (kind: AccountType) => void;
+  /* Se o modal abre direto na recuperação de senha. Mora aqui e não no
+     AuthModal porque a página /redefinir-senha precisa abrir esse modo quando
+     o link do e-mail chega expirado. */
+  authModalForgot: boolean;
+  setAuthModalForgot: (forgot: boolean) => void;
   authRedirect: string | null;
   setAuthRedirect: (path: string | null) => void;
   promptLogin: (redirectTo?: string) => void;
+  /** Abre o modal já na tela que pede o e-mail de recuperação. */
+  promptPasswordReset: () => void;
 }
 
 export interface PersonRegistration {
@@ -241,12 +248,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserData | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"login" | "register">("login");
+  const [authModalForgot, setAuthModalForgot] = useState(false);
   const [authModalKind, setAuthModalKind] = useState<AccountType>("pf");
   const [authRedirect, setAuthRedirect] = useState<string | null>(null);
 
   const promptLogin = useCallback((redirectTo?: string) => {
     setAuthModalTab("login");
+    setAuthModalForgot(false);
     setAuthRedirect(redirectTo ?? null);
+    setAuthModalOpen(true);
+  }, []);
+
+  const promptPasswordReset = useCallback(() => {
+    setAuthModalTab("login");
+    setAuthModalForgot(true);
+    setAuthRedirect(null);
     setAuthModalOpen(true);
   }, []);
 
@@ -388,6 +404,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={{
       user, isLoggedIn: !!user,
       login, socialLogin, register, registerCompany, isCnpjRegistered, logout, updateUser,
+      authModalForgot, setAuthModalForgot, promptPasswordReset,
       addAddress, updateAddress, removeAddress, setDefaultAddress,
       addCard, updateCard, removeCard, setDefaultCard,
       authModalOpen, setAuthModalOpen, authModalTab, setAuthModalTab,

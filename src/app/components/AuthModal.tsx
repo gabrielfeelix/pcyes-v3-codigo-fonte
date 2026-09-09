@@ -23,6 +23,7 @@ export function AuthModal() {
     authModalOpen, setAuthModalOpen, authModalTab, setAuthModalTab,
     authModalKind, setAuthModalKind,
     login, socialLogin, register, registerCompany, authRedirect, setAuthRedirect,
+    authModalForgot: forgotPassword, setAuthModalForgot: setForgotPassword,
   } = useAuth();
   const navigate = useNavigate();
   const { resolvedTheme } = useTheme();
@@ -38,7 +39,6 @@ export function AuthModal() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<{ kind: AccountType; name: string } | null>(null);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
-  const [forgotPassword, setForgotPassword] = useState(false);
 
   /* O tipo de conta só existe no cadastro. Login é por e-mail e senha — a conta
      já sabe se é PF ou PJ, e perguntar aqui só faria o usuário errar. */
