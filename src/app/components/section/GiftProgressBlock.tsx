@@ -36,9 +36,6 @@ type GiftProgressBlockProps = {
   onNavigate?: () => void;
   /** `true` na própria listagem da campanha: lá o link levaria de volta pra cá. */
   staticSlots?: boolean;
-  /** Protótipo: troca de campanha ao vivo. Ver `CampaignSwitcher`. */
-  campaignId?: string;
-  onCampaignChange?: (id: string) => void;
 };
 
 export function GiftProgressBlock({
@@ -49,8 +46,6 @@ export function GiftProgressBlock({
   onChoose,
   onNavigate,
   staticSlots = false,
-  campaignId,
-  onCampaignChange,
 }: GiftProgressBlockProps) {
   const compact = variant === "drawer";
   const { campaign, unlocked, ratio, remainingLabel, counted, goalLabel, required } = progress;
@@ -69,9 +64,6 @@ export function GiftProgressBlock({
         unlocked ? "border-primary/18 bg-primary/[0.06]" : "border-foreground/8 bg-foreground/[0.03]"
       }`}
     >
-      {campaignId && onCampaignChange && (
-        <CampaignSwitcher current={campaignId} onChange={onCampaignChange} />
-      )}
       <div className={compact ? "px-4 py-3.5" : "px-5 py-4"}>
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -286,54 +278,6 @@ function RequiredList({
             </button>
           )}
         </div>
-      ))}
-    </div>
-  );
-}
-
-/**
- * Seletor de campanha — ANDAIME DE PROTÓTIPO, não faz parte da loja.
- *
- * Existe porque as campanhas não podem rodar juntas e o cliente precisa ver
- * todas. Não usa `?brinde=` sozinho porque o carrinho vive só em memória:
- * recarregar para trocar de regra esvaziava a cesta e a campanha não tinha
- * sobre o que agir. Trocar aqui é troca de estado, o carrinho fica de pé.
- *
- * Some sozinho no build de produção (`import.meta.env.DEV`). Ao levar para o
- * Magento, apagar este componente e o store por trás dele: lá a campanha é a
- * regra de carrinho ativa, e não há o que escolher na tela.
- */
-const CAMPAIGN_TABS = [
-  { id: "valor", label: "VALOR" },
-  { id: "qtd", label: "QUANTIDADE" },
-  { id: "categoria", label: "CATEGORIA" },
-  { id: "itens", label: "PRODUTOS" },
-];
-
-function CampaignSwitcher({ current, onChange }: { current: string; onChange: (id: string) => void }) {
-  if (!import.meta.env.DEV) return null;
-  return (
-    <div className="flex flex-wrap items-center gap-1 border-b border-dashed border-foreground/10 bg-foreground/[0.02] px-3 py-2">
-      <span
-        className="mr-1 text-foreground/25"
-        style={{ fontFamily: "var(--font-family-inter)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.14em" }}
-      >
-        TESTE
-      </span>
-      {CAMPAIGN_TABS.map((tab) => (
-        <button
-          key={tab.id}
-          onClick={() => onChange(tab.id)}
-          aria-pressed={current === tab.id}
-          className={`cursor-pointer rounded-pill px-2.5 py-1 transition-colors ${
-            current === tab.id
-              ? "bg-primary/15 text-primary"
-              : "text-foreground/35 hover:bg-foreground/[0.05] hover:text-foreground/70"
-          }`}
-          style={{ fontFamily: "var(--font-family-inter)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.08em" }}
-        >
-          {tab.label}
-        </button>
       ))}
     </div>
   );

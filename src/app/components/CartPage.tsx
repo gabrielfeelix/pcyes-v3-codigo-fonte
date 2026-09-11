@@ -31,10 +31,58 @@ import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentati
 import { getPreOrderInfo } from "./PreOrderData";
 import { BrindePill, GiftProgressBlock, Price, PreOrderPill } from "./section";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
+import { cepUf, isValidCep } from "../../utils/cep";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { useGiftCampaign } from "../lib/useGiftCampaign";
 import { EarnPreview } from "./points/EarnPreview";
+import { ConfirmDialog } from "./ConfirmDialog";
 import { toast } from "sonner";
+
+/**
+ * Cotação de frete — MOCK determinístico pelo CEP.
+ *
+ * O carrinho não fecha frete: ele estima. Por isso a cotação vem por
+ * transportadora (é o que o cliente vê no rastreio) com a modalidade e o prazo
+ * ao lado, e a nota embaixo diz que o valor definitivo sai no checkout, com o
+ * endereço completo. Frete grátis não esconde o cálculo: a opção normal aparece
+ * como GRÁTIS e as mais rápidas seguem cobradas — quem quer receber antes
+ * continua podendo pagar por isso.
+ *
+ * No Magento isto vira a resposta do `estimate-shipping-methods` do carrinho.
+ */
+type ShippingQuote = {
+  id: string;
+  carrier: string;
+  mode: string;
+  eta: string;
+  price: number;
+};
+
+const CARRIERS = ["BIAGI & LUCHINI LTDA", "BRASPRESS", "JAMEF", "TOTAL EXPRESS", "CORREIOS"];
+
+function quoteShipping(cep: string, freeShipping: boolean): ShippingQuote[] {
+  const seed = Number(cep.replace(/\D/g, "").slice(0, 3)) || 10;
+  const near = CARRIERS[seed % CARRIERS.length];
+  const far = CARRIERS[(seed + 2) % CARRIERS.length];
+  const baseDays = 1 + (seed % 3);
+  const days = (n: number) => `${n} ${n === 1 ? "dia útil" : "dias úteis"}`;
+  return [
+    {
+      id: "normal",
+      carrier: near,
+      mode: "Normal",
+      eta: days(baseDays + 1),
+      price: freeShipping ? 0 : 24.9 + (seed % 7),
+    },
+    {
+      id: "expressa",
+      carrier: far,
+      mode: "Expressa",
+      eta: days(baseDays),
+      price: 36.4 + (seed % 9),
+    },
+  ];
+}
 
 export function CartPage() {
   const { items, removeItem, restoreItem, updateQuantity, clearCart, setGiftItem } = useCart();
@@ -55,16 +103,15 @@ export function CartPage() {
   const [couponOpen, setCouponOpen] = useState(false);
   const [cep, setCep] = useState("");
   const [cepLoading, setCepLoading] = useState(false);
-  const [shippingOptions, setShippingOptions] = useState<{ id: string; label: string; eta: string; price: number }[] | null>(null);
+  const [shippingOptions, setShippingOptions] = useState<ShippingQuote[] | null>(null);
   const [selectedShipping, setSelectedShipping] = useState<string | null>(null);
+  const [confirmClear, setConfirmClear] = useState(false);
   // Aqui o modal NÃO abre sozinho ao cruzar a meta (autoOpen: false): na página
   // inteira o bloco de brinde está visível o tempo todo, então um modal por
   // cima seria interrupção sem ganho. No drawer é o contrário — lá o bloco
   // pode estar fora de vista.
   const {
     progress: giftProgress,
-    campaignId,
-    setCampaignId,
     paidItems,
     giftItem,
     unlocked: giftUnlocked,
@@ -93,11 +140,10 @@ export function CartPage() {
   const discountPct = appliedCoupon ? COUPONS[appliedCoupon] || 0 : 0;
   const discountValue = (subtotal * discountPct) / 100;
   const freeShipping = subtotal >= 299;
-  const shippingPrice = freeShipping
-    ? 0
-    : shippingOptions && selectedShipping
-    ? shippingOptions.find((o) => o.id === selectedShipping)?.price ?? 0
-    : 0;
+  const chosenShipping =
+    (shippingOptions && selectedShipping && shippingOptions.find((o) => o.id === selectedShipping)) || null;
+  const shippingPrice = chosenShipping?.price ?? 0;
+  const cepUfLabel = cepUf(cep);
   const maxPointsRedeem = maxRedeemablePoints(userPoints, subtotal - discountValue);
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
   const pointsValue = pointsToBRL(pointsUsed);
@@ -108,20 +154,16 @@ export function CartPage() {
 
 
   useEffect(() => {
-    const d = cep.replace(/\D/g, "");
-    if (d.length !== 8 || freeShipping) {
+    if (!isValidCep(cep)) {
       setShippingOptions(null);
       setSelectedShipping(null);
       return;
     }
     setCepLoading(true);
     const t = setTimeout(() => {
-      setShippingOptions([
-        { id: "pac", label: "PAC Econômico", eta: "7 dias úteis", price: 14.9 },
-        { id: "sedex", label: "Sedex Expresso", eta: "2 dias úteis", price: 35.9 },
-        { id: "today", label: "Mesmo dia · só capitais", eta: "Hoje", price: 59.9 },
-      ]);
-      setSelectedShipping("sedex");
+      const quotes = quoteShipping(cep, freeShipping);
+      setShippingOptions(quotes);
+      setSelectedShipping(quotes[0].id);
       setCepLoading(false);
     }, 700);
     return () => clearTimeout(t);
@@ -254,76 +296,74 @@ export function CartPage() {
                 {items.length} {items.length === 1 ? "item selecionado" : "itens selecionados"}
               </h1>
             </div>
+            {/* Limpar carrinho existe no drawer e faltava aqui como AÇÃO: era
+                só um texto apagado no canto, que não se lia como botão. Ganha
+                borda e o rótulo inteiro, mas segue em peso baixo — é uma saída
+                destrutiva, não uma sugestão. Confirma no `ConfirmDialog`, o
+                mesmo do perfil: esvaziar o carrinho não tem desfazer. */}
             <button
-              onClick={() => toast("Limpar todo o carrinho?", {
-                action: { label: "Limpar", onClick: () => clearCart() },
-              })}
-              className="inline-flex items-center gap-1.5 cursor-pointer text-ink-subtle transition-colors hover:text-ink min-h-[44px] md:min-h-[24px]"
+              onClick={() => setConfirmClear(true)}
+              className="inline-flex flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-full border border-edge-subtle px-3.5 text-ink-subtle transition-colors hover:border-primary/35 hover:text-primary min-h-[44px] md:min-h-[36px]"
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
               aria-label="Limpar carrinho"
             >
               <Trash2 size={13} strokeWidth={2} />
-              Limpar
+              Limpar carrinho
             </button>
           </div>
-
-          {/* Progresso da campanha de brinde. Enquanto o brinde não está no
-              carrinho, este bloco é o estado inteiro — barra (meta de valor)
-              ou vagas (meta de quantidade), com a vitrine dos elegíveis já
-              aberta, que aqui a coluna comporta. Com o brinde escolhido, o
-              cartão verde abaixo assume. */}
-          {giftProgress && !giftItem && (
-            <div className="mb-6">
-              <GiftProgressBlock
-                progress={giftProgress}
-                giftItem={giftItem}
-                variant="page"
-                canChoose={!isSingleGift}
-                onChoose={openGiftModal}
-                campaignId={campaignId}
-                onCampaignChange={setCampaignId}
-              />
-            </div>
-          )}
-
-          {giftUnlocked && giftItem && (
-            <div
-              className="mb-6 flex flex-wrap items-center justify-between gap-3 overflow-hidden p-4 md:p-5"
-              style={{
-                borderRadius: "var(--radius-card-md)",
-                background: "linear-gradient(135deg, rgba(34,197,94,0.10) 0%, rgba(34,197,94,0.03) 100%)",
-                border: "1px solid rgba(34,197,94,0.3)",
-              }}
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-ink-strong"
-                  style={{ background: "var(--gradient-buy)" }}
-                >
-                  <Check size={16} strokeWidth={2.4} />
-                </div>
-                <div>
-                  <p style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#22c55e" }}>
-                    Brinde no carrinho
-                  </p>
-                  <p className="text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
-                    {giftItem.name}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={swapGift}
-                className="inline-flex items-center cursor-pointer text-ink-muted transition-colors hover:text-ink-strong min-h-[44px] px-3 md:min-h-[24px] md:px-0"
-                style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
-              >
-                Trocar
-              </button>
-            </div>
-          )}
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-8">
             {/* Items column */}
             <div className="flex flex-col gap-3">
+              {/* Progresso da campanha de brinde. Enquanto o brinde não está no
+                  carrinho, este bloco é o estado inteiro — barra (meta de valor)
+                  ou vagas (meta de quantidade), com a vitrine dos elegíveis já
+                  aberta, que aqui a coluna comporta. Com o brinde escolhido, o
+                  cartão verde abaixo assume. */}
+              {giftProgress && !giftItem && (
+                <GiftProgressBlock
+                  progress={giftProgress}
+                  giftItem={giftItem}
+                  variant="page"
+                  canChoose={!isSingleGift}
+                  onChoose={openGiftModal}
+                />
+              )}
+
+              {giftUnlocked && giftItem && (
+                <div
+                  className="flex flex-wrap items-center justify-between gap-3 overflow-hidden p-4 md:p-5"
+                  style={{
+                    borderRadius: "var(--radius-card-md)",
+                    background: "linear-gradient(135deg, rgba(34,197,94,0.10) 0%, rgba(34,197,94,0.03) 100%)",
+                    border: "1px solid rgba(34,197,94,0.3)",
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-ink-strong"
+                      style={{ background: "var(--gradient-buy)" }}
+                    >
+                      <Check size={16} strokeWidth={2.4} />
+                    </div>
+                    <div>
+                      <p style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#22c55e" }}>
+                        Brinde no carrinho
+                      </p>
+                      <p className="text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
+                        {giftItem.name}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={swapGift}
+                    className="inline-flex items-center cursor-pointer text-ink-muted transition-colors hover:text-ink-strong min-h-[44px] px-3 md:min-h-[24px] md:px-0"
+                    style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
+                  >
+                    Trocar
+                  </button>
+                </div>
+              )}
               <AnimatePresence mode="popLayout">
                 {items.map((item) => {
                   const unit = item.isGift ? 0 : parseBRL(item.price);
@@ -514,75 +554,70 @@ export function CartPage() {
                   // RESUMO DO PEDIDO
                 </p>
 
-                {/* Shipping (acima do cupom — frete grátis ou cálculo) */}
-                {freeShipping ? (
-                  <div
-                    className="mb-3 flex items-center gap-2.5 rounded-card-sm p-3"
-                    style={{
-                      background: "rgba(34,197,94,0.08)",
-                      border: "1px solid rgba(34,197,94,0.3)",
-                    }}
-                    role="status"
-                    aria-live="polite"
-                  >
-                    <Truck size={15} strokeWidth={2.2} className="text-green-400 flex-shrink-0" />
-                    <div>
-                      <p style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#22c55e", letterSpacing: "0.01em" }}>
-                        Frete grátis desbloqueado
-                      </p>
-                      <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", marginTop: "1px" }}>
-                        Calculado direto no checkout
-                      </p>
-                    </div>
+                {/* Frete — primeiro bloco do resumo, porque é o único número do
+                    pedido que ainda falta. O CEP aparece mesmo com frete
+                    grátis: a régua de R$ 299 zera a modalidade normal, não o
+                    prazo, e o prazo é o que decide a compra. */}
+                <div className="mb-3">
+                  <div className="mb-2 flex items-center gap-2">
+                    <Truck size={13} className="text-ink-muted" strokeWidth={2} />
+                    <span
+                      className="text-ink-muted tracking-wide"
+                      style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}
+                    >
+                      Calcular frete
+                    </span>
                   </div>
-                ) : (
-                  <div className="mb-3">
-                    <div className="mb-2 flex items-center gap-2">
-                      <Truck size={13} className="text-ink-muted" strokeWidth={2} />
-                      <span
-                        className="text-ink-muted tracking-wide"
-                        style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="Digite seu CEP"
+                      value={cep}
+                      onChange={(e) => setCep(formatCep(e.target.value))}
+                      className="w-full px-3.5 py-2.5 pr-9 text-ink-strong placeholder:text-ink-subtle focus:outline-none transition-all cart-field"
+                      aria-label="CEP para cálculo de frete"
+                      style={{
+                        borderRadius: "var(--radius-card-sm)",
+                        border: "1px solid rgba(var(--foreground-rgb), 0.1)",
+                        background: "rgba(var(--foreground-rgb), 0.03)",
+                        fontFamily: "var(--font-family-inter)",
+                        fontSize: "var(--text-sm)",
+                        fontWeight: 600,
+                        letterSpacing: "0.02em",
+                      }}
+                    />
+                    {cepLoading && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-ink-muted" />}
+                    {!cepLoading && shippingOptions && (
+                      <Check size={14} strokeWidth={2.6} className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500" />
+                    )}
+                  </div>
+                  <AnimatePresence>
+                    {shippingOptions && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="overflow-hidden"
                       >
-                        Calcular frete
-                      </span>
-                    </div>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="Digite seu CEP"
-                        value={cep}
-                        onChange={(e) => setCep(formatCep(e.target.value))}
-                        className="w-full px-3.5 py-2.5 pr-9 text-ink-strong placeholder:text-ink-subtle focus:outline-none transition-all cart-field"
-                        aria-label="CEP para cálculo de frete"
-                        style={{
-                          borderRadius: "var(--radius-card-sm)",
-                          border: "1px solid rgba(var(--foreground-rgb), 0.1)",
-                          background: "rgba(var(--foreground-rgb), 0.03)",
-                          fontFamily: "var(--font-family-inter)",
-                          fontSize: "var(--text-sm)",
-                          fontWeight: 600,
-                          letterSpacing: "0.02em",
-                        }}
-                      />
-                      {cepLoading && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-ink-muted" />}
-                    </div>
-                    <AnimatePresence>
-                      {shippingOptions && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.25 }}
-                          className="mt-3 space-y-1.5 overflow-hidden"
+                        <p
+                          className="mb-2 mt-2 text-ink-subtle"
+                          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
+                          role="status"
+                          aria-live="polite"
                         >
+                          Entrega em {cep}{cepUfLabel ? ` · ${cepUfLabel}` : ""}
+                        </p>
+                        <div className="space-y-1.5">
                           {shippingOptions.map((opt) => {
                             const active = selectedShipping === opt.id;
                             return (
                               <button
                                 key={opt.id}
                                 onClick={() => setSelectedShipping(opt.id)}
-                                className="flex w-full items-center gap-2.5 rounded-[var(--radius-card-sm)] px-3 py-2 text-left transition-colors min-h-[44px] md:min-h-[24px]"
+                                aria-pressed={active}
+                                className="flex w-full items-center gap-2.5 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-left transition-colors min-h-[44px]"
                                 style={{
                                   background: active ? "rgba(34,197,94,0.06)" : "rgba(var(--foreground-rgb), 0.02)",
                                   border: active ? "1.5px solid rgba(34,197,94,0.5)" : "1px solid rgba(var(--foreground-rgb), 0.06)",
@@ -597,26 +632,45 @@ export function CartPage() {
                                 >
                                   {active && <Check size={9} strokeWidth={3} className="text-ink-strong" />}
                                 </span>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                                    {opt.label}
+                                <div className="min-w-0 flex-1">
+                                  <p className="truncate text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.02em" }}>
+                                    {opt.carrier}
                                   </p>
                                   <p className="text-ink-subtle" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                                    {opt.eta}
+                                    {opt.mode} ({opt.eta})
                                   </p>
                                 </div>
-                                <p className="flex-shrink-0 text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-sm)", fontWeight: 800 }}>
-                                  {formatBRL(opt.price)}
-                                </p>
+                                {opt.price === 0 ? (
+                                  <p className="flex-shrink-0" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.08em", color: "#22c55e" }}>
+                                    GRÁTIS
+                                  </p>
+                                ) : (
+                                  <p className="flex-shrink-0 text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-sm)", fontWeight: 800 }}>
+                                    {formatBRL(opt.price)}
+                                  </p>
+                                )}
                               </button>
                             );
                           })}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                )}
-
+                        </div>
+                        <p
+                          className="mt-2 text-ink-subtle"
+                          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.45 }}
+                        >
+                          Valor estimado. O frete definitivo é fechado no checkout, com o endereço completo.
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  {!shippingOptions && freeShipping && (
+                    <p
+                      className="mt-2"
+                      style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#22c55e" }}
+                    >
+                      Frete grátis desbloqueado · informe o CEP pro prazo
+                    </p>
+                  )}
+                </div>
                 {/* Coupon */}
                 <button
                   onClick={() => setCouponOpen((v) => !v)}
@@ -818,19 +872,24 @@ export function CartPage() {
                       </span>
                     </div>
                   )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="min-w-0 truncate text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
                       Frete
+                      {/* A modalidade escolhida entra na própria linha: sem ela
+                          o "GRÁTIS" some do contexto do prazo que a pessoa
+                          acabou de selecionar logo acima. */}
+                      {chosenShipping && ` · ${chosenShipping.mode} (${chosenShipping.eta})`}
                     </span>
                     <span
+                      className="flex-shrink-0"
                       style={{
                         fontFamily: "var(--font-family-inter)",
                         fontSize: "var(--text-sm)",
                         fontWeight: 700,
-                        color: freeShipping || (selectedShipping && shippingPrice === 0) ? "#22c55e" : "rgba(var(--foreground-rgb), 0.85)",
+                        color: shippingPrice === 0 && (chosenShipping || freeShipping) ? "#22c55e" : "rgba(var(--foreground-rgb), 0.85)",
                       }}
                     >
-                      {freeShipping ? "GRÁTIS" : selectedShipping ? formatBRL(shippingPrice) : "—"}
+                      {chosenShipping ? (shippingPrice === 0 ? "GRÁTIS" : formatBRL(shippingPrice)) : freeShipping ? "GRÁTIS" : "—"}
                     </span>
                   </div>
                   {pointsValue > 0 && (
@@ -854,6 +913,14 @@ export function CartPage() {
                     </span>
                     <Price value={total} label="Total" className="text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 800, letterSpacing: "-0.02em" }} />
                   </div>
+                  {/* O total só é fechado quando não há frete estimado dentro
+                      dele. Com CEP informado, o número acima é estimativa e
+                      precisa dizer isso ao lado do próprio número. */}
+                  {chosenShipping && (
+                    <p className="mb-1 text-ink-subtle" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                      Com frete estimado para o CEP informado
+                    </p>
+                  )}
                   <div className="mb-1 flex items-baseline justify-between">
                     <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#22c55e" }}>
                       no PIX
@@ -1097,6 +1164,16 @@ export function CartPage() {
           </button>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmClear}
+        onClose={() => setConfirmClear(false)}
+        onConfirm={clearCart}
+        title="Limpar o carrinho?"
+        description={`${items.length} ${items.length === 1 ? "item sai" : "itens saem"} do carrinho. Essa ação não pode ser desfeita.`}
+        confirmLabel="Limpar carrinho"
+        destructive
+      />
 
       <Footer />
     </>

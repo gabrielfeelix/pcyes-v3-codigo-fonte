@@ -38,8 +38,6 @@ export function CartDrawer() {
 
   const {
     progress: giftProgress,
-    campaignId,
-    setCampaignId,
     paidItems,
     giftItem,
     isSingleGift,
@@ -113,8 +111,6 @@ export function CartDrawer() {
                   canChoose={!isSingleGift}
                   onChoose={openGiftModal}
                   onNavigate={() => setIsOpen(false)}
-                  campaignId={campaignId}
-                  onCampaignChange={setCampaignId}
                 />
               </div>
             )}
