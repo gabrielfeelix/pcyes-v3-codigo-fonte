@@ -3287,7 +3287,11 @@ export function ProductPage() {
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            className="order-2 w-full lg:order-none lg:w-[56%] xl:w-[58%] flex-shrink-0"
+            /* Sticky no mesmo offset do card de compra do outro lado: quando
+               o resumo "Sobre o produto" é longo, a coluna da imagem terminava
+               no meio e deixava um vazio enorme até o fim do texto. Só a partir
+               de lg — no empilhado a imagem vem antes e não há o que grudar. */
+            className="order-2 w-full flex-shrink-0 lg:order-none lg:w-[56%] xl:w-[58%] lg:sticky lg:top-[190px] lg:self-start"
           >
             <ProductGallery
               images={galleryImages}
