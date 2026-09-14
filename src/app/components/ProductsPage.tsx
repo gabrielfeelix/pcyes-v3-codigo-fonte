@@ -2180,7 +2180,7 @@ export function ProductsPage() {
                           <span className={`relative inline-flex h-2 w-2 rounded-full ${urgent ? "bg-[#ff2419]" : "bg-emerald-500"}`} />
                         </span>
                         <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, color: urgent ? "#ff5a52" : "rgba(var(--foreground-rgb), 0.85)" }}>
-                          {urgent ? `Últimas ${stockLeft} unidades em estoque` : `${stockLeft} em estoque · envio em 24h`}
+                          {urgent ? `Últimas ${stockLeft} unidades em estoque` : `${stockLeft} em estoque · envio em 24h úteis`}
                         </span>
                       </div>
                     );

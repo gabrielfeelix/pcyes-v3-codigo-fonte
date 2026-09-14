@@ -1046,7 +1046,7 @@ function StickyPriceCard({
             className={inStock ? "text-[#4CAF50]" : "text-foreground/45"}
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
           >
-            {inStock ? `${stockLabel} · envio em 24h` : discontinued ? "Fora de linha" : "Sem estoque"}
+            {inStock ? `${stockLabel} · envio em 24h úteis` : discontinued ? "Fora de linha" : "Sem estoque"}
           </span>
         </div>
 
