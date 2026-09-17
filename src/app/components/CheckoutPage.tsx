@@ -394,14 +394,12 @@ export function CheckoutPage() {
         label: "Sedex Expresso",
         eta: "2 dias úteis",
         price: free ? 0 : 35.9,
-        badge: free ? "GRÁTIS" : undefined,
       },
       {
         id: "pac",
         label: "PAC Econômico",
         eta: "7 dias úteis",
         price: free ? 0 : 14.9,
-        badge: free ? "GRÁTIS" : undefined,
       },
       {
         id: "today",
@@ -1391,46 +1389,45 @@ export function CheckoutPage() {
                               </div>
                               <Truck size={18} strokeWidth={1.8} className={active ? "text-green-400" : "text-ink-muted"} />
                               <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2">
-                                  <p className="text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
-                                    {opt.label}
-                                  </p>
-                                  {opt.badge && (
-                                    <span
-                                      className="inline-flex items-center text-ink-strong"
-                                      style={{
-                                        padding: "2px 8px",
-                                        borderRadius: "var(--radius-pill)",
-                                        background:
-                                          opt.badge === "GRÁTIS"
-                                            ? "var(--gradient-buy)"
-                                            : "var(--gradient-brand)",
-                                        fontFamily: "var(--font-family-inter)",
-                                        fontSize: "var(--text-caption)",
-                                        fontWeight: 800,
-                                        letterSpacing: "0.1em",
-                                      }}
-                                    >
-                                      {opt.badge}
-                                    </span>
-                                  )}
-                                </div>
+                                <p className="text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
+                                  {opt.label}
+                                </p>
                                 <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", marginTop: 2 }}>
                                   {opt.eta}
                                 </p>
                               </div>
-                              <p
-                                className="flex-shrink-0"
-                                style={{
-                                  fontFamily: "var(--font-family-figtree)",
-                                  fontSize: "var(--text-base)",
-                                  fontWeight: 800,
-                                  color: opt.price === 0 ? "#22c55e" : "#fff",
-                                  letterSpacing: "-0.015em",
-                                }}
-                              >
-                                {opt.price === 0 ? "Grátis" : formatBRL(opt.price)}
-                              </p>
+                              {/* badge fica empilhado sobre o preço: o nome da opção mantém
+                                  a largura inteira e não quebra em três linhas no mobile */}
+                              <div className="flex flex-shrink-0 flex-col items-end gap-1">
+                                {opt.badge && (
+                                  <span
+                                    className="inline-flex items-center whitespace-nowrap text-ink-strong"
+                                    style={{
+                                      padding: "2px 8px",
+                                      borderRadius: "var(--radius-pill)",
+                                      background: "var(--gradient-brand)",
+                                      fontFamily: "var(--font-family-inter)",
+                                      fontSize: "var(--text-caption)",
+                                      fontWeight: 800,
+                                      letterSpacing: "0.1em",
+                                    }}
+                                  >
+                                    {opt.badge}
+                                  </span>
+                                )}
+                                <p
+                                  className="whitespace-nowrap"
+                                  style={{
+                                    fontFamily: "var(--font-family-figtree)",
+                                    fontSize: "var(--text-base)",
+                                    fontWeight: 800,
+                                    color: opt.price === 0 ? "#22c55e" : "#fff",
+                                    letterSpacing: "-0.015em",
+                                  }}
+                                >
+                                  {opt.price === 0 ? "Grátis" : formatBRL(opt.price)}
+                                </p>
+                              </div>
                             </button>
                           );
                         })}
