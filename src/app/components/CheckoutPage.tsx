@@ -39,6 +39,7 @@ import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { EarnPreview } from "./points/EarnPreview";
 import { toast } from "sonner";
+import { PcyesCoin } from "./PcyesCoin";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -1233,12 +1234,17 @@ export function CheckoutPage() {
                     aria-expanded={pointsApplied}
                   >
                     <span className="flex items-center gap-2">
-                      <PcyesCoinSmall />
+                      <PcyesCoin />
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.78)" }}>
                         PC Points
                       </span>
-                      <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, color: "rgba(var(--foreground-rgb), 0.4)" }}>
-                        {userPoints} pts
+                      {/* Saldo no amarelo dos PC Points, não em cinza: é o número que
+                          decide se vale usar, e apagado ele lia como rótulo
+                          desativado. O "pts" fica mais fraco — a unidade não
+                          precisa do mesmo peso do valor. */}
+                      <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#facc15", fontVariantNumeric: "tabular-nums" }}>
+                        {userPoints.toLocaleString("pt-BR")}
+                        <span style={{ fontWeight: 600, opacity: 0.65 }}> pts</span>
                       </span>
                     </span>
                     <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.1em", color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.45)", textTransform: "uppercase" }}>
@@ -2717,38 +2723,6 @@ function CardBrand({ digits }: { digits: string }) {
   );
 }
 
-function PcyesCoinSmall({ size = 18 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden>
-      <defs>
-        <radialGradient id="pcoin-grad-checkout" cx="35%" cy="30%" r="80%">
-          <stop offset="0%" stopColor="#fde68a" />
-          <stop offset="50%" stopColor="#facc15" />
-          <stop offset="100%" stopColor="#b45309" />
-        </radialGradient>
-        <radialGradient id="pcoin-shine-checkout" cx="30%" cy="25%" r="35%">
-          <stop offset="0%" stopColor="#fff" stopOpacity="0.85" />
-          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-      <circle cx="16" cy="16" r="14" fill="url(#pcoin-grad-checkout)" stroke="#92400e" strokeWidth="1.2" />
-      <circle cx="16" cy="16" r="11" fill="none" stroke="#92400e" strokeWidth="0.7" strokeDasharray="1.5 1.2" opacity="0.45" />
-      <text
-        x="16"
-        y="21.5"
-        textAnchor="middle"
-        fontFamily="var(--font-family-figtree), system-ui, sans-serif"
-        fontSize="14"
-        fontWeight="900"
-        fill="#7c2d12"
-        letterSpacing="-0.04em"
-      >
-        P
-      </text>
-      <ellipse cx="12" cy="11" rx="4.5" ry="3" fill="url(#pcoin-shine-checkout)" />
-    </svg>
-  );
-}
 
 function NumberStepperRed({
   value,
