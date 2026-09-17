@@ -1106,7 +1106,12 @@ export function CheckoutPage() {
                     key={s.key}
                     onClick={() => done && setStep(s.key as Step)}
                     disabled={!done}
-                    className="flex flex-1 items-center gap-2 min-h-[44px] md:min-h-[24px] disabled:cursor-not-allowed"
+                    // No mobile só o ícone aparece: o último passo não pode esticar,
+                    // senão sobra um vão à direita e os ícones deixam de ficar
+                    // igualmente espaçados. No desktop todos esticam, como antes.
+                    className={`flex items-center gap-2 min-h-[44px] md:min-h-[24px] disabled:cursor-not-allowed ${
+                      i < STEPS.length - 1 ? "flex-1" : "flex-none md:flex-1"
+                    }`}
                   >
                     <div
                       className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full transition-all"
