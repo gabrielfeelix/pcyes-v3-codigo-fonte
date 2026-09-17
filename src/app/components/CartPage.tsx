@@ -427,7 +427,7 @@ export function CartPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.96 }}
                       transition={{ duration: 0.22 }}
-                      className="relative flex gap-4 overflow-hidden p-4 md:gap-5 md:p-5"
+                      className="relative flex gap-3 overflow-hidden p-3.5 md:gap-5 md:p-5"
                       style={{
                         borderRadius: "var(--radius-card-md)",
                         background: cardBg,
@@ -437,7 +437,7 @@ export function CartPage() {
                     >
                       {/* Image */}
                       <div
-                        className="relative h-[100px] w-[100px] flex-shrink-0 overflow-hidden md:h-[120px] md:w-[120px]"
+                        className="relative h-[75px] w-[75px] flex-shrink-0 overflow-hidden md:h-[120px] md:w-[120px]"
                         style={{
                           borderRadius: "var(--radius-card-sm)",
                           background: "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.08) 0%, rgba(var(--foreground-rgb), 0.02) 100%)",
@@ -454,9 +454,10 @@ export function CartPage() {
                       {/* Info */}
                       <div className="flex min-w-0 flex-1 flex-col">
                         <div className="flex items-start justify-between gap-3">
+                          <div className="flex min-w-0 flex-1 items-center gap-2 md:contents">
                           <Link
                             to={`/produto/${item.id}`}
-                            className="text-ink-strong transition-colors hover:text-primary line-clamp-2"
+                            className="truncate text-ink-strong transition-colors hover:text-primary md:line-clamp-2 md:overflow-visible md:whitespace-normal"
                             style={{
                               fontFamily: "var(--font-family-figtree)",
                               fontSize: "var(--text-base)",
@@ -467,9 +468,13 @@ export function CartPage() {
                           >
                             {item.name}
                           </Link>
+                          <span className="flex-shrink-0 md:hidden">
+                            {item.isGift ? <BrindePill /> : getPreOrderInfo(item.id) ? <PreOrderPill info={getPreOrderInfo(item.id)!} compact /> : null}
+                          </span>
+                          </div>
                           <button
                             onClick={() => removeWithUndo(item)}
-                            className="flex h-11 w-11 md:h-8 md:w-8 flex-shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-subtle transition-colors hover:bg-white/[0.06] hover:text-primary"
+                            className="hidden h-11 w-11 md:flex md:h-8 md:w-8 flex-shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-subtle transition-colors hover:bg-white/[0.06] hover:text-primary"
                             aria-label="Remover item"
                           >
                             <Trash2 size={14} strokeWidth={1.8} />
@@ -479,12 +484,12 @@ export function CartPage() {
                         <div className="mt-1 md:hidden">{priceBlock}</div>
 
                         {item.isGift && (
-                          <div className="mt-1.5">
+                          <div className="mt-1.5 hidden md:block">
                             <BrindePill />
                           </div>
                         )}
                         {!item.isGift && getPreOrderInfo(item.id) && (
-                          <div className="mt-1.5">
+                          <div className="mt-1.5 hidden md:block">
                             <PreOrderPill info={getPreOrderInfo(item.id)!} compact />
                           </div>
                         )}
@@ -502,20 +507,20 @@ export function CartPage() {
                             >
                               <button
                                 onClick={() => updateQuantity(item.cartKey, item.quantity - 1)}
-                                className="flex h-11 w-11 md:h-8 md:w-8 cursor-pointer items-center justify-center text-ink-muted transition-colors hover:bg-white/[0.05] hover:text-ink-strong"
+                                className="flex h-9 w-9 md:h-8 md:w-8 cursor-pointer items-center justify-center text-ink-muted transition-colors hover:bg-white/[0.05] hover:text-ink-strong"
                                 aria-label="Diminuir quantidade"
                               >
                                 <Minus size={12} strokeWidth={2} />
                               </button>
                               <span
-                                className="flex h-11 w-9 md:h-8 md:w-9 items-center justify-center text-ink-strong tabular-nums"
+                                className="flex h-9 w-8 md:h-8 md:w-9 items-center justify-center text-ink-strong tabular-nums"
                                 style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700 }}
                               >
                                 {item.quantity}
                               </span>
                               <button
                                 onClick={() => updateQuantity(item.cartKey, item.quantity + 1)}
-                                className="flex h-11 w-11 md:h-8 md:w-8 cursor-pointer items-center justify-center text-ink-muted transition-colors hover:bg-white/[0.05] hover:text-ink-strong"
+                                className="flex h-9 w-9 md:h-8 md:w-8 cursor-pointer items-center justify-center text-ink-muted transition-colors hover:bg-white/[0.05] hover:text-ink-strong"
                                 aria-label="Aumentar quantidade"
                               >
                                 <Plus size={12} strokeWidth={2} />
@@ -532,6 +537,14 @@ export function CartPage() {
 
                           {/* Price — só no desktop; no mobile ele já aparece sob o nome */}
                           <div className="hidden text-right md:block">{priceBlock}</div>
+
+                          <button
+                            onClick={() => removeWithUndo(item)}
+                            className="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-subtle transition-colors hover:bg-white/[0.06] hover:text-primary md:hidden"
+                            aria-label="Remover item"
+                          >
+                            <Trash2 size={14} strokeWidth={1.8} />
+                          </button>
                         </div>
                       </div>
                     </motion.div>
