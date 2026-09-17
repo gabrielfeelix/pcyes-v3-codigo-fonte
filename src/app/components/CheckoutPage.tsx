@@ -2213,76 +2213,48 @@ export function CheckoutPage() {
       {/* Mobile fixed bottom action bar — total + step CTA. lg:hidden, abaixo dos modais (z-[120]).
           Ancorada acima do aviso de cookies, que é fixed num z maior. Ver `--cookie-h`. */}
       <div style={{ bottom: "var(--cookie-h, 0px)" }} className="fixed left-0 right-0 z-40 lg:hidden">
-        {/* Atalhos: uma linha inteira para cada, como na coluna do desktop —
-            lado a lado ficavam apertados e ilegíveis. */}
-        <div
-          className="border-t border-edge"
-          style={{ background: "rgba(14,14,14,0.95)", backdropFilter: "blur(20px)" }}
+        {/* Cupom e PC Points saíram daqui: os dois já existem dentro do
+            resumo, que é o mesmo bloco do desktop. A barra repetia as duas
+            linhas e empurrava o botão de avançar pra baixo, comendo tela num
+            lugar onde ela é escassa. Sobrou um convite só. */}
+        <button
+          onClick={() => openDetails()}
+          aria-expanded={detailsOpen}
+          className="flex w-full cursor-pointer flex-col items-center justify-center gap-1.5 border-t border-edge px-4 py-2 transition-colors hover:bg-white/[0.04] active:bg-white/[0.06]"
+          style={{ minHeight: 48, background: "rgba(14,14,14,0.95)", backdropFilter: "blur(20px)" }}
         >
-          <button
-            onClick={() => openDetails("coupon")}
-            className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 transition-colors hover:bg-white/[0.03]"
-            style={{ minHeight: 40 }}
-          >
-            <span className="flex items-center gap-2">
-              {appliedCoupon ? <Check size={12} className="text-green-500" strokeWidth={2.6} /> : <Ticket size={12} className="text-ink-muted" strokeWidth={2.2} />}
-              <span
-                className={appliedCoupon ? "text-green-400" : "text-ink-muted"}
-                style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}
-              >
-                {appliedCoupon ? `${appliedCoupon} aplicado` : "Tenho um cupom"}
-              </span>
+          {/* Puxador: é o sinal que o celular inteiro usa pra dizer que algo
+              sobe daqui. Sem ele, texto miúdo na barra não lê como controle. */}
+          <span aria-hidden="true" className="h-[3px] w-9 rounded-full bg-white/20" />
+          <span className="flex items-center gap-1.5 text-ink">
+            {/* Caixa normal e não versalete: "VER DETALHES" com tracking largo
+                lê como rótulo de seção, não como algo em que se toca. */}
+            <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
+              Ver detalhes
             </span>
-            <span
-              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: appliedCoupon ? "#22c55e" : "rgba(var(--foreground-rgb), 0.45)" }}
-            >
-              {appliedCoupon ? "Trocar" : "Usar"}
-            </span>
-          </button>
-          <button
-            onClick={() => openDetails("points")}
-            className="flex w-full cursor-pointer items-center justify-between gap-3 border-t border-edge-subtle px-4 transition-colors hover:bg-white/[0.03]"
-            style={{ minHeight: 40 }}
-          >
-            <span className="flex items-center gap-2">
-              <PcyesCoinSmall size={13} />
-              <span
-                style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.6)" }}
-              >
-                PC Points
-              </span>
-              <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, color: "rgba(var(--foreground-rgb), 0.4)" }}>
-                {userPoints} pts
-              </span>
-            </span>
-            <span
-              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.45)" }}
-            >
-              {pointsApplied ? "Aplicado" : "Usar"}
-            </span>
-          </button>
-        </div>
+            <ChevronUp size={14} strokeWidth={2.6} />
+          </span>
+        </button>
         <div
           className="flex items-center gap-3 border-t border-edge px-4 py-3"
           style={{ background: "rgba(14,14,14,0.95)", backdropFilter: "blur(20px)" }}
         >
           <div className="flex-1 min-w-0">
-            <button
-              onClick={() => openDetails()}
-              className="inline-flex cursor-pointer items-center gap-1 text-ink-muted transition-colors hover:text-ink-strong"
+            {/* Texto, não botão: a linha "Ver detalhes" logo acima já é a
+                afordância de expandir, e dois alvos para a mesma ação viram
+                ruído. */}
+            <span
+              className="block text-ink-muted"
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" }}
-              aria-expanded={detailsOpen}
             >
               Total
-              <ChevronUp size={11} strokeWidth={2.8} />
-            </button>
-            <button
-              onClick={() => openDetails()}
-              className="block cursor-pointer text-left text-ink-strong"
+            </span>
+            <span
+              className="block text-ink-strong"
               style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1 }}
             >
               {formatBRL(total)}
-            </button>
+            </span>
           </div>
           {step < 3 ? (
             <button
