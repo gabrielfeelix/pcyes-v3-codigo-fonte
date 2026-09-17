@@ -667,7 +667,7 @@ export function CheckoutPage() {
   if (items.length === 0 && !orderConfirmed) {
     return (
       <>
-        <div className="pt-3 md:pt-[142px]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 200px)" }}>
+        <div className="pt-[calc(72px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 200px)" }}>
           <div className="mx-auto flex max-w-[640px] flex-col items-center px-5 py-24 text-center">
             <p
               className="mb-3 text-primary"
@@ -704,58 +704,6 @@ export function CheckoutPage() {
             </Link>
           </div>
         </div>
-        {/* Resumo do pedido no mobile — abre de baixo para cima a partir da barra
-          fixa. z abaixo dos modais (z-[120]) e acima da barra (z-40). */}
-      <AnimatePresence>
-        {detailsOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setDetailsOpen(false)}
-            className="fixed inset-0 z-[110] flex items-end justify-center bg-black/70 backdrop-blur-sm lg:hidden"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Resumo do pedido"
-          >
-            <motion.div
-              ref={detailsSheetRef}
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-[520px] max-h-[86vh] overflow-y-auto"
-              style={{
-                background: "var(--surface-1)",
-                borderRadius: "20px 20px 0 0",
-                borderTop: "1px solid rgba(var(--foreground-rgb), 0.08)",
-                boxShadow: "0 -40px 100px rgba(0,0,0,0.55)",
-              }}
-            >
-              <div
-                className="sticky top-0 z-10 flex items-center justify-between gap-3 px-5 pb-3 pt-4"
-                style={{ background: "var(--surface-1)" }}
-              >
-                <span
-                  className="text-primary"
-                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.3em" }}
-                >
-                  // RESUMO
-                </span>
-                <button
-                  onClick={() => setDetailsOpen(false)}
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink-strong"
-                  aria-label="Ver menos"
-                >
-                  <X size={16} strokeWidth={2} />
-                </button>
-              </div>
-              <div className="px-5 pb-6">{orderSummary}</div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
       <Footer />
       </>
     );
@@ -767,7 +715,7 @@ export function CheckoutPage() {
     const s = (pixTimer % 60).toString().padStart(2, "0");
     return (
       <>
-        <div className="pt-3 md:pt-[88px]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 120px)" }}>
+        <div className="pt-[calc(72px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 120px)" }}>
           <div className="mx-auto max-w-[720px] px-5 py-10 md:px-8">
             <p
               className="mb-3 text-primary"
@@ -943,7 +891,7 @@ export function CheckoutPage() {
     const snap = confirmedSnapshot;
     return (
       <>
-        <div className="pt-3 md:pt-[88px]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 200px)" }}>
+        <div className="pt-[calc(72px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 200px)" }}>
           <div className="mx-auto max-w-[720px] px-5 py-12 md:px-8">
             <div className="mb-10 flex flex-col items-center text-center">
               <motion.div
@@ -1399,7 +1347,7 @@ export function CheckoutPage() {
 
   return (
     <>
-      <div className="pt-3 md:pt-[88px] pb-36 lg:pb-0" style={{ background: "var(--surface-0)", minHeight: "100vh" }}>
+      <div className="pt-[calc(72px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))] pb-44 lg:pb-0" style={{ background: "var(--surface-0)", minHeight: "100vh" }}>
         <div className="mx-auto max-w-[1320px] px-5 py-4 md:px-8 md:py-6">
           <Link
             to="/carrinho"
@@ -2265,59 +2213,76 @@ export function CheckoutPage() {
       {/* Mobile fixed bottom action bar — total + step CTA. lg:hidden, abaixo dos modais (z-[120]).
           Ancorada acima do aviso de cookies, que é fixed num z maior. Ver `--cookie-h`. */}
       <div style={{ bottom: "var(--cookie-h, 0px)" }} className="fixed left-0 right-0 z-40 lg:hidden">
+        {/* Atalhos: uma linha inteira para cada, como na coluna do desktop —
+            lado a lado ficavam apertados e ilegíveis. */}
         <div
-          className="flex items-center gap-2 border-t border-edge px-4 py-2"
+          className="border-t border-edge"
           style={{ background: "rgba(14,14,14,0.95)", backdropFilter: "blur(20px)" }}
         >
           <button
-            onClick={() => openDetails()}
-            className="inline-flex cursor-pointer items-center gap-1.5 text-ink-muted transition-colors hover:text-ink-strong"
-            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.04em", minHeight: 32 }}
-            aria-expanded={detailsOpen}
+            onClick={() => openDetails("coupon")}
+            className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 transition-colors hover:bg-white/[0.03]"
+            style={{ minHeight: 40 }}
           >
-            <ChevronUp size={12} strokeWidth={2.6} />
-            Ver detalhes
+            <span className="flex items-center gap-2">
+              {appliedCoupon ? <Check size={12} className="text-green-500" strokeWidth={2.6} /> : <Ticket size={12} className="text-ink-muted" strokeWidth={2.2} />}
+              <span
+                className={appliedCoupon ? "text-green-400" : "text-ink-muted"}
+                style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}
+              >
+                {appliedCoupon ? `${appliedCoupon} aplicado` : "Tenho um cupom"}
+              </span>
+            </span>
+            <span
+              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: appliedCoupon ? "#22c55e" : "rgba(var(--foreground-rgb), 0.45)" }}
+            >
+              {appliedCoupon ? "Trocar" : "Usar"}
+            </span>
           </button>
-          <span className="ml-auto flex items-center gap-1.5">
-            <button
-              onClick={() => openDetails("coupon")}
-              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 transition-colors ${
-                appliedCoupon ? "border-green-500/30 bg-green-500/[0.08] text-green-400" : "border-edge-subtle text-ink-muted hover:border-edge hover:text-ink"
-              }`}
-              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, minHeight: 32 }}
+          <button
+            onClick={() => openDetails("points")}
+            className="flex w-full cursor-pointer items-center justify-between gap-3 border-t border-edge-subtle px-4 transition-colors hover:bg-white/[0.03]"
+            style={{ minHeight: 40 }}
+          >
+            <span className="flex items-center gap-2">
+              <PcyesCoinSmall size={13} />
+              <span
+                style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.6)" }}
+              >
+                PC Points
+              </span>
+              <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, color: "rgba(var(--foreground-rgb), 0.4)" }}>
+                {userPoints} pts
+              </span>
+            </span>
+            <span
+              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.45)" }}
             >
-              <Ticket size={11} strokeWidth={2.2} />
-              {appliedCoupon ? appliedCoupon : "Cupom"}
-            </button>
-            <button
-              onClick={() => openDetails("points")}
-              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 transition-colors ${
-                pointsApplied ? "border-yellow-300/40 bg-yellow-300/[0.08]" : "border-edge-subtle text-ink-muted hover:border-edge hover:text-ink"
-              }`}
-              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, minHeight: 32, color: pointsApplied ? "#facc15" : undefined }}
-            >
-              <PcyesCoinSmall size={12} />
-              Points
-            </button>
-          </span>
+              {pointsApplied ? "Aplicado" : "Usar"}
+            </span>
+          </button>
         </div>
         <div
           className="flex items-center gap-3 border-t border-edge px-4 py-3"
           style={{ background: "rgba(14,14,14,0.95)", backdropFilter: "blur(20px)" }}
         >
           <div className="flex-1 min-w-0">
-            <p
-              className="text-ink-muted"
+            <button
+              onClick={() => openDetails()}
+              className="inline-flex cursor-pointer items-center gap-1 text-ink-muted transition-colors hover:text-ink-strong"
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" }}
+              aria-expanded={detailsOpen}
             >
               Total
-            </p>
-            <p
-              className="text-ink-strong"
+              <ChevronUp size={11} strokeWidth={2.8} />
+            </button>
+            <button
+              onClick={() => openDetails()}
+              className="block cursor-pointer text-left text-ink-strong"
               style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1 }}
             >
               {formatBRL(total)}
-            </p>
+            </button>
           </div>
           {step < 3 ? (
             <button
@@ -2359,6 +2324,58 @@ export function CheckoutPage() {
           )}
         </div>
       </div>
+      {/* Resumo do pedido no mobile — abre de baixo para cima a partir da barra
+          fixa. z abaixo dos modais (z-[120]) e acima da barra (z-40). */}
+      <AnimatePresence>
+        {detailsOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setDetailsOpen(false)}
+            className="fixed inset-0 z-[110] flex items-end justify-center bg-black/70 backdrop-blur-sm lg:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Resumo do pedido"
+          >
+            <motion.div
+              ref={detailsSheetRef}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-[520px] max-h-[86vh] overflow-y-auto"
+              style={{
+                background: "var(--surface-1)",
+                borderRadius: "20px 20px 0 0",
+                borderTop: "1px solid rgba(var(--foreground-rgb), 0.08)",
+                boxShadow: "0 -40px 100px rgba(0,0,0,0.55)",
+              }}
+            >
+              <div
+                className="sticky top-0 z-10 flex items-center justify-between gap-3 px-5 pb-3 pt-4"
+                style={{ background: "var(--surface-1)" }}
+              >
+                <span
+                  className="text-primary"
+                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.3em" }}
+                >
+                  // RESUMO
+                </span>
+                <button
+                  onClick={() => setDetailsOpen(false)}
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink-strong"
+                  aria-label="Ver menos"
+                >
+                  <X size={16} strokeWidth={2} />
+                </button>
+              </div>
+              <div className="px-5 pb-6">{orderSummary}</div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <Footer />
 
       {/* Apple Pay sheet */}

@@ -19,7 +19,7 @@ export function RootLayout() {
 
   const showAnnouncement =
     pathname !== "/checkout" && pathname !== "/carrinho" && pathname !== "/monte-seu-pc";
-  const showNavbar = pathname !== "/checkout" && pathname !== "/monte-seu-pc";
+  const showNavbar = pathname !== "/monte-seu-pc";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -54,7 +54,7 @@ export function RootLayout() {
                 {showAnnouncement && <AnnouncementBar />}
                 {showNavbar && <Navbar />}
                 <div data-page-light-scope className="contents">
-                  {pathname !== "/checkout" && <CartDrawer />}
+                  <CartDrawer />
                   <AuthModal />
                   <WelcomePopup />
                   <CookieConsent />
