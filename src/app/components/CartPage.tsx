@@ -367,6 +367,58 @@ export function CartPage() {
               <AnimatePresence mode="popLayout">
                 {items.map((item) => {
                   const unit = item.isGift ? 0 : parseBRL(item.price);
+                  // O bloco de preço aparece em dois lugares e só um fica visível:
+                  // no mobile logo abaixo do nome (o stepper fica sozinho na base,
+                  // sem disputar largura com o preço); no desktop, ao lado do stepper.
+                  const priceBlock = item.isGift ? (
+                    <>
+                      {item.originalPrice && (
+                        <p
+                          className="line-through"
+                          style={{
+                            fontFamily: "var(--font-family-inter)",
+                            fontSize: "var(--text-caption)",
+                            color: "rgba(var(--foreground-rgb), 0.3)",
+                          }}
+                        >
+                          {item.originalPrice}
+                        </p>
+                      )}
+                      <p
+                        style={{
+                          fontFamily: "var(--font-family-figtree)",
+                          fontSize: "var(--text-lg)",
+                          fontWeight: 800,
+                          color: "#22c55e",
+                          letterSpacing: "-0.015em",
+                        }}
+                      >
+                        R$ 0,00
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p
+                        className="text-ink-strong"
+                        style={{
+                          fontFamily: "var(--font-family-figtree)",
+                          fontSize: "var(--text-lg)",
+                          fontWeight: 800,
+                          letterSpacing: "-0.015em",
+                        }}
+                      >
+                        <Price value={unit * item.quantity} />
+                      </p>
+                      {item.quantity > 1 && (
+                        <p
+                          className="text-ink-subtle"
+                          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
+                        >
+                          {item.quantity}× <Price value={unit} />
+                        </p>
+                      )}
+                    </>
+                  );
                   return (
                     <motion.div
                       key={item.cartKey}
@@ -424,6 +476,8 @@ export function CartPage() {
                           </button>
                         </div>
 
+                        <div className="mt-1 md:hidden">{priceBlock}</div>
+
                         {item.isGift && (
                           <div className="mt-1.5">
                             <BrindePill />
@@ -476,58 +530,8 @@ export function CartPage() {
                             </span>
                           )}
 
-                          {/* Price */}
-                          <div className="text-right">
-                            {item.isGift ? (
-                              <>
-                                {item.originalPrice && (
-                                  <p
-                                    className="line-through"
-                                    style={{
-                                      fontFamily: "var(--font-family-inter)",
-                                      fontSize: "var(--text-caption)",
-                                      color: "rgba(var(--foreground-rgb), 0.3)",
-                                    }}
-                                  >
-                                    {item.originalPrice}
-                                  </p>
-                                )}
-                                <p
-                                  style={{
-                                    fontFamily: "var(--font-family-figtree)",
-                                    fontSize: "var(--text-lg)",
-                                    fontWeight: 800,
-                                    color: "#22c55e",
-                                    letterSpacing: "-0.015em",
-                                  }}
-                                >
-                                  R$ 0,00
-                                </p>
-                              </>
-                            ) : (
-                              <>
-                                <p
-                                  className="text-ink-strong"
-                                  style={{
-                                    fontFamily: "var(--font-family-figtree)",
-                                    fontSize: "var(--text-lg)",
-                                    fontWeight: 800,
-                                    letterSpacing: "-0.015em",
-                                  }}
-                                >
-                                  <Price value={unit * item.quantity} />
-                                </p>
-                                {item.quantity > 1 && (
-                                  <p
-                                    className="text-ink-subtle"
-                                    style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
-                                  >
-                                    {item.quantity}× <Price value={unit} />
-                                  </p>
-                                )}
-                              </>
-                            )}
-                          </div>
+                          {/* Price — só no desktop; no mobile ele já aparece sob o nome */}
+                          <div className="hidden text-right md:block">{priceBlock}</div>
                         </div>
                       </div>
                     </motion.div>
