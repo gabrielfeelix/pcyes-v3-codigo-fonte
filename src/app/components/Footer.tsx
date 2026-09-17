@@ -119,7 +119,7 @@ export function Footer() {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
   return (
-    <footer className={`${isDark ? "bg-surface-0" : "bg-[#f5f5f5]"} border-t ${isDark ? "border-edge-subtle" : "border-foreground/10"} text-foreground`}>
+    <footer className={`${isDark ? "bg-black" : "bg-[#f5f5f5]"} border-t ${isDark ? "border-edge-subtle" : "border-foreground/10"} text-foreground`}>
       <div className="mx-auto max-w-[1434px] px-5 pt-[65px] pb-4 md:px-12 xl:px-0">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_400px] md:gap-8">
           

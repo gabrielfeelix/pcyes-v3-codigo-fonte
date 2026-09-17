@@ -3162,10 +3162,6 @@ export function ProductPage() {
       addItem(cartPayload());
     }
     setAddedToCart(true);
-    toast.success(`${product.name.split(" ").slice(0, 4).join(" ")}…`, {
-      description: `${qty}× adicionado ao carrinho`,
-      duration: 2500,
-    });
     setTimeout(() => setAddedToCart(false), 2200);
   };
 
@@ -3641,7 +3637,7 @@ export function ProductPage() {
                         </span>
                       )}
                       <button
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); addItem({ id: rProduct.id, name: rProduct.name, price: rProduct.price, image: getPrimaryProductImage(rProduct) }); toast.success("Adicionado!"); }}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); addItem({ id: rProduct.id, name: rProduct.name, price: rProduct.price, image: getPrimaryProductImage(rProduct) }); }}
                         className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 translate-y-0 whitespace-nowrap rounded-full px-10 py-3 opacity-100 transition-all duration-300 lg:translate-y-2 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 cursor-pointer"
                         style={{
                           background: "var(--gradient-buy)",

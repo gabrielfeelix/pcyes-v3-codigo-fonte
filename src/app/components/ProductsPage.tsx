@@ -9,7 +9,6 @@ import {
   Heart, ShoppingCart, Star, X, ArrowUpRight, ChevronLeft,
   ChevronRight, Check, Eye, Minus, Plus,
 } from "lucide-react";
-import { toast } from "sonner";
 import { useCart } from "./CartContext";
 import { useFavorites } from "./FavoritesContext";
 import { useTheme } from "./ThemeProvider";
@@ -1025,13 +1024,11 @@ export function ProductsPage() {
     setTimeout(() => setIsLoading(false), 350);
   };
 
-  /* ── Add to cart with toast ── */
+  /* ── Add to cart ── */
+  // Sem toast: `addItem` já abre o drawer do carrinho com o item lá dentro,
+  // então o aviso flutuante só repetia o que a sidebar mostra melhor.
   const handleAddToCart = useCallback((product: typeof allProducts[0]) => {
     addItem(product);
-    toast.success(`${product.name.split(" ").slice(0, 4).join(" ")}…`, {
-      description: product.price,
-      duration: 2500,
-    });
   }, [addItem]);
 
   /* ── Image carousel ── */
