@@ -23,6 +23,7 @@ import {
   Clock,
   RefreshCw,
   Ticket,
+  ChevronUp,
 } from "lucide-react";
 import { artFitClass } from "../lib/setupImages";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -89,6 +90,272 @@ const inputStyle: React.CSSProperties = {
 };
 
 function Field({ label, children, required, className, error }: { label: string; children: React.ReactNode; required?: boolean; className?: string; error?: string }) {
+  const orderSummary = (
+    <>
+                {/* pt/pr dão respiro para o badge de qtd (-top/-right) não ser
+                    cortado pelo overflow do scroll (overflow-y-auto clipa X também). */}
+                <div className="mb-4 max-h-[280px] space-y-3 overflow-y-auto pl-0.5 pr-2 pt-2">
+                  {items.map((item) => (
+                    <div key={item.cartKey} className="flex items-center gap-3">
+                      <div className="relative h-14 w-14 flex-shrink-0">
+                        <div
+                          className="h-full w-full overflow-hidden"
+                          style={{
+                            borderRadius: "var(--radius-card-sm)",
+                            background: "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.08) 0%, rgba(var(--foreground-rgb), 0.02) 100%)",
+                            border: "1px solid rgba(var(--foreground-rgb), 0.08)",
+                            boxShadow: "inset 0 1px 0 rgba(var(--foreground-rgb), 0.04)",
+                          }}
+                        >
+                          <ImageWithFallback src={item.image} alt={item.name} className={`h-full w-full ${artFitClass(item.image, "p-1.5")}`} />
+                        </div>
+                        {item.quantity > 1 && (
+                          <span
+                            aria-label={`Quantidade ${item.quantity}`}
+                            className="absolute -right-1.5 -top-1.5 z-10 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-ink-strong"
+                            style={{
+                              background: "var(--gradient-brand)",
+                              fontFamily: "var(--font-family-inter)",
+                              fontSize: "var(--text-caption)",
+                              fontWeight: 800,
+                              boxShadow: "0 4px 12px -4px rgba(225,6,0,0.55)",
+                            }}
+                          >
+                            {item.quantity}
+                          </span>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="line-clamp-2 text-ink" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, lineHeight: 1.3 }}>
+                          {item.name}
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: "var(--font-family-inter)",
+                            fontSize: "var(--text-caption)",
+                            fontWeight: 700,
+                            color: item.isGift ? "#22c55e" : "rgba(var(--foreground-rgb), 0.85)",
+                            marginTop: "2px",
+                          }}
+                        >
+                          {item.isGift ? "Brinde · Grátis" : item.price}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="h-px bg-white/5 mb-4" />
+
+                {/* Cupom inline (CheckoutPage) */}
+                <div className="mb-3" data-section="coupon">
+                  <button
+                    onClick={() => setCouponOpen((v) => !v)}
+                    className={`flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2.5 min-h-[44px] md:min-h-[24px] transition-colors ${
+                      appliedCoupon ? "rounded-card-sm border border-green-500/25 bg-green-500/[0.06]" : "rounded-card-sm border border-edge-subtle hover:border-edge hover:bg-white/[0.03]"
+                    }`}
+                    aria-expanded={couponOpen}
+                  >
+                    <span className="flex items-center gap-2">
+                      {appliedCoupon ? <Check size={13} className="text-green-500" strokeWidth={2.4} /> : <Ticket size={13} className="text-ink-muted" strokeWidth={2} />}
+                      <span
+                        className={appliedCoupon ? "text-green-400" : "text-ink-muted"}
+                        style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: appliedCoupon ? 700 : 600 }}
+                      >
+                        {appliedCoupon ? `${appliedCoupon} aplicado` : "Tenho um cupom"}
+                      </span>
+                      {appliedCoupon && (
+                        <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "rgba(34,197,94,0.75)" }}>
+                          −{discountPct}%
+                        </span>
+                      )}
+                    </span>
+                    <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: appliedCoupon ? "rgba(34,197,94,0.75)" : "rgba(var(--foreground-rgb), 0.4)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                      {appliedCoupon ? "Alterar" : "Adicionar"}
+                    </span>
+                  </button>
+                  <AnimatePresence>
+                    {couponOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.22 }}
+                        className="overflow-hidden"
+                      >
+                        {/* p-[2px]: folga para o anel de foco não encostar na
+                            borda do container recortado pelo overflow-hidden. */}
+                        <div className="mt-2 flex gap-2 p-[2px]">
+                          <input
+                            type="text"
+                            placeholder="Ex: PCYES10"
+                            value={coupon}
+                            onChange={(e) => { setCoupon(e.target.value.toUpperCase()); setCouponError(""); }}
+                            onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
+                            aria-label="Código do cupom"
+                            className="pcyes-coupon-input flex-1 rounded-[var(--radius-card-sm)] px-3 py-2 text-ink-strong placeholder:text-ink-subtle focus:outline-none"
+                            style={{
+                              background: "rgba(var(--foreground-rgb), 0.03)",
+                              border: "1px solid rgba(var(--foreground-rgb), 0.1)",
+                              fontFamily: "var(--font-family-inter)",
+                              fontSize: "var(--text-caption)",
+                              fontWeight: 600,
+                            }}
+                          />
+                          <button
+                            onClick={handleApplyCoupon}
+                            disabled={!coupon.trim()}
+                            className="cursor-pointer rounded-[var(--radius-card-sm)] px-4 py-2 min-h-[44px] md:min-h-[24px] text-ink-strong transition-transform hover:scale-[1.02] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
+                            style={{
+                              background: "var(--gradient-brand)",
+                              fontFamily: "var(--font-family-inter)",
+                              fontSize: "var(--text-caption)",
+                              fontWeight: 800,
+                              letterSpacing: "0.06em",
+                              textTransform: "uppercase",
+                              boxShadow: "var(--shadow-brand-cta-sm)",
+                            }}
+                          >
+                            Aplicar
+                          </button>
+                        </div>
+                        {couponError && (
+                          <p className="mt-2 text-primary" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
+                            {couponError}
+                          </p>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* PC Points inline (CheckoutPage) */}
+                <div
+                  data-section="points"
+                  className={`mb-4 overflow-hidden rounded-card-sm transition-colors ${
+                    pointsApplied
+                      ? "border border-yellow-300/40 bg-yellow-300/[0.05]"
+                      : "border border-edge-subtle hover:border-yellow-300/35 hover:bg-yellow-300/[0.05]"
+                  }`}
+                >
+                  <button
+                    onClick={() => { setPointsApplied((v) => !v); setPointsOpen((v) => !v); }}
+                    className="flex w-full cursor-pointer items-center justify-between gap-2 px-3 py-2.5 min-h-[44px] md:min-h-[24px]"
+                    aria-expanded={pointsApplied}
+                  >
+                    <span className="flex items-center gap-2">
+                      <PcyesCoinSmall />
+                      <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.78)" }}>
+                        PC Points
+                      </span>
+                      <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, color: "rgba(var(--foreground-rgb), 0.4)" }}>
+                        {userPoints} pts
+                      </span>
+                    </span>
+                    <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.1em", color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.45)", textTransform: "uppercase" }}>
+                      {pointsApplied ? "Aplicado" : "Usar"}
+                    </span>
+                  </button>
+                  <AnimatePresence>
+                    {pointsApplied && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.22 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="border-t px-3 pb-3 pt-3" style={{ borderColor: "rgba(250,204,21,0.2)" }}>
+                          <div className="mb-2.5 flex items-center justify-between gap-3">
+                            <NumberStepperRed
+                              value={pointsToUse}
+                              onChange={setPointsToUse}
+                              max={maxPointsRedeem}
+                              step={10}
+                            />
+                            <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", color: "rgba(var(--foreground-rgb), 0.5)", fontWeight: 600 }}>
+                              de {maxPointsRedeem}
+                            </span>
+                          </div>
+                          <input
+                            type="range"
+                            min={0}
+                            max={maxPointsRedeem}
+                            step={10}
+                            value={pointsToUse}
+                            onChange={(e) => setPointsToUse(Number(e.target.value))}
+                            aria-label="Slider de pontos PCYES"
+                            className="w-full"
+                            style={{ accentColor: "#facc15" }}
+                          />
+                          <p className="mt-2 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                            Economia: <span style={{ color: "#facc15", fontWeight: 800 }}>{formatBRL(pointsValue)}</span>
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div className="mb-4 space-y-2">
+                  <Line label="Subtotal" value={formatBRL(subtotal)} amount={subtotal} />
+                  {discountValue > 0 && <Line label={`Cupom ${appliedCoupon}`} value={`−${formatBRL(discountValue)}`} amount={discountValue} positive />}
+                  <Line label="Frete" value={shippingPrice === 0 ? "Grátis" : formatBRL(shippingPrice)} positive={shippingPrice === 0} />
+                  {pointsValue > 0 && (
+                    <div className="flex items-center justify-between">
+                      <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "#facc15", fontWeight: 600 }}>
+                        PC Points
+                      </span>
+                      <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "#facc15", fontWeight: 700 }}>
+                        −{formatBRL(pointsValue)}
+                      </span>
+                    </div>
+                  )}
+                  {pixDiscount > 0 && <Line label="Desconto PIX (10%)" value={`−${formatBRL(pixDiscount)}`} amount={pixDiscount} positive />}
+                </div>
+
+                <div
+                  className="rounded-[var(--radius-card-sm)] p-4"
+                  style={{ background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}
+                >
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                      Total
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-family-figtree)",
+                        fontSize: "var(--text-xl)",
+                        fontWeight: 800,
+                        letterSpacing: "-0.02em",
+                        color: payment === "pix" ? "#22c55e" : "#fff",
+                      }}
+                    >
+                      <span aria-hidden="true">{formatBRL(total)}</span>
+                      <span className="sr-only">Total, {formatBRLSpoken(total)}</span>
+                    </span>
+                  </div>
+                  {payment !== "pix" && (
+                    <p className="mt-1 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                      ou no PIX por {formatBRL(total - (subtotal - discountValue) * 0.1)}{" "}
+                      <span className="text-green-400 font-bold">−10%</span>
+                    </p>
+                  )}
+                </div>
+
+                <div className="mt-5 flex flex-col gap-2 text-ink-subtle" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
+                  <span className="inline-flex items-center gap-1.5">
+                    <ShieldCheck size={12} strokeWidth={2} className="text-green-500" />
+                    Compra 100% segura · SSL
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Truck size={12} strokeWidth={2} className="text-ink-muted" />
+                    Frete grátis acima de R$ 299
+                  </span>
+                </div>
+    </>
+  );
+
   return (
     <div className={className}>
       <label
@@ -365,6 +632,23 @@ export function CheckoutPage() {
   const [couponError, setCouponError] = useState("");
   const [couponOpen, setCouponOpen] = useState(false);
   const [pointsOpen, setPointsOpen] = useState(false);
+  // Resumo do pedido no mobile: fica escondido atrás de "Ver detalhes" na barra
+  // fixa, para a pessoa focar só na etapa atual. No desktop segue na coluna.
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const detailsSheetRef = useRef<HTMLDivElement>(null);
+
+  // Abre o resumo e, quando vem de um atalho da barra, rola até a seção pedida.
+  // A busca é feita dentro do sheet porque a coluna do desktop segue no DOM.
+  const openDetails = (section?: "coupon" | "points") => {
+    setDetailsOpen(true);
+    if (section === "coupon") setCouponOpen(true);
+    if (!section) return;
+    window.setTimeout(() => {
+      detailsSheetRef.current
+        ?.querySelector(`[data-section="${section}"]`)
+        ?.scrollIntoView({ block: "center", behavior: "smooth" });
+    }, 260);
+  };
   const userPoints = 1479;
   const [orderConfirmed, setOrderConfirmed] = useState(false);
   const [confirmedSnapshot, setConfirmedSnapshot] = useState<{
@@ -686,7 +970,59 @@ export function CheckoutPage() {
             </Link>
           </div>
         </div>
-        <Footer />
+        {/* Resumo do pedido no mobile — abre de baixo para cima a partir da barra
+          fixa. z abaixo dos modais (z-[120]) e acima da barra (z-40). */}
+      <AnimatePresence>
+        {detailsOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setDetailsOpen(false)}
+            className="fixed inset-0 z-[110] flex items-end justify-center bg-black/70 backdrop-blur-sm lg:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Resumo do pedido"
+          >
+            <motion.div
+              ref={detailsSheetRef}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-[520px] max-h-[86vh] overflow-y-auto"
+              style={{
+                background: "var(--surface-1)",
+                borderRadius: "20px 20px 0 0",
+                borderTop: "1px solid rgba(var(--foreground-rgb), 0.08)",
+                boxShadow: "0 -40px 100px rgba(0,0,0,0.55)",
+              }}
+            >
+              <div
+                className="sticky top-0 z-10 flex items-center justify-between gap-3 px-5 pb-3 pt-4"
+                style={{ background: "var(--surface-1)" }}
+              >
+                <span
+                  className="text-primary"
+                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.3em" }}
+                >
+                  // RESUMO
+                </span>
+                <button
+                  onClick={() => setDetailsOpen(false)}
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink-strong"
+                  aria-label="Ver menos"
+                >
+                  <X size={16} strokeWidth={2} />
+                </button>
+              </div>
+              <div className="px-5 pb-6">{orderSummary}</div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <Footer />
       </>
     );
   }
@@ -1063,7 +1399,7 @@ export function CheckoutPage() {
 
   return (
     <>
-      <div className="pt-3 md:pt-[88px] pb-24 lg:pb-0" style={{ background: "var(--surface-0)", minHeight: "100vh" }}>
+      <div className="pt-3 md:pt-[88px] pb-36 lg:pb-0" style={{ background: "var(--surface-0)", minHeight: "100vh" }}>
         <div className="mx-auto max-w-[1320px] px-5 py-4 md:px-8 md:py-6">
           <Link
             to="/carrinho"
@@ -1902,7 +2238,7 @@ export function CheckoutPage() {
               </div>
             </div>
 
-            <div className="lg:sticky lg:top-[150px] lg:self-start">
+            <div className="hidden lg:block lg:sticky lg:top-[150px] lg:self-start">
               <div
                 className="overflow-hidden p-6"
                 style={{
@@ -1919,266 +2255,7 @@ export function CheckoutPage() {
                   // RESUMO
                 </p>
 
-                {/* pt/pr dão respiro para o badge de qtd (-top/-right) não ser
-                    cortado pelo overflow do scroll (overflow-y-auto clipa X também). */}
-                <div className="mb-4 max-h-[280px] space-y-3 overflow-y-auto pl-0.5 pr-2 pt-2">
-                  {items.map((item) => (
-                    <div key={item.cartKey} className="flex items-center gap-3">
-                      <div className="relative h-14 w-14 flex-shrink-0">
-                        <div
-                          className="h-full w-full overflow-hidden"
-                          style={{
-                            borderRadius: "var(--radius-card-sm)",
-                            background: "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.08) 0%, rgba(var(--foreground-rgb), 0.02) 100%)",
-                            border: "1px solid rgba(var(--foreground-rgb), 0.08)",
-                            boxShadow: "inset 0 1px 0 rgba(var(--foreground-rgb), 0.04)",
-                          }}
-                        >
-                          <ImageWithFallback src={item.image} alt={item.name} className={`h-full w-full ${artFitClass(item.image, "p-1.5")}`} />
-                        </div>
-                        {item.quantity > 1 && (
-                          <span
-                            aria-label={`Quantidade ${item.quantity}`}
-                            className="absolute -right-1.5 -top-1.5 z-10 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-ink-strong"
-                            style={{
-                              background: "var(--gradient-brand)",
-                              fontFamily: "var(--font-family-inter)",
-                              fontSize: "var(--text-caption)",
-                              fontWeight: 800,
-                              boxShadow: "0 4px 12px -4px rgba(225,6,0,0.55)",
-                            }}
-                          >
-                            {item.quantity}
-                          </span>
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="line-clamp-2 text-ink" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, lineHeight: 1.3 }}>
-                          {item.name}
-                        </p>
-                        <p
-                          style={{
-                            fontFamily: "var(--font-family-inter)",
-                            fontSize: "var(--text-caption)",
-                            fontWeight: 700,
-                            color: item.isGift ? "#22c55e" : "rgba(var(--foreground-rgb), 0.85)",
-                            marginTop: "2px",
-                          }}
-                        >
-                          {item.isGift ? "Brinde · Grátis" : item.price}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="h-px bg-white/5 mb-4" />
-
-                {/* Cupom inline (CheckoutPage) */}
-                <div className="mb-3">
-                  <button
-                    onClick={() => setCouponOpen((v) => !v)}
-                    className={`flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2.5 min-h-[44px] md:min-h-[24px] transition-colors ${
-                      appliedCoupon ? "rounded-card-sm border border-green-500/25 bg-green-500/[0.06]" : "rounded-card-sm border border-edge-subtle hover:border-edge hover:bg-white/[0.03]"
-                    }`}
-                    aria-expanded={couponOpen}
-                  >
-                    <span className="flex items-center gap-2">
-                      {appliedCoupon ? <Check size={13} className="text-green-500" strokeWidth={2.4} /> : <Ticket size={13} className="text-ink-muted" strokeWidth={2} />}
-                      <span
-                        className={appliedCoupon ? "text-green-400" : "text-ink-muted"}
-                        style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: appliedCoupon ? 700 : 600 }}
-                      >
-                        {appliedCoupon ? `${appliedCoupon} aplicado` : "Tenho um cupom"}
-                      </span>
-                      {appliedCoupon && (
-                        <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "rgba(34,197,94,0.75)" }}>
-                          −{discountPct}%
-                        </span>
-                      )}
-                    </span>
-                    <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: appliedCoupon ? "rgba(34,197,94,0.75)" : "rgba(var(--foreground-rgb), 0.4)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                      {appliedCoupon ? "Alterar" : "Adicionar"}
-                    </span>
-                  </button>
-                  <AnimatePresence>
-                    {couponOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.22 }}
-                        className="overflow-hidden"
-                      >
-                        {/* p-[2px]: folga para o anel de foco não encostar na
-                            borda do container recortado pelo overflow-hidden. */}
-                        <div className="mt-2 flex gap-2 p-[2px]">
-                          <input
-                            type="text"
-                            placeholder="Ex: PCYES10"
-                            value={coupon}
-                            onChange={(e) => { setCoupon(e.target.value.toUpperCase()); setCouponError(""); }}
-                            onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
-                            aria-label="Código do cupom"
-                            className="pcyes-coupon-input flex-1 rounded-[var(--radius-card-sm)] px-3 py-2 text-ink-strong placeholder:text-ink-subtle focus:outline-none"
-                            style={{
-                              background: "rgba(var(--foreground-rgb), 0.03)",
-                              border: "1px solid rgba(var(--foreground-rgb), 0.1)",
-                              fontFamily: "var(--font-family-inter)",
-                              fontSize: "var(--text-caption)",
-                              fontWeight: 600,
-                            }}
-                          />
-                          <button
-                            onClick={handleApplyCoupon}
-                            disabled={!coupon.trim()}
-                            className="cursor-pointer rounded-[var(--radius-card-sm)] px-4 py-2 min-h-[44px] md:min-h-[24px] text-ink-strong transition-transform hover:scale-[1.02] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
-                            style={{
-                              background: "var(--gradient-brand)",
-                              fontFamily: "var(--font-family-inter)",
-                              fontSize: "var(--text-caption)",
-                              fontWeight: 800,
-                              letterSpacing: "0.06em",
-                              textTransform: "uppercase",
-                              boxShadow: "var(--shadow-brand-cta-sm)",
-                            }}
-                          >
-                            Aplicar
-                          </button>
-                        </div>
-                        {couponError && (
-                          <p className="mt-2 text-primary" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                            {couponError}
-                          </p>
-                        )}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                {/* PC Points inline (CheckoutPage) */}
-                <div
-                  className={`mb-4 overflow-hidden rounded-card-sm transition-colors ${
-                    pointsApplied
-                      ? "border border-yellow-300/40 bg-yellow-300/[0.05]"
-                      : "border border-edge-subtle hover:border-yellow-300/35 hover:bg-yellow-300/[0.05]"
-                  }`}
-                >
-                  <button
-                    onClick={() => { setPointsApplied((v) => !v); setPointsOpen((v) => !v); }}
-                    className="flex w-full cursor-pointer items-center justify-between gap-2 px-3 py-2.5 min-h-[44px] md:min-h-[24px]"
-                    aria-expanded={pointsApplied}
-                  >
-                    <span className="flex items-center gap-2">
-                      <PcyesCoinSmall />
-                      <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.78)" }}>
-                        PC Points
-                      </span>
-                      <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, color: "rgba(var(--foreground-rgb), 0.4)" }}>
-                        {userPoints} pts
-                      </span>
-                    </span>
-                    <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.1em", color: pointsApplied ? "#facc15" : "rgba(var(--foreground-rgb), 0.45)", textTransform: "uppercase" }}>
-                      {pointsApplied ? "Aplicado" : "Usar"}
-                    </span>
-                  </button>
-                  <AnimatePresence>
-                    {pointsApplied && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.22 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="border-t px-3 pb-3 pt-3" style={{ borderColor: "rgba(250,204,21,0.2)" }}>
-                          <div className="mb-2.5 flex items-center justify-between gap-3">
-                            <NumberStepperRed
-                              value={pointsToUse}
-                              onChange={setPointsToUse}
-                              max={maxPointsRedeem}
-                              step={10}
-                            />
-                            <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", color: "rgba(var(--foreground-rgb), 0.5)", fontWeight: 600 }}>
-                              de {maxPointsRedeem}
-                            </span>
-                          </div>
-                          <input
-                            type="range"
-                            min={0}
-                            max={maxPointsRedeem}
-                            step={10}
-                            value={pointsToUse}
-                            onChange={(e) => setPointsToUse(Number(e.target.value))}
-                            aria-label="Slider de pontos PCYES"
-                            className="w-full"
-                            style={{ accentColor: "#facc15" }}
-                          />
-                          <p className="mt-2 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                            Economia: <span style={{ color: "#facc15", fontWeight: 800 }}>{formatBRL(pointsValue)}</span>
-                          </p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                <div className="mb-4 space-y-2">
-                  <Line label="Subtotal" value={formatBRL(subtotal)} amount={subtotal} />
-                  {discountValue > 0 && <Line label={`Cupom ${appliedCoupon}`} value={`−${formatBRL(discountValue)}`} amount={discountValue} positive />}
-                  <Line label="Frete" value={shippingPrice === 0 ? "Grátis" : formatBRL(shippingPrice)} positive={shippingPrice === 0} />
-                  {pointsValue > 0 && (
-                    <div className="flex items-center justify-between">
-                      <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "#facc15", fontWeight: 600 }}>
-                        PC Points
-                      </span>
-                      <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "#facc15", fontWeight: 700 }}>
-                        −{formatBRL(pointsValue)}
-                      </span>
-                    </div>
-                  )}
-                  {pixDiscount > 0 && <Line label="Desconto PIX (10%)" value={`−${formatBRL(pixDiscount)}`} amount={pixDiscount} positive />}
-                </div>
-
-                <div
-                  className="rounded-[var(--radius-card-sm)] p-4"
-                  style={{ background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}
-                >
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                      Total
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-family-figtree)",
-                        fontSize: "var(--text-xl)",
-                        fontWeight: 800,
-                        letterSpacing: "-0.02em",
-                        color: payment === "pix" ? "#22c55e" : "#fff",
-                      }}
-                    >
-                      <span aria-hidden="true">{formatBRL(total)}</span>
-                      <span className="sr-only">Total, {formatBRLSpoken(total)}</span>
-                    </span>
-                  </div>
-                  {payment !== "pix" && (
-                    <p className="mt-1 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                      ou no PIX por {formatBRL(total - (subtotal - discountValue) * 0.1)}{" "}
-                      <span className="text-green-400 font-bold">−10%</span>
-                    </p>
-                  )}
-                </div>
-
-                <div className="mt-5 flex flex-col gap-2 text-ink-subtle" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                  <span className="inline-flex items-center gap-1.5">
-                    <ShieldCheck size={12} strokeWidth={2} className="text-green-500" />
-                    Compra 100% segura · SSL
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Truck size={12} strokeWidth={2} className="text-ink-muted" />
-                    Frete grátis acima de R$ 299
-                  </span>
-                </div>
+                {orderSummary}
               </div>
             </div>
           </div>
@@ -2188,6 +2265,42 @@ export function CheckoutPage() {
       {/* Mobile fixed bottom action bar — total + step CTA. lg:hidden, abaixo dos modais (z-[120]).
           Ancorada acima do aviso de cookies, que é fixed num z maior. Ver `--cookie-h`. */}
       <div style={{ bottom: "var(--cookie-h, 0px)" }} className="fixed left-0 right-0 z-40 lg:hidden">
+        <div
+          className="flex items-center gap-2 border-t border-edge px-4 py-2"
+          style={{ background: "rgba(14,14,14,0.95)", backdropFilter: "blur(20px)" }}
+        >
+          <button
+            onClick={() => openDetails()}
+            className="inline-flex cursor-pointer items-center gap-1.5 text-ink-muted transition-colors hover:text-ink-strong"
+            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.04em", minHeight: 32 }}
+            aria-expanded={detailsOpen}
+          >
+            <ChevronUp size={12} strokeWidth={2.6} />
+            Ver detalhes
+          </button>
+          <span className="ml-auto flex items-center gap-1.5">
+            <button
+              onClick={() => openDetails("coupon")}
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 transition-colors ${
+                appliedCoupon ? "border-green-500/30 bg-green-500/[0.08] text-green-400" : "border-edge-subtle text-ink-muted hover:border-edge hover:text-ink"
+              }`}
+              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, minHeight: 32 }}
+            >
+              <Ticket size={11} strokeWidth={2.2} />
+              {appliedCoupon ? appliedCoupon : "Cupom"}
+            </button>
+            <button
+              onClick={() => openDetails("points")}
+              className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 transition-colors ${
+                pointsApplied ? "border-yellow-300/40 bg-yellow-300/[0.08]" : "border-edge-subtle text-ink-muted hover:border-edge hover:text-ink"
+              }`}
+              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, minHeight: 32, color: pointsApplied ? "#facc15" : undefined }}
+            >
+              <PcyesCoinSmall size={12} />
+              Points
+            </button>
+          </span>
+        </div>
         <div
           className="flex items-center gap-3 border-t border-edge px-4 py-3"
           style={{ background: "rgba(14,14,14,0.95)", backdropFilter: "blur(20px)" }}
