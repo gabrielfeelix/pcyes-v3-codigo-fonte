@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router";
+import { Link } from "react-router";
 import { useTheme } from "./ThemeProvider";
 import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -118,32 +118,6 @@ function SocialIcon({ label }: { label: (typeof socialLinks)[number]["label"] })
 export function Footer() {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
-  const { pathname } = useLocation();
-  const isCheckout = pathname === "/checkout";
-
-  if (isCheckout) {
-    return (
-      <footer className={`${isDark ? "bg-surface-0" : "bg-[#f5f5f5]"} border-t ${isDark ? "border-edge-subtle" : "border-foreground/10"} text-foreground py-12 mt-auto`}>
-        <div className="mx-auto max-w-5xl px-5 md:px-8">
-          <div className="flex flex-col items-center justify-center gap-6 text-center">
-            <Link to="/" className="hover:opacity-80 transition-opacity" aria-label="PCYES">
-              <ImageWithFallback src={brandLogo} alt="PCYES" className="h-[34px] w-auto object-contain" />
-            </Link>
-            <p className={`max-w-md text-[var(--text-sm)] ${isDark ? "text-foreground/50" : "text-foreground/60"}`} style={{ fontFamily: "var(--font-family-inter)", lineHeight: "1.6" }}>
-              A PCYES nasceu para impulsionar a performance dos gamers e profissionais, entregando produtos de alta qualidade, tecnologia e design inovador para o seu setup.
-            </p>
-            <div className="pt-6">
-              <ImageWithFallback src={paymentMethodsImage} alt="Formas de pagamento PCYES" className="h-auto w-[250px] max-w-full object-contain opacity-50 hover:opacity-80 transition-opacity" />
-            </div>
-            <p className={isDark ? "text-foreground/30 mt-2" : "text-foreground/40 mt-2"} style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-              &copy; {new Date().getFullYear()} Oderço Distribuidora | Todos os direitos reservados.
-            </p>
-          </div>
-        </div>
-      </footer>
-    );
-  }
-
   return (
     <footer className={`${isDark ? "bg-surface-0" : "bg-[#f5f5f5]"} border-t ${isDark ? "border-edge-subtle" : "border-foreground/10"} text-foreground`}>
       <div className="mx-auto max-w-[1434px] px-5 pt-[65px] pb-4 md:px-12 xl:px-0">
