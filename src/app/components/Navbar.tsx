@@ -1363,7 +1363,14 @@ export function Navbar() {
   return (
     <>
       {/* Header wrapper with unified hover */}
-      <div ref={headerWrapRef} className="fixed left-0 right-0 z-50" style={{ top: collapsedNow ? 0 : "var(--announce-h, 40px)", transition: "top .28s ease" }} onMouseEnter={() => setPromoHovered(true)} onMouseLeave={() => setPromoHovered(false)}>
+      <div ref={headerWrapRef} className="fixed left-0 right-0 z-50" style={{
+        top: "var(--announce-h, 40px)",
+        /* Sobe com transform, igual à faixa de aviso (.announce-bar): com
+           `top` animado aqui e transform lá, as duas andavam em ritmos
+           diferentes e abria uma fresta entre elas durante a animação. */
+        transform: collapsedNow ? "translateY(calc(-1 * var(--announce-h, 40px)))" : "translateY(0)",
+        transition: "transform .28s ease",
+      }} onMouseEnter={() => setPromoHovered(true)} onMouseLeave={() => setPromoHovered(false)}>
         {/* Promo banner */}
         <AnimatePresence>
           {!promoDismissed && showExpanded && showPromoBanner && (
