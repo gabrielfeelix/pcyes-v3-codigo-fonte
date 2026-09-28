@@ -440,6 +440,9 @@ export function CheckoutPage() {
   const baseTotal = subtotal - discountValue + shippingPrice - pointsValue;
   const pixDiscount = payment === "pix" ? Math.max(0, (subtotal - discountValue - pointsValue)) * 0.1 : 0;
   const total = baseTotal - pixDiscount;
+  // Mesmo total com o desconto do Pix, calculado à parte: é o preço que a
+  // vitrine mostra, e aparece como alternativa quando outra forma está escolhida.
+  const pixTotal = baseTotal - Math.max(0, subtotal - discountValue - pointsValue) * 0.1;
 
   const handleApplyCoupon = () => {
     const c = coupon.trim().toUpperCase();
@@ -1320,8 +1323,11 @@ export function CheckoutPage() {
                   style={{ background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}
                 >
                   <div className="flex items-baseline justify-between">
-                    <span className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                      Total
+                    <span
+                      className={payment === "pix" ? "" : "text-ink-muted"}
+                      style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: payment === "pix" ? "#22c55e" : undefined }}
+                    >
+                      {payment === "pix" ? "Total no Pix" : "Total"}
                     </span>
                     <span
                       style={{
@@ -1336,10 +1342,13 @@ export function CheckoutPage() {
                       <span className="sr-only">Total, {formatBRLSpoken(total)}</span>
                     </span>
                   </div>
-                  {payment !== "pix" && (
-                    <p className="mt-1 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                      ou no PIX por {formatBRL(total - (subtotal - discountValue) * 0.1)}{" "}
-                      <span className="text-green-400 font-bold">−10%</span>
+                  {payment === "pix" ? (
+                    <p className="mt-1 text-right text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                      ou {formatBRL(baseTotal)} no cartão, em até 10× de {formatBRL(baseTotal / 10)}
+                    </p>
+                  ) : (
+                    <p className="mt-1 text-right text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                      no Pix sai por <span className="font-bold text-green-400">{formatBRL(pixTotal)}</span>
                     </p>
                   )}
                 </div>
@@ -2245,11 +2254,11 @@ export function CheckoutPage() {
               className="block text-ink-muted"
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" }}
             >
-              Total
+              {payment === "pix" ? "Total no Pix" : "Total"}
             </span>
             <span
               className="block text-ink-strong"
-              style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1 }}
+              style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1, color: payment === "pix" ? "#22c55e" : undefined }}
             >
               {formatBRL(total)}
             </span>

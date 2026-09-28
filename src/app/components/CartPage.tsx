@@ -924,11 +924,15 @@ export function CartPage() {
 
                 {/* Total */}
                 <div className="mb-5 rounded-[var(--radius-card-sm)] p-4" style={{ background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}>
+                  {/* O número grande é o do Pix, o mesmo que a vitrine e a PDP
+                      mostram. Com o preço cheio em destaque, o total parecia
+                      subir entre a PDP e o carrinho e só "voltar" quando a
+                      pessoa escolhia Pix no checkout. */}
                   <div className="mb-1 flex items-baseline justify-between">
-                    <span className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                      Total
+                    <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#22c55e" }}>
+                      Total no Pix
                     </span>
-                    <Price value={total} label="Total" className="text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 800, letterSpacing: "-0.02em" }} />
+                    <Price value={totalPix} label="Total no Pix" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 800, color: "#22c55e", letterSpacing: "-0.02em" }} />
                   </div>
                   {/* O total só é fechado quando não há frete estimado dentro
                       dele. Com CEP informado, o número acima é estimativa e
@@ -938,14 +942,8 @@ export function CartPage() {
                       Com frete estimado para o CEP informado
                     </p>
                   )}
-                  <div className="mb-1 flex items-baseline justify-between">
-                    <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#22c55e" }}>
-                      no PIX
-                    </span>
-                    <Price value={totalPix} label="Total no PIX" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, color: "#22c55e", letterSpacing: "-0.02em" }} />
-                  </div>
                   <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                    ou 10× de {formatBRL(total / 10)} sem juros
+                    ou {formatBRL(total)} no cartão, em até 10× de {formatBRL(total / 10)} sem juros
                   </p>
                   {/* Dentro do card de total, porque é sobre ESTE pedido. */}
                   <div className="mt-3 border-t border-foreground/8 pt-3">
@@ -1152,13 +1150,13 @@ export function CartPage() {
               className="text-ink-muted"
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" }}
             >
-              Total
+              Total no Pix
             </p>
-            <p className="text-ink-strong">
+            <p>
               <Price
-                value={total}
-                label="Total"
-                style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1 }}
+                value={totalPix}
+                label="Total no Pix"
+                style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, color: "#22c55e", letterSpacing: "-0.02em", lineHeight: 1.1 }}
               />
             </p>
           </div>
