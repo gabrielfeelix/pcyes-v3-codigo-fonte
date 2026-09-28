@@ -2332,7 +2332,7 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
             Ninguém avaliou esse produto ainda
           </h2>
           <p className="mt-3 mx-auto text-foreground/50" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-base)", maxWidth: "46ch", lineHeight: 1.6 }}>
-            Se você já usou, conta como foi no seu setup. O que você escrever é o que a próxima pessoa vai ler antes de decidir.
+            Comprou? Conte como foi, sua opinião ajuda quem está decidindo agora.
           </p>
           <button
             onClick={() => setReviewModalOpen(true)}
