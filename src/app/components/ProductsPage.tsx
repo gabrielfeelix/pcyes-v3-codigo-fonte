@@ -1485,7 +1485,15 @@ export function ProductsPage() {
           </header>
 
           {/* ── Top control bar — full width above sidebar+grid ── */}
-          <div className="flex flex-col gap-4 mb-6 pb-4 border-b border-foreground/10 xl:flex-row xl:items-center xl:justify-between">
+          {/* No celular a barra gruda logo abaixo do header e acompanha quando
+              ele recolhe (--header-h), como na Tonante. Fica numa linha só,
+              Filtros e Ordenar: contagem, itens por página e grade/lista
+              aparecem do md pra cima. A sombra dura cobre, na cor do fundo, a
+              fresta de um frame enquanto o header anima. */}
+          <div
+            className="sticky z-30 -mx-5 mb-6 flex flex-row items-center justify-between gap-3 border-b border-foreground/10 px-5 py-2 shadow-[0_-48px_0_var(--surface-0)] md:-mx-8 md:flex-col md:items-stretch md:gap-4 md:px-8 md:pb-4 md:pt-0 lg:static lg:mx-0 lg:px-0 lg:shadow-none xl:flex-row xl:items-center xl:justify-between"
+            style={{ top: "var(--header-h, 156px)", background: "var(--surface-0)" }}
+          >
             <div className="flex min-w-0 flex-wrap items-center gap-4">
               <button onClick={() => setMobileFiltersOpen(true)}
                 className="lg:hidden flex items-center gap-2 px-4 py-2 min-h-[44px] border border-foreground/15 text-foreground/70 hover:text-foreground transition-colors"
@@ -1496,7 +1504,7 @@ export function ProductsPage() {
                   <span className="ml-1 w-5 h-5 rounded-full bg-foreground text-background flex items-center justify-center font-bold" style={{ fontSize: "var(--text-caption)" }}>{activeFilterCount}</span>
                 )}
               </button>
-              <span className="text-foreground/60" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
+              <span className="hidden text-foreground/60 md:inline" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
                 Mostrando <span className="text-foreground font-semibold">{filtered.length}</span> {filtered.length === 1 ? "produto" : "produtos"}
               </span>
             </div>
@@ -1530,7 +1538,7 @@ export function ProductsPage() {
                 </AnimatePresence>
               </div>
 
-              <div ref={itemsPerPageDropdownRef} className="relative flex items-center gap-2 text-foreground/70" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
+              <div ref={itemsPerPageDropdownRef} className="relative hidden items-center gap-2 text-foreground/70 md:flex" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
                 <span>Mostrar:</span>
                 <button
                   type="button"
@@ -1592,7 +1600,7 @@ export function ProductsPage() {
               </div>
 
               {/* Grid / List */}
-              <div className="flex border border-foreground/10 overflow-hidden" style={{ borderRadius: "var(--radius-button)" }}>
+              <div className="hidden border border-foreground/10 overflow-hidden md:flex" style={{ borderRadius: "var(--radius-button)" }}>
                 <button onClick={() => setGridMode("grid")}
                   className={`p-2 transition-colors ${gridMode === "grid" ? "bg-foreground/[0.08] text-foreground" : "text-foreground/40 hover:text-foreground/60"}`}
                   aria-label="Visualização em grade"
