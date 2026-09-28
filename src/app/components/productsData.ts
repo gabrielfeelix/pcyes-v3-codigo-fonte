@@ -1257,8 +1257,8 @@ const rawProducts: Product[] = [
     "name": "Cabo PCYES VGA 3+6 15 Pinos 30 Metros 1280x1024 Macho PVM36-30",
     "price": "R$ 59,90",
     "priceNum": 59.9,
-    "rating": 4.6,
-    "reviews": 152,
+    "rating": 0,
+    "reviews": 0,
     "category": "Periféricos",
     "subcategory": "Cabo",
     "tags": [

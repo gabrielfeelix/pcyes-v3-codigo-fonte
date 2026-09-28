@@ -1878,7 +1878,9 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
   newReviewPhotosRef.current = newReviewPhotos;
   useEffect(() => () => newReviewPhotosRef.current.forEach((photo) => URL.revokeObjectURL(photo.url)), []);
 
-  const [reviews, setReviews] = useState([
+  /* Produto com `reviews: 0` no catálogo abre sem nenhuma — é o que mostra o
+     estado vazio da seção. */
+  const [reviews, setReviews] = useState(product.reviews > 0 ? [
     {
       id: 1,
       user: "Ricardo M.",
@@ -1950,7 +1952,7 @@ function ReviewsSection({ product, isDark }: { product: any; isDark: boolean }) 
       ],
       likes: 5
     },
-  ]);
+  ] : []);
   const hasReviews = reviews.length > 0;
 
   const mediaReviews = reviews.filter((review) => review.images?.length);
@@ -3520,20 +3522,24 @@ export function ProductPage() {
                   />
                 ))}
               </div>
-              <span
-                className="inline-flex items-center min-h-[44px] md:min-h-[24px] text-foreground/70 font-semibold tabular-nums cursor-pointer hover:text-[#FFB800] transition-colors"
-                style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
-                onClick={scrollToReviews}
-              >
-                {product.rating.toFixed(1)}
-              </span>
-              <span className="text-foreground/15">·</span>
+              {product.reviews > 0 && (
+                <>
+                  <span
+                    className="inline-flex items-center min-h-[44px] md:min-h-[24px] text-foreground/70 font-semibold tabular-nums cursor-pointer hover:text-[#FFB800] transition-colors"
+                    style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
+                    onClick={scrollToReviews}
+                  >
+                    {product.rating.toFixed(1)}
+                  </span>
+                  <span className="text-foreground/15">·</span>
+                </>
+              )}
               <span
                 className="inline-flex items-center min-h-[44px] md:min-h-[24px] text-foreground/45 hover:text-foreground/65 cursor-pointer transition-colors"
                 style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
                 onClick={scrollToReviews}
               >
-                {product.reviews} avaliações
+                {product.reviews > 0 ? `${product.reviews} avaliações` : "Sem avaliações ainda"}
               </span>
               {/* Quanto este produto rende — na mesma linha que a página já usa
                   para qualificar o produto, e antes do bloco de compra. */}
