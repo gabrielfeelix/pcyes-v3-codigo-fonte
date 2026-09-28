@@ -140,8 +140,10 @@ function PaymentOption({
   color?: string;
   accentBg?: string;
 }) {
-  const accent = color ?? "var(--primary)";
-  const activeBadgeBg = accentBg ?? "rgba(255,43,46,0.14)";
+  /* Selecionado é verde em todas as formas, não só no Pix: borda vermelha
+     em volta de cartão ou boleto lia como erro de preenchimento. */
+  const accent = color ?? "#22c55e";
+  const activeBadgeBg = accentBg ?? "rgba(34,197,94,0.14)";
   return (
     <button
       onClick={onClick}
@@ -150,7 +152,7 @@ function PaymentOption({
         borderRadius: "var(--radius-card-sm)",
         background: active ? "rgba(var(--foreground-rgb), 0.06)" : "rgba(var(--foreground-rgb), 0.02)",
         border: active ? `1.5px solid ${accent}` : "1px solid rgba(var(--foreground-rgb), 0.08)",
-        boxShadow: active ? `0 18px 40px -20px ${color ?? "rgba(225,6,0,0.5)"}, inset 0 1px 0 rgba(var(--foreground-rgb), 0.04)` : "none",
+        boxShadow: active ? `0 18px 40px -20px ${color ?? "rgba(34,197,94,0.5)"}, inset 0 1px 0 rgba(var(--foreground-rgb), 0.04)` : "none",
         color: active ? "#fff" : "rgba(var(--foreground-rgb), 0.65)",
         minHeight: 84,
       }}
@@ -1845,11 +1847,11 @@ export function CheckoutPage() {
                                         className="text-left p-3 transition-all cursor-pointer flex items-center gap-2.5 relative"
                                         style={{
                                           borderRadius: 12,
-                                          background: sel ? "rgba(255,43,46,0.08)" : "rgba(var(--foreground-rgb), 0.02)",
-                                          border: sel ? "1.5px solid rgba(255,43,46,0.45)" : "1px solid rgba(var(--foreground-rgb), 0.08)",
+                                          background: sel ? "rgba(34,197,94,0.08)" : "rgba(var(--foreground-rgb), 0.02)",
+                                          border: sel ? "1.5px solid rgba(34,197,94,0.45)" : "1px solid rgba(var(--foreground-rgb), 0.08)",
                                         }}
                                       >
-                                        <span className="flex items-center justify-center shrink-0" style={{ width: 16, height: 16, borderRadius: 9999, border: sel ? "5px solid var(--primary)" : "1.5px solid rgba(var(--foreground-rgb), 0.4)", background: sel ? "var(--primary)" : "transparent", boxShadow: sel ? "inset 0 0 0 2px #161617" : "none" }} />
+                                        <span className="flex items-center justify-center shrink-0" style={{ width: 16, height: 16, borderRadius: 9999, border: sel ? "5px solid #22c55e" : "1.5px solid rgba(var(--foreground-rgb), 0.4)", background: sel ? "#22c55e" : "transparent", boxShadow: sel ? "inset 0 0 0 2px #161617" : "none" }} />
                                         <div className="min-w-0 flex-1">
                                           <div className="flex items-center gap-2">
                                             <span className="text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase" }}>{c.brand}</span>
