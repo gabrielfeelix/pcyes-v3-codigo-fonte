@@ -20,10 +20,10 @@ interface Post {
   id: number;
   image: string;
   username: string;
-  /** O que a pessoa faz, em uma linha. Aparece embaixo do @. */
-  role: string;
-  /** Texto do "Sobre". Um parágrafo, tom de apresentação. */
-  about: string;
+  /** O que a pessoa faz, em uma linha. Aparece embaixo do @. Vazio = some. */
+  role?: string;
+  /** Texto do "Sobre". Um parágrafo, tom de apresentação. Vazio = o bloco some. */
+  about?: string;
   /**
    * Reenquadramento da foto, no formato do `object-position`.
    *
@@ -34,74 +34,18 @@ interface Post {
   imgPos?: string;
 }
 
+/* Fotos finais do design (Site V2), 1200×1600 (3:4). O @ saiu do nome do
+   arquivo e ainda não foi confirmado; `role` e `about` ficam vazios até o
+   marketing mandar a apresentação de cada criador — não inventar bio. */
 const posts: Post[] = [
-  {
-    id: 1,
-    image: "/influencers/alanzoka.png",
-    username: "alanzoka",
-    role: "Streamer, maior canal de games da Twitch BR",
-    about:
-      "Alan Ferreira transmite quase todo dia há mais de dez anos e construiu o maior canal de jogos do Brasil na Twitch. O formato mudou pouco nesse tempo: sessão longa, jogo do começo ao fim e conversa com o chat sem roteiro.",
-  },
-  {
-    id: 2,
-    image: "/influencers/yoda.png",
-    /* Foto deitada e ele está bem na direita do enquadramento: sem puxar, o
-       corte em pé pega só a bancada e corta o rosto. */
-    imgPos: "80% center",
-    username: "yoda",
-    role: "League of Legends, campeão do CBLOL",
-    about:
-      "Felipe Noronha saiu do competitivo de League of Legends, onde foi campeão do CBLOL em 2017, e virou um dos streamers mais assistidos do país. Fundou a SehLoiro, rede que reúne criadores de conteúdo, e leva a mesma leitura de jogo do palco para a transmissão.",
-  },
-  {
-    id: 3,
-    image: "/influencers/sofiaespanha.png",
-    username: "sofiaespanha",
-    role: "Valorant e conteúdo IRL, criadora da FURIA",
-    about:
-      "Sofia Espanha faz parte do time de criadores da FURIA e reúne milhões de seguidores entre TikTok e Twitch. Alterna partida de Valorant com transmissão de react e conteúdo do dia a dia, formato que trouxe muita gente de fora do público de jogo para o competitivo.",
-  },
-  {
-    id: 4,
-    image: "/influencers/nobru.png",
-    username: "nobru",
-    role: "Free Fire, jogador e fundador da Fluxo",
-    about:
-      "Bruno Goes saiu do competitivo de Free Fire para montar a própria organização. A Fluxo nasceu em 2021 e virou uma das casas mais seguidas do país, com time em várias modalidades e uma base que acompanha o dia a dia da equipe.",
-  },
-  {
-    id: 5,
-    image: "/influencers/luba.png",
-    username: "luba",
-    role: "YouTube, gameplay e humor",
-    about:
-      "Um dos canais de games mais antigos ainda ativos no YouTube brasileiro. Ficou conhecido pela edição rápida e pelo humor em cima da própria gameplay, fórmula que atravessou mais de uma geração de público.",
-  },
-  {
-    id: 6,
-    image: "/influencers/muca.png",
-    username: "mucahd",
-    role: "Minecraft, construção e desafio",
-    about:
-      "Muca produz série longa de Minecraft, entre mega construção e desafio, e faz parte da Creative Squad. Mantém canal separado só para as transmissões ao vivo, onde a construção acontece do zero na frente de quem está assistindo.",
-  },
-  {
-    id: 7,
-    image: "https://commons.wikimedia.org/wiki/Special:FilePath/IEM_2015_San_Jose_Day_1_-_70.jpg?width=900",
-    username: "fallen",
-    role: "Counter-Strike, capitão e AWPer",
-    about:
-      "Gabriel Toledo, o nome mais conhecido do Counter-Strike brasileiro. Capitaneou a geração que levou o país a dois títulos de Major e fundou a Games Academy para formar jogador novo. Segue competindo em alto nível mais de uma década depois da estreia.",
-  },
-  {
-    id: 8,
-    image: "https://commons.wikimedia.org/wiki/Special:FilePath/BETWAY_AIM_CHALLENGE_COLDZERA_screenshot.jpg?width=900",
-    username: "coldzera",
-    role: "Counter-Strike, dois anos como melhor do mundo",
-    about:
-      "Marcelo David foi eleito o melhor jogador do mundo em 2016 e 2017, feito que nenhum outro brasileiro repetiu. Ficou marcado pelo salto com AWP contra a Team Liquid, jogada que virou pôster do Counter-Strike competitivo.",
-  },
+  { id: 1, image: "/influencers/king.webp", username: "king" },
+  { id: 2, image: "/influencers/atri.webp", username: "atri" },
+  { id: 3, image: "/influencers/butterzinho.webp", username: "butterzinho" },
+  { id: 4, image: "/influencers/kaciane.webp", username: "kaciane" },
+  { id: 5, image: "/influencers/lucas-incrivel-filme.webp", username: "lucasincrivelfilme" },
+  { id: 6, image: "/influencers/paivinha.webp", username: "paivinha" },
+  { id: 7, image: "/influencers/projeto-trivia.webp", username: "projetotrivia" },
+  { id: 8, image: "/influencers/wesley.webp", username: "wesley" },
 ];
 
 export function InRealLifeSection() {
@@ -452,13 +396,17 @@ export function InRealLifeSection() {
                 >
                   @{selectedPost.username}
                 </span>
+                {selectedPost.role && (
                 <span
                   className="text-foreground/45 mt-1"
                   style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
                 >
                   {selectedPost.role}
                 </span>
+                )}
 
+                {selectedPost.about && (
+                <>
                 <span
                   className="text-foreground/25 block mt-7 mb-3 tracking-wider"
                   style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
@@ -471,6 +419,8 @@ export function InRealLifeSection() {
                 >
                   {selectedPost.about}
                 </p>
+                </>
+                )}
 
                 {/* Rodapé: diz onde a pessoa está na sequência e repete a
                     navegação em texto, para quem não associou as setas da foto
