@@ -3,39 +3,31 @@
 import { useMemo, useRef } from "react";
 import { useNavigate } from "react-router";
 import { motion, useInView } from "motion/react";
-import { ArrowRight, Zap } from "lucide-react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { useFavorites } from "./FavoritesContext";
 import { allProducts, type Product } from "./productsData";
 import {
+  getCatalogHref,
   getPrimaryProductImage,
-  getProductCategory,
-  getProductSubcategory,
   getShowcaseProducts,
-  getVisibleCatalogProducts,
 } from "./productPresentation";
 import { SectionHeader } from "./section";
 import { ProductCard } from "./ProductCard";
 
 /**
- * Arte do banner da direita.
+ * Arte do banner da direita — peça final do marketing (Site V2).
  *
- * PROVISÓRIA: o destino do slot é uma peça fechada do marketing. Até lá vale a
- * arte de setup montado, que é o que existe no repositório.
- *
- * O convite fala com quem NÃO entende de peça. Fotos de interior de gabinete
- * mostram justamente o que assusta esse público — cabos, dissipadores, placas —
- * e ainda vinham com logo de concorrente à mostra (ASUS, MSI). Esta mostra o
- * resultado: a máquina pronta, ligada, em cima da mesa.
- *
- * Variante `tall` (1000×1200, 5:6), não a `wide`: o slot é EM PÉ — no desktop
- * ele estica pela altura das duas fileiras de produto ao lado, algo perto de
- * 360×820. Com a arte larga, `object-cover` mostrava a cena quase inteira e
- * trazia junto o letreiro "PCYES Base", que nomeia uma linha específica num
- * banner genérico.
+ * Duas artes porque o slot muda de orientação: no desktop ele estica pela
+ * altura das duas fileiras de produto (900×1800, em pé); no celular a grade
+ * quebra e ele deita (1050×900). Chamada e botão já vêm desenhados na arte,
+ * então o card não sobrepõe texto nem escurecido — o card inteiro é o link.
  */
-const BANNER_ARTE = "/setups/tall/setup-base.webp";
+const BANNER_ARTE = {
+  desktop: "/banners/drops/upgrade-monitor-desktop.webp",
+  mobile: "/banners/drops/upgrade-monitor-mobile.webp",
+  href: getCatalogHref({ category: "Monitores" }),
+  alt: "Upgrade que seu setup merece. Linha de monitores gamer em até 10x sem juros",
+};
 
 /**
  * Piso de altura do banner.
@@ -90,20 +82,6 @@ export function DealsHighlight({
     }
     return escolhidos;
   }, [productIds]);
-
-  /* Contagem e preço de entrada das builds prontas vêm do catálogo. O card
-     anterior trazia "+200 itens" chumbado no código — o número real era 280. */
-  const setups = useMemo(
-    () =>
-      getVisibleCatalogProducts(allProducts).filter(
-        (p) => getProductCategory(p) === "Computadores" && getProductSubcategory(p) === "Setups",
-      ),
-    [],
-  );
-  const setupFrom = useMemo(
-    () => setups.reduce<Product | null>((min, p) => (!min || p.priceNum < min.priceNum ? p : min), null),
-    [setups],
-  );
 
   const handleAdd = (p: Product) =>
     addItem({
@@ -182,20 +160,13 @@ export function DealsHighlight({
 
           {/*
             DIREITA: um banner só, na altura das duas fileiras de produto.
-
-            É um SLOT DE ARTE. O conteúdo abaixo (texto + botões sobre a foto) é
-            o que existe hoje, mas o destino é receber uma peça fechada do
-            marketing — quando ela chegar, troca-se `BANNER_ARTE` e apagam-se as
-            camadas de texto; o enquadramento e a proporção não mudam.
-
-            Proporção: a coluna é 1/4 da grade e a altura vem das duas fileiras
-            de produto ao lado, então a arte precisa ser VERTICAL (algo perto de
-            3:4). Arte horizontal aqui vai sobrar nas laterais ou cortar o
-            assunto.
+            Slot de arte fechada: nada de texto por cima. Desktop em pé,
+            celular deitado — `<picture>` troca a arte no breakpoint `lg`,
+            o mesmo em que a grade passa a ter a coluna lateral.
           */}
           <motion.a
-            href="/monte-seu-pc?inicio=quiz"
-            onClick={(e) => { e.preventDefault(); navigate("/monte-seu-pc?inicio=quiz"); }}
+            href={BANNER_ARTE.href}
+            onClick={(e) => { e.preventDefault(); navigate(BANNER_ARTE.href); }}
             data-keep-dark
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -203,96 +174,20 @@ export function DealsHighlight({
             /* `stroke-hover-red` é o hover de banner do sistema (mesmo de
                BannerDuo e InRealLifeSection): o anel vermelho é o estado de
                HOVER, não de repouso. */
-            className="stroke-hover-red group/banner relative flex min-h-0 flex-col justify-end overflow-hidden border border-white/10 p-7 md:p-8"
+            className="stroke-hover-red group/banner relative block min-h-0 overflow-hidden border border-white/10"
             style={{ borderRadius: "var(--radius-card-xl)", minHeight: BANNER_MIN_H }}
-            aria-label="Monte seu PC — responder 3 perguntas"
+            aria-label={BANNER_ARTE.alt}
           >
-            {/* A arte ocupa o card inteiro. */}
-            <ImageWithFallback
-              src={BANNER_ARTE}
-              alt=""
-              aria-hidden
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover/banner:scale-[1.04]"
-              style={{ objectPosition: "100% 52%" }}
-            />
-            {/* Escurecimento neutro, sem tingir: a foto já é vermelha e um
-                degradê vermelho por cima chapava tudo num bloco só. Preto puro
-                segura a legibilidade e deixa a cor da arte aparecer. */}
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 34%, rgba(0,0,0,0.72) 68%, rgba(0,0,0,0.94) 100%)",
-              }}
-            />
-
-            <div className="relative">
-              {/* Sem eyebrow o banner não diz para onde leva, e destoa do resto
-                  da home, onde todo bloco abre com `// ALGUMA COISA`. */}
-              <span
-                className="mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5"
-                style={{
-                  background: "rgba(255,255,255,0.12)",
-                  border: "1px solid rgba(255,255,255,0.25)",
-                  backdropFilter: "blur(8px)",
-                  fontFamily: "var(--font-family-inter)",
-                  fontSize: "var(--text-caption)",
-                  fontWeight: 700,
-                  letterSpacing: "0.14em",
-                  color: "#fff",
-                  textTransform: "uppercase",
-                }}
-              >
-                <Zap size={11} strokeWidth={2.4} /> // Monte seu PC
-              </span>
-
-              <h3
-                className="text-ink-strong"
-                style={{
-                  fontFamily: "var(--font-family-figtree)",
-                  fontSize: "clamp(24px, 1.9vw, 32px)",
-                  fontWeight: 800,
-                  lineHeight: 1.05,
-                  letterSpacing: "-0.03em",
-                  textShadow: "0 4px 24px rgba(0,0,0,0.6)",
-                }}
-              >
-                Não sabe<br />qual PC comprar?
-              </h3>
-
-              <p
-                className="mt-3"
-                style={{
-                  fontFamily: "var(--font-family-inter)",
-                  fontSize: "var(--text-sm)",
-                  color: "rgba(255,255,255,0.82)",
-                  lineHeight: 1.5,
-                  textShadow: "0 2px 12px rgba(0,0,0,0.7)",
-                }}
-              >
-                Responde 3 perguntas e sai com a máquina certa — ou vê as {setups.length} builds
-                prontas{setupFrom ? `, a partir de ${setupFrom.price}` : ""}.
-              </p>
-
-              {/* Pílula, não `<button>`: o card inteiro já é o link, e um botão
-                  dentro de âncora é HTML inválido. */}
-              <span
-                className="mt-5 inline-flex items-center gap-2 whitespace-nowrap rounded-full px-5 py-3"
-                style={{
-                  background: "#ffffff",
-                  color: "#1a0000",
-                  fontFamily: "var(--font-family-inter)",
-                  fontSize: "var(--text-caption)",
-                  fontWeight: 800,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  boxShadow: "0 14px 32px -8px rgba(0,0,0,0.55)",
-                }}
-              >
-                Responder 3 perguntas
-                <ArrowRight size={14} strokeWidth={2.6} className="transition-transform group-hover/banner:translate-x-1" />
-              </span>
-            </div>
+            <picture>
+              <source media="(min-width: 1024px)" srcSet={BANNER_ARTE.desktop} />
+              <img
+                src={BANNER_ARTE.mobile}
+                alt={BANNER_ARTE.alt}
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover/banner:scale-[1.04]"
+                style={{ objectPosition: "center center" }}
+              />
+            </picture>
           </motion.a>
         </div>
       </div>
