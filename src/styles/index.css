@@ -1,3 +1,10 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
+
+/* Headroom do celular: com o header recolhido (Navbar marca o atributo),
+   a faixa de aviso sobe junto. */
+.announce-bar { transition: transform .28s ease; }
+@media (max-width: 1023px) {
+  html[data-header-collapsed] .announce-bar { transform: translateY(-100%); }
+}

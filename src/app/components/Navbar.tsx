@@ -595,6 +595,14 @@ export function Navbar() {
   const isHome = location.pathname === "/";
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchDropdownRef = useRef<HTMLDivElement>(null);
+  /* Headroom do celular (padrão da Tonante): rolando pra baixo a faixa de
+     aviso e a linha de busca recolhem e sobra a linha do logo; qualquer
+     rolagem pra cima traz tudo de volta. No desktop nada muda. */
+  const [mobileCollapsed, setMobileCollapsed] = useState(false);
+  const [mobileSearchReopened, setMobileSearchReopened] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const headerWrapRef = useRef<HTMLDivElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const searchPanelRef = useRef<HTMLDivElement>(null);
 
   // Countdown
@@ -620,6 +628,56 @@ export function Navbar() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const sync = () => setIsMobileViewport(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    let lastY = Math.max(0, window.scrollY);
+    const onScroll = () => {
+      const y = Math.max(0, window.scrollY);
+      const delta = y - lastY;
+      // Ignora tremida de trackpad/dedo: só conta movimento de 8px ou mais.
+      if (Math.abs(delta) < 8) return;
+      lastY = y;
+      const collapse = y > 80 && delta > 0;
+      setMobileCollapsed(collapse);
+      if (collapse) setMobileSearchReopened(false);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const collapsedNow = isMobileViewport && mobileCollapsed;
+  const mobileSearchHidden = collapsedNow && !mobileSearchReopened;
+
+  /* A faixa de aviso é outro componente (fixed no topo); ela lê este
+     atributo pra subir junto. */
+  useEffect(() => {
+    const root = document.documentElement;
+    if (collapsedNow) root.dataset.headerCollapsed = "";
+    else delete root.dataset.headerCollapsed;
+  }, [collapsedNow]);
+
+  /* `--header-h`: onde o header termina agora (faixa de aviso + header),
+     pra quem gruda embaixo dele, como a barra de filtros da categoria. */
+  useEffect(() => {
+    const el = headerWrapRef.current;
+    if (!el) return;
+    const publish = () => {
+      const top = collapsedNow ? "0px" : "var(--announce-h, 40px)";
+      document.documentElement.style.setProperty("--header-h", `calc(${top} + ${Math.round(el.getBoundingClientRect().height)}px)`);
+    };
+    publish();
+    const ro = new ResizeObserver(publish);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [collapsedNow]);
 
   useEffect(() => {
     if (!mobileOpen) { setMobileMenuView("main"); setMobileActiveMega(null); }
@@ -1305,7 +1363,7 @@ export function Navbar() {
   return (
     <>
       {/* Header wrapper with unified hover */}
-      <div className="fixed left-0 right-0 z-50" style={{ top: "var(--announce-h, 40px)" }} onMouseEnter={() => setPromoHovered(true)} onMouseLeave={() => setPromoHovered(false)}>
+      <div ref={headerWrapRef} className="fixed left-0 right-0 z-50" style={{ top: collapsedNow ? 0 : "var(--announce-h, 40px)", transition: "top .28s ease" }} onMouseEnter={() => setPromoHovered(true)} onMouseLeave={() => setPromoHovered(false)}>
         {/* Promo banner */}
         <AnimatePresence>
           {!promoDismissed && showExpanded && showPromoBanner && (
@@ -1376,6 +1434,15 @@ export function Navbar() {
             </div>
 
 	            <div className="relative z-10 flex items-center justify-end gap-1">
+	              {mobileSearchHidden && (
+	                <button
+	                  onClick={() => { setMobileSearchReopened(true); setTimeout(() => mobileSearchInputRef.current?.focus(), 280); }}
+	                  className={`flex h-10 w-10 items-center justify-center transition-colors cursor-pointer ${iconColor}`}
+	                  aria-label="Buscar"
+	                >
+	                  <Search size={20} strokeWidth={1.6} />
+	                </button>
+	              )}
 	              <button
 	                onClick={() => setCartOpen(true)}
 	                className={`relative flex h-10 w-10 items-center justify-center transition-colors cursor-pointer ${iconColor}`}
@@ -1400,7 +1467,17 @@ export function Navbar() {
 	          </div>
 
           {/* Busca do celular, em linha própria sob o logo (padrão da Tonante). */}
-          <div className="px-4 pb-3 lg:hidden">
+          <div
+            className="px-4 lg:hidden"
+            aria-hidden={mobileSearchHidden || undefined}
+            style={{
+              maxHeight: mobileSearchHidden ? 0 : 64,
+              opacity: mobileSearchHidden ? 0 : 1,
+              paddingBottom: mobileSearchHidden ? 0 : 12,
+              overflow: mobileSearchHidden ? "hidden" : "visible",
+              transition: "max-height .28s ease, opacity .2s ease, padding-bottom .28s ease",
+            }}
+          >
             <form
               onSubmit={handleSearchSubmit}
               className="relative"
@@ -1408,6 +1485,8 @@ export function Navbar() {
               <div className="flex h-10 items-center overflow-hidden rounded-[var(--radius-card)] border border-edge bg-surface-3 shadow-sm backdrop-blur-xl">
                 <Search size={16} className="ml-3 flex-shrink-0 text-ink-muted" strokeWidth={1.8} />
                 <input
+                ref={mobileSearchInputRef}
+                tabIndex={mobileSearchHidden ? -1 : undefined}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Buscar produtos, marcas..."

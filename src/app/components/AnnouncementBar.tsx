@@ -63,7 +63,7 @@ export function AnnouncementBar() {
     <div
       role="region"
       aria-label="Aviso promocional"
-      className="fixed inset-x-0 top-0 z-[60] w-full overflow-hidden"
+      className="announce-bar fixed inset-x-0 top-0 z-[60] w-full overflow-hidden"
       style={{
         background:
           "linear-gradient(90deg, #050505 0%, #0a0a1a 50%, #050505 100%)",
