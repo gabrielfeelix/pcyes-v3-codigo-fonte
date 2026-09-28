@@ -2014,7 +2014,13 @@ export function ProductsPage() {
                 <button onClick={() => setMobileFiltersOpen(false)} className="text-foreground/40 hover:text-foreground transition-colors p-2" aria-label="Fechar filtros"><X size={20} /></button>
               </div>
               {filterSidebar}
-              <div className="sticky bottom-0 pt-4 mt-8 bg-inherit">
+              {/* Rodapé colado na base da gaveta, com fundo sólido de ponta a
+                  ponta: antes o botão flutuava 24px acima da borda (o padding
+                  da gaveta) e os filtros apareciam passando por baixo dele. */}
+              <div
+                className="sticky -bottom-6 -mx-6 -mb-6 mt-8 border-t border-foreground/10 px-6 pt-4"
+                style={{ background: "var(--surface-1)", paddingBottom: "calc(24px + env(safe-area-inset-bottom, 0px))" }}
+              >
                 <button onClick={() => { applyFilters(); setMobileFiltersOpen(false); }}
                   className="w-full py-3.5 bg-foreground text-background font-bold flex items-center justify-center gap-2 transition-opacity hover:opacity-90 shadow-lg"
                   style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", letterSpacing: "0.04em", textTransform: "uppercase" }}
