@@ -73,11 +73,11 @@ export function InstallmentLine({ priceNum, scale = "card", className = "mt-1" }
         color: `rgba(var(--foreground-rgb), ${cfg.alpha})`,
       }}
     >
-      {/* No celular a coluna do card é estreita (~160px): "no cartão" fazia a
-          linha quebrar em duas. O "sem juros" já diz que é cartão; a versão
-          falada segue completa. */}
+      {/* A coluna do card é estreita no celular e no desktop de 4 colunas:
+          "no cartão" fazia a linha quebrar em duas. O "sem juros" já diz que
+          é cartão; a versão falada segue completa. */}
       <span aria-hidden="true">
-        {INSTALLMENTS}x de {formatBRL(parcela)} sem juros<span className="hidden sm:inline"> no cartão</span>
+        {INSTALLMENTS}x de {formatBRL(parcela)} sem juros
       </span>
       <span className="sr-only">
         {INSTALLMENTS} vezes de {formatBRLSpoken(parcela)} sem juros no cartão
