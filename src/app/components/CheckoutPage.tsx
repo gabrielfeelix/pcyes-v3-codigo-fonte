@@ -676,7 +676,7 @@ export function CheckoutPage() {
   if (items.length === 0 && !orderConfirmed) {
     return (
       <>
-        <CheckoutHeader onBack={() => navigate("/carrinho")} />
+        <CheckoutHeader onBack={() => navigate("/carrinho")} backLabel="Voltar ao carrinho" />
         <div className="pt-16 md:pt-[72px]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 200px)" }}>
           <div className="mx-auto flex max-w-[640px] flex-col items-center px-5 py-24 text-center">
             <p
@@ -1360,7 +1360,7 @@ export function CheckoutPage() {
 
   return (
     <>
-      <CheckoutHeader onBack={goBack} />
+      <CheckoutHeader onBack={goBack} backLabel={step === 0 ? "Voltar ao carrinho" : "Voltar"} />
       <div className="pt-16 md:pt-[72px] pb-44 lg:pb-0" style={{ background: "var(--surface-0)", minHeight: "100vh" }}>
         <div className="mx-auto max-w-[1320px] px-5 py-4 md:px-8 md:py-6">
           <div className="mb-6">
@@ -2210,7 +2210,7 @@ export function CheckoutPage() {
                     style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
                   >
                     <ChevronLeft size={14} strokeWidth={2.4} />
-                    {step === 0 ? "Voltar pro carrinho" : "Voltar"}
+                    {step === 0 ? "Voltar ao carrinho" : "Voltar"}
                   </button>
                 </div>
               </div>
