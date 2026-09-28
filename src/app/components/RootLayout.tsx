@@ -54,6 +54,11 @@ export function RootLayout() {
                 </a>
                 {showAnnouncement && <AnnouncementBar />}
                 {showNavbar && <Navbar />}
+                {/* No celular a busca ganhou linha própria sob o logo (52px). As
+                    páginas reservam no topo só a altura da linha do logo, então
+                    o acréscimo entra aqui, uma vez, em vez de em cada página.
+                    Do md pra cima o respiro das páginas já cobre. */}
+                {showNavbar && <div aria-hidden="true" className="h-[52px] md:hidden" />}
                 <div data-page-light-scope className="contents">
                   <CartDrawer />
                   <AuthModal />

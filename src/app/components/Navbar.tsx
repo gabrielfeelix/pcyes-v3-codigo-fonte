@@ -1356,8 +1356,8 @@ export function Navbar() {
 	        >
 	          {/* Mobile header */}
 	          <div
-	            className="flex lg:hidden items-center justify-between px-4 transition-all duration-500"
-	            style={{ height: scrolled ? 60 : 64 }}
+	            className="relative flex lg:hidden items-center justify-between px-4"
+	            style={{ height: 64 }}
 	          >
 	            <button
 	              className={`relative z-10 flex h-10 w-10 items-center justify-center transition-colors cursor-pointer ${iconColor}`}
@@ -1367,112 +1367,15 @@ export function Navbar() {
 	              {mobileOpen ? <X size={23} strokeWidth={1.7} /> : <Menu size={23} strokeWidth={1.7} />}
 	            </button>
 
-	            <AnimatePresence mode="wait" initial={false}>
-	              {scrolled ? (
-		                <motion.form
-		                  key="mobile-search"
-		                  onSubmit={handleSearchSubmit}
-		                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
-		                  animate={{ opacity: 1, y: 0, scale: 1 }}
-		                  exit={{ opacity: 0, y: 6, scale: 0.98 }}
-		                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-		                  className="relative mx-2 min-w-0 flex-1"
-		                >
-		                  <div className="flex h-10 items-center overflow-hidden rounded-[var(--radius-card)] border border-edge bg-surface-3 shadow-sm backdrop-blur-xl">
-		                    <Search size={16} className="ml-3 flex-shrink-0 text-ink-muted" strokeWidth={1.8} />
-		                    <input
-		                      value={searchQuery}
-		                      onChange={(e) => setSearchQuery(e.target.value)}
-		                      placeholder="Buscar"
-		                      aria-label="Buscar produtos" className="h-full min-w-0 flex-1 bg-transparent px-2 text-ink-strong outline-none placeholder:text-ink-strong/48"
-		                      style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
-		                    />
-		                    {searchQuery && (
-		                      <button
-		                        type="button"
-		                        onClick={() => setSearchQuery("")}
-		                        className="flex h-full w-8 items-center justify-center text-ink-muted"
-		                        aria-label="Limpar busca"
-		                      >
-		                        <X size={13} />
-		                      </button>
-		                    )}
-		                  </div>
-		                  <AnimatePresence>
-		                    {searchQuery.trim().length > 0 && (
-		                      <motion.div
-		                        initial={{ opacity: 0, y: -6, scale: 0.985 }}
-		                        animate={{ opacity: 1, y: 0, scale: 1 }}
-		                        exit={{ opacity: 0, y: -6, scale: 0.985 }}
-		                        transition={{ duration: 0.16 }}
-		                        className="absolute -left-12 -right-12 top-[46px] z-[80] max-h-[58vh] overflow-y-auto rounded-card-sm border border-edge bg-surface-0/98 p-2 shadow-2xl backdrop-blur-2xl"
-		                      >
-		                        {searchResults.length > 0 ? (
-		                          <>
-		                            <p className="px-2 pb-2 pt-1 text-ink-subtle" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}>
-		                              {searchResults.length} resultado{searchResults.length !== 1 ? "s" : ""}
-		                            </p>
-		                            {searchResults.map((product) => (
-		                              <Link
-		                                key={product.id}
-		                                to={`/produto/${product.id}`}
-		                                onClick={() => setSearchQuery("")}
-		                                className="group flex items-center gap-3 rounded-[var(--radius-card-sm)] p-2.5 transition-colors hover:bg-white/[0.06]"
-		                              >
-		                                <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-[var(--radius-card)] bg-white/[0.04]">
-		                                  <ImageWithFallback src={getPrimaryProductImage(product)} alt={product.name} className="h-full w-full object-cover" />
-		                                </div>
-		                                <div className="min-w-0 flex-1">
-		                                  <p className="line-clamp-2 text-ink-strong/86 transition-colors group-hover:text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-sm)", fontWeight: 600, lineHeight: 1.15 }}>
-		                                    {product.name}
-		                                  </p>
-		                                  <p className="mt-1 truncate text-ink-strong/36" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-		                                    {product.category}
-		                                  </p>
-		                                </div>
-		                                <span className="flex-shrink-0 text-ink-strong/58" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}>
-		                                  {product.price}
-		                                </span>
-		                              </Link>
-		                            ))}
-		                          </>
-		                        ) : (
-		                          <div className="px-4 py-5 text-center">
-		                            <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-		                              Nenhum produto encontrado
-		                            </p>
-		                          </div>
-		                        )}
-		                      </motion.div>
-		                    )}
-		                  </AnimatePresence>
-		                </motion.form>
-	              ) : (
-	                <motion.div
-	                  key="mobile-logo"
-	                  initial={{ opacity: 0, y: 6, scale: 0.98 }}
-	                  animate={{ opacity: 1, y: 0, scale: 1 }}
-	                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
-	                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-	                  className="pointer-events-none absolute left-1/2 top-1/2 w-[150px] -translate-x-1/2 -translate-y-1/2"
-	                >
-	                  <Link to="/" className="pointer-events-auto block">
-	                    <img src={PCYES_LOGO} alt="PCYES" className="mx-auto h-[30px] w-auto object-contain" />
-	                  </Link>
-	                </motion.div>
-	              )}
-	            </AnimatePresence>
+            {/* Logo sempre no centro, fixo: no celular ele não vira campo de
+                busca ao rolar. A busca tem linha própria logo abaixo. */}
+            <div className="pointer-events-none absolute left-1/2 top-1/2 w-[150px] -translate-x-1/2 -translate-y-1/2">
+              <Link to="/" className="pointer-events-auto block">
+                <img src={PCYES_LOGO} alt="PCYES" className="mx-auto h-[30px] w-auto object-contain" />
+              </Link>
+            </div>
 
 	            <div className="relative z-10 flex items-center justify-end gap-1">
-	              {!scrolled && (
-	                <button
-	                  onClick={() => setSearchOpen(!searchOpen)}
-	                  className={`flex h-10 w-10 items-center justify-center transition-colors cursor-pointer ${iconColor}`}
-	                  aria-label="Buscar"
-	                >
-	                  <Search size={20} strokeWidth={1.6} />
-	                </button>
-	              )}
 	              <button
 	                onClick={() => setCartOpen(true)}
 	                className={`relative flex h-10 w-10 items-center justify-center transition-colors cursor-pointer ${iconColor}`}
@@ -1495,6 +1398,83 @@ export function Navbar() {
 	              </button>
 	            </div>
 	          </div>
+
+          {/* Busca do celular, em linha própria sob o logo (padrão da Tonante). */}
+          <div className="px-4 pb-3 lg:hidden">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="relative"
+            >
+              <div className="flex h-10 items-center overflow-hidden rounded-[var(--radius-card)] border border-edge bg-surface-3 shadow-sm backdrop-blur-xl">
+                <Search size={16} className="ml-3 flex-shrink-0 text-ink-muted" strokeWidth={1.8} />
+                <input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Buscar produtos, marcas..."
+                  aria-label="Buscar produtos" className="h-full min-w-0 flex-1 bg-transparent px-2 text-ink-strong outline-none placeholder:text-ink-strong/48"
+                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="flex h-full w-8 items-center justify-center text-ink-muted"
+                    aria-label="Limpar busca"
+                  >
+                    <X size={13} />
+                  </button>
+                )}
+              </div>
+              <AnimatePresence>
+                {searchQuery.trim().length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6, scale: 0.985 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.985 }}
+                    transition={{ duration: 0.16 }}
+                    className="absolute left-0 right-0 top-[46px] z-[80] max-h-[58vh] overflow-y-auto rounded-card-sm border border-edge bg-surface-0/98 p-2 shadow-2xl backdrop-blur-2xl"
+                  >
+                    {searchResults.length > 0 ? (
+                      <>
+                        <p className="px-2 pb-2 pt-1 text-ink-subtle" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}>
+                          {searchResults.length} resultado{searchResults.length !== 1 ? "s" : ""}
+                        </p>
+                        {searchResults.map((product) => (
+                          <Link
+                            key={product.id}
+                            to={`/produto/${product.id}`}
+                            onClick={() => setSearchQuery("")}
+                            className="group flex items-center gap-3 rounded-[var(--radius-card-sm)] p-2.5 transition-colors hover:bg-white/[0.06]"
+                          >
+                            <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-[var(--radius-card)] bg-white/[0.04]">
+                              <ImageWithFallback src={getPrimaryProductImage(product)} alt={product.name} className="h-full w-full object-cover" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="line-clamp-2 text-ink-strong/86 transition-colors group-hover:text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-sm)", fontWeight: 600, lineHeight: 1.15 }}>
+                                {product.name}
+                              </p>
+                              <p className="mt-1 truncate text-ink-strong/36" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                                {product.category}
+                              </p>
+                            </div>
+                            <span className="flex-shrink-0 text-ink-strong/58" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}>
+                              {product.price}
+                            </span>
+                          </Link>
+                        ))}
+                      </>
+                    ) : (
+                      <div className="px-4 py-5 text-center">
+                        <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                          Nenhum produto encontrado
+                        </p>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </form>
+          </div>
 
           {/* Top row — desktop */}
           <div
