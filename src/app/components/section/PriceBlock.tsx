@@ -66,18 +66,19 @@ export function InstallmentLine({ priceNum, scale = "card", className = "mt-1" }
     <p
       // Catálogo: 14px só do sm pra cima; no celular a coluna do card não
       // comporta e a linha quebrava. Lá fica no tamanho de legenda.
-      className={`leading-tight ${scale === "catalog" ? "text-[length:var(--text-caption)] sm:text-[length:var(--text-sm)]" : ""} ${className}`}
+      className={`leading-tight truncate ${scale === "catalog" ? "text-[length:var(--text-caption)] sm:text-[length:var(--text-sm)]" : ""} ${className}`}
       style={{
         fontFamily: "var(--font-family-inter)",
         fontSize: scale === "catalog" ? undefined : cfg.installment,
         color: `rgba(var(--foreground-rgb), ${cfg.alpha})`,
       }}
     >
-      {/* A coluna do card é estreita no celular e no desktop de 4 colunas:
-          "no cartão" fazia a linha quebrar em duas. O "sem juros" já diz que
-          é cartão; a versão falada segue completa. */}
+      {/* Sempre uma linha só: a coluna do card é estreita (~160px no celular)
+          e, com parcela de quatro dígitos, "10x de R$ 1.234,99 sem juros no
+          cartão" quebrava e desalinhava os cards vizinhos. Forma curta de
+          vitrine; a versão falada segue completa. */}
       <span aria-hidden="true">
-        {INSTALLMENTS}x de {formatBRL(parcela)} sem juros
+        {INSTALLMENTS}x {formatBRL(parcela)} sem juros
       </span>
       <span className="sr-only">
         {INSTALLMENTS} vezes de {formatBRLSpoken(parcela)} sem juros no cartão
@@ -166,9 +167,10 @@ export function PriceBlock({
 
       {/* `items-baseline`: a etiqueta do PIX é bem menor que o preço, e alinhada
           pelo centro ela flutuava acima da linha dos algarismos. */}
-      {/* `gap-y-1`: na coluna estreita a etiqueta do PIX quebra pra linha de
-          baixo e, sem respiro, encostava no preço. */}
-      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+      {/* "à vista no PIX" sempre na linha de baixo do preço. Ao lado, ele
+          ficava na mesma linha só quando o preço era curto: com preço longo
+          quebrava, e o bloco mudava de altura entre cards vizinhos. */}
+      <div className="flex flex-col items-start gap-1">
         <p
           className="text-ink-strong leading-none"
           style={{
