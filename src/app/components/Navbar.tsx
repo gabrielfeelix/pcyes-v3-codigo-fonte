@@ -123,7 +123,7 @@ const megaMenus: Record<string, MegaMenu> = {
     title: "Hardware",
     subItems: [
       {
-        label: "Placas de Vídeo", href: "/produtos?category=Placas de Vídeo",
+        label: "Placas de Vídeo", href: "/produtos?category=Placas de Vídeo", image: "/menu/placas-de-video.png",
         right: {
           type: "products", title: "Placas de Vídeo",
           products: [
@@ -135,7 +135,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "SSD e HD", href: "/produtos?category=SSD e HD",
+        label: "SSD e HD", href: "/produtos?category=SSD e HD", image: "/menu/ssd-e-hd.png",
         right: {
           type: "products", title: "Armazenamento",
           products: [
@@ -146,7 +146,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Refrigeração", href: "/produtos?category=Refrigeração",
+        label: "Refrigeração", href: "/produtos?category=Refrigeração", image: "/menu/refrigeracao.png",
         right: {
           type: "products", title: "Refrigeração",
           products: [
@@ -157,7 +157,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Gabinetes", href: "/produtos?category=Gabinetes",
+        label: "Gabinetes", href: "/produtos?category=Gabinetes", image: "/menu/gabinetes.png",
         right: {
           type: "products", title: "Gabinetes",
           products: [
@@ -169,7 +169,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Monitores", href: "/produtos?category=Monitores",
+        label: "Monitores", href: "/produtos?category=Monitores", image: "/menu/monitores.png",
         right: {
           type: "layouts", title: "Monitores por Resolução",
           layouts: [
@@ -182,7 +182,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Fontes", href: "/produtos",
+        label: "Fontes", href: "/produtos", image: "/menu/fontes.png",
         right: {
           type: "layouts", title: "Fontes por Certificação",
           layouts: [
@@ -201,7 +201,7 @@ const megaMenus: Record<string, MegaMenu> = {
     title: "Periféricos",
     subItems: [
       {
-        label: "Teclados", href: getCatalogHref({ category: "Periféricos", subcategory: "Teclados" }),
+        label: "Teclados", href: getCatalogHref({ category: "Periféricos", subcategory: "Teclados" }), image: "/menu/teclados.png",
         right: {
           type: "layouts", title: "Teclados por Layout",
           layouts: [
@@ -214,7 +214,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Mouse", href: getCatalogHref({ category: "Periféricos", subcategory: "Mouses" }),
+        label: "Mouse", href: getCatalogHref({ category: "Periféricos", subcategory: "Mouses" }), image: "/menu/mouse.png",
         right: {
           type: "products", title: "Mouse Gamer",
           products: [
@@ -225,7 +225,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Mousepads", href: getCatalogHref({ category: "Periféricos", subcategory: "Mousepads" }),
+        label: "Mousepads", href: getCatalogHref({ category: "Periféricos", subcategory: "Mousepads" }), image: "/menu/mousepads.png",
         right: {
           type: "products", title: "Mousepads",
           products: [
@@ -237,7 +237,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Cadeiras", href: getCatalogHref({ category: "Cadeiras", subcategory: "Cadeiras Gamer" }),
+        label: "Cadeiras", href: getCatalogHref({ category: "Cadeiras", subcategory: "Cadeiras Gamer" }), image: "/menu/cadeiras.png",
         right: {
           type: "products", title: "Cadeiras Gamer",
           products: [
@@ -249,7 +249,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Headsets", href: getCatalogHref({ category: "Periféricos", subcategory: "Headsets" }),
+        label: "Headsets", href: getCatalogHref({ category: "Periféricos", subcategory: "Headsets" }), image: "/menu/headsets.png",
         right: {
           type: "layouts", title: "Headsets por Conexão",
           layouts: [
@@ -261,7 +261,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Streaming", href: "/produtos?category=Streaming",
+        label: "Streaming", href: "/produtos?category=Streaming", image: "/menu/streaming.png",
         right: {
           type: "layouts", title: "Streaming & Podcast",
           layouts: [
@@ -279,7 +279,7 @@ const megaMenus: Record<string, MegaMenu> = {
     title: "Computadores",
     subItems: [
       {
-        label: "Mini PC", href: getCatalogHref({ category: "Computadores", subcategory: "Mini Computadores" }),
+        label: "Mini PC", href: getCatalogHref({ category: "Computadores", subcategory: "Mini Computadores" }), image: "/menu/mini-pc.png",
         right: {
           type: "featured", title: "Mini PC",
           image: "https://images.unsplash.com/photo-1587831990711-23ca6441447b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800",
@@ -289,7 +289,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "PCYES One", href: getCatalogHref({ category: "Computadores", subcategory: "All in One" }),
+        label: "PCYES One", href: getCatalogHref({ category: "Computadores", subcategory: "All in One" }), image: "/menu/pcyes-one.png",
         right: {
           type: "featured", title: "PCYES One",
           image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800",
@@ -397,7 +397,7 @@ const megaMenus: Record<string, MegaMenu> = {
     title: "Drivers e Manuais",
     subItems: [
       {
-        label: "Headsets", href: "/drivers-e-manuais",
+        label: "Headsets", href: "/drivers-e-manuais", image: "/menu/headsets.png",
         right: {
           type: "downloads", title: "Headsets — Drivers",
           items: [
@@ -408,7 +408,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Teclados", href: "/drivers-e-manuais",
+        label: "Teclados", href: "/drivers-e-manuais", image: "/menu/teclados.png",
         right: {
           type: "downloads", title: "Teclados — Drivers & Software",
           items: [
@@ -419,7 +419,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Mouse", href: "/drivers-e-manuais",
+        label: "Mouse", href: "/drivers-e-manuais", image: "/menu/mouse.png",
         right: {
           type: "downloads", title: "Mouse — Drivers & Software",
           items: [
@@ -430,7 +430,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Monitores", href: "/drivers-e-manuais",
+        label: "Monitores", href: "/drivers-e-manuais", image: "/menu/monitores.png",
         right: {
           type: "downloads", title: "Monitores — Manuais",
           items: [
@@ -441,7 +441,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Gabinetes", href: "/drivers-e-manuais",
+        label: "Gabinetes", href: "/drivers-e-manuais", image: "/menu/gabinetes.png",
         right: {
           type: "downloads", title: "Gabinetes — Manuais",
           items: [
@@ -452,7 +452,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Cadeiras", href: "/drivers-e-manuais",
+        label: "Cadeiras", href: "/drivers-e-manuais", image: "/menu/cadeiras.png",
         right: {
           type: "downloads", title: "Cadeiras — Manuais",
           items: [
