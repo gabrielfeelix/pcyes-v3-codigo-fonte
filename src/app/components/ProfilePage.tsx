@@ -1484,7 +1484,7 @@ export function ProfilePage() {
                                 disabled={!inStock}
                                 className={`w-full min-h-[44px] md:min-h-[24px] py-1.5 inline-flex items-center justify-center gap-1.5 transition-all cursor-pointer ${inStock ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-foreground/8 text-foreground/40 cursor-not-allowed"}`}
                                 style={{ borderRadius: "var(--radius-card)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
-                              ><ShoppingCart size={11} /> {inStock ? "Comprar" : "Avisar quando voltar"}</button>
+                              ><ShoppingCart size={11} /> {inStock ? "Adicionar" : "Avisar quando voltar"}</button>
                             </div>
                           </div>
                         );

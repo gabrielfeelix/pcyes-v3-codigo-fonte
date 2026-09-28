@@ -470,7 +470,7 @@ export function IntelligentDevices() {
                       size="sm"
                       className="hidden md:inline-flex absolute bottom-4 left-1/2 z-20 -translate-x-1/2 md:translate-y-2 md:opacity-0 transition-all duration-300 md:group-hover:translate-y-0 md:group-hover:opacity-100 cursor-pointer"
                     >
-                      <ShoppingCart size={12} strokeWidth={2} /> Comprar
+                      <ShoppingCart size={12} strokeWidth={2} /> Adicionar
                     </CTAButton>
                   </div>
                   <div className="mt-4 px-1">
@@ -510,7 +510,7 @@ export function IntelligentDevices() {
                   className="mt-3 md:hidden"
                   aria-label={`Comprar ${product.name}`}
                 >
-                  <ShoppingCart size={12} strokeWidth={2} /> Comprar
+                  <ShoppingCart size={12} strokeWidth={2} /> Adicionar
                 </CTAButton>
               </div>
             );

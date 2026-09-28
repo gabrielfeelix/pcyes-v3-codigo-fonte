@@ -1743,7 +1743,7 @@ export function ProductsPage() {
                               className="hidden lg:flex items-center justify-center absolute bottom-4 left-4 right-4 z-20 translate-y-2 whitespace-nowrap rounded-full py-3 text-[var(--text-sm)] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 cursor-pointer"
                               style={{ background: "var(--gradient-buy)", color: "white", fontFamily: "var(--font-family-inter)", fontWeight: 700, letterSpacing: "0.04em", boxShadow: "var(--shadow-buy-cta-sm)" }}
                             >
-                              <span className="inline-flex items-center gap-2"><ShoppingCart size={14} strokeWidth={2} /> Comprar</span>
+                              <span className="inline-flex items-center gap-2"><ShoppingCart size={14} strokeWidth={2} /> Adicionar</span>
                             </button>
                           </div>
 
@@ -1837,7 +1837,7 @@ export function ProductsPage() {
                                 className="flex w-full items-center justify-center gap-2 rounded-full cursor-pointer"
                                 style={{ background: "var(--gradient-buy)", color: "white", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700, letterSpacing: "0.04em", boxShadow: "var(--shadow-buy-cta-sm)", paddingTop: "10px", paddingBottom: "10px" }}
                               >
-                                <ShoppingCart size={15} strokeWidth={2} /> Comprar
+                                <ShoppingCart size={15} strokeWidth={2} /> Adicionar
                               </button>
                             </div>
                           </div>
@@ -1891,7 +1891,7 @@ export function ProductsPage() {
                             <button onClick={() => handleAddToCart(displayProduct)}
                               className="sm:hidden mt-2.5 flex w-full items-center justify-center gap-2 rounded-full py-2 cursor-pointer"
                               style={{ background: "var(--gradient-buy)", color: "white", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700, letterSpacing: "0.04em", boxShadow: "var(--shadow-buy-cta-sm)" }}
-                            ><ShoppingCart size={14} strokeWidth={2} /> Comprar</button>
+                            ><ShoppingCart size={14} strokeWidth={2} /> Adicionar</button>
                           </div>
                           {/* Favorite — absolute top-right on mobile, inline column on desktop */}
                           <button onClick={() => toggleFavorite(displayProduct.id)}
@@ -1915,7 +1915,7 @@ export function ProductsPage() {
                                 letterSpacing: "0.04em",
                                 boxShadow: "var(--shadow-buy-cta-sm)",
                               }}
-                            ><ShoppingCart size={14} strokeWidth={2} /> Comprar</button>
+                            ><ShoppingCart size={14} strokeWidth={2} /> Adicionar</button>
                           </div>
                         </motion.div>
                       );
@@ -2282,7 +2282,7 @@ export function ProductsPage() {
                       boxShadow: "var(--shadow-buy-cta)",
                     }}
                   >
-                    <ShoppingCart size={16} strokeWidth={2} /> Comprar
+                    <ShoppingCart size={16} strokeWidth={2} /> Adicionar
                   </button>
                 </div>
               </div>

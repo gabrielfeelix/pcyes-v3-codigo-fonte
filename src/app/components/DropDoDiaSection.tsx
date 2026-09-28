@@ -218,7 +218,7 @@ export function DropDoDiaSection() {
                       className="mt-5 cursor-pointer"
                     >
                       <ShoppingCart size={14} strokeWidth={2.2} />
-                      Comprar
+                      Adicionar
                     </CTAButton>
                   </div>
                 </div>

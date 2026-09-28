@@ -133,7 +133,7 @@ export function PopularGrid() {
                   <div className="absolute bottom-4 left-4 right-4 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-400">
                     <QuickAddButton
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); addItem(product); }}
-                      label="Comprar"
+                      label="Adicionar"
                     />
                   </div>
                 </div>

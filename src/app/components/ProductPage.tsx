@@ -1657,7 +1657,7 @@ function SetupComponentsDrawer({
             </span>
           </div>
           <CTAButton variant="buy" size="lg" block onClick={handleBuy}>
-            <ShoppingCart size={15} strokeWidth={2.4} className="flex-shrink-0" /> Comprar
+            <ShoppingCart size={15} strokeWidth={2.4} className="flex-shrink-0" /> Adicionar
           </CTAButton>
         </div>
       </SheetContent>
@@ -3758,7 +3758,7 @@ export function ProductPage() {
                           boxShadow: "var(--shadow-buy-cta-sm)",
                         }}
                       >
-                        <span className="inline-flex items-center gap-2"><ShoppingCart size={14} strokeWidth={2} /> Comprar</span>
+                        <span className="inline-flex items-center gap-2"><ShoppingCart size={14} strokeWidth={2} /> Adicionar</span>
                       </button>
                     </div>
 

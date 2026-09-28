@@ -234,7 +234,7 @@ function EssentialCard({ product }: EssentialCardProps) {
             size="md"
             className="min-h-[44px] cursor-pointer"
           >
-            Comprar
+            Adicionar
           </CTAButton>
         </div>
       </div>

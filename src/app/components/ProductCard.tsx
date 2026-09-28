@@ -33,14 +33,14 @@ const VARIANT = {
     pad: "p-2 md:p-8",
     clamp: "line-clamp-1",
     quickAddSize: "lg" as const,
-    quickAddLabel: "Comprar",
+    quickAddLabel: "Adicionar",
   },
   grid: {
     aspect: "aspect-square",
     pad: "p-2 md:p-6",
     clamp: "line-clamp-2",
     quickAddSize: "sm" as const,
-    quickAddLabel: "Comprar",
+    quickAddLabel: "Adicionar",
   },
 };
 
