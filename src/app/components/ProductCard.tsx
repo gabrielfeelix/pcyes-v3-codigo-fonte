@@ -231,6 +231,7 @@ export function ProductCard({
 
         <PriceBlock
           className="mt-3"
+          reserveOldPrice
           priceNum={product.priceNum}
           oldPriceNum={oldPriceNum > product.priceNum ? oldPriceNum : undefined}
         />

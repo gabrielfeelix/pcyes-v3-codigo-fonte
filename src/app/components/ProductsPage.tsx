@@ -1781,7 +1781,11 @@ export function ProductsPage() {
                               )}
                             </div>
 
-                            <div className="mt-3">
+                            {/* Preço no pé do card (mt-auto no PriceBlock): título,
+                                nota, seletor de cor e selo podem variar de altura
+                                entre cards, e o preço e o botão ficam alinhados
+                                com os vizinhos mesmo assim. */}
+                            <div className="mt-3 flex flex-1 flex-col">
                               {swatches.length > 1 && (
                                 <div className="mb-2 flex items-center gap-1.5">
                                   {swatches.map((sw) => (
@@ -1809,6 +1813,8 @@ export function ProductsPage() {
                                 </div>
                               )}
                               <PriceBlock
+                                className="mt-auto"
+                                reserveOldPrice
                                 scale="catalog"
                                 priceNum={displayProduct.priceNum}
                                 oldPrice={displayProduct.oldPrice}
@@ -1821,7 +1827,7 @@ export function ProductsPage() {
                             {/* O respiro acima do botão é margem de verdade (pt-4 no
                                 invólucro). Antes era `pt-3` no próprio botão: virava
                                 espaço dentro dele e o botão encostava no preço. */}
-                            <div className="mt-auto pt-4 lg:hidden">
+                            <div className="pt-4 lg:hidden">
                               <button
                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToCart(displayProduct); }}
                                 className="flex w-full items-center justify-center gap-2 rounded-full cursor-pointer"

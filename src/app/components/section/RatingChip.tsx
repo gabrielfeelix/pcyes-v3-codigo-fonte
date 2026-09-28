@@ -17,7 +17,20 @@ type RatingChipProps = {
  * junto do título, onde o olho já procura preço/avaliação.
  */
 export function RatingChip({ rating, reviews, className = "" }: RatingChipProps) {
-  if (!rating) return null;
+  /* Sem avaliação a linha não some: estrela apagada e "(0)". Se sumisse, o
+     preço e o botão do card subiam e ficavam desencontrados dos vizinhos. */
+  if (!rating || !reviews) {
+    return (
+      <span
+        className={`inline-flex items-center gap-1 whitespace-nowrap ${className}`}
+        style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
+        aria-label="Ainda sem avaliações"
+      >
+        <Star size={12} className="text-foreground/25" aria-hidden="true" />
+        <span aria-hidden="true" style={{ color: "rgba(var(--foreground-rgb), 0.45)" }}>(0)</span>
+      </span>
+    );
+  }
 
   return (
     <span

@@ -116,6 +116,9 @@ interface PriceBlockProps {
   oldPrice?: string;
   scale?: PriceScale;
   className?: string;
+  /** Em grade: guarda a altura da linha do preço antigo mesmo sem ele, pra
+   *  o preço ficar na mesma altura em todos os cards. */
+  reserveOldPrice?: boolean;
 }
 
 export function PriceBlock({
@@ -124,6 +127,7 @@ export function PriceBlock({
   oldPrice,
   scale = "card",
   className,
+  reserveOldPrice = false,
 }: PriceBlockProps) {
   const cfg = SCALE[scale];
   const hasOld = Boolean(oldPrice) || (oldPriceNum !== undefined && oldPriceNum > priceNum);
@@ -152,6 +156,11 @@ export function PriceBlock({
                visível ao leitor de tela como está. */
             oldPrice
           )}
+        </p>
+      )}
+      {!hasOld && reserveOldPrice && (
+        <p aria-hidden="true" className="invisible leading-none mb-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
+          &nbsp;
         </p>
       )}
 
