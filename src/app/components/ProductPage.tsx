@@ -1073,8 +1073,8 @@ function StickyPriceCard({
               onClick={onBuyNow}
               className="cursor-pointer disabled:cursor-not-allowed"
             >
-              <Zap size={15} strokeWidth={2.4} fill="currentColor" />
-              Comprar agora
+              <ShoppingCart size={15} strokeWidth={2.4} />
+              Adicionar ao carrinho
             </CTAButton>
           ) : discontinued ? (
             <DiscontinuedNotice category={product.category} />
@@ -1461,7 +1461,10 @@ function MobilePurchaseFlow({
             {isPreOrder ? (
               <><Rocket size={15} strokeWidth={2.4} className="flex-shrink-0" /> {preOrderSoldOut ? "Esgotado" : "Comprar agora"}</>
             ) : (
-              <><Zap size={15} strokeWidth={2.4} fill="currentColor" className="flex-shrink-0" /> Comprar agora</>
+              /* O botão leva pro carrinho, não pro checkout: "Comprar agora" com
+                 raio prometia compra instantânea, e no teste de usabilidade a
+                 galera estranhou cair no carrinho. */
+              <><ShoppingCart size={15} strokeWidth={2.4} className="flex-shrink-0" /> Adicionar ao carrinho</>
             )}
           </CTAButton>
         )}
@@ -3827,7 +3830,10 @@ export function ProductPage() {
                 <><Rocket size={14} strokeWidth={2.4} /> Comprar agora</>
               )
             ) : (
-              <><Zap size={14} fill="currentColor" /> Comprar agora</>
+              /* Barra fixa: o botão divide a linha com o preço, então fica só
+                 "Adicionar"; o ícone de carrinho completa o sentido e o botão
+                 não quebra em duas linhas. */
+              <><ShoppingCart size={14} strokeWidth={2.4} /> Adicionar</>
             )}
           </button>
         </div>
