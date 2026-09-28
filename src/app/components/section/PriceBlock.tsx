@@ -99,7 +99,7 @@ export function PixLabel({ scale = "card" }: PixLabelProps) {
         fontFamily: "var(--font-family-inter)",
         fontSize: SCALE[scale].installment,
         fontWeight: 700,
-        color: "var(--save)",
+        color: "#16a34a",
         letterSpacing: "0.01em",
       }}
     >
