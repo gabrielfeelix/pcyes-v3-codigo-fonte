@@ -33,6 +33,7 @@ import { useAuth } from "./AuthContext";
 import { AddressFormModal } from "./AddressFormModal";
 import { CardFormModal } from "./CardFormModal";
 import { Footer } from "./Footer";
+import { CheckoutHeader } from "./CheckoutHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
@@ -470,6 +471,8 @@ export function CheckoutPage() {
   // só travar. Melhor p/ Nielsen (prevenção de erro) e p/ leitor de tela.
   const [attempted, setAttempted] = useState(false);
   const err = (cond: boolean, msg: string) => (attempted && cond ? msg : undefined);
+  const goBack = () => (step === 0 ? navigate("/carrinho") : setStep((s) => (s - 1) as Step));
+
   const tryAdvance = () => {
     if (canAdvance) {
       setAttempted(false);
@@ -668,7 +671,8 @@ export function CheckoutPage() {
   if (items.length === 0 && !orderConfirmed) {
     return (
       <>
-        <div className="pt-[calc(72px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 200px)" }}>
+        <CheckoutHeader onBack={() => navigate("/carrinho")} />
+        <div className="pt-16 md:pt-[72px]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 200px)" }}>
           <div className="mx-auto flex max-w-[640px] flex-col items-center px-5 py-24 text-center">
             <p
               className="mb-3 text-primary"
@@ -716,7 +720,8 @@ export function CheckoutPage() {
     const s = (pixTimer % 60).toString().padStart(2, "0");
     return (
       <>
-        <div className="pt-[calc(72px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 120px)" }}>
+        <CheckoutHeader />
+        <div className="pt-16 md:pt-[72px]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 120px)" }}>
           <div className="mx-auto max-w-[720px] px-5 py-10 md:px-8">
             <p
               className="mb-3 text-primary"
@@ -892,7 +897,8 @@ export function CheckoutPage() {
     const snap = confirmedSnapshot;
     return (
       <>
-        <div className="pt-[calc(72px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 200px)" }}>
+        <CheckoutHeader />
+        <div className="pt-16 md:pt-[72px]" style={{ background: "var(--surface-0)", minHeight: "calc(100vh - 200px)" }}>
           <div className="mx-auto max-w-[720px] px-5 py-12 md:px-8">
             <div className="mb-10 flex flex-col items-center text-center">
               <motion.div
@@ -1353,17 +1359,9 @@ export function CheckoutPage() {
 
   return (
     <>
-      <div className="pt-[calc(72px+var(--announce-h))] md:pt-[calc(150px+var(--announce-h))] pb-44 lg:pb-0" style={{ background: "var(--surface-0)", minHeight: "100vh" }}>
+      <CheckoutHeader onBack={goBack} />
+      <div className="pt-16 md:pt-[72px] pb-44 lg:pb-0" style={{ background: "var(--surface-0)", minHeight: "100vh" }}>
         <div className="mx-auto max-w-[1320px] px-5 py-4 md:px-8 md:py-6">
-          <Link
-            to="/carrinho"
-            className="mb-4 inline-flex items-center gap-1.5 text-ink-muted transition-colors hover:text-ink"
-            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}
-          >
-            <ChevronLeft size={14} strokeWidth={2} />
-            Voltar pro carrinho
-          </Link>
-
           <div className="mb-6">
             <p
               className="mb-2 text-primary"
@@ -2143,9 +2141,11 @@ export function CheckoutPage() {
                 </motion.div>
               </AnimatePresence>
 
-              <div className="mt-6 flex items-center justify-between gap-3">
+              {/* No mobile o voltar mora no cabeçalho do checkout e o avançar
+                  na barra fixa de baixo; esta linha é só do desktop. */}
+              <div className="mt-6 hidden items-center justify-between gap-3 lg:flex">
                 <button
-                  onClick={() => (step === 0 ? navigate("/carrinho") : setStep((s) => (s - 1) as Step))}
+                  onClick={goBack}
                   className="inline-flex cursor-pointer items-center gap-1.5 rounded-full px-5 py-3 min-h-[44px] md:min-h-[24px] text-ink-muted transition-colors hover:bg-white/[0.05] hover:text-ink-strong"
                   style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
                 >
@@ -2192,7 +2192,7 @@ export function CheckoutPage() {
               </div>
             </div>
 
-            <div className="hidden lg:block lg:sticky lg:top-[150px] lg:self-start">
+            <div className="hidden lg:block lg:sticky lg:top-[96px] lg:self-start">
               <div
                 className="overflow-hidden p-6"
                 style={{
@@ -2210,6 +2210,7 @@ export function CheckoutPage() {
                 </p>
 
                 {orderSummary}
+
               </div>
             </div>
           </div>

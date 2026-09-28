@@ -19,7 +19,8 @@ export function RootLayout() {
 
   const showAnnouncement =
     pathname !== "/checkout" && pathname !== "/carrinho" && pathname !== "/monte-seu-pc";
-  const showNavbar = pathname !== "/monte-seu-pc";
+  /* O checkout traz o próprio cabeçalho (CheckoutHeader). */
+  const showNavbar = pathname !== "/monte-seu-pc" && pathname !== "/checkout";
 
   useEffect(() => {
     window.scrollTo(0, 0);
