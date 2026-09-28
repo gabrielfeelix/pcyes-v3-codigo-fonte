@@ -16780,8 +16780,8 @@ const rawProducts: Product[] = [
     "name": "Mouse PCYES USB Comfort 1000DPI Cabo 2 Metros PMOC1U",
     "price": "R$ 249,90",
     "priceNum": 249.9,
-    "rating": 4.8,
-    "reviews": 368,
+    "rating": 0,
+    "reviews": 0,
     "category": "Periféricos",
     "subcategory": "Mouse",
     "tags": [
@@ -17184,8 +17184,8 @@ const rawProducts: Product[] = [
     "name": "Mouse PCYES Sem Fio Dash Lite Black 1600DPI Silent Click PMDV2BK",
     "price": "R$ 249,90",
     "priceNum": 249.9,
-    "rating": 4.4,
-    "reviews": 234,
+    "rating": 0,
+    "reviews": 0,
     "category": "Periféricos",
     "subcategory": "Mouse",
     "tags": [
@@ -18004,8 +18004,8 @@ const rawProducts: Product[] = [
     "name": "Mouse PCYES USB Soft 1200DPI Silent Click Cabo 2m MSSC01",
     "price": "R$ 249,90",
     "priceNum": 249.9,
-    "rating": 4.8,
-    "reviews": 396,
+    "rating": 0,
+    "reviews": 0,
     "category": "Periféricos",
     "subcategory": "Mouse",
     "tags": [
