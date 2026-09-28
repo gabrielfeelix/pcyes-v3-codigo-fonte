@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Link } from "react-router";
 import { motion, useReducedMotion } from "motion/react";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { getCatalogHref } from "./productPresentation";
 
 interface Slide {
   /** Desktop / default image. Used when `srcMobile` is absent or viewport is >= md. */
@@ -15,15 +16,29 @@ interface Slide {
 }
 
 /**
- * Each slide can also declare `srcMobile` for a vertically taller crop.
- * Today we ship only desktop art; uncomment the mobile entries once the
- * mobile-cropped files exist in /public/assets — otherwise <picture>
- * would 404 on small viewports.
+ * Artes finais do time de design (Site V2): 2560×1067 no desktop, 1080×1560
+ * em pé no celular. Chamada e botão já vêm desenhados na arte — o slide inteiro
+ * é o link, então o `alt` repete a chamada.
  */
 const slides: Slide[] = [
-  { src: "/assets/banner-1.webp", href: "/produtos", alt: "Nova Coleção Performance 2026" },
-  { src: "/assets/banner-2.webp", href: "/produtos?category=Periféricos", alt: "Equipamentos para streamers" },
-  { src: "/assets/banner-3.webp", href: "/monte-seu-pc", alt: "Builds prontas pra dominar" },
+  {
+    src: "/banners/topo/cadeiras-desktop.webp",
+    srcMobile: "/banners/topo/cadeiras-mobile.webp",
+    href: getCatalogHref({ category: "Cadeiras" }),
+    alt: "Linha de cadeiras office e gamer",
+  },
+  {
+    src: "/banners/topo/pcyes-one-desktop.webp",
+    srcMobile: "/banners/topo/pcyes-one-mobile.webp",
+    href: getCatalogHref({ category: "Computadores", subcategory: "All in One" }),
+    alt: "Discreto no formato, imenso em capacidade. Computador PCYES One",
+  },
+  {
+    src: "/banners/topo/teclados-desktop.webp",
+    srcMobile: "/banners/topo/teclados-mobile.webp",
+    href: getCatalogHref({ category: "Periféricos", subcategory: "Teclados" }),
+    alt: "Seu setup começa nas suas mãos. Linha de teclados office e gamer",
+  },
 ];
 
 const SLIDE_DURATION = 6500;
