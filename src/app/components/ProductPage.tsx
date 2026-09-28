@@ -3805,7 +3805,7 @@ export function ProductPage() {
               {preOrderInfo ? (
                 <span className="text-[#f97316] text-xs font-normal">pré-venda</span>
               ) : (
-                <span className="text-[#4CAF50] text-xs font-normal">no PIX</span>
+                <span className="text-[#16a34a] text-xs font-normal">no PIX</span>
               )}
             </p>
           </div>
@@ -3814,13 +3814,16 @@ export function ProductPage() {
             disabled={preOrderInfo ? (preOrderInfo.reservedUnits >= preOrderInfo.totalUnits) : (product.inStock === false)}
             className="px-5 py-3 flex items-center gap-2 font-semibold transition-all cursor-pointer disabled:opacity-40 text-ink-strong"
             style={{
-              borderRadius: "var(--radius-button)",
+              borderRadius: 9999,
               fontFamily: "var(--font-family-inter)",
               fontSize: "var(--text-sm)",
               whiteSpace: "nowrap",
               background: preOrderInfo
                 ? "var(--gradient-preorder-orange)"
-                : "#4CAF50",
+                : "var(--gradient-buy)",
+              /* Mesmo verde e sombra do "Adicionar ao carrinho" principal (CTAButton
+                 buy), e pílula como os outros botões de compra. */
+              boxShadow: preOrderInfo ? undefined : "var(--shadow-buy-cta)",
             }}
           >
             {preOrderInfo ? (
