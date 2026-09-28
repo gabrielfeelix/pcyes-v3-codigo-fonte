@@ -16,7 +16,8 @@ import { HeaderDelivery } from "./HeaderDelivery";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/tooltip";
 import { allProducts, type Product } from "./productsData";
 import { getCatalogHref, getPrimaryProductImage, getProductCategory, getProductSubcategory, getProductSwatches, getVisibleCatalogProducts } from "./productPresentation";
-import { getCategoryFromSlug, getCategorySlug, getSubcategorySlug } from "../lib/slug";
+import { getCategoryFromSlug, getCategorySlug, getSubcategorySlug, getProductUrl } from "../lib/slug";
+import { getSetupProductId, setupProducts } from "../lib/setups";
 import { SHOWCASES, getShowcasePath } from "../lib/showcases";
 import { searchProducts } from "../../utils/search";
 
@@ -96,6 +97,19 @@ interface MegaMenu {
   subItems: MegaSubItem[];
   /** Quando presente, o painel vira grade de banners em vez de miniaturas. */
   banners?: CollabBanner[];
+}
+
+/**
+ * Link direto para a página de um PC pronto, pela chave do preset em setups.ts.
+ *
+ * Provisório: por enquanto os cartões de PC Gamer abrem o produto, não a
+ * listagem da faixa. Quando a listagem por nível voltar, troca-se por
+ * `setupsHref({ showcase: "pc-gamer", tags: [...] })`.
+ */
+function setupProductHref(key: string, fallback: string) {
+  const id = getSetupProductId(key);
+  const product = setupProducts.find((p) => p.id === id);
+  return product ? getProductUrl(product) : fallback;
 }
 
 /**
@@ -298,9 +312,12 @@ const megaMenus: Record<string, MegaMenu> = {
           href: getCatalogHref({ category: "Computadores", subcategory: "All in One" })
         }
       },
+      /* OCULTO: a vitrine Workstation só tinha Render e Studio, que saíram do
+         catálogo (ver ACTIVE_SETUPS em lib/setups). Volta quando houver produto;
+         a arte nova (produtos soltos, sem fundo) está no briefing.
       {
         /* Workstation = máquina de trabalho pesado. No catálogo isso é a linha
-           Creator; as finalidades abaixo são recortes de preço dentro dela. */
+           Creator; as finalidades abaixo são recortes de preço dentro dela. * /
         label: "Workstation", href: setupsHref({ showcase: "workstation" }), image: "/setups/wide/setup-render.webp", thumb: "arte",
         right: {
           type: "layouts", title: "Workstation por Finalidade",
@@ -312,6 +329,7 @@ const megaMenus: Record<string, MegaMenu> = {
           ]
         }
       },
+      */
     ]
   },
 
@@ -319,7 +337,7 @@ const megaMenus: Record<string, MegaMenu> = {
     title: "PC Gamer",
     subItems: [
       {
-        label: "Entrada", href: setupsHref({ showcase: "pc-gamer", tags: ["Entrada"] }), image: "/setups/wide/setup-base.webp", thumb: "arte",
+        label: "Base", href: setupProductHref("base", setupsHref({ showcase: "pc-gamer", tags: ["Entrada"] })), image: "/setups/wide/setup-base.webp", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Entrada",
           layouts: [
@@ -330,7 +348,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Intermediário", href: setupsHref({ showcase: "pc-gamer", tags: ["Intermediário"] }), image: "/setups/wide/setup-pulse.webp", thumb: "arte",
+        label: "Pulse", href: setupProductHref("pulse", setupsHref({ showcase: "pc-gamer", tags: ["Intermediário"] })), image: "/setups/wide/setup-pulse.webp", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Intermediário",
           layouts: [
@@ -341,7 +359,7 @@ const megaMenus: Record<string, MegaMenu> = {
         }
       },
       {
-        label: "Avançado", href: setupsHref({ showcase: "pc-gamer", tags: ["Avançado"] }), image: "/setups/wide/setup-apex.webp", thumb: "arte",
+        label: "Strike", href: setupProductHref("strike", setupsHref({ showcase: "pc-gamer", tags: ["Avançado"] })), image: "/setups/wide/setup-strike.webp", thumb: "arte",
         right: {
           type: "layouts", title: "PC Gamer Avançado",
           layouts: [

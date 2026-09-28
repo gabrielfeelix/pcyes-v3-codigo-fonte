@@ -658,7 +658,7 @@ type PresetTier =
 type Scenario = { label: string; value: string; sub?: string };
 
 import { quizGames, quizPrograms, type QuizGame, type QuizProgram } from "../lib/gameLibrary";
-import { getSetupProductId } from "../lib/setups";
+import { ACTIVE_SETUPS, getSetupProductId, resolveActiveSetupKey } from "../lib/setups";
 
 type UseTypeCardData = {
   id: UseType;
@@ -729,7 +729,7 @@ type Preset = {
   selections: Record<string, string>;
 };
 
-const presets: Preset[] = [
+const allPresets: Preset[] = [
   {
     id: "pulse",
     persona: "gamer",
@@ -956,30 +956,30 @@ const presets: Preset[] = [
   },
   {
     id: "base",
-    persona: "daily",
+    persona: "gamer",
     name: "PCYES Base",
-    tagline: "Dia-a-dia · Office + streaming",
-    description: "PC honesto pra estudo, trabalho remoto e streaming. Custo-benefício de verdade.",
+    tagline: "Gamer · 1080p · entrada",
+    description: "Porta de entrada no PC gamer. Roda os competitivos em 1080p e dá conta do dia a dia sem aperto.",
     price: 2299,
     oldPrice: 2599,
     pixDiscount: 10,
     installments: { count: 10, value: 229.9 },
     accent: "#64748b",
     glow: "rgba(100,116,139,0.35)",
-    icon: <Briefcase className="h-5 w-5" />,
+    icon: <Gamepad2 className="h-5 w-5" />,
     heroImage: "/setups/setup-base.webp",
     performance: "Entrada",
     specs: {
       cpu: "Intel Core i3-12100F",
-      gpu: "Vídeo integrado UHD 730",
+      gpu: "GeForce RTX 3050 6GB",
       ram: "16GB DDR4 3200MHz",
       storage: "SSD NVMe 480GB",
       psu: "400W 80+",
     },
     scenarios: [
-      { label: "Office + 15 abas", value: "Sem travas", sub: "" },
-      { label: "Zoom HD + Slack", value: "Tranquilo", sub: "" },
-      { label: "Netflix 4K", value: "Fluido", sub: "" },
+      { label: "Valorant 1080p", value: "Fluido", sub: "" },
+      { label: "CS2 1080p", value: "Fluido", sub: "" },
+      { label: "Fortnite 1080p", value: "Jogável", sub: "" },
     ],
     rating: 4.6,
     reviews: 312,
@@ -1066,6 +1066,10 @@ const presets: Preset[] = [
     },
   },
 ];
+
+/* Só os setups que existem (ver ACTIVE_SETUPS em lib/setups). Os outros seis
+   presets ficam guardados, ocultos, até voltarem ao catálogo. */
+const presets = allPresets.filter((p) => (ACTIVE_SETUPS as readonly string[]).includes(p.id));
 
 const recommendPreset = (a: QuizAnswers): PresetTier => {
   if (a.useType === "gaming") {
@@ -5646,7 +5650,7 @@ export function MonteSeuPcPage() {
    * chave não casar com nenhum produto.
    */
   const handleQuizComplete = (rec: PresetTier) => {
-    const productId = getSetupProductId(rec);
+    const productId = getSetupProductId(resolveActiveSetupKey(rec));
     if (productId) {
       navigate(`/produto/${productId}`);
       return;

@@ -92,10 +92,10 @@ const SETUP_SEED: SetupSeed[] = [
     monitor: "Monitor PCYES 32\" 4K IPS 100% AdobeRGB",
   },
   {
-    key: "base", persona: "daily", name: "PCYES Base", tagline: "Dia-a-dia · Office + streaming",
-    description: "PC honesto pra estudo, trabalho remoto e streaming. Custo-benefício de verdade.",
+    key: "base", persona: "gamer", name: "PCYES Base", tagline: "Gamer · 1080p · entrada",
+    description: "Porta de entrada no PC gamer. Roda os competitivos em 1080p e dá conta do dia a dia sem aperto.",
     price: 2299, oldPrice: 2599, rating: 4.6, reviews: 312, heroImage: "/setups/setup-base.webp", tier: "Entrada",
-    specs: { cpu: "Intel Core i3-12100F", gpu: "Vídeo integrado UHD 730", ram: "16GB DDR4 3200MHz", storage: "SSD NVMe 480GB", psu: "400W 80+" },
+    specs: { cpu: "Intel Core i3-12100F", gpu: "GeForce RTX 3050 6GB", ram: "16GB DDR4 3200MHz", storage: "SSD NVMe 480GB", psu: "400W 80+" },
     monitor: "Monitor PCYES 21,5\" Full HD 75Hz",
   },
   {
@@ -204,7 +204,28 @@ const SETUP_SUBCATEGORY = "Setups";
 /** Componentes de cada setup, indexados pelo id do produto. */
 export const setupComponents: Record<number, SetupComponent[]> = {};
 
-/** Setups como produtos de catálogo. */
+/**
+ * Setups que existem de verdade. Os outros seis presets eram do protótipo e
+ * ficam ocultos: continuam no SETUP_SEED (os ids dependem da posição), mas não
+ * viram produto de catálogo nem recomendação do quiz.
+ */
+export const ACTIVE_SETUPS = ["base", "pulse", "strike"] as const;
+const isActiveSetup = (key: string) => (ACTIVE_SETUPS as readonly string[]).includes(key);
+
+/**
+ * Preset oculto → ativo mais próximo em preço (Base R$ 2,3k, Pulse R$ 3,5k,
+ * Strike R$ 7,5k). O quiz continua recomendando pelos nove perfis; a saída é
+ * que cai num dos três que existem.
+ */
+const NEAREST_ACTIVE: Record<string, string> = {
+  sketch: "pulse", hub: "pulse",
+  render: "strike", cockpit: "strike", apex: "strike", studio: "strike",
+};
+export function resolveActiveSetupKey(key: string): string {
+  return isActiveSetup(key) ? key : NEAREST_ACTIVE[key] ?? "strike";
+}
+
+/** Setups como produtos de catálogo — só os ativos. */
 export const setupProducts: Product[] = SETUP_SEED.map((seed, i) => {
   const id = SETUP_ID_BASE + i + 1;
   const components = buildComponents(seed);
@@ -242,7 +263,7 @@ export const setupProducts: Product[] = SETUP_SEED.map((seed, i) => {
       { label: "Categoria de uso", value: seed.tagline },
     ],
   };
-});
+}).filter((_, i) => isActiveSetup(SETUP_SEED[i].key));
 
 const setupIds = new Set(setupProducts.map((p) => p.id));
 
