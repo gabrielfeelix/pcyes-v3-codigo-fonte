@@ -1523,7 +1523,7 @@ export function ProductsPage() {
                 <AnimatePresence>
                   {sortDropdownOpen && (
                     <motion.div initial={{ opacity: 0, y: -5, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -5, scale: 0.97 }} transition={{ duration: 0.15 }}
-                      className="absolute left-0 right-auto sm:left-auto sm:right-0 top-full mt-3 border border-foreground/10 shadow-xl z-30 min-w-[200px] max-w-[calc(100vw-32px)] py-2"
+                      className="absolute right-0 left-auto md:left-0 md:right-auto xl:left-auto xl:right-0 top-full mt-3 border border-foreground/10 shadow-xl z-30 min-w-[200px] max-w-[calc(100vw-32px)] py-2"
                       style={{ borderRadius: "var(--radius-card)", background: "var(--surface-1)" }}
                     >
                       {sortOptions.map((opt) => (
