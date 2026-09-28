@@ -38,8 +38,10 @@ interface CategoryDef {
 
 }
 
-/* Ordem = encaixe no bento (ver BENTO_SPAN): Gabinetes (hero 2×2) → Cadeiras
-   (frame alto) → produtos que fecham bem em quadrado pequeno. */
+/* Ordem = encaixe no bento (ver BENTO_SPAN_*): Gabinetes (hero 2×2) → Cadeiras
+   (frame alto) → pequenos. Artes finais do design (Site V2) nos quadros de
+   antes; Mousepads ocupa o lugar de Monitores, que ficou sem arte nova. A arte
+   de Water Coolers (public/categorias/water-coolers.webp) não entrou. */
 const CATEGORY_DEFS: CategoryDef[] = [
   {
     label: "Gabinetes",
@@ -47,7 +49,7 @@ const CATEGORY_DEFS: CategoryDef[] = [
     href: "/gabinetes/",
     lifestyle: "https://cdn.oderco.com.br/produtos/252558/3F00DCAA20BD6D04E0630300A8C06874",
     category: "Gabinetes",
-    arte: "/categorias/gabinetes-desktop.png",
+    arte: "/categorias/gabinetes.webp",
   },
   {
     label: "Cadeiras Gamer",
@@ -56,7 +58,7 @@ const CATEGORY_DEFS: CategoryDef[] = [
     lifestyle: "https://cdn.oderco.com.br/produtos/299948/3C1B41C611E7F40EE0630300A8C0C57C",
     category: "Cadeiras",
     subLabel: "Cadeiras Gamer",
-    arte: "/categorias/cadeiras-desktop.png",
+    arte: "/categorias/cadeiras.webp",
   },
   {
     label: "Mouses",
@@ -65,7 +67,7 @@ const CATEGORY_DEFS: CategoryDef[] = [
     lifestyle: "https://cdn.oderco.com.br/produtos/199396/3F2E42F714EE871CE0630300A8C048F6",
     category: "Periféricos",
     subLabel: "Mouses",
-    arte: "/categorias/mouses-desktop.png",
+    arte: "/categorias/mouses.webp",
   },
   {
     label: "Headsets",
@@ -74,15 +76,16 @@ const CATEGORY_DEFS: CategoryDef[] = [
     lifestyle: "https://cdn.oderco.com.br/produtos/307806/48313F6103512D92E0630300A8C04D73",
     category: "Periféricos",
     subLabel: "Headsets e Fones",
-    arte: "/categorias/headsets-desktop.png",
+    arte: "/categorias/headsets.webp",
   },
   {
-    label: "Monitores",
-    teaser: "Alta taxa de atualização",
-    href: "/monitores/",
-    lifestyle: "https://cdn.oderco.com.br/produtos/209949/1029001B37618397E0630300A8C069C3",
-    category: "Monitores",
-    arte: "/categorias/monitores-desktop.png",
+    label: "Mousepads",
+    teaser: "Deslize e controle",
+    href: "/perifericos/mousepads/",
+    lifestyle: "/categorias/mousepads.webp",
+    category: "Periféricos",
+    subLabel: "Mousepads",
+    arte: "/categorias/mousepads.webp",
   },
   {
     label: "Microfones",
@@ -91,7 +94,7 @@ const CATEGORY_DEFS: CategoryDef[] = [
     lifestyle: "https://cdn.oderco.com.br/produtos/332488/4D4C20FBD0EEAEB4E0630300A8C0FF35",
     category: "Streaming",
     subLabel: "Microfones",
-    arte: "/categorias/microfones-desktop.png",
+    arte: "/categorias/microfones.webp",
   },
   {
     label: "Teclados",
@@ -100,7 +103,7 @@ const CATEGORY_DEFS: CategoryDef[] = [
     lifestyle: "https://cdn.oderco.com.br/produtos/286139/47CD45D3569E8A3EE0630300A8C0C7F2",
     category: "Periféricos",
     subLabel: "Teclados",
-    arte: "/categorias/teclados-desktop.png",
+    arte: "/categorias/teclados.webp",
   },
   {
     label: "Placas de Vídeo",
@@ -108,7 +111,7 @@ const CATEGORY_DEFS: CategoryDef[] = [
     href: "/placas-de-video/",
     lifestyle: "https://cdn.oderco.com.br/produtos/305499/47A45C4DC546919FE0630300A8C07C9A",
     category: "Placas de Vídeo",
-    arte: "/categorias/placas-desktop.png",
+    arte: "/categorias/placas.webp",
   },
 ];
 
@@ -124,7 +127,7 @@ const BENTO_SPAN_MD = [
   "md:col-span-1 md:row-span-2", // Cadeiras (frame alto)
   "md:col-span-1 md:row-span-1", // Mouses
   "md:col-span-1 md:row-span-1", // Headsets
-  "md:col-span-1 md:row-span-1", // Monitores
+  "md:col-span-1 md:row-span-1", // Mousepads
   "md:col-span-1 md:row-span-1", // Microfones
   "md:col-span-1 md:row-span-1", // Teclados
   "md:col-span-1 md:row-span-1", // Placas
@@ -145,7 +148,7 @@ const BENTO_SPAN_MD = [
  *   [ Gabinetes  (2 col) ]
  *   [ Cadeiras ][ Mouses ]
  *   [   alta   ][Headsets]
- *   [Monitores ][Microfon]
+ *   [Mousepads ][Microfon]
  *   [Teclados  ][  alto  ]
  *   [  Placas   (2 col)  ]
  *
@@ -157,7 +160,7 @@ const BENTO_SPAN_MOBILE = [
   "row-span-6", // Cadeiras — frame alto, 312px
   "row-span-3", // Mouses — 150px
   "row-span-3", // Headsets
-  "row-span-3", // Monitores
+  "row-span-3", // Mousepads
   "row-span-6", // Microfones — frame alto, par da Cadeiras
   "row-span-3", // Teclados
   "col-span-2 row-span-4", // Placas — fechamento, 204px
@@ -262,14 +265,14 @@ function BentoCell({ cat, index }: { cat: Category; index: number }) {
         className="pointer-events-none absolute inset-0 md:hidden"
         style={{
           background:
-            "linear-gradient(180deg, rgba(8,8,10,0.22) 0%, transparent 14%, transparent 84%, rgba(8,8,10,0.3) 100%)",
+            "linear-gradient(180deg, rgba(8,8,10,0.06) 0%, transparent 14%, transparent 84%, rgba(8,8,10,0.08) 100%)",
         }}
       />
       <div
         className="pointer-events-none absolute inset-0 hidden md:block"
         style={{
           background:
-            "linear-gradient(180deg, rgba(8,8,10,0.32) 0%, transparent 12%, transparent 80%, rgba(8,8,10,0.42) 100%)",
+            "linear-gradient(180deg, rgba(8,8,10,0.09) 0%, transparent 12%, transparent 80%, rgba(8,8,10,0.12) 100%)",
         }}
       />
       {/* Anel vermelho suave no hover. */}
