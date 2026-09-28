@@ -1,9 +1,18 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { X, ArrowRight, Check, Facebook, Instagram, Youtube, Twitter } from "lucide-react";
+import { X, ArrowRight, Check } from "lucide-react";
 
 const PCYES_LOGO = "https://pcyes-cdn.oderco.com.br/Logotipos/PCYES/Simbolo-Logo-Horiz-Vermelho.png";
+
+/**
+ * Arte do convite — espaço reservado, ainda sem peça do design.
+ *
+ * Desktop: painel da esquerda, metade do modal (~460 × 520). Celular: faixa de
+ * 190px em cima do formulário. Orientações opostas, então são duas artes (ver
+ * docs/banners-homepage.html). Vazio = cai no degradê com o logo.
+ */
+const POPUP_ARTE: { desktop?: string; mobile?: string } = {};
 
 /** Fração da página que precisa ser percorrida antes do convite aparecer. */
 const SCROLL_TRIGGER = 0.15;
@@ -107,7 +116,7 @@ export function WelcomePopup() {
 
               {/* ── Hero (left) ─────────────────────────────────────── */}
               <div
-                className="relative hidden md:flex items-center justify-center min-h-[480px] overflow-hidden"
+                className="relative flex h-[190px] items-center justify-center overflow-hidden md:h-auto md:min-h-[480px]"
                 style={{
                   background:
                     "radial-gradient(circle at 28% 22%, rgba(255, 48, 48, 0.55) 0%, transparent 55%), radial-gradient(circle at 75% 78%, rgba(225, 6, 0, 0.4) 0%, transparent 50%), linear-gradient(135deg, #1d0404 0%, #0a0a0a 60%, #000 100%)",
@@ -126,25 +135,37 @@ export function WelcomePopup() {
                 <div className="pointer-events-none absolute -bottom-32 -right-20 w-[320px] h-[320px] rounded-full blur-3xl"
                   style={{ background: "radial-gradient(circle, rgba(225, 6, 0, 0.3) 0%, transparent 70%)" }} />
 
+                {POPUP_ARTE.desktop || POPUP_ARTE.mobile ? (
+                  <picture>
+                    {POPUP_ARTE.desktop && <source media="(min-width: 768px)" srcSet={POPUP_ARTE.desktop} />}
+                    <img
+                      src={POPUP_ARTE.mobile ?? POPUP_ARTE.desktop}
+                      alt=""
+                      className="absolute inset-0 z-10 h-full w-full object-cover"
+                    />
+                  </picture>
+                ) : (
                 <div className="relative z-10 flex flex-col items-center px-10 text-center">
-                  <img src={PCYES_LOGO} alt="PCYES" className="w-[220px] mb-8 drop-shadow-[0_8px_24px_rgba(225,6,0,0.45)]" />
+                  {/* No celular a faixa é baixa: só o logo, menor. */}
+                  <img src={PCYES_LOGO} alt="PCYES" className="w-[150px] md:w-[220px] md:mb-8 drop-shadow-[0_8px_24px_rgba(225,6,0,0.45)]" />
                   <p
-                    className="text-ink leading-snug"
+                    className="hidden md:block text-ink leading-snug"
                     style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, letterSpacing: "-0.02em" }}
                   >
                     Built for<br />Performance
                   </p>
                   <p
-                    className="mt-4 text-ink-muted max-w-[260px]"
+                    className="hidden md:block mt-4 text-ink-muted max-w-[260px]"
                     style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.55 }}
                   >
                     Hardware, periféricos e setups feitos pra quem joga, edita e cria sem trava.
                   </p>
                 </div>
+                )}
               </div>
 
               {/* ── Form (right) ────────────────────────────────────── */}
-              <div className="px-8 md:px-12 py-10 md:py-14 flex flex-col justify-center">
+              <div className="px-8 md:px-12 py-8 md:py-14 flex flex-col justify-center">
                 {!submitted ? (
                   <>
                     <h3
@@ -179,25 +200,8 @@ export function WelcomePopup() {
                       </button>
                     </form>
 
-                    {/* Social */}
-                    <div className="mt-7 flex items-center justify-center gap-3">
-                      {[
-                        { Icon: Facebook, label: "Facebook", href: "#" },
-                        { Icon: Twitter, label: "X", href: "#" },
-                        { Icon: Instagram, label: "Instagram", href: "#" },
-                        { Icon: Youtube, label: "YouTube", href: "#" },
-                      ].map(({ Icon, label, href }) => (
-                        <a
-                          key={label}
-                          href={href}
-                          aria-label={label}
-                          className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-foreground/65 hover:text-foreground hover:border-foreground/40 transition-colors"
-                        >
-                          <Icon size={16} strokeWidth={1.6} />
-                        </a>
-                      ))}
-                    </div>
-
+                    {/* Sem links de rede social: quem acabou de chegar não deve ser
+                        convidado a sair do site. O espaço foi para a arte no celular. */}
                     <button
                       onClick={dismiss}
                       className="mt-5 mx-auto block text-foreground/40 hover:text-foreground/70 transition-colors cursor-pointer"
