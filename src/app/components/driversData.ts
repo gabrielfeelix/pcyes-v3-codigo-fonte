@@ -144,40 +144,56 @@ function buildEntries(): DriverEntry[] {
     candidates.push(product);
   }
 
-  return candidates.map((product, index) => {
-    const seed = product.id + index * 17 + 3;
-    const slug = product.seoSlug && product.seoSlug.length > 0 ? product.seoSlug : kebabCase(product.name);
-    const model = product.sku ?? `PCY-${String(1000 + product.id).slice(-4)}`;
+  return candidates.map(buildEntry);
+}
 
-    const driver: DriverFile = {
-      format: "ZIP",
-      sizeLabel: sizeLabel(seed, 300, 900),
-      updatedAt: pickDate(seed),
-    };
-    const manual: DriverFile = {
-      format: "PDF",
-      sizeLabel: sizeLabel(seed + 91, 150, 600),
-      updatedAt: pickDate(seed + 91),
-    };
+function buildEntry(product: Product, index: number): DriverEntry {
+  const seed = product.id + index * 17 + 3;
+  const slug = product.seoSlug && product.seoSlug.length > 0 ? product.seoSlug : kebabCase(product.name);
+  const model = product.sku ?? `PCY-${String(1000 + product.id).slice(-4)}`;
 
-    return {
-      slug,
-      productId: product.id,
-      name: product.name,
-      category: product.category,
-      model,
-      image: product.image,
-      shortDescription: buildShortDescription(product),
-      driver,
-      manual,
-    };
-  });
+  const driver: DriverFile = {
+    format: "ZIP",
+    sizeLabel: sizeLabel(seed, 300, 900),
+    updatedAt: pickDate(seed),
+  };
+  const manual: DriverFile = {
+    format: "PDF",
+    sizeLabel: sizeLabel(seed + 91, 150, 600),
+    updatedAt: pickDate(seed + 91),
+  };
+
+  return {
+    slug,
+    productId: product.id,
+    name: product.name,
+    category: product.category,
+    model,
+    image: product.image,
+    shortDescription: buildShortDescription(product),
+    driver,
+    manual,
+  };
 }
 
 export const driverEntries: DriverEntry[] = buildEntries();
 
+/* A central lista só ~24 produtos, mas toda PDP tem download: fora da
+   lista, a entrada é gerada na hora a partir do produto. */
+export function getDriverForProduct(productId: number): DriverEntry | undefined {
+  const listed = driverEntries.find((entry) => entry.productId === productId);
+  if (listed) return listed;
+  const product = allProducts.find((p) => p.id === productId);
+  return product ? buildEntry(product, 0) : undefined;
+}
+
 export function getDriverBySlug(slug: string): DriverEntry | undefined {
-  return driverEntries.find((entry) => entry.slug === slug);
+  const listed = driverEntries.find((entry) => entry.slug === slug);
+  if (listed) return listed;
+  const product = allProducts.find(
+    (p) => (p.seoSlug || kebabCase(p.name)) === slug,
+  );
+  return product ? buildEntry(product, 0) : undefined;
 }
 
 export const driverCategories: string[] = Array.from(

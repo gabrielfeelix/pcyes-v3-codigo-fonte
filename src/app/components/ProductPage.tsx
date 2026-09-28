@@ -7,6 +7,7 @@ import {
   Check, Share2, MapPin, CreditCard, Banknote, QrCode,
   Loader2, ArrowUpRight, Zap, X, Clock, Info,
   Rocket, CalendarDays, ShieldCheck, ZoomIn, Settings2, ImagePlus,
+  Download, FileText, Cpu,
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "./ui/sheet";
@@ -51,6 +52,7 @@ import { DiscontinuedNotice } from "./DiscontinuedNotice";
 import { useFocusTrap } from "../lib/useFocusTrap";
 import { trackViewItem } from "../../utils/analytics";
 import { productDetails } from "./productDetails";
+import { getDriverForProduct, type DriverFile } from "./driversData";
 
 /* ── helpers ─────────────────────────────────────────── */
 
@@ -2975,6 +2977,102 @@ function ProductStandardDescription({
 }
 
 /* ═══════════════════════════════════════════════════════
+   DRIVERS E MANUAIS — entre a descrição e as avaliações.
+   Aparece em todos os produtos (driversData gera a entrada).
+   ═══════════════════════════════════════════════════════ */
+
+function formatDriverDate(iso: string) {
+  const [year, month, day] = iso.split("-");
+  return year && month && day ? `${day}/${month}/${year}` : iso;
+}
+
+function ProductDownloads({ productId }: { productId: number }) {
+  const entry = getDriverForProduct(productId);
+  const [started, setStarted] = useState<"driver" | "manual" | null>(null);
+  if (!entry) return null;
+
+  const rows: { kind: "driver" | "manual"; icon: typeof Cpu; title: string; text: string; file: DriverFile }[] = [
+    { kind: "driver", icon: Cpu, title: "Driver e software", text: entry.shortDescription, file: entry.driver },
+    { kind: "manual", icon: FileText, title: "Manual do usuário", text: "Instalação, especificações e cuidados, em PDF para consultar ou imprimir.", file: entry.manual },
+  ];
+
+  return (
+    <section className="py-14 md:py-16 border-t border-foreground/5">
+      <div className="mx-auto max-w-[1120px]">
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="mb-3 text-primary tracking-[0.22em]" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800 }}>
+              // SUPORTE
+            </p>
+            <h2 className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(24px, 3.4vw, 32px)", lineHeight: 1.08, fontWeight: 700, letterSpacing: "-0.02em" }}>
+              Drivers e manuais
+            </h2>
+            <p className="mt-2 text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.6 }}>
+              Modelo {entry.model}. Arquivos oficiais, sempre na versão mais recente.
+            </p>
+          </div>
+          <Link
+            to={`/drivers-e-manuais/${entry.slug}`}
+            className="inline-flex w-fit items-center gap-1.5 text-foreground/60 transition-colors hover:text-foreground"
+            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}
+          >
+            Central de downloads <ArrowUpRight size={15} />
+          </Link>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          {rows.map(({ kind, icon: Icon, title, text, file }) => (
+            <article
+              key={kind}
+              className="flex flex-col gap-5 border border-foreground/10 bg-foreground/[0.03] p-6 transition-colors hover:border-foreground/20"
+              style={{ borderRadius: "var(--radius-card-lg)" }}
+            >
+              <div className="flex items-start gap-4">
+                <div
+                  className={`flex h-11 w-11 flex-shrink-0 items-center justify-center ${kind === "driver" ? "bg-primary/12 text-primary" : "bg-foreground/[0.06] text-foreground/70"}`}
+                  style={{ borderRadius: "var(--radius-button)" }}
+                >
+                  <Icon size={20} />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 600, lineHeight: 1.25 }}>
+                    {title}
+                  </h3>
+                  <p className="mt-1.5 text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.55 }}>
+                    {text}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-edge-subtle pt-5">
+                <p className="text-foreground/45" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                  <span className="text-foreground/70" style={{ fontWeight: 700, letterSpacing: "0.08em" }}>{file.format}</span>
+                  {" · "}{file.sizeLabel}{" · "}atualizado em {formatDriverDate(file.updatedAt)}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setStarted(kind)}
+                  aria-label={`Baixar ${title.toLowerCase()} do ${entry.name}`}
+                  className={`inline-flex items-center gap-2 px-5 py-2.5 transition-all active:scale-[0.98] cursor-pointer ${
+                    kind === "driver"
+                      ? "bg-primary text-ink-strong hover:brightness-110"
+                      : "border border-foreground/15 text-foreground hover:border-foreground/30"
+                  }`}
+                  style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700 }}
+                >
+                  {started === kind ? <Check size={15} /> : <Download size={15} />}
+                  {started === kind ? "Download iniciado" : kind === "driver" ? "Baixar driver" : "Baixar manual"}
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════ */
 
@@ -3541,10 +3639,12 @@ export function ProductPage() {
               />
             </div>
 
-      {/* Reviews Section */}
-      <div ref={reviewsRef}>
-        <ReviewsSection product={product} isDark={isDark} />
-      </div>
+            <ProductDownloads key={product.id} productId={product.id} />
+
+            {/* Reviews Section */}
+            <div ref={reviewsRef}>
+              <ReviewsSection product={product} isDark={isDark} />
+            </div>
           </div>
         </div>
 
