@@ -6,7 +6,7 @@ import { Heart, ShoppingCart } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useAuth } from "./AuthContext";
 import { allProducts, type Product } from "./productsData";
-import { getPrimaryProductImage, getProductSwatches, getStockStatus } from "./productPresentation";
+import { getPrimaryProductImage, getProductSwatches, getStockStatus, getCardSwatches } from "./productPresentation";
 import { artFitClass, setupArtVariant } from "../lib/setupImages";
 import { getPreOrderInfo } from "./PreOrderData";
 import { CTAButton, DiscountBadge, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge } from "./section";
@@ -78,7 +78,9 @@ export function ProductCard({
   const [selectedSwatchId, setSelectedSwatchId] = useState<number | null>(null);
   const { isLoggedIn } = useAuth();
 
-  const swatchList = swatches ? getProductSwatches(product) : [];
+  /* Toda card mostra a linha de cor (uma bolinha ou mais), como no catálogo:
+     sem ela o preço dos cards vizinhos desalinhava. */
+  const swatchList = getCardSwatches(product, swatches ? getProductSwatches(product) : []);
   const selectedProduct = selectedSwatchId
     ? allProducts.find((p) => p.id === selectedSwatchId)
     : product;
@@ -229,18 +231,15 @@ export function ProductCard({
         {/* Nota abaixo do título — mesmo lugar do card do catálogo. */}
         <RatingChip rating={product.rating} reviews={product.reviews} className="mt-1.5" />
 
-        <PriceBlock
-          className="mt-3"
-          reserveOldPrice
-          priceNum={product.priceNum}
-          oldPriceNum={oldPriceNum > product.priceNum ? oldPriceNum : undefined}
-        />
       </div>
     </>
   );
 
   return (
-    <div className={`group ${className}`} style={style}>
+    /* Coluna: nome, nota e cor em cima; preço no pé (mt-auto) e botão por
+       último. Em grade, cards da mesma linha ficam com preço e botão na
+       mesma altura, seja qual for o tamanho do nome ou do selo. */
+    <div className={`group flex flex-col ${className}`} style={style}>
       {href ? (
         <Link to={href} className="block">
           {well}
@@ -257,7 +256,7 @@ export function ProductCard({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setSelectedSwatchId(s.productId === selectedSwatchId ? null : s.productId);
+                if (swatchList.length > 1) setSelectedSwatchId(s.productId === selectedSwatchId ? null : s.productId);
               }}
               className="inline-flex items-center justify-center p-4 -m-4 md:p-1.5 md:-m-1.5 cursor-pointer transition-all hover:scale-110"
               aria-label={s.label}
@@ -268,10 +267,10 @@ export function ProductCard({
                 style={{
                   background: s.color,
                   border:
-                    selectedSwatchId === s.productId
+                    swatchList.length > 1 && selectedSwatchId === s.productId
                       ? "2px solid rgba(225, 6, 0, 0.9)"
-                      : "1px solid rgba(var(--foreground-rgb), 0.18)",
-                  boxShadow: selectedSwatchId === s.productId ? "0 0 8px rgba(225, 6, 0, 0.5)" : "none",
+                      : "1px solid rgba(var(--foreground-rgb), 0.3)",
+                  boxShadow: swatchList.length > 1 && selectedSwatchId === s.productId ? "0 0 8px rgba(225, 6, 0, 0.5)" : "none",
                 }}
               />
             </button>
@@ -287,6 +286,24 @@ export function ProductCard({
               +{swatchList.length - 5}
             </span>
           )}
+        </div>
+      )}
+
+      {href ? (
+        <Link to={href} className="mt-auto block px-1 pt-3">
+            <PriceBlock
+                        reserveOldPrice
+              priceNum={product.priceNum}
+              oldPriceNum={oldPriceNum > product.priceNum ? oldPriceNum : undefined}
+            />
+        </Link>
+      ) : (
+        <div className="mt-auto px-1 pt-3">
+            <PriceBlock
+                        reserveOldPrice
+              priceNum={product.priceNum}
+              oldPriceNum={oldPriceNum > product.priceNum ? oldPriceNum : undefined}
+            />
         </div>
       )}
 
