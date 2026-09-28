@@ -1344,16 +1344,6 @@ export function CheckoutPage() {
                   )}
                 </div>
 
-                <div className="mt-5 flex flex-col gap-2 text-ink-subtle" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>
-                  <span className="inline-flex items-center gap-1.5">
-                    <ShieldCheck size={12} strokeWidth={2} className="text-green-500" />
-                    Compra 100% segura · SSL
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Truck size={12} strokeWidth={2} className="text-ink-muted" />
-                    Frete grátis acima de R$ 299
-                  </span>
-                </div>
     </>
   );
 
@@ -2141,55 +2131,6 @@ export function CheckoutPage() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* No mobile o voltar mora no cabeçalho do checkout e o avançar
-                  na barra fixa de baixo; esta linha é só do desktop. */}
-              <div className="mt-6 hidden items-center justify-between gap-3 lg:flex">
-                <button
-                  onClick={goBack}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-full px-5 py-3 min-h-[44px] md:min-h-[24px] text-ink-muted transition-colors hover:bg-white/[0.05] hover:text-ink-strong"
-                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
-                >
-                  <ChevronLeft size={14} strokeWidth={2.4} />
-                  Voltar
-                </button>
-
-                {step < 3 ? (
-                  <button
-                    onClick={tryAdvance}
-                    aria-disabled={!canAdvance}
-                    className={`hidden lg:inline-flex cursor-pointer items-center gap-2 rounded-full px-7 py-3 text-ink-strong transition-transform hover:scale-[1.03] active:scale-[0.97] ${!canAdvance ? "opacity-60" : ""}`}
-                    style={{
-                      background: "var(--gradient-brand)",
-                      fontFamily: "var(--font-family-inter)",
-                      fontSize: "var(--text-caption)",
-                      fontWeight: 800,
-                      letterSpacing: "0.06em",
-                      textTransform: "uppercase",
-                      boxShadow: "var(--shadow-brand-cta)",
-                    }}
-                  >
-                    Continuar
-                    <ChevronRight size={14} strokeWidth={2.6} />
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleFinish}
-                    className="hidden lg:inline-flex cursor-pointer items-center gap-2 rounded-full px-7 py-3 text-ink-strong transition-transform hover:scale-[1.03] active:scale-[0.97]"
-                    style={{
-                      background: "var(--gradient-buy)",
-                      fontFamily: "var(--font-family-inter)",
-                      fontSize: "var(--text-caption)",
-                      fontWeight: 800,
-                      letterSpacing: "0.06em",
-                      textTransform: "uppercase",
-                      boxShadow: "var(--shadow-buy-cta)",
-                    }}
-                  >
-                    <Lock size={13} strokeWidth={2.6} />
-                    Finalizar pedido
-                  </button>
-                )}
-              </div>
             </div>
 
             <div className="hidden lg:block lg:sticky lg:top-[96px] lg:self-start">
@@ -2211,6 +2152,56 @@ export function CheckoutPage() {
 
                 {orderSummary}
 
+                {/* Avançar e voltar ficam presos ao resumo, que é sticky: com o
+                    formulário de endereço ou a lista de cartões aberta, a coluna
+                    da esquerda cresce e os botões iam parar lá embaixo. Aqui eles
+                    seguem a rolagem e ficam sempre à vista. */}
+                <div className="mt-5 flex flex-col gap-2.5">
+                  {step < 3 ? (
+                    <button
+                      onClick={tryAdvance}
+                      aria-disabled={!canAdvance}
+                      className={`inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full px-7 py-3.5 text-ink-strong transition-transform hover:scale-[1.02] active:scale-[0.98] ${!canAdvance ? "opacity-60" : ""}`}
+                      style={{
+                        background: "var(--gradient-brand)",
+                        fontFamily: "var(--font-family-inter)",
+                        fontSize: "var(--text-caption)",
+                        fontWeight: 800,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        boxShadow: "var(--shadow-brand-cta)",
+                      }}
+                    >
+                      Continuar
+                      <ChevronRight size={14} strokeWidth={2.6} />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleFinish}
+                      className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full px-7 py-3.5 text-ink-strong transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                      style={{
+                        background: "var(--gradient-buy)",
+                        fontFamily: "var(--font-family-inter)",
+                        fontSize: "var(--text-caption)",
+                        fontWeight: 800,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        boxShadow: "var(--shadow-buy-cta)",
+                      }}
+                    >
+                      <Lock size={13} strokeWidth={2.6} />
+                      Finalizar pedido
+                    </button>
+                  )}
+                  <button
+                    onClick={goBack}
+                    className="inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-full border border-edge px-7 py-3 text-ink-muted transition-colors hover:border-white/25 hover:text-ink-strong"
+                    style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
+                  >
+                    <ChevronLeft size={14} strokeWidth={2.4} />
+                    {step === 0 ? "Voltar pro carrinho" : "Voltar"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
