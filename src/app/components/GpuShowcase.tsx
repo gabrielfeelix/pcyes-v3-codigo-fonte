@@ -12,50 +12,49 @@ import { artFitClass } from "../lib/setupImages";
 
 interface Comparison {
   id: string;
-  productId: number;
+  /** Produto do card abaixo do comparador. Sem ele, o card não aparece —
+      2060 Super e 5060 não estão no catálogo. */
+  productId?: number;
   newName: string;
   previousName: string;
-  tagline: string;
-  metric: string;
-  scene: string;
+  /** Artes finais do design (Site V2): antes e depois são fotos distintas,
+      21:9 no desktop (2560×1097) e 4:3 no celular (1200×900). */
+  before: { desktop: string; mobile: string };
+  after: { desktop: string; mobile: string };
 }
 
+const gpuArt = (slug: string, side: "antes" | "depois") => ({
+  desktop: `/gpu/${slug}-${side}-desktop.webp`,
+  mobile: `/gpu/${slug}-${side}-mobile.webp`,
+});
+
+/* Sem métrica de FPS: não há número medido para esses pares, e percentual
+   inventado numa vitrine de venda vira promessa. Entra quando houver teste. */
 const COMPARISONS: Comparison[] = [
   {
-    id: "rtx-3070",
-    productId: 500,
-    newName: "RTX 3070",
-    previousName: "RTX 2060",
-    tagline: "Ray Tracing + DLSS 3 em 4K",
-    metric: "+85% FPS",
-    scene: "/assets/cod.webp",
+    id: "rtx-2060-super",
+    newName: "RTX 2060 Super",
+    previousName: "GTX 1660 Super",
+    before: gpuArt("gtx1660s-rtx2060s", "antes"),
+    after: gpuArt("gtx1660s-rtx2060s", "depois"),
   },
   {
     id: "rtx-3060",
     productId: 433,
     newName: "RTX 3060",
-    previousName: "GTX 1660",
-    tagline: "12GB GDDR6 + Ampere Cores",
-    metric: "+60% FPS",
-    scene: "/assets/god-of-war.webp",
+    previousName: "RTX 2060",
+    before: gpuArt("rtx2060-rtx3060", "antes"),
+    after: gpuArt("rtx2060-rtx3060", "depois"),
   },
   {
-    id: "rtx-3050",
-    productId: 434,
-    newName: "RTX 3050",
-    previousName: "GTX 1050 Ti",
-    tagline: "Ray Tracing acessível em Full HD",
-    metric: "+72% FPS",
-    scene: "/assets/mario.webp",
+    id: "rtx-5060",
+    newName: "RTX 5060",
+    previousName: "RTX 4060",
+    before: gpuArt("rtx4060-rtx5060", "antes"),
+    after: gpuArt("rtx4060-rtx5060", "depois"),
   },
 ];
 
-/* O lado "antes" simula uma placa mais fraca, não uma foto fora de foco.
-   blur(8px) lia como "imagem quebrada"; aqui a degradação é sutil e plausível:
-   menos definição, menos cor, menos contraste e um leve escurecimento — do
-   jeito que um preset gráfico mais baixo realmente parece. */
-const BEFORE_FILTER = "blur(1.6px) saturate(0.78) contrast(0.92) brightness(0.92)";
-const AFTER_FILTER = "saturate(1.15) contrast(1.06)";
 const ACCENT = "#ff2419";
 const ACCENT_GLOW = "rgba(225, 6, 0, 0.55)";
 const ACCENT_BG = "var(--gradient-brand)";
@@ -68,7 +67,7 @@ export function GpuShowcase() {
 
   const active = COMPARISONS[activeIdx];
   const productById = useMemo(() => new Map(allProducts.map((p) => [p.id, p])), []);
-  const product = productById.get(active.productId) as Product | undefined;
+  const product = (active.productId ? productById.get(active.productId) : undefined) as Product | undefined;
 
   const updatePosition = (clientX: number) => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -121,33 +120,7 @@ export function GpuShowcase() {
         background: "var(--surface-0)",
       }}
     >
-      {/* Fundo: a própria cena, desfocada e escurecida. Evita a imagem estourada
-          ocupando a largura toda — a comparação fica contida e nítida, e o fundo
-          só dá ambientação. */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <ImageWithFallback
-          src={active.scene}
-          alt=""
-          className="h-full w-full object-cover"
-          style={{ filter: "blur(32px) saturate(0.6)", transform: "scale(1.12)" }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0.82) 45%, rgba(0,0,0,0.93) 100%)",
-          }}
-        />
-      </div>
 
-      {/* Backdrop glow */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-70"
-        style={{
-          background:
-            "radial-gradient(800px 500px at 50% 0%, rgba(225, 6, 0, 0.12) 0%, transparent 60%), radial-gradient(600px 400px at 50% 100%, rgba(225, 6, 0, 0.08) 0%, transparent 60%)",
-        }}
-      />
 
       <div className="relative w-full">
         {/* Header (contained) */}
@@ -252,21 +225,12 @@ export function GpuShowcase() {
               transition={{ duration: 0.35 }}
               className="absolute inset-0"
             >
-              {/* "Before" — full image with degraded filter */}
+              {/* "Antes" — foto da placa anterior, inteira por baixo */}
               <div className="absolute inset-0">
-                <ImageWithFallback
-                  src={active.scene}
-                  alt="Antes"
-                  className="h-full w-full object-cover"
-                  style={{ filter: BEFORE_FILTER }}
-                />
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, rgba(0,0,0,0.0) 60%, rgba(0,0,0,0.6) 100%)",
-                  }}
-                />
+                <picture>
+                  <source media="(min-width: 768px)" srcSet={active.before.desktop} />
+                  <img src={active.before.mobile} alt={`Cena com ${active.previousName}`} draggable={false} className="h-full w-full object-cover" />
+                </picture>
               </div>
 
               {/* "After" — clipped from slider to right edge */}
@@ -274,27 +238,10 @@ export function GpuShowcase() {
                 className="absolute inset-0"
                 style={{ clipPath: `inset(0 0 0 ${pos}%)` }}
               >
-                <ImageWithFallback
-                  src={active.scene}
-                  alt="Depois"
-                  className="h-full w-full object-cover"
-                  style={{ filter: AFTER_FILTER }}
-                />
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, rgba(0,0,0,0.0) 55%, rgba(0,0,0,0.55) 100%)",
-                  }}
-                />
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{
-                    background:
-                      "radial-gradient(circle at 50% 50%, rgba(225,6,0,0.08) 0%, transparent 60%)",
-                    mixBlendMode: "screen",
-                  }}
-                />
+                <picture>
+                  <source media="(min-width: 768px)" srcSet={active.after.desktop} />
+                  <img src={active.after.mobile} alt={`Cena com ${active.newName}`} draggable={false} className="h-full w-full object-cover" />
+                </picture>
               </div>
             </motion.div>
           </AnimatePresence>
@@ -365,34 +312,6 @@ export function GpuShowcase() {
                 }}
               >
                 {active.newName}
-              </span>
-            </div>
-          </div>
-
-          {/* Metric badge top-center.
-              No celular a pílula é arredondada, não circular: com `rounded-full`
-              e o texto em duas linhas o raio virava meia-lua e comia os cantos
-              do texto. A fonte cai para 10px e o respiro interno sobe, senão a
-              frase quebra em três linhas coladas na borda. */}
-          <div className="pointer-events-none absolute top-3 md:top-5 left-1/2 z-20 -translate-x-1/2 w-[86%] md:w-auto md:max-w-[90%]">
-            <div
-              className="rounded-2xl md:rounded-full px-4 md:px-3.5 py-2 md:py-1.5 backdrop-blur-md"
-              style={{
-                background: "rgba(0, 0, 0, 0.62)",
-                border: "1px solid rgba(var(--foreground-rgb), 0.1)",
-              }}
-            >
-              <span
-                className="text-[10px] md:text-[var(--text-caption)] whitespace-normal md:whitespace-nowrap text-center block"
-                style={{
-                  fontFamily: "var(--font-family-inter)",
-                  fontWeight: 700,
-                  letterSpacing: "0.08em",
-                  lineHeight: 1.45,
-                  color: "#ffffff",
-                }}
-              >
-                {active.metric} · {active.tagline}
               </span>
             </div>
           </div>
@@ -493,7 +412,7 @@ export function GpuShowcase() {
                         lineHeight: 1.25,
                       }}
                     >
-                      {active.newName} · {active.tagline}
+                      {product.name}
                     </h3>
                     <p
                       className="mt-1 text-ink-strong"
