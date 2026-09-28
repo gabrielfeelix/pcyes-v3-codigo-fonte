@@ -1818,13 +1818,18 @@ export function ProductsPage() {
 
                             {/* Mobile buy button — below info so the image stays clean.
                                 Desktop uses the floating hover pill above instead. */}
-                            <button
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToCart(displayProduct); }}
-                              className="lg:hidden mt-auto pt-3 flex w-full items-center justify-center gap-2 rounded-full cursor-pointer"
-                              style={{ background: "var(--gradient-buy)", color: "white", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700, letterSpacing: "0.04em", boxShadow: "var(--shadow-buy-cta-sm)", paddingTop: "10px", paddingBottom: "10px" }}
-                            >
-                              <ShoppingCart size={15} strokeWidth={2} /> Comprar
-                            </button>
+                            {/* O respiro acima do botão é margem de verdade (pt-4 no
+                                invólucro). Antes era `pt-3` no próprio botão: virava
+                                espaço dentro dele e o botão encostava no preço. */}
+                            <div className="mt-auto pt-4 lg:hidden">
+                              <button
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToCart(displayProduct); }}
+                                className="flex w-full items-center justify-center gap-2 rounded-full cursor-pointer"
+                                style={{ background: "var(--gradient-buy)", color: "white", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700, letterSpacing: "0.04em", boxShadow: "var(--shadow-buy-cta-sm)", paddingTop: "10px", paddingBottom: "10px" }}
+                              >
+                                <ShoppingCart size={15} strokeWidth={2} /> Comprar
+                              </button>
+                            </div>
                           </div>
                         </motion.div>
                       );

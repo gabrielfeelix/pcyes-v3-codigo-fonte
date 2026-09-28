@@ -64,15 +64,20 @@ export function InstallmentLine({ priceNum, scale = "card", className = "mt-1" }
 
   return (
     <p
-      className={`leading-tight ${className}`}
+      // Catálogo: 14px só do sm pra cima; no celular a coluna do card não
+      // comporta e a linha quebrava. Lá fica no tamanho de legenda.
+      className={`leading-tight ${scale === "catalog" ? "text-[length:var(--text-caption)] sm:text-[length:var(--text-sm)]" : ""} ${className}`}
       style={{
         fontFamily: "var(--font-family-inter)",
-        fontSize: cfg.installment,
+        fontSize: scale === "catalog" ? undefined : cfg.installment,
         color: `rgba(var(--foreground-rgb), ${cfg.alpha})`,
       }}
     >
+      {/* No celular a coluna do card é estreita (~160px): "no cartão" fazia a
+          linha quebrar em duas. O "sem juros" já diz que é cartão; a versão
+          falada segue completa. */}
       <span aria-hidden="true">
-        {INSTALLMENTS}x de {formatBRL(parcela)} sem juros no cartão
+        {INSTALLMENTS}x de {formatBRL(parcela)} sem juros<span className="hidden sm:inline"> no cartão</span>
       </span>
       <span className="sr-only">
         {INSTALLMENTS} vezes de {formatBRLSpoken(parcela)} sem juros no cartão
@@ -152,7 +157,9 @@ export function PriceBlock({
 
       {/* `items-baseline`: a etiqueta do PIX é bem menor que o preço, e alinhada
           pelo centro ela flutuava acima da linha dos algarismos. */}
-      <div className="flex flex-wrap items-baseline gap-x-2">
+      {/* `gap-y-1`: na coluna estreita a etiqueta do PIX quebra pra linha de
+          baixo e, sem respiro, encostava no preço. */}
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
         <p
           className="text-ink-strong leading-none"
           style={{
@@ -169,7 +176,7 @@ export function PriceBlock({
         <PixLabel scale={scale} />
       </div>
 
-      <InstallmentLine priceNum={priceNum} scale={scale} />
+      <InstallmentLine priceNum={priceNum} scale={scale} className="mt-1.5" />
     </div>
   );
 }

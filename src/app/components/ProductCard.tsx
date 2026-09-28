@@ -301,7 +301,7 @@ export function ProductCard({
             e.stopPropagation();
             onAdd(product);
           }}
-          className="md:hidden mt-3"
+          className="md:hidden mt-4"
         >
           <ShoppingCart size={14} strokeWidth={2} /> {cfg.quickAddLabel}
         </CTAButton>
