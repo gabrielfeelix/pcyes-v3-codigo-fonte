@@ -1386,6 +1386,29 @@ export function CheckoutPage() {
 
           <div className="mb-8">
             <div className="flex items-center justify-between gap-1 overflow-x-auto pb-1">
+              {/* O carrinho entra como etapa já concluída, como fazem KaBuM e
+                  outros grandes e-commerces: a pessoa chega no checkout vendo
+                  que já andou um passo, não que está começando do zero. É o
+                  único passo concluído que sai do checkout ao ser clicado. */}
+              <button
+                onClick={() => navigate("/carrinho")}
+                aria-label="Carrinho, etapa concluída. Voltar ao carrinho"
+                className="flex flex-1 cursor-pointer items-center gap-2 min-h-[44px] md:min-h-[24px]"
+              >
+                <div
+                  className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full"
+                  style={{ background: "var(--gradient-buy)", color: "#fff", boxShadow: "0 8px 22px -6px rgba(34,197,94,0.45)" }}
+                >
+                  <Check size={14} strokeWidth={2.6} />
+                </div>
+                <span
+                  className="hidden text-ink md:inline"
+                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.04em" }}
+                >
+                  Carrinho
+                </span>
+                <div className="hidden h-px flex-1 md:block" style={{ background: "rgba(34,197,94,0.4)" }} />
+              </button>
               {STEPS.map((s, i) => {
                 const Icon = s.icon;
                 const active = step === s.key;
@@ -1438,7 +1461,7 @@ export function CheckoutPage() {
               className="md:hidden mt-2 text-ink-muted"
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, letterSpacing: "0.04em" }}
             >
-              Etapa {step + 1} de 4 · {STEPS[step].label}
+              Etapa {step + 2} de 5 · {STEPS[step].label}
             </p>
           </div>
 
