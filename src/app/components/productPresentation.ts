@@ -375,3 +375,19 @@ export function getProductHoverMedia(
 
   return null;
 }
+
+/**
+ * Bolinhas de cor do card de catálogo: todo produto mostra pelo menos uma.
+ * Com variações, as de `getProductSwatches`; sem, uma só, com a cor do
+ * próprio produto (lida do nome; sem cor no nome, preto, a cor da linha).
+ * Assim a linha existe em todo card e o preço não desalinha entre vizinhos.
+ */
+export function getCardSwatches(
+  product: Pick<Product, "id" | "name" | "category">,
+  swatches: ProductSwatch[],
+): ProductSwatch[] {
+  if (swatches.length > 1) return swatches;
+  const label = getBodyColorLabels(product.name)[0];
+  const rule = COLOR_RULES.find((item) => item.label === label) ?? COLOR_RULES.find((item) => item.label === "Preto")!;
+  return [{ color: rule.color, label: rule.label, productId: product.id, image: "", name: product.name }];
+}

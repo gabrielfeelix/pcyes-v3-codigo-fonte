@@ -25,6 +25,7 @@ import {
   getSubcategoryFromSlug,
   getProductSwatches,
   getVisibleCatalogProducts,
+  getCardSwatches,
 } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { searchProducts } from "../../utils/search";
@@ -1660,7 +1661,7 @@ export function ProductsPage() {
                       const productImages = getProductImages(displayProduct);
                       const imageKey = `${product.id}:${displayProduct.id}`;
                       const imgIdx = getImageIndex(imageKey, productImages.length);
-                      const swatches = getProductSwatchesCached(product);
+                      const swatches = getCardSwatches(product, getProductSwatchesCached(product));
                       const switchBadgeInfo = getSwitchBadgeInfo(displayProduct);
                       const preOrderInfo = getPreOrderInfo(displayProduct.id);
 
@@ -1786,7 +1787,8 @@ export function ProductsPage() {
                                 entre cards, e o preço e o botão ficam alinhados
                                 com os vizinhos mesmo assim. */}
                             <div className="mt-3 flex flex-1 flex-col">
-                              {swatches.length > 1 && (
+                              {/* Toda card tem a linha de cor: uma bolinha ou mais. */}
+                              {swatches.length > 0 && (
                                 <div className="mb-2 flex items-center gap-1.5">
                                   {swatches.map((sw) => (
                                     <button
@@ -1804,8 +1806,10 @@ export function ProductsPage() {
                                         className="h-3 w-3 rounded-full block transition-all hover:scale-110"
                                         style={{
                                           backgroundColor: sw.color,
-                                          border: sw.productId === displayProduct.id ? "2px solid rgba(225,6,0,0.9)" : "1px solid rgba(var(--foreground-rgb), 0.18)",
-                                          boxShadow: sw.productId === displayProduct.id ? "0 0 8px rgba(225,6,0,0.5)" : "none",
+                                          // Anel de seleção só quando há o que escolher: com uma cor
+                                          // só, a bolinha é informativa e fica neutra.
+                                          border: swatches.length > 1 && sw.productId === displayProduct.id ? "2px solid rgba(225,6,0,0.9)" : "1px solid rgba(var(--foreground-rgb), 0.3)",
+                                          boxShadow: swatches.length > 1 && sw.productId === displayProduct.id ? "0 0 8px rgba(225,6,0,0.5)" : "none",
                                         }}
                                       />
                                     </button>
