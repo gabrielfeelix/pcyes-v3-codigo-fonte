@@ -132,160 +132,68 @@ function setupsHref(opts: { tags?: string[]; precoMin?: number; precoMax?: numbe
   return query ? `${path}?${query}` : path;
 }
 
+/**
+ * Item de categoria de catálogo: o painel da direita lista os produtos do
+ * `href` sozinho (getProductsForMenuHref), então só nome, destino e arte.
+ * Sem `image`, a miniatura vem do primeiro produto da categoria.
+ */
+function catItem(label: string, target: { category: string; subcategory?: string }, image?: string): MegaSubItem {
+  return { label, href: getCatalogHref(target), image, right: { type: "products", title: label, products: [] } };
+}
+
 const megaMenus: Record<string, MegaMenu> = {
   hardware: {
     title: "Hardware",
     subItems: [
-      {
-        label: "Placas de Vídeo", href: "/produtos?category=Placas de Vídeo", image: "/menu/placas-de-video.png",
-        right: {
-          type: "products", title: "Placas de Vídeo",
-          products: [
-            { id: 31, name: "GT 710 2GB DDR3", subtitle: "Low Profile", image: "https://cdn.oderco.com.br/produtos/282767/2D04A9618C5EF13EE0630300A8C0554C", price: "R$ 499,90", badge: "-20%" },
-            { id: 32, name: "GT 740 2GB GDDR5", subtitle: "128 Bits", image: "https://cdn.oderco.com.br/produtos/259330/189437062258193CE0630300A8C08D4D", price: "R$ 499,90" },
-            { id: 33, name: "GT740 4GB GDDR5", subtitle: "128 Bits High Perf", image: "https://cdn.oderco.com.br/produtos/261071/1982E845579812A0E0630300A8C04222", price: "R$ 499,90" },
-            { id: 34, name: "GT730 2GB DDR5", subtitle: "64 Bits Edge LP", image: "https://cdn.oderco.com.br/produtos/261089/1982E845579A12A0E0630300A8C04222", price: "R$ 499,90", badge: "-20%" },
-          ]
-        }
-      },
-      {
-        label: "SSD e HD", href: "/produtos?category=SSD e HD", image: "/menu/ssd-e-hd.png",
-        right: {
-          type: "products", title: "Armazenamento",
-          products: [
-            { id: 36, name: "SSD PCYES 256GB", subtitle: "M.2 NVMe PCIe 3.0", image: "https://cdn.oderco.com.br/produtos/202394/401A241D79BE4FABE0630300A8C0903C", price: "R$ 299,90" },
-            { id: 37, name: "SSD PCYES 512GB", subtitle: "M.2 NVMe 2200MB/s", image: "https://cdn.oderco.com.br/produtos/202394/401A241D79BE4FABE0630300A8C0903C", price: "R$ 299,90", badge: "-20%" },
-            { id: 39, name: "SSD PCYES 1TB", subtitle: "SATA III Alta Capacidade", image: "https://cdn.oderco.com.br/produtos/202396/401A241D79B44FABE0630300A8C0903C", price: "R$ 299,90" },
-          ]
-        }
-      },
-      {
-        label: "Refrigeração", href: "/produtos?category=Refrigeração", image: "/menu/refrigeracao.png",
-        right: {
-          type: "products", title: "Refrigeração",
-          products: [
-            { id: 41, name: "Cooler Nótus ST", subtitle: "Intel TDP 65W", image: "https://cdn.oderco.com.br/produtos/32846/3F9F1AE4EDB8A0D1E0630300A8C05422", price: "R$ 349,90" },
-            { id: 42, name: "Sangue Frio 3", subtitle: "Water Cooler 120mm", image: "https://cdn.oderco.com.br/produtos/210397/3D7FF909C0F830B1E0630300A8C042C0", price: "R$ 349,90" },
-            { id: 43, name: "Sangue Frio 3 ARGB", subtitle: "Water Cooler 120mm", image: "https://cdn.oderco.com.br/produtos/210410/3D7292BA47F8A9BFE0630300A8C09253", price: "R$ 349,90", badge: "-20%" },
-          ]
-        }
-      },
-      {
-        label: "Gabinetes", href: "/produtos?category=Gabinetes", image: "/menu/gabinetes.png",
-        right: {
-          type: "products", title: "Gabinetes",
-          products: [
-            { id: 6, name: "Forcefield Max", subtitle: "Black Vulcan Vidro Temperado", image: "https://cdn.oderco.com.br/produtos/252557/3F00DCAA20B56D04E0630300A8C06874", price: "R$ 599,90" },
-            { id: 7, name: "Forcefield", subtitle: "Black Vulcan Vidro Temperado", image: "https://cdn.oderco.com.br/produtos/191991/3F00DCAA20E46D04E0630300A8C06874", price: "R$ 599,90", badge: "-20%" },
-            { id: 8, name: "Forcefield", subtitle: "White Ghost Vidro Temperado", image: "https://cdn.oderco.com.br/produtos/191992/3F00DCAA20EA6D04E0630300A8C06874", price: "R$ 599,90" },
-            { id: 9, name: "Set Black Vulcan", subtitle: "Vidro Temperado Lateral", image: "https://cdn.oderco.com.br/produtos/191993/3F00DCAA20D96D04E0630300A8C06874", price: "R$ 599,90" },
-          ]
-        }
-      },
-      {
-        label: "Monitores", href: "/produtos?category=Monitores", image: "/menu/monitores.png",
-        right: {
-          type: "layouts", title: "Monitores por Resolução",
-          layouts: [
-            { label: "Full HD 1080p", desc: "Ideal para gaming e trabalho do dia a dia", href: "/produtos?category=Monitores" },
-            { label: "Quad HD 1440p", desc: "Qualidade e nitidez superiores", href: "/produtos?category=Monitores" },
-            { label: "Ultra HD 4K", desc: "Resolução máxima para criadores", href: "/produtos?category=Monitores" },
-            { label: "Curvo Ultrawide", desc: "Imersão total no setup", href: "/produtos?category=Monitores" },
-            { label: "Alta Taxa de Atualização", desc: "144Hz, 165Hz e 240Hz disponíveis", href: "/produtos?category=Monitores" },
-          ]
-        }
-      },
-      {
-        label: "Fontes", href: "/produtos", image: "/menu/fontes.png",
-        right: {
-          type: "layouts", title: "Fontes por Certificação",
-          layouts: [
-            { label: "80 Plus Bronze", desc: "Custo-benefício para montagens simples", href: "/produtos" },
-            { label: "80 Plus Gold", desc: "Alta eficiência para gaming", href: "/produtos" },
-            { label: "80 Plus Platinum", desc: "Máxima eficiência energética", href: "/produtos" },
-            { label: "Fontes Modulares", desc: "Organização de cabos facilitada", href: "/produtos" },
-            { label: "Fontes Semi-Modulares", desc: "Equilíbrio entre preço e organização", href: "/produtos" },
-          ]
-        }
-      },
+      catItem("Placas de Vídeo", { category: "Placas de Vídeo" }, "https://cdn.oderco.com.br/produtos/264537/27C1CE4F32189F3CE0630300A8C03E0C"),
+      catItem("Placas-mãe", { category: "Hardware", subcategory: "Placas-mãe" }, "https://cdn.oderco.com.br/produtos/270434/401F35F0C98F26C2E0630300A8C0FD75"),
+      catItem("Memória RAM", { category: "Hardware", subcategory: "Memórias" }, "https://cdn.oderco.com.br/produtos/34681/4520E92D669AC021E0630300A8C02B6F"),
+      catItem("SSD e HD", { category: "SSD e HD" }, "/menu/ssd-e-hd.png"),
+      catItem("Fontes", { category: "Fontes" }, "/menu/fontes.png"),
+      catItem("Gabinetes", { category: "Gabinetes" }, "/menu/gabinetes.png"),
+      catItem("Refrigeração", { category: "Refrigeração" }, "/menu/refrigeracao.png"),
+      catItem("Controladores RGB", { category: "Refrigeração", subcategory: "Acessórios de Refrigeração" }, "https://cdn.oderco.com.br/produtos/192929/4420D12710685FE4E0630300A8C06F5A"),
+      catItem("Placas de Rede", { category: "Hardware", subcategory: "Placas de Rede" }, "https://cdn.oderco.com.br/produtos/340182/4B18A241B186B5C1E0630300A8C08F50"),
+      catItem("Placas de Captura", { category: "Streaming", subcategory: "Placas de Captura" }),
     ]
   },
 
   perifericos: {
     title: "Periféricos",
     subItems: [
-      {
-        label: "Teclados", href: getCatalogHref({ category: "Periféricos", subcategory: "Teclados" }), image: "/menu/teclados.png",
-        right: {
-          type: "layouts", title: "Teclados por Layout",
-          layouts: [
-            { label: "100% Full Size", desc: "Com teclado numérico completo", href: getCatalogHref({ category: "Periféricos", subcategory: "Teclados" }), image: "https://cdn.oderco.com.br/produtos/246231/3FA2133D8BCE330EE0630300A8C0F6B9" },
-            { label: "80% TKL", desc: "Sem teclado numérico", href: getCatalogHref({ category: "Periféricos", subcategory: "Teclados" }), image: "https://cdn.oderco.com.br/produtos/199408/3FA0B95161429B0EE0630300A8C04A18" },
-            { label: "75% Compact", desc: "Formato popular e otimizado", href: getCatalogHref({ category: "Periféricos", subcategory: "Teclados" }), image: "https://cdn.oderco.com.br/produtos/199409/3FA2133D8BC8330EE0630300A8C0F6B9" },
-            { label: "65% Compact", desc: "Focado nas setas direcionais", href: getCatalogHref({ category: "Periféricos", subcategory: "Teclados" }), image: "https://cdn.oderco.com.br/produtos/246230/3FA0FF24E03F4B06E0630300A8C0A92F" },
-            { label: "60% Mini", desc: "Ultra compacto para viagem", href: getCatalogHref({ category: "Periféricos", subcategory: "Teclados" }), image: "https://cdn.oderco.com.br/produtos/286135/25C7064E389DE6C2E0630300A8C0EDA5" },
-          ]
-        }
-      },
-      {
-        label: "Mouse", href: getCatalogHref({ category: "Periféricos", subcategory: "Mouses" }), image: "/menu/mouse.png",
-        right: {
-          type: "products", title: "Mouse Gamer",
-          products: [
-            { id: 16, name: "Basaran Black Vulcan", subtitle: "12400 DPI Silent Click", image: "https://cdn.oderco.com.br/produtos/199399/3F2E42F714F7871CE0630300A8C048F6", price: "R$ 249,90", badge: "-20%" },
-            { id: 17, name: "Basaran Stealth White", subtitle: "10000 DPI Sem Fio RGB", image: "https://cdn.oderco.com.br/produtos/199420/FBD0003333EA8CF3E0530300A8C0E348", price: "R$ 249,90" },
-            { id: 18, name: "Gaius RGB", subtitle: "12400 DPI 6 Botões", image: "https://cdn.oderco.com.br/produtos/199396/3F2E42F714EB871CE0630300A8C048F6", price: "R$ 249,90" },
-          ]
-        }
-      },
-      {
-        label: "Mousepads", href: getCatalogHref({ category: "Periféricos", subcategory: "Mousepads" }), image: "/menu/mousepads.png",
-        right: {
-          type: "products", title: "Mousepads",
-          products: [
-            { id: 11, name: "Obsidian G2D Black", subtitle: "500x400mm Speed", image: "https://cdn.oderco.com.br/produtos/207001/0813C43B72B06C60E0630300A8C0C984", price: "R$ 149,90" },
-            { id: 12, name: "Obsidian G3D Vidro", subtitle: "500x400mm Glass", image: "https://cdn.oderco.com.br/produtos/207002/FD6585990BA79601E0530300A8C09D90", price: "R$ 149,90" },
-            { id: 14, name: "Obsidian G2D Extended", subtitle: "900x420mm Desk Mat", image: "https://cdn.oderco.com.br/produtos/230652/3FA519DFE3CDF8BBE0630300A8C0CD12", price: "R$ 149,90" },
-            { id: 15, name: "Maze White Ghost", subtitle: "900x420mm Extended", image: "https://cdn.oderco.com.br/produtos/268133/3FA5BA5A4893B008E0630300A8C0D3E2", price: "R$ 149,90" },
-          ]
-        }
-      },
-      {
-        label: "Cadeiras", href: getCatalogHref({ category: "Cadeiras", subcategory: "Cadeiras Gamer" }), image: "/menu/cadeiras.png",
-        right: {
-          type: "products", title: "Cadeiras Gamer",
-          products: [
-            { id: 1, name: "Mad Racer V8 Turbo", subtitle: "Amarela — Ergonômica", image: "https://cdn.oderco.com.br/produtos/210197/06D1CA7F36792E05E0630300A8C051C3", price: "R$ 1.299,90", badge: "-20%" },
-            { id: 2, name: "Sentinel Black Vulcan", subtitle: "Ergonômica Gamer", image: "https://cdn.oderco.com.br/produtos/212141/138B26D1B2A5AFE5E0630300A8C068DE", price: "R$ 1.299,90" },
-            { id: 3, name: "Sentinel Red Magma", subtitle: "Ergonômica Gamer", image: "https://cdn.oderco.com.br/produtos/212143/138B26D1B2AAAFE5E0630300A8C068DE", price: "R$ 1.299,90" },
-            { id: 4, name: "Sentinel Cobalt Blue", subtitle: "Ergonômica Gamer", image: "https://cdn.oderco.com.br/produtos/212146/138B26D1B2AFAFE5E0630300A8C068DE", price: "R$ 1.299,90" },
-          ]
-        }
-      },
-      {
-        label: "Headsets", href: getCatalogHref({ category: "Periféricos", subcategory: "Headsets" }), image: "/menu/headsets.png",
-        right: {
-          type: "layouts", title: "Headsets por Conexão",
-          layouts: [
-            { label: "USB 7.1 Surround", desc: "Som envolvente para gaming", href: getCatalogHref({ category: "Periféricos", subcategory: "Headsets" }) },
-            { label: "P2 Analógico", desc: "Compatibilidade universal", href: getCatalogHref({ category: "Periféricos", subcategory: "Headsets" }) },
-            { label: "2.4 GHz Sem Fio", desc: "Liberdade e baixa latência", href: getCatalogHref({ category: "Periféricos", subcategory: "Headsets" }) },
-            { label: "Bluetooth 5.0", desc: "Multi-dispositivo e portátil", href: getCatalogHref({ category: "Periféricos", subcategory: "Headsets" }) },
-          ]
-        }
-      },
-      {
-        label: "Streaming", href: "/produtos?category=Streaming", image: "/menu/streaming.png",
-        right: {
-          type: "layouts", title: "Streaming & Podcast",
-          layouts: [
-            { label: "Microfones USB", desc: "Qualidade estúdio plug & play", href: "/produtos?category=Streaming" },
-            { label: "Braço Articulado", desc: "Posicionamento profissional", href: "/produtos?category=Streaming" },
-            { label: "Webcams HD", desc: "Imagem nítida para lives e calls", href: "/produtos?category=Streaming" },
-            { label: "Interface de Áudio", desc: "Controle total do som", href: "/produtos?category=Streaming" },
-          ]
-        }
-      },
+      catItem("Teclados", { category: "Periféricos", subcategory: "Teclados" }, "/menu/teclados.png"),
+      catItem("Mouse", { category: "Periféricos", subcategory: "Mouses" }, "/menu/mouse.png"),
+      catItem("Headsets", { category: "Periféricos", subcategory: "Headsets e Fones" }, "/menu/headsets.png"),
+      catItem("Mousepads", { category: "Periféricos", subcategory: "Mousepads" }, "/menu/mousepads.png"),
+      catItem("Webcams", { category: "Streaming", subcategory: "Webcams" }, "https://cdn.oderco.com.br/produtos/286477/261AA2B78525ABD8E0630300A8C0C7A7"),
+      catItem("Microfones", { category: "Streaming", subcategory: "Microfones" }, "https://cdn.oderco.com.br/produtos/332488/4D4C20FBD0EFAEB4E0630300A8C0FF35"),
+      catItem("Volantes", { category: "Periféricos", subcategory: "Volantes e Controles" }, "https://cdn.oderco.com.br/produtos/306297/4A92640F2C25F83AE0630300A8C074DC"),
+    ]
+  },
+
+  acessorios: {
+    title: "Acessórios",
+    subItems: [
+      catItem("Cabos", { category: "Periféricos", subcategory: "Cabos e Adaptadores" }, "https://cdn.oderco.com.br/produtos/29308/49D848F395A48A12E0630300A8C0EA50"),
+      catItem("Suportes", { category: "Periféricos", subcategory: "Suportes e Ergonomia" }, "https://cdn.oderco.com.br/produtos/211817/0EAA4ED0B6B3E195E0630300A8C0492A"),
+      catItem("Luminárias", { category: "Periféricos", subcategory: "Iluminação" }, "https://cdn.oderco.com.br/produtos/334144/4B9572B75F54C341E0630300A8C022D7"),
+      catItem("Montagem e Manutenção", { category: "Refrigeração", subcategory: "Pasta Térmica" }, "https://cdn.oderco.com.br/produtos/275610/2DE360053FE5A37FE0630300A8C0CB25"),
+    ]
+  },
+
+  cadeiras: {
+    title: "Cadeiras",
+    subItems: [
+      catItem("Cadeiras Gamer", { category: "Cadeiras", subcategory: "Cadeiras Gamer" }, "/menu/cadeiras.png"),
+      catItem("Cadeiras Office", { category: "Cadeiras", subcategory: "Cadeiras Ergonômicas" }, "https://cdn.oderco.com.br/produtos/318399/3517CD1145127885E0630300A8C0F955"),
+    ]
+  },
+
+  monitores: {
+    title: "Monitores",
+    subItems: [
+      catItem("Monitores Gamer", { category: "Monitores" }, "https://cdn.oderco.com.br/produtos/207005/369D7273916B8EB3E0630300A8C0EDA6"),
+      catItem("Monitores Escritório", { category: "Monitores" }, "https://cdn.oderco.com.br/produtos/207005/369D7273916C8EB3E0630300A8C0EDA6"),
     ]
   },
 
@@ -497,9 +405,13 @@ const navItems: NavItem[] = [
   { label: "Novidades", href: "/produtos" },
   { label: "Hardware", mega: "hardware", href: getCatalogHref({ category: "Hardware" }) },
   { label: "Periféricos", mega: "perifericos", href: getCatalogHref({ category: "Periféricos" }) },
+  { label: "Acessórios", mega: "acessorios", href: getCatalogHref({ category: "Periféricos", subcategory: "Cabos e Adaptadores" }) },
+  { label: "Cadeiras", mega: "cadeiras", href: getCatalogHref({ category: "Cadeiras" }) },
   { label: "Computadores", mega: "computadores", href: getCatalogHref({ category: "Computadores" }) },
   { label: "PC Gamer", mega: "pcgamer", href: setupsHref({ showcase: "pc-gamer" }) },
+  { label: "Monitores", mega: "monitores", href: getCatalogHref({ category: "Monitores" }) },
   { label: "Collab", mega: "collab", href: "/maringa-fc" },
+  { label: "Drivers e Manuais", mega: "drivers", href: "/drivers-e-manuais" },
   { label: "Monte seu PC", href: "/monte-seu-pc", emphasis: "build" },
 ];
 
@@ -2192,14 +2104,13 @@ export function Navbar() {
               const isActiveItem = activeMega === item.mega;
               const isGreen = item.emphasis === "green";
               const isBuild = item.emphasis === "build";
-              const baseClass = `relative flex items-center gap-1 px-4 py-1.5 transition-colors duration-300 after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:bg-primary after:transition-transform after:duration-300 ${
+              const baseClass = `relative flex items-center gap-1 whitespace-nowrap px-1 py-1.5 text-[13px] min-[1280px]:px-2.5 min-[1280px]:text-sm min-[1360px]:px-4 transition-colors duration-300 after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:bg-primary after:transition-transform after:duration-300 ${
                 isActiveItem
                   ? "text-foreground after:scale-x-100"
                   : `${isGreen || isBuild ? "" : categoryLinkColor} after:scale-x-0 hover:after:scale-x-100`
               }`;
               const customStyle: React.CSSProperties = {
                 fontFamily: "var(--font-family-inter)",
-                fontSize: "var(--text-sm)",
                 fontWeight: isBuild ? 700 : 500,
               };
               if (isGreen) {
@@ -2372,7 +2283,7 @@ export function Navbar() {
                       })}
                     </div>
                   ) : (
-                  <div className="flex items-start justify-center gap-5 overflow-x-auto pb-1 md:gap-7 xl:gap-9">
+                  <div className="flex items-start justify-center-safe gap-5 overflow-x-auto pb-1 md:gap-7 xl:gap-9">
                     {activeMegaData.subItems.map((sub) => {
                       const image = getMegaCategoryImage(sub);
                       const href = resolveMenuHref(sub.href);
