@@ -1381,8 +1381,10 @@ export function Navbar() {
         {/* Main nav */}
         <nav className="transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{
-            backgroundColor: "#000000",
-            borderBottom: "1px solid rgba(var(--foreground-rgb), 0.06)",
+            /* No topo, o header some no fundo da página, sem linha; rolou, ganha
+               o preto e a linha de base. Borda transparente mantém a altura. */
+            backgroundColor: scrolled ? "#000000" : "var(--surface-0)",
+            borderBottom: `1px solid ${scrolled ? "rgba(var(--foreground-rgb), 0.06)" : "transparent"}`,
           }}
 	        >
 	          {/* Mobile header */}
