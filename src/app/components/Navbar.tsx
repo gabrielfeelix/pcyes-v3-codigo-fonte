@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo, type ReactNode } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback, type ReactNode } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import { Search, ShoppingCart, User, Menu, X, Clock, TrendingUp, ArrowUpRight, Heart, ChevronRight, ChevronLeft, ChevronDown, Download, FileText, Sparkles, Wand2, Grid2x2, Box, Monitor, Cpu, Radio, Globe2, MapPin, HelpCircle, Hand } from "lucide-react";
 import { openVLibras } from "./VLibras";
@@ -532,6 +532,25 @@ export function Navbar() {
   const [promoHovered, setPromoHovered] = useState(false);
   const [countdown, setCountdown] = useState({ h: 0, m: 0, s: 0 });
   const [activeMega, setActiveMega] = useState<string | null>(null);
+  /* Altura do conteúdo do megamenu, medida. Trocar de categoria muda muito a
+     altura (Novidades, Collab e Monte seu PC têm painéis bem diferentes); com
+     ela medida, o painel anima até a nova altura em vez de saltar. "auto" ao
+     abrir, para o painel já nascer no tamanho certo, sem animar do zero.
+     `grow`: crescer é mais rápido que encolher. Ao crescer, o conteúdo novo já
+     está lá e o painel lento cortava a parte de baixo dele por um tempo. */
+  const [megaContent, setMegaContent] = useState<{ h: number | "auto"; grow: boolean }>({ h: "auto", grow: false });
+  const megaContentRO = useRef<ResizeObserver | null>(null);
+  const megaContentRef = useCallback((el: HTMLDivElement | null) => {
+    megaContentRO.current?.disconnect();
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      const h = el.offsetHeight;
+      setMegaContent((prev) => (prev.h === h ? prev : { h, grow: typeof prev.h === "number" && h > prev.h }));
+    });
+    ro.observe(el);
+    megaContentRO.current = ro;
+  }, []);
+  useEffect(() => { if (!activeMega) setMegaContent({ h: "auto", grow: false }); }, [activeMega]);
   const [desktopCatOpen, setDesktopCatOpen] = useState(false);
   const [activeSubItem, setActiveSubItem] = useState<string | null>(null);
   const megaTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -2216,13 +2235,20 @@ export function Navbar() {
           <AnimatePresence>
             {activeMega && activeMegaData && (
               <motion.div
-                initial={{ opacity: 1 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+                initial={{ opacity: 1 }} animate={{ opacity: 1, height: megaContent.h }} exit={{ opacity: 0 }}
+                transition={{
+                  opacity: { duration: 0.18, ease: [0.16, 1, 0.3, 1] },
+                  height: megaContent.grow
+                    ? { duration: 0.24, ease: [0.22, 1, 0.36, 1] }
+                    : { duration: 0.42, ease: [0.22, 1, 0.36, 1] },
+                }}
                 className="absolute left-0 right-0 z-[52] overflow-hidden border-t border-foreground/5 shadow-[0_18px_45px_rgba(0,0,0,0.14)]"
                 style={{ backgroundColor: isDark ? "rgba(18,18,19,0.98)" : "rgba(250,250,250,0.99)", backdropFilter: "blur(34px)" }}
                 onMouseEnter={() => handleMegaEnter(activeMega)} onMouseLeave={handleMegaLeave}
               >
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }} className="mx-auto max-w-[1180px] px-5 py-6 md:px-8">
+                {/* `key` por categoria: o conteúdo novo remonta e entra em fade
+                    enquanto a altura do painel desliza até ele. */}
+                <motion.div key={activeMega} ref={megaContentRef} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }} className="mx-auto max-w-[1180px] px-5 py-6 md:px-8">
                   {activeMegaData.panel === "montar" ? (
                     <div className="grid grid-cols-3 gap-4">
                       {montarPaths.map((path) => {
