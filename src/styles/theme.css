@@ -246,6 +246,10 @@
 .category-track::-webkit-scrollbar,
 .profile-tabs::-webkit-scrollbar { display: none; }
 
+/* Miniaturas do megamenu: navegação só pelas setas (Navbar). */
+.mega-track { scrollbar-width: none; }
+.mega-track::-webkit-scrollbar { display: none; }
+
 /* ── Scrollbar única do sistema ──────────────────────────────────────────
    Antes cada superfície herdava a barra nativa do navegador: a janela saía
    escura, mas painel de filtro, modal e drawer saíam claros e grossos, porque

@@ -515,6 +515,22 @@ export function Navbar() {
   const [desktopCatOpen, setDesktopCatOpen] = useState(false);
   const [activeSubItem, setActiveSubItem] = useState<string | null>(null);
   const megaTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /* Carrossel das miniaturas: com mais itens do que cabem, setas no lugar da
+     barra de rolagem (mesmo padrão do front do Magento). */
+  const megaTrackRef = useRef<HTMLDivElement>(null);
+  const [megaEdges, setMegaEdges] = useState({ prev: false, next: false });
+  const updateMegaEdges = () => {
+    const el = megaTrackRef.current;
+    if (!el) return;
+    const prev = el.scrollLeft > 4;
+    const next = el.scrollLeft + el.clientWidth < el.scrollWidth - 4;
+    // Só troca o estado se mudou: o ref roda a cada render e realimentaria o ciclo.
+    setMegaEdges((cur) => (cur.prev === prev && cur.next === next ? cur : { prev, next }));
+  };
+  const scrollMega = (dir: 1 | -1) => {
+    const el = megaTrackRef.current;
+    if (el) el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: "smooth" });
+  };
 
   const { totalItems, setIsOpen: setCartOpen } = useCart();
   const { isLoggedIn, user, setAuthModalOpen, logout } = useAuth();
@@ -2283,7 +2299,12 @@ export function Navbar() {
                       })}
                     </div>
                   ) : (
-                  <div className="flex items-start justify-center-safe gap-5 overflow-x-auto pb-1 md:gap-7 xl:gap-9">
+                  <div className="relative" key={activeMega ?? ""}>
+                  <div
+                    ref={(el) => { megaTrackRef.current = el; if (el) requestAnimationFrame(updateMegaEdges); }}
+                    onScroll={updateMegaEdges}
+                    className="mega-track flex items-start justify-center-safe gap-5 overflow-x-auto pb-1 md:gap-7 xl:gap-9"
+                  >
                     {activeMegaData.subItems.map((sub) => {
                       const image = getMegaCategoryImage(sub);
                       const href = resolveMenuHref(sub.href);
@@ -2333,6 +2354,27 @@ export function Navbar() {
                         </Link>
                       );
                     })}
+                  </div>
+                  {megaEdges.prev && (
+                    <button
+                      type="button"
+                      aria-label="Categorias anteriores"
+                      onClick={() => scrollMega(-1)}
+                      className="absolute left-0 top-[67px] z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-foreground/12 bg-background/90 text-foreground/85 shadow-[0_8px_24px_rgba(0,0,0,0.35)] backdrop-blur transition-colors hover:border-foreground/25 hover:text-foreground"
+                    >
+                      <ChevronLeft size={18} strokeWidth={2} />
+                    </button>
+                  )}
+                  {megaEdges.next && (
+                    <button
+                      type="button"
+                      aria-label="Próximas categorias"
+                      onClick={() => scrollMega(1)}
+                      className="absolute right-0 top-[67px] z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-foreground/12 bg-background/90 text-foreground/85 shadow-[0_8px_24px_rgba(0,0,0,0.35)] backdrop-blur transition-colors hover:border-foreground/25 hover:text-foreground"
+                    >
+                      <ChevronRight size={18} strokeWidth={2} />
+                    </button>
+                  )}
                   </div>
                   )}
                 </motion.div>
