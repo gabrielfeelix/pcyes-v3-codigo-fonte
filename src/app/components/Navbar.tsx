@@ -806,7 +806,7 @@ export function Navbar() {
     if (activeMega && activeMega !== mega) {
       setActiveMega(mega);
     } else if (!activeMega) {
-      megaTimeout.current = setTimeout(() => setActiveMega(mega), 400);
+      megaTimeout.current = setTimeout(() => setActiveMega(mega), 80);
     }
   };
   const handleMegaLeave = () => {
@@ -2258,13 +2258,13 @@ export function Navbar() {
           <AnimatePresence>
             {activeMega && activeMegaData && (
               <motion.div
-                initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+                initial={{ opacity: 1 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
                 className="absolute left-0 right-0 z-[52] overflow-hidden border-t border-foreground/5 shadow-[0_18px_45px_rgba(0,0,0,0.14)]"
                 style={{ backgroundColor: isDark ? "rgba(18,18,19,0.98)" : "rgba(250,250,250,0.99)", backdropFilter: "blur(34px)" }}
                 onMouseEnter={() => handleMegaEnter(activeMega)} onMouseLeave={handleMegaLeave}
               >
-                <div className="mx-auto max-w-[1180px] px-5 py-6 md:px-8">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }} className="mx-auto max-w-[1180px] px-5 py-6 md:px-8">
                   {activeMegaData.banners ? (
                     /* Collabs: campanha com marca parceira pede arte grande e
                        nome legível — não a miniatura circular de categoria.
@@ -2424,7 +2424,7 @@ export function Navbar() {
                     })}
                   </div>
                   )}
-                </div>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
