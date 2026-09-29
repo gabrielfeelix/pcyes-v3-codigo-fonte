@@ -152,6 +152,7 @@ const megaMenus: Record<string, MegaMenu> = {
       catItem("Fontes", { category: "Fontes" }, "/menu/fontes.png"),
       catItem("Gabinetes", { category: "Gabinetes" }, "/menu/gabinetes.png"),
       catItem("Refrigeração", { category: "Refrigeração" }, "/menu/refrigeracao.png"),
+      catItem("Montagem e Manutenção", { category: "Refrigeração", subcategory: "Pasta Térmica" }, "https://cdn.oderco.com.br/produtos/275610/2DE360053FE5A37FE0630300A8C0CB25"),
       catItem("Controladores RGB", { category: "Refrigeração", subcategory: "Acessórios de Refrigeração" }, "https://cdn.oderco.com.br/produtos/192929/4420D12710685FE4E0630300A8C06F5A"),
       catItem("Placas de Rede", { category: "Hardware", subcategory: "Placas de Rede" }, "https://cdn.oderco.com.br/produtos/340182/4B18A241B186B5C1E0630300A8C08F50"),
       catItem("Placas de Captura", { category: "Streaming", subcategory: "Placas de Captura" }),
@@ -164,22 +165,17 @@ const megaMenus: Record<string, MegaMenu> = {
       catItem("Teclados", { category: "Periféricos", subcategory: "Teclados" }, "/menu/teclados.png"),
       catItem("Mouse", { category: "Periféricos", subcategory: "Mouses" }, "/menu/mouse.png"),
       catItem("Headsets", { category: "Periféricos", subcategory: "Headsets e Fones" }, "/menu/headsets.png"),
+      catItem("Monitores", { category: "Monitores" }, "/menu/monitores.png"),
       catItem("Mousepads", { category: "Periféricos", subcategory: "Mousepads" }, "/menu/mousepads.png"),
       catItem("Webcams", { category: "Streaming", subcategory: "Webcams" }, "https://cdn.oderco.com.br/produtos/286477/261AA2B78525ABD8E0630300A8C0C7A7"),
       catItem("Microfones", { category: "Streaming", subcategory: "Microfones" }, "https://cdn.oderco.com.br/produtos/332488/4D4C20FBD0EFAEB4E0630300A8C0FF35"),
       catItem("Volantes", { category: "Periféricos", subcategory: "Volantes e Controles" }, "https://cdn.oderco.com.br/produtos/306297/4A92640F2C25F83AE0630300A8C074DC"),
-    ]
-  },
-
-  acessorios: {
-    title: "Acessórios",
-    subItems: [
       catItem("Cabos", { category: "Periféricos", subcategory: "Cabos e Adaptadores" }, "https://cdn.oderco.com.br/produtos/29308/49D848F395A48A12E0630300A8C0EA50"),
       catItem("Suportes", { category: "Periféricos", subcategory: "Suportes e Ergonomia" }, "https://cdn.oderco.com.br/produtos/211817/0EAA4ED0B6B3E195E0630300A8C0492A"),
       catItem("Luminárias", { category: "Periféricos", subcategory: "Iluminação" }, "https://cdn.oderco.com.br/produtos/334144/4B9572B75F54C341E0630300A8C022D7"),
-      catItem("Montagem e Manutenção", { category: "Refrigeração", subcategory: "Pasta Térmica" }, "https://cdn.oderco.com.br/produtos/275610/2DE360053FE5A37FE0630300A8C0CB25"),
     ]
   },
+
 
   cadeiras: {
     title: "Cadeiras",
@@ -189,13 +185,6 @@ const megaMenus: Record<string, MegaMenu> = {
     ]
   },
 
-  monitores: {
-    title: "Monitores",
-    subItems: [
-      catItem("Monitores Gamer", { category: "Monitores" }, "https://cdn.oderco.com.br/produtos/207005/369D7273916B8EB3E0630300A8C0EDA6"),
-      catItem("Monitores Escritório", { category: "Monitores" }, "https://cdn.oderco.com.br/produtos/207005/369D7273916C8EB3E0630300A8C0EDA6"),
-    ]
-  },
 
   computadores: {
     title: "Computadores",
@@ -405,13 +394,10 @@ const navItems: NavItem[] = [
   { label: "Novidades", href: "/produtos" },
   { label: "Hardware", mega: "hardware", href: getCatalogHref({ category: "Hardware" }) },
   { label: "Periféricos", mega: "perifericos", href: getCatalogHref({ category: "Periféricos" }) },
-  { label: "Acessórios", mega: "acessorios", href: getCatalogHref({ category: "Periféricos", subcategory: "Cabos e Adaptadores" }) },
   { label: "Cadeiras", mega: "cadeiras", href: getCatalogHref({ category: "Cadeiras" }) },
   { label: "Computadores", mega: "computadores", href: getCatalogHref({ category: "Computadores" }) },
   { label: "PC Gamer", mega: "pcgamer", href: setupsHref({ showcase: "pc-gamer" }) },
-  { label: "Monitores", mega: "monitores", href: getCatalogHref({ category: "Monitores" }) },
   { label: "Collab", mega: "collab", href: "/maringa-fc" },
-  { label: "Drivers e Manuais", href: "/drivers-e-manuais" },
   { label: "Monte seu PC", href: "/monte-seu-pc", emphasis: "build" },
 ];
 
