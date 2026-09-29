@@ -618,6 +618,10 @@ export function Navbar() {
     const publish = () => {
       const top = collapsedNow ? "0px" : "var(--announce-h, 40px)";
       document.documentElement.style.setProperty("--header-h", `calc(${top} + ${Math.round(el.getBoundingClientRect().height)}px)`);
+      /* `--header-open-h`: altura do header aberto, sem a faixa de aviso.
+         Não muda ao rolar, então serve de recuo pro conteúdo do topo da
+         página (hero da home) sem empurrar o layout quando o header recolhe. */
+      if (!collapsedNow) document.documentElement.style.setProperty("--header-open-h", `${Math.round(el.getBoundingClientRect().height)}px`);
     };
     publish();
     const ro = new ResizeObserver(publish);
