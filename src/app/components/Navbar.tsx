@@ -411,7 +411,7 @@ const navItems: NavItem[] = [
   { label: "PC Gamer", mega: "pcgamer", href: setupsHref({ showcase: "pc-gamer" }) },
   { label: "Monitores", mega: "monitores", href: getCatalogHref({ category: "Monitores" }) },
   { label: "Collab", mega: "collab", href: "/maringa-fc" },
-  { label: "Drivers e Manuais", mega: "drivers", href: "/drivers-e-manuais" },
+  { label: "Drivers e Manuais", href: "/drivers-e-manuais" },
   { label: "Monte seu PC", href: "/monte-seu-pc", emphasis: "build" },
 ];
 
