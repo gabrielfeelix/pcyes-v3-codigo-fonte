@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo, type ReactNode } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
-import { Search, ShoppingCart, User, Menu, X, Clock, TrendingUp, ArrowUpRight, Heart, ChevronRight, ChevronLeft, ChevronDown, Download, FileText, Sparkles, Grid2x2, Box, Monitor, Cpu, Radio, Globe2, MapPin, HelpCircle, Hand } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, X, Clock, TrendingUp, ArrowUpRight, Heart, ChevronRight, ChevronLeft, ChevronDown, Download, FileText, Sparkles, Wand2, Grid2x2, Box, Monitor, Cpu, Radio, Globe2, MapPin, HelpCircle, Hand } from "lucide-react";
 import { openVLibras } from "./VLibras";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
@@ -100,7 +100,7 @@ interface MegaMenu {
   banners?: CollabBanner[];
   /** Painel próprio, montado a partir de dados e não de subitens. Só desktop:
       no celular o item vira link direto. */
-  panel?: "novidades";
+  panel?: "novidades" | "montar";
 }
 
 /**
@@ -147,6 +147,7 @@ function catItem(label: string, target: { category: string; subcategory?: string
 
 const megaMenus: Record<string, MegaMenu> = {
   novidades: { title: "Novidades", subItems: [], panel: "novidades" },
+  montar: { title: "Monte seu PC", subItems: [], panel: "montar" },
 
   hardware: {
     title: "Hardware",
@@ -404,7 +405,7 @@ const navItems: NavItem[] = [
   { label: "Computadores", mega: "computadores", href: getCatalogHref({ category: "Computadores" }) },
   { label: "PC Gamer", mega: "pcgamer", href: setupsHref({ showcase: "pc-gamer" }) },
   { label: "Collab", mega: "collab", href: "/maringa-fc" },
-  { label: "Monte seu PC", href: "/monte-seu-pc", emphasis: "build" },
+  { label: "Monte seu PC", mega: "montar", href: "/monte-seu-pc", emphasis: "build" },
 ];
 
 const trending = ["Gabinete Spectrum", "Mouse Cobra", "Teclado Mecânico", "Headset 7.1"];
@@ -481,6 +482,14 @@ function getProductsForMenuHref(href?: string) {
 
 /* Painel de Novidades: um lançamento por categoria, para a vitrine não abrir
    com cinco variações do mesmo SSD; e a pré-venda mais próxima. */
+/* Painel do Monte seu PC: os três caminhos da tela de entrada da página, para
+   quem já sabe o que quer pular a escolha. Títulos dizem a ação, não o perfil. */
+const montarPaths = [
+  { key: "builder", icon: Cpu, label: "Montar peça por peça", desc: "Você escolhe processador, placa de vídeo e o resto. A gente confere se tudo é compatível.", cta: "Começar a montar", href: "/monte-seu-pc?inicio=builder" },
+  { key: "quiz", icon: Wand2, label: "Descobrir meu PC ideal", desc: "Responda 3 perguntas sobre o que você joga ou faz, e a gente indica o PC certo.", cta: "Fazer o quiz", href: "/monte-seu-pc?inicio=quiz", badge: "POPULAR" },
+  { key: "presets", icon: Sparkles, label: "Comprar PC pronto", desc: "PCs já montados e testados, pra jogar, criar ou trabalhar. Compra como qualquer produto.", cta: "Ver PCs prontos", href: "/computadores/setups/" },
+] as const;
+
 const novidadesPanel = (() => {
   const seen = new Set<string>();
   const arrivals = getNewArrivals(80).filter((p) => {
@@ -2214,7 +2223,36 @@ export function Navbar() {
                 onMouseEnter={() => handleMegaEnter(activeMega)} onMouseLeave={handleMegaLeave}
               >
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }} className="mx-auto max-w-[1180px] px-5 py-6 md:px-8">
-                  {activeMegaData.panel === "novidades" ? (
+                  {activeMegaData.panel === "montar" ? (
+                    <div className="grid grid-cols-3 gap-4">
+                      {montarPaths.map((path) => {
+                        const Icon = path.icon;
+                        return (
+                          <Link key={path.key} to={path.href} onClick={closeMegaMenu}
+                            className={`group relative flex flex-col rounded-[18px] border p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 ${isDark ? "border-white/[0.07] bg-white/[0.03]" : "border-black/[0.06] bg-black/[0.02]"}`}>
+                            <span className="flex items-center justify-between">
+                              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
+                                <Icon size={20} />
+                              </span>
+                              {"badge" in path && (
+                                <span className="rounded-full bg-primary px-2 py-0.5 text-white"
+                                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "10px", letterSpacing: "0.12em", fontWeight: 800 }}>{path.badge}</span>
+                              )}
+                            </span>
+                            <span className="mt-4 text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 600, lineHeight: 1.15 }}>
+                              {path.label}
+                            </span>
+                            <span className="mt-1.5 text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.45 }}>
+                              {path.desc}
+                            </span>
+                            <span className="mt-4 inline-flex items-center gap-1.5 text-primary" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
+                              {path.cta} <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  ) : activeMegaData.panel === "novidades" ? (
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px] lg:gap-8">
                       <div>
                         <div className="mb-4 flex items-baseline justify-between">
