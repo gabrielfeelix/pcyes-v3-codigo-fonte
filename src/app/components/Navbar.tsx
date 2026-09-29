@@ -2411,7 +2411,14 @@ export function Navbar() {
                             </span>
                           ) : (
                           <span className="relative flex h-[118px] w-[118px] items-center justify-center overflow-visible transition-all duration-300 group-hover:-translate-y-1 group-hover:scale-[1.03]">
-                            <span className={`absolute inset-[8px] rounded-full ${isDark ? "bg-white/[0.055]" : "bg-black/[0.045]"}`} />
+                            {/* Mesmo fundo da foto no card de produto (ProductCard): degradê
+                                diagonal, borda fina e brilho no canto. */}
+                            <span className="absolute inset-[8px] overflow-hidden rounded-full" style={{
+                              background: "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.10) 0%, rgba(var(--foreground-rgb), 0.03) 100%)",
+                              border: "1px solid rgba(var(--foreground-rgb), 0.08)",
+                            }}>
+                              <span className="absolute inset-0" style={{ background: "radial-gradient(circle at 30% 25%, rgba(var(--foreground-rgb), 0.06) 0%, transparent 55%)" }} />
+                            </span>
                             {image ? (
                               <ImageWithFallback
                                 src={image}
