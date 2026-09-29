@@ -161,7 +161,7 @@ const megaMenus: Record<string, MegaMenu> = {
       catItem("Montagem e Manutenção", { category: "Refrigeração", subcategory: "Pasta Térmica" }, "https://cdn.oderco.com.br/produtos/275610/2DE360053FE5A37FE0630300A8C0CB25"),
       catItem("Controladores RGB", { category: "Refrigeração", subcategory: "Acessórios de Refrigeração" }, "https://cdn.oderco.com.br/produtos/192929/4420D12710685FE4E0630300A8C06F5A"),
       catItem("Placas de Rede", { category: "Hardware", subcategory: "Placas de Rede" }, "https://cdn.oderco.com.br/produtos/340182/4B18A241B186B5C1E0630300A8C08F50"),
-      catItem("Placas de Captura", { category: "Streaming", subcategory: "Placas de Captura" }),
+      catItem("Placas de Captura", { category: "Streaming", subcategory: "Placas de Captura" }, "https://cdn.oderco.com.br/produtos/36256/3FA05E82970C98B2E0630300A8C0EB15"),
     ]
   },
 
@@ -174,7 +174,7 @@ const megaMenus: Record<string, MegaMenu> = {
       catItem("Monitores", { category: "Monitores" }, "/menu/monitores.png"),
       catItem("Mousepads", { category: "Periféricos", subcategory: "Mousepads" }, "/menu/mousepads.png"),
       catItem("Webcams", { category: "Streaming", subcategory: "Webcams" }, "https://cdn.oderco.com.br/produtos/286477/261AA2B78525ABD8E0630300A8C0C7A7"),
-      catItem("Microfones", { category: "Streaming", subcategory: "Microfones" }, "https://cdn.oderco.com.br/produtos/332488/4D4C20FBD0EFAEB4E0630300A8C0FF35"),
+      catItem("Microfones", { category: "Streaming", subcategory: "Microfones" }, "/menu/streaming.png"),
       catItem("Volantes", { category: "Periféricos", subcategory: "Volantes e Controles" }, "https://cdn.oderco.com.br/produtos/306297/4A92640F2C25F83AE0630300A8C074DC"),
       catItem("Cabos", { category: "Periféricos", subcategory: "Cabos e Adaptadores" }, "https://cdn.oderco.com.br/produtos/29308/49D848F395A48A12E0630300A8C0EA50"),
       catItem("Suportes", { category: "Periféricos", subcategory: "Suportes e Ergonomia" }, "https://cdn.oderco.com.br/produtos/211817/0EAA4ED0B6B3E195E0630300A8C0492A"),

@@ -25057,12 +25057,14 @@ const rawProducts: Product[] = [
       "Placa de Captura"
     ],
     "brand": "PCYES",
-    "image": "https://cdn.oderco.com.br/produtos/212150/0439FF6EF320D8EAE0630300A8C09D34",
+    "image": "https://cdn.oderco.com.br/produtos/36256/3FA05E82970C98B2E0630300A8C0EB15",
     "images": [
-      "https://cdn.oderco.com.br/produtos/212150/0439FF6EF320D8EAE0630300A8C09D34",
-      "https://cdn.oderco.com.br/produtos/212150/12712B9C29A2288BE0630300A8C0BF3A",
-      "https://cdn.oderco.com.br/produtos/212150/12712B9C29A3288BE0630300A8C0BF3A",
-      "https://cdn.oderco.com.br/produtos/212150/12712B9C29A4288BE0630300A8C0BF3A"
+      "https://cdn.oderco.com.br/produtos/36256/3FA05E82970C98B2E0630300A8C0EB15",
+      "https://cdn.oderco.com.br/produtos/36256/3FA05E82971198B2E0630300A8C0EB15",
+      "https://cdn.oderco.com.br/produtos/36256/3FA05E82970D98B2E0630300A8C0EB15",
+      "https://cdn.oderco.com.br/produtos/36256/3FA05E82970E98B2E0630300A8C0EB15",
+      "https://cdn.oderco.com.br/produtos/36256/3FA05E82970F98B2E0630300A8C0EB15",
+      "https://cdn.oderco.com.br/produtos/36256/3FA05E82971098B2E0630300A8C0EB15"
     ],
     "description": "A Placa de Captura PCYES Lynx UHD-03 Dual foi desenvolvida para criadores de conteúdo, streamers e profissionais que buscam alta qualidade de captura com máxima flexibilidade. Com suporte a pass-through em até 4K/60Hz e gravação em Full HD 1080p a 60 fps, ela garante transmissões fluidas e imagens n…",
     "features": [
