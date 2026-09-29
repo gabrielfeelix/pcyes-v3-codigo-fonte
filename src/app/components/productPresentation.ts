@@ -139,6 +139,34 @@ export function getVisibleCatalogProducts(catalog: Product[] = allProducts) {
 }
 
 /**
+ * Lançamentos: os SKUs mais novos do catálogo visível.
+ *
+ * O catálogo não guarda data de cadastro. O SKU é sequencial no ERP, então SKU
+ * maior = cadastro mais recente. Troca por `created_at` quando o Magento expuser.
+ */
+/**
+ * Nome de vitrine: o nome de catálogo carrega ficha técnica e SKU ("Fonte
+ * PCYES Gamer Electro V2 750W 80 Plus Bronze ... ELECV2PTO750W"). Em card
+ * pequeno fica só até a primeira especificação.
+ */
+export function getShowcaseName(name: string) {
+  const clean = name.replace(/\bPCYES\b\s*/gi, "").split(/\s[–-]\s/)[0];
+  const cut = clean.search(/\s(\d+([.,]\d+)?\s?(W|GB|TB|MM|mm|Hz|")\b|TDP|80 Plus|PFC|Vidro|M\.2|DDR\d|\d+\s?x\s?\d)/i);
+  return (cut > 12 ? clean.slice(0, cut) : clean).trim();
+}
+
+export const NEW_ARRIVALS_LIMIT = 40;
+export function getSkuRecency(product: Pick<Product, "sku">) {
+  return Number.parseInt(product.sku ?? "", 10) || 0;
+}
+export function getNewArrivals(limit = NEW_ARRIVALS_LIMIT) {
+  return getVisibleCatalogProducts(allProducts)
+    .slice()
+    .sort((a, b) => getSkuRecency(b) - getSkuRecency(a))
+    .slice(0, limit);
+}
+
+/**
  * Disponibilidade do produto — fonte única de verdade para toda a UI.
  *
  *   "in-stock"     → tem unidade, compra liberada

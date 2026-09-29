@@ -26,6 +26,8 @@ import {
   getProductSwatches,
   getVisibleCatalogProducts,
   getCardSwatches,
+  getNewArrivals,
+  getSkuRecency,
 } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { searchProducts } from "../../utils/search";
@@ -167,6 +169,7 @@ function getProductVariantByColor(product: Product, label: string) {
 const PAGE_SIZE_OPTIONS = [16, 24, 36] as const;
 const sortOptions = [
   { label: "Relevância", value: "relevance" },
+  { label: "Mais recentes", value: "newest" },
   { label: "Mais vendidos", value: "bestselling" },
   { label: "A – Z", value: "az" },
   { label: "Z – A", value: "za" },
@@ -176,6 +179,7 @@ const sortOptions = [
   { label: "Maior desconto", value: "discount" },
 ];
 const brandsList = productBrands;
+const NEW_ARRIVAL_IDS = new Set(getNewArrivals().map((p) => p.id));
 const GLOBAL_MIN = 0;
 /* Teto derivado do catálogo, não fixo: com 15.000 no código o setup Studio
    (R$ 18.499) ficava fora de QUALQUER listagem, inclusive da própria vitrine de
@@ -457,10 +461,13 @@ export function ProductsPage() {
   const [priceMin, setPriceMin] = useState(GLOBAL_MIN);
   const [priceMax, setPriceMax] = useState(GLOBAL_MAX);
   const [onlyDiscount, setOnlyDiscount] = useState(false);
+  // Lido da URL já no primeiro render: o efeito estado→URL roda antes do
+  // URL→estado e apagaria o `novidades=1` de quem chega pelo menu.
+  const [onlyNew, setOnlyNew] = useState(() => searchParams.get("novidades") === "1");
   const [selectedDiscounts, setSelectedDiscounts] = useState<Set<number>>(new Set());
   const [selectedRatings, setSelectedRatings] = useState<Set<number>>(new Set());
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [sortBy, setSortBy] = useState("relevance");
+  const [sortBy, setSortBy] = useState(() => (searchParams.get("novidades") === "1" ? "newest" : "relevance"));
   const [gridMode, setGridMode] = useState<"grid" | "list">("grid");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
@@ -510,6 +517,9 @@ export function ProductsPage() {
     setPriceMax(Number.isFinite(pMax) && pMax > 0 ? pMax : GLOBAL_MAX);
 
     setOnlyDiscount(searchParams.get("promo") === "1");
+    const novidades = searchParams.get("novidades") === "1";
+    setOnlyNew(novidades);
+    if (novidades) setSortBy("newest");
 
     const marcas = searchParams.get("marcas");
     setSelectedBrands(marcas ? new Set(marcas.split(",").filter(Boolean)) : new Set());
@@ -540,6 +550,9 @@ export function ProductsPage() {
     if (onlyDiscount) sp.set("promo", "1");
     else sp.delete("promo");
 
+    if (onlyNew) sp.set("novidades", "1");
+    else sp.delete("novidades");
+
     if (selectedBrands.size > 0) sp.set("marcas", [...selectedBrands].join(","));
     else sp.delete("marcas");
 
@@ -557,7 +570,7 @@ export function ProductsPage() {
       lastWrittenSearchRef.current = next;
       setSearchParams(sp, { replace: true });
     }
-  }, [priceMin, priceMax, onlyDiscount, selectedBrands, selectedAttributes, selectedTags, searchParams, setSearchParams]);
+  }, [priceMin, priceMax, onlyDiscount, onlyNew, selectedBrands, selectedAttributes, selectedTags, searchParams, setSearchParams]);
 
   /* ── Scroll to top on category change ── */
   const mainRef = useRef<HTMLDivElement>(null);
@@ -615,7 +628,7 @@ export function ProductsPage() {
 
   const clearAll = () => {
     setSelectedCategories(new Set()); setSelectedFeaturedCategories(new Set()); setSelectedSubcategories(new Set()); setSelectedTags(new Set()); setSelectedAttributes(new Set()); setSelectedBrands(new Set()); setSelectedSizes(new Set()); setSelectedColors(new Set());
-    setPriceMin(GLOBAL_MIN); setPriceMax(GLOBAL_MAX); setOnlyDiscount(false); setSelectedDiscounts(new Set()); setSelectedRatings(new Set());
+    setPriceMin(GLOBAL_MIN); setPriceMax(GLOBAL_MAX); setOnlyDiscount(false); setOnlyNew(false); setSelectedDiscounts(new Set()); setSelectedRatings(new Set());
     setInStockOnly(false); setSearchQuery(""); setSelectedVariantIds({});
     const sp = new URLSearchParams(searchParams); sp.delete("category"); sp.delete("subcategory"); sp.delete("search"); setSearchParams(sp, { replace: true });
   };
@@ -672,6 +685,7 @@ export function ProductsPage() {
       });
     }
     if (onlyDiscount) result = result.filter((p) => getDiscount(getColorMatchedProduct(p)) > 0);
+    if (onlyNew) result = result.filter((p) => NEW_ARRIVAL_IDS.has(p.id));
     if (selectedDiscounts.size > 0) {
       const minSelected = Math.min(...selectedDiscounts);
       result = result.filter((p) => getDiscount(getColorMatchedProduct(p)) >= minSelected);
@@ -688,7 +702,7 @@ export function ProductsPage() {
     if (inStockOnly) result = result.filter((p) => p.inStock !== false);
 
     return result;
-  }, [campaignCut, showcase, selectedCategories, selectedFeaturedCategories, selectedSubcategories, selectedTags, selectedAttributes, selectedBrands, selectedSizes, onlyDiscount, selectedDiscounts, selectedRatings, inStockOnly, searchOrder]);
+  }, [campaignCut, showcase, selectedCategories, selectedFeaturedCategories, selectedSubcategories, selectedTags, selectedAttributes, selectedBrands, selectedSizes, onlyDiscount, onlyNew, selectedDiscounts, selectedRatings, inStockOnly, searchOrder]);
 
   const priceBounds = useMemo(() => {
     const productsForPrice = selectedColors.size > 0
@@ -712,7 +726,7 @@ export function ProductsPage() {
   const priceFilterActive = priceMin > priceBounds.min || priceMax < priceBounds.max;
 
   const activeFilterCount = selectedCategories.size + selectedFeaturedCategories.size + selectedSubcategories.size + selectedTags.size + selectedAttributes.size + selectedBrands.size + selectedSizes.size + selectedColors.size
-    + (priceFilterActive ? 1 : 0) + (onlyDiscount ? 1 : 0)
+    + (priceFilterActive ? 1 : 0) + (onlyDiscount ? 1 : 0) + (onlyNew ? 1 : 0)
     + selectedDiscounts.size
     + selectedRatings.size + (searchQuery ? 1 : 0) + (inStockOnly ? 1 : 0);
 
@@ -725,7 +739,7 @@ export function ProductsPage() {
      e devem ficar fora do índice, com o canonical apontando para a página-mãe. */
   const refinementCount = selectedTags.size + selectedAttributes.size + selectedBrands.size + selectedSizes.size + selectedColors.size
     + selectedDiscounts.size + selectedRatings.size
-    + (priceFilterActive ? 1 : 0) + (onlyDiscount ? 1 : 0) + (searchQuery ? 1 : 0) + (inStockOnly ? 1 : 0)
+    + (priceFilterActive ? 1 : 0) + (onlyDiscount ? 1 : 0) + (onlyNew ? 1 : 0) + (searchQuery ? 1 : 0) + (inStockOnly ? 1 : 0)
     + (selectedCategories.size > (slugCategory ? 1 : 0) ? 1 : 0)
     + (selectedSubcategories.size > (slugSubcategory ? 1 : 0) ? 1 : 0)
     + selectedFeaturedCategories.size;
@@ -955,6 +969,7 @@ export function ProductsPage() {
     if (selectedColors.size > 0) result = result.filter((p) => [...selectedColors].some((color) => productMatchesColor(p, color)));
 
     switch (sortBy) {
+      case "newest": result.sort((a, b) => getSkuRecency(b) - getSkuRecency(a)); break;
       case "relevance": if (searchOrder) result.sort((a, b) => (searchOrder!.get(a.id) ?? 1e9) - (searchOrder!.get(b.id) ?? 1e9)); break;
       case "price-asc": result.sort((a, b) => a.priceNum - b.priceNum); break;
       case "price-desc": result.sort((a, b) => b.priceNum - a.priceNum); break;
@@ -1006,6 +1021,7 @@ export function ProductsPage() {
       {[...selectedColors].map((color) => <FilterPill key={color} label={color} onRemove={() => toggleColor(color)} />)}
       {priceFilterActive && <FilterPill label={`R$ ${priceMin} – R$ ${priceMax}`} onRemove={() => { setPriceMin(priceBounds.min); setPriceMax(priceBounds.max); }} />}
       {onlyDiscount && <FilterPill label="Promoção" onRemove={() => setOnlyDiscount(false)} />}
+      {onlyNew && <FilterPill label="Novidades" onRemove={() => setOnlyNew(false)} />}
       {[...selectedDiscounts].sort((a, b) => a - b).map((d) => (
         <FilterPill key={`disc-${d}`} label={`${d}% OFF`} onRemove={() => setSelectedDiscounts((prev) => { const n = new Set(prev); n.delete(d); return n; })} />
       ))}
@@ -1462,7 +1478,7 @@ export function ProductsPage() {
                 ? showcase.h1
                 : initialSubcategory
                   ? `${initialSubcategory} ${activeCategoryLabel}`
-                  : activeCategoryLabel || "Todos os produtos"}
+                  : activeCategoryLabel || (onlyNew ? "Novidades" : "Todos os produtos")}
             </h1>
             <p
               className="mt-3 text-foreground/75"
@@ -1481,6 +1497,8 @@ export function ProductsPage() {
                 ? showcase.intro
                 : activeCategoryLabel
                   ? `Confira a linha completa de ${initialSubcategory ? `${initialSubcategory.toLowerCase()} ${activeCategoryLabel.toLowerCase()}` : activeCategoryLabel.toLowerCase()} PCYES. Garantia oficial, frete grátis acima de R$ 299, até 10x sem juros.`
+                  : onlyNew
+                  ? "Os lançamentos mais recentes da PCYES, do mais novo para o mais antigo."
                   : "Catálogo completo PCYES. Hardware, periféricos, setups gamer e mais."}
             </p>
           </header>
