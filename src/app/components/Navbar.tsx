@@ -391,7 +391,7 @@ interface NavItem { label: string; href?: string; mega?: string; emphasis?: "gre
 const SHOW_REGION_SWITCHER = false;
 
 const navItems: NavItem[] = [
-  { label: "Novidades", href: "/produtos" },
+  { label: "Novidades", href: "/novidades" },
   { label: "Hardware", mega: "hardware", href: getCatalogHref({ category: "Hardware" }) },
   { label: "Periféricos", mega: "perifericos", href: getCatalogHref({ category: "Periféricos" }) },
   { label: "Cadeiras", mega: "cadeiras", href: getCatalogHref({ category: "Cadeiras" }) },
