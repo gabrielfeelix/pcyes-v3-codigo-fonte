@@ -195,7 +195,7 @@ export function HeroSection() {
                         style={{
                           WebkitUserDrag: "none",
                           objectPosition: "center 25%",
-                          filter: isActive ? "none" : "brightness(0.35) saturate(0.7)",
+                          filter: isActive ? "none" : "brightness(0.7) saturate(0.9)",
                           transition: "filter 320ms ease",
                         } as React.CSSProperties}
                       />
