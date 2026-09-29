@@ -19,7 +19,7 @@ import { formatBRL, formatBRLSpoken } from "../../../utils/format";
  * formato do resto do varejo brasileiro:
  *
  *   R$ 530,88            (riscado, preço anterior)
- *   R$ 404,91  à vista no PIX
+ *   R$ 404,91 no PIX
  *   10x de R$ 44,99 sem juros no cartão
  *
  * O percentual "% OFF" que ficava ao lado do preço saiu daqui — o selo sobre a
@@ -27,7 +27,7 @@ import { formatBRL, formatBRLSpoken } from "../../../utils/format";
  * preços, e a linha do lado do valor agora responde uma pergunta melhor:
  * quanto custa pagando à vista.
  *
- * UM VERDE SÓ (`--save`): o verde está no "à vista no PIX" e em mais nada. Ele
+ * UM VERDE SÓ (`--save`): o verde está no "no PIX" e em mais nada. Ele
  * chegou a existir no percentual e no PIX ao mesmo tempo, em linhas coladas, e
  * os dois disputavam a atenção.
  */
@@ -91,7 +91,8 @@ interface PixLabelProps {
   scale?: PriceScale;
 }
 
-/** "à vista no PIX" — a etiqueta que explica o número grande. */
+/** "no PIX" — a etiqueta que explica o número grande. "À vista" sobrava:
+ *  PIX já é à vista. */
 export function PixLabel({ scale = "card" }: PixLabelProps) {
   return (
     <span
@@ -104,7 +105,7 @@ export function PixLabel({ scale = "card" }: PixLabelProps) {
         letterSpacing: "0.01em",
       }}
     >
-      à vista no PIX
+      no PIX
     </span>
   );
 }
@@ -167,21 +168,21 @@ export function PriceBlock({
 
       {/* `items-baseline`: a etiqueta do PIX é bem menor que o preço, e alinhada
           pelo centro ela flutuava acima da linha dos algarismos. */}
-      {/* "à vista no PIX" sempre na linha de baixo do preço. Ao lado, ele
-          ficava na mesma linha só quando o preço era curto: com preço longo
-          quebrava, e o bloco mudava de altura entre cards vizinhos. */}
-      <div className="flex flex-col items-start gap-1">
+      {/* "no PIX" ao lado do preço. O preço nunca parte ("R$" numa linha, número
+          na outra); em tela estreita a fonte encolhe, e só se ainda
+          assim faltar espaço o "no PIX" desce de linha. */}
+      <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
         <p
-          className="text-ink-strong leading-none"
+          className="text-ink-strong leading-none whitespace-nowrap"
           style={{
             fontFamily: "var(--font-family-figtree)",
-            fontSize: cfg.price,
+            fontSize: `min(${cfg.price}, 4.3vw)`,
             fontWeight: 700,
             letterSpacing: "-0.015em",
           }}
         >
           <span aria-hidden="true">{formatBRL(pix)}</span>
-          <span className="sr-only">{formatBRLSpoken(pix)} à vista no PIX</span>
+          <span className="sr-only">{formatBRLSpoken(pix)} no PIX</span>
         </p>
 
         <PixLabel scale={scale} />
