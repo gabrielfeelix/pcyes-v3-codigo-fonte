@@ -53,7 +53,8 @@ interface InstallmentLineProps {
 }
 
 /**
- * "10x de R$ X sem juros no cartão" — visual e falado.
+ * "ou 10x de R$ X sem juros" — visual e falado. O "ou" amarra com o preço do
+ * PIX logo acima: são duas formas de pagar, não dois valores somados.
  *
  * A parcela sai do preço CHEIO, não do preço do PIX: quem parcela no cartão não
  * tem o desconto à vista, e prometer a parcela menor seria mentira no checkout.
@@ -78,10 +79,10 @@ export function InstallmentLine({ priceNum, scale = "card", className = "mt-1" }
           cartão" quebrava e desalinhava os cards vizinhos. Forma curta de
           vitrine; a versão falada segue completa. */}
       <span aria-hidden="true">
-        {INSTALLMENTS}x {formatBRL(parcela)} sem juros
+        ou {INSTALLMENTS}x {formatBRL(parcela)} sem juros
       </span>
       <span className="sr-only">
-        {INSTALLMENTS} vezes de {formatBRLSpoken(parcela)} sem juros no cartão
+        ou {INSTALLMENTS} vezes de {formatBRLSpoken(parcela)} sem juros no cartão
       </span>
     </p>
   );
