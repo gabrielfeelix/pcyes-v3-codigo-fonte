@@ -15,7 +15,8 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { HeaderDelivery } from "./HeaderDelivery";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/tooltip";
 import { allProducts, type Product } from "./productsData";
-import { getCatalogHref, getPrimaryProductImage, getProductCategory, getProductSubcategory, getProductSwatches, getVisibleCatalogProducts } from "./productPresentation";
+import { getCatalogHref, getPrimaryProductImage, getProductCategory, getProductSubcategory, getProductSwatches, getVisibleCatalogProducts, getNewArrivals, getShowcaseName } from "./productPresentation";
+import { PRE_ORDER_ITEMS } from "./PreOrderData";
 import { getCategoryFromSlug, getCategorySlug, getSubcategorySlug, getProductUrl } from "../lib/slug";
 import { getSetupProductId, setupProducts } from "../lib/setups";
 import { SHOWCASES, getShowcasePath } from "../lib/showcases";
@@ -97,6 +98,9 @@ interface MegaMenu {
   subItems: MegaSubItem[];
   /** Quando presente, o painel vira grade de banners em vez de miniaturas. */
   banners?: CollabBanner[];
+  /** Painel próprio, montado a partir de dados e não de subitens. Só desktop:
+      no celular o item vira link direto. */
+  panel?: "novidades";
 }
 
 /**
@@ -142,6 +146,8 @@ function catItem(label: string, target: { category: string; subcategory?: string
 }
 
 const megaMenus: Record<string, MegaMenu> = {
+  novidades: { title: "Novidades", subItems: [], panel: "novidades" },
+
   hardware: {
     title: "Hardware",
     subItems: [
@@ -391,7 +397,7 @@ interface NavItem { label: string; href?: string; mega?: string; emphasis?: "gre
 const SHOW_REGION_SWITCHER = false;
 
 const navItems: NavItem[] = [
-  { label: "Novidades", href: "/novidades" },
+  { label: "Novidades", mega: "novidades", href: "/produtos?novidades=1" },
   { label: "Hardware", mega: "hardware", href: getCatalogHref({ category: "Hardware" }) },
   { label: "Periféricos", mega: "perifericos", href: getCatalogHref({ category: "Periféricos" }) },
   { label: "Cadeiras", mega: "cadeiras", href: getCatalogHref({ category: "Cadeiras" }) },
@@ -472,6 +478,25 @@ function getProductsForMenuHref(href?: string) {
     return true;
   });
 }
+
+/* Painel de Novidades: um lançamento por categoria, para a vitrine não abrir
+   com cinco variações do mesmo SSD; e a pré-venda mais próxima. */
+const novidadesPanel = (() => {
+  const seen = new Set<string>();
+  const arrivals = getNewArrivals(80).filter((p) => {
+    const cat = getProductCategory(p);
+    if (seen.has(cat)) return false;
+    seen.add(cat);
+    return true;
+  }).slice(0, 5);
+  const now = Date.now();
+  const next = PRE_ORDER_ITEMS
+    .filter((info) => new Date(info.releaseDate).getTime() > now)
+    .sort((a, b) => a.releaseDate.localeCompare(b.releaseDate))
+    .map((info) => ({ info, product: getCatalogProduct(info.productId) }))
+    .find((x) => x.product);
+  return { arrivals, preOrder: next ? { info: next.info, product: next.product! } : null };
+})();
 
 function productToMenuCard(product: Product): ProductCard {
   return {
@@ -2187,7 +2212,65 @@ export function Navbar() {
                 onMouseEnter={() => handleMegaEnter(activeMega)} onMouseLeave={handleMegaLeave}
               >
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }} className="mx-auto max-w-[1180px] px-5 py-6 md:px-8">
-                  {activeMegaData.banners ? (
+                  {activeMegaData.panel === "novidades" ? (
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px] lg:gap-8">
+                      <div>
+                        <div className="mb-4 flex items-baseline justify-between">
+                          <span className="text-foreground/50" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", letterSpacing: "0.16em", fontWeight: 700 }}>
+                            ACABARAM DE CHEGAR
+                          </span>
+                          <Link to="/produtos?novidades=1" onClick={closeMegaMenu} className="group inline-flex items-center gap-1 text-foreground/70 transition-colors hover:text-foreground"
+                            style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
+                            Ver todas as novidades <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                          </Link>
+                        </div>
+                        <div className="grid grid-cols-5 gap-3">
+                          {novidadesPanel.arrivals.map((product) => (
+                            <Link key={product.id} to={`/produto/${product.id}`} onClick={closeMegaMenu}
+                              className={`group flex flex-col rounded-[18px] border p-3 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 ${isDark ? "border-white/[0.07] bg-white/[0.03]" : "border-black/[0.06] bg-black/[0.02]"}`}>
+                              <span className="relative flex aspect-square items-center justify-center">
+                                <span className={`absolute inset-[10%] rounded-full ${isDark ? "bg-white/[0.05]" : "bg-black/[0.04]"}`} />
+                                <ImageWithFallback src={getPrimaryProductImage(product)} alt={product.name}
+                                  className="relative z-10 h-[88%] w-[88%] object-contain drop-shadow-[0_18px_22px_rgba(0,0,0,0.25)] transition-transform duration-300 group-hover:scale-[1.06]" />
+                                <span className="absolute left-0 top-0 z-20 rounded-full bg-primary px-2 py-0.5 text-white"
+                                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "10px", letterSpacing: "0.12em", fontWeight: 800 }}>NOVO</span>
+                              </span>
+                              <span className="mt-2 text-foreground/45" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 500 }}>
+                                {getProductCategory(product)}
+                              </span>
+                              <span className="mt-0.5 line-clamp-2 min-h-[2.4em] text-foreground/85 transition-colors group-hover:text-foreground"
+                                style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-sm)", fontWeight: 600, lineHeight: 1.2 }}>
+                                {getShowcaseName(product.name)}
+                              </span>
+                              <span className="mt-1.5 text-foreground" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
+                                {product.price}
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                      {novidadesPanel.preOrder && (
+                        <Link to={`/produto/${novidadesPanel.preOrder.product.id}`} onClick={closeMegaMenu}
+                          className="group relative flex flex-col overflow-hidden rounded-[22px] border border-[#f97316]/30 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#f97316]/60"
+                          style={{ background: "radial-gradient(circle at 50% 38%, rgba(249,115,22,0.20), transparent 64%)" }}>
+                          <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#f97316] px-2.5 py-1 text-white"
+                            style={{ fontFamily: "var(--font-family-inter)", fontSize: "10px", letterSpacing: "0.14em", fontWeight: 800 }}>
+                            PRÉ-VENDA · {new Date(novidadesPanel.preOrder.info.releaseDate).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).replace(".", "").toUpperCase()}
+                          </span>
+                          <span className="relative mt-2 flex h-[150px] items-center justify-center">
+                            <ImageWithFallback src={getPrimaryProductImage(novidadesPanel.preOrder.product)} alt={novidadesPanel.preOrder.product.name}
+                              className="h-full w-full object-contain drop-shadow-[0_20px_26px_rgba(0,0,0,0.35)] transition-transform duration-500 group-hover:scale-[1.05]" />
+                          </span>
+                          <span className="mt-3 line-clamp-2 text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 600, lineHeight: 1.2 }}>
+                            {getShowcaseName(novidadesPanel.preOrder.product.name)}
+                          </span>
+                          <span className="mt-3 inline-flex items-center gap-1.5 text-[#f97316]" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
+                            Reservar agora <ArrowUpRight size={14} />
+                          </span>
+                        </Link>
+                      )}
+                    </div>
+                  ) : activeMegaData.banners ? (
                     /* Collabs: campanha com marca parceira pede arte grande e
                        nome legível — não a miniatura circular de categoria.
                        A grade acompanha a quantidade para um banner sozinho não
@@ -2729,7 +2812,7 @@ export function Navbar() {
                           >
                             <button
                               onClick={() => {
-                                if (item.mega) {
+                                if (item.mega && !megaMenus[item.mega]?.panel) {
                                   setMobileActiveMega(item.mega);
                                   setMobileMenuView("category");
                                 } else {
@@ -2745,7 +2828,7 @@ export function Navbar() {
                               >
                                 {item.label}
                               </span>
-                              {item.mega && <ChevronRight size={17} className="text-foreground/32" strokeWidth={1.5} />}
+                              {item.mega && !megaMenus[item.mega]?.panel && <ChevronRight size={17} className="text-foreground/32" strokeWidth={1.5} />}
                             </button>
                           </motion.div>
                         );
