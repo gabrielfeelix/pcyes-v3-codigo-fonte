@@ -753,6 +753,11 @@ export function Navbar() {
     const value = searchQuery.trim();
     if (!value) return;
     setSearchOpen(false);
+    // Drivers e Manuais saiu da barra: quem busca por isso vai direto à página.
+    if (/\b(drivers?|manua(l|is)|software)\b/i.test(value.normalize("NFD").replace(/[\u0300-\u036f]/g, ""))) {
+      navigate("/drivers-e-manuais");
+      return;
+    }
     navigate(`/produtos?search=${encodeURIComponent(value)}`);
   };
 
