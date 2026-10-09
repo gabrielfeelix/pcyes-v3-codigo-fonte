@@ -471,7 +471,7 @@ export function PcPointsPage() {
           </div>
         </div>
 
-        <div className="relative mx-auto -mt-16 max-w-[1434px] px-5 pb-20 md:px-12 lg:mt-0 lg:flex lg:min-h-[min(100svh,940px)] lg:items-center lg:pb-24 lg:pt-[170px]">
+        <div className="relative mx-auto -mt-16 max-w-[1434px] px-5 pb-20 md:px-12 lg:mt-0 lg:flex lg:min-h-[min(100svh,980px)] lg:items-center lg:pb-24 lg:pt-[240px]">
             <motion.div
               initial="hidden"
               animate="show"
