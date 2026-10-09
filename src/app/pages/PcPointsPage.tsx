@@ -1027,209 +1027,219 @@ function OrderCalculator() {
  * Como os pontos viram desconto (regulamento, seção 5: vale o menor entre o
  * limite do nível e o saldo).
  *
- * Duas tentativas anteriores não foram entendidas: barras na escala do pedido
- * e depois "dois valores competindo" com a nota do checkout. Esta usa uma
- * imagem física: o limite do nível é um pote (no Mítico cabe até 20% do
- * pedido) e os pontos são moedas que enchem o pote. O que entra vira
- * desconto; o que não cabe transborda e fica guardado. Um controle só, o
- * valor dos pontos, e a conta final escrita como conta.
+ * Três tentativas anteriores (barras na escala do pedido, valores competindo,
+ * pote) pediam que a pessoa deduzisse a regra. Aqui cada caso tem o seu
+ * quadro, com a resposta no título e a conta escrita como resumo de pedido;
+ * a linha que decide o desconto vem destacada. Mesmo pedido nos dois
+ * (R$ 568,40 no Mítico, o exemplo do regulamento), só muda o saldo.
  */
-const BALANCE_MAX = 200;
+const REDEEM_CASES = [
+  {
+    id: "abaixo",
+    tag: "Caso 1",
+    title: "Seus pontos valem menos que o limite",
+    answer: "Você usa todos os pontos.",
+    balance: EXAMPLE.balance,
+  },
+  {
+    id: "acima",
+    tag: "Caso 2",
+    title: "Seus pontos valem mais que o limite",
+    answer: "Você usa até o limite. O resto fica guardado.",
+    balance: 150,
+  },
+];
 
 function RedeemRule() {
+  return (
+    <>
+      <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={viewportOnce} className="max-w-[720px]">
+        <Eyebrow>Usando os pontos</Eyebrow>
+        <SectionTitle>Como seus pontos viram desconto</SectionTitle>
+        <Lede>
+          Ao finalizar o pedido, você escolhe usar seus pontos. O desconto tem um limite, que depende do seu nível:
+          de até 5% a até 20% do valor do pedido. O que acontece depende de quanto os seus pontos valem.
+        </Lede>
+      </motion.div>
+
+      <div className="mt-12 grid gap-4 md:grid-cols-2">
+        {REDEEM_CASES.map((c, i) => (
+          <RedeemCase key={c.id} index={i} {...c} />
+        ))}
+      </div>
+
+      <p className="mt-6 text-ink-muted" style={{ fontFamily: INTER, fontSize: 13, lineHeight: 1.6 }}>
+        Exemplo com um pedido de {brl(EXAMPLE.order)} no nível Mítico (até 20%). Pontos não podem ser trocados por
+        dinheiro.
+      </p>
+    </>
+  );
+}
+
+function RedeemCase({
+  index,
+  tag,
+  title,
+  answer,
+  balance,
+}: {
+  index: number;
+  tag: string;
+  title: string;
+  answer: string;
+  balance: number;
+}) {
   const reduce = useReducedMotion();
-  const [balance, setBalance] = useState(EXAMPLE.balance);
   const mitico = LEVELS[LEVELS.length - 1];
   const order = EXAMPLE.order;
   const cap = (order * mitico.cap) / 100;
   const used = Math.min(cap, balance);
   const leftover = Math.max(0, balance - cap);
-  const total = order - used;
-  const full = balance >= cap;
-  const spring = reduce ? { duration: 0 } : { type: "spring" as const, stiffness: 140, damping: 22 };
+  const levelDecides = balance > cap;
 
-  /* moedas do transbordo: uma a cada R$ 15 que sobram, até 5 */
-  const spill = leftover > 0 ? Math.min(5, Math.ceil(leftover / 15)) : 0;
+  /* Barra na escala do maior dos dois valores, para os dois casos caberem. */
+  const scaleMax = Math.max(cap, balance) * 1.08;
+  const pctOf = (v: number) => `${(v / scaleMax) * 100}%`;
+
+  const line = "flex items-baseline justify-between gap-4 py-2.5";
+  const label: CSSProperties = { fontFamily: INTER, fontSize: 14 };
+  const value: CSSProperties = { fontFamily: FIGTREE, fontWeight: 700, fontSize: 16 };
+  const decides = (on: boolean): CSSProperties =>
+    on ? { background: "rgba(250,204,21,0.08)", boxShadow: "inset 2px 0 0 #FACC15" } : {};
 
   return (
-    <div className="grid items-center gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-      <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={viewportOnce}>
-        <Eyebrow>Usando os pontos</Eyebrow>
-        <SectionTitle className="max-w-[18ch]">Como seus pontos viram desconto</SectionTitle>
-        <Lede className="max-w-[46ch]">
-          Pense no seu nível como um pote. Em cada pedido, cabe nele até uma parte do valor da compra: até 5% no
-          Indique e Ganhe, até 20% no Mítico.
-        </Lede>
-        <Lede className="max-w-[46ch]">
-          Seus pontos enchem esse pote, e tudo o que está dentro vira desconto. O que não couber fica guardado
-          para a próxima compra.
-        </Lede>
-        <p className="mt-4 text-ink-muted" style={{ fontFamily: INTER, fontSize: 14, lineHeight: 1.6 }}>
-          Arraste o controle ao lado para ver acontecer. Pontos não podem ser trocados por dinheiro.
-        </p>
-      </motion.div>
+    <motion.article
+      variants={reveal}
+      initial="hidden"
+      whileInView="show"
+      viewport={viewportOnce}
+      custom={index}
+      className="flex flex-col rounded-card-lg border border-edge bg-white/[0.02] p-6 md:p-8"
+    >
+      <span className="uppercase" style={{ fontFamily: INTER, fontSize: 11, letterSpacing: "0.22em", fontWeight: 700, color: GOLD }}>
+        {tag}
+      </span>
+      <h3 className="mt-3 text-ink-strong" style={{ fontFamily: FIGTREE, fontSize: "clamp(22px, 2.2vw, 28px)", fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.15 }}>
+        {title}
+      </h3>
+      <p className="mt-2 text-ink" style={{ fontFamily: INTER, fontSize: 16, lineHeight: 1.5 }}>
+        {answer}
+      </p>
 
-      <motion.div
-        variants={reveal}
-        initial="hidden"
-        whileInView="show"
-        viewport={viewportOnce}
-        custom={1}
-        className="rounded-card-lg border border-edge bg-white/[0.02] p-6 md:p-10"
-      >
-        <span className="text-ink-muted" style={{ fontFamily: INTER, fontSize: 13, fontWeight: 600 }}>
-          Exemplo: pedido de {brl(order)} no nível Mítico
-        </span>
-
-        {/* ── o pote ── */}
-        <div className="mt-6 flex items-end justify-center gap-6 sm:gap-10">
-          <div className="flex flex-col items-center">
-            <span className="text-center text-ink" style={{ fontFamily: INTER, fontSize: 13, lineHeight: 1.35 }}>
-              Cabe até <b className="text-ink-strong">{brl(cap)}</b>
-              <br />
-              <span className="text-ink-muted">20% do pedido</span>
-            </span>
-            <div
-              className="relative mt-3 h-[220px] w-[150px] overflow-hidden rounded-b-[30px] rounded-t-[12px] border-2 transition-[border-color,box-shadow] duration-500"
-              style={{
-                borderColor: full ? GOLD : "rgba(255,255,255,0.22)",
-                background: "rgba(255,255,255,0.03)",
-                boxShadow: full ? "0 0 40px -6px rgba(250,204,21,0.55)" : "none",
-              }}
-            >
-              {/* o enchimento: moedas empilhadas, em ouro */}
-              <motion.div
-                className="absolute inset-x-0 bottom-0"
-                style={{
-                  background: `radial-gradient(circle at 50% 40%, rgba(255,255,255,0.28) 0 5px, transparent 6px) 0 0 / 30px 16px, ${GOLD_GRADIENT}`,
-                }}
-                initial={false}
-                animate={{ height: `${(used / cap) * 100}%` }}
-                transition={spring}
-              >
-                <span className="absolute inset-x-0 top-0 h-[3px] bg-white/60" />
-              </motion.div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span
-                  className="rounded-full px-2.5 py-1 tabular-nums"
-                  style={{ fontFamily: FIGTREE, fontWeight: 800, fontSize: 20, color: "#fff", background: "rgba(10,10,10,0.72)" }}
-                >
-                  <AnimatedBRL value={used} />
-                </span>
-                <span className="mt-1.5 rounded-full px-2 py-0.5 text-[#fff]" style={{ fontFamily: INTER, fontSize: 11, fontWeight: 700, background: "rgba(10,10,10,0.6)" }}>
-                  {full ? "pote cheio" : "viram desconto"}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* o que transborda */}
-          <div className="flex w-[130px] flex-col items-center pb-2">
-            <AnimatePresence>
-              {spill > 0 ? (
-                <motion.div
-                  key="spill"
-                  className="flex flex-col items-center"
-                  initial={{ opacity: 0, y: -12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.35 }}
-                >
-                  <div className="relative h-[70px] w-[90px]" style={{ perspective: 500 }}>
-                    {Array.from({ length: spill }, (_, i) => (
-                      <motion.span
-                        key={i}
-                        className="absolute"
-                        style={{ left: 30 + (i % 2 ? 14 : -14) * Math.ceil(i / 2), bottom: (i % 3) * 6 }}
-                        initial={{ y: -40, opacity: 0, rotate: -30 }}
-                        animate={{ y: 0, opacity: 1, rotate: (i - 2) * 12 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 16, delay: i * 0.05 }}
-                      >
-                        <PcyesCoin size={30} />
-                      </motion.span>
-                    ))}
-                  </div>
-                  <span className="mt-2 text-center tabular-nums text-ink" style={{ fontFamily: INTER, fontSize: 13, lineHeight: 1.35 }}>
-                    Sobram <b style={{ color: GOLD }}>{brl(leftover)}</b>
-                    <br />
-                    <span className="text-ink-muted">ficam guardados para a próxima compra</span>
-                  </span>
-                </motion.div>
-              ) : (
-                <motion.span
-                  key="nada"
-                  className="text-center text-ink-muted"
-                  style={{ fontFamily: INTER, fontSize: 13, lineHeight: 1.35 }}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  Todos os seus pontos couberam no pote
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-
-        {/* ── o único controle: quanto valem os pontos ── */}
-        <div className="mt-8">
-          <div className="flex items-baseline justify-between gap-4">
-            <label htmlFor="pp-balance" className="flex items-center gap-2 text-ink" style={{ fontFamily: INTER, fontSize: 14 }}>
-              <PcyesCoin size={18} />
-              Seus pontos valem
-            </label>
-            <span className="tabular-nums" style={{ fontFamily: FIGTREE, fontWeight: 800, fontSize: 22, color: GOLD }}>
-              {brl(balance)}
-            </span>
-          </div>
-          <input
-            id="pp-balance"
-            type="range"
-            min={0}
-            max={BALANCE_MAX}
-            step={5}
-            value={balance}
-            onChange={(e) => setBalance(Number(e.target.value))}
-            className="pp-range mt-3 w-full"
-            style={{ ["--pp-fill" as string]: `${(balance / BALANCE_MAX) * 100}%` }}
+      {/* pontos × limite, na mesma régua */}
+      <div className="mt-7" aria-hidden>
+        <div className="relative h-3 rounded-full bg-white/[0.06]">
+          {/* o limite: trilho tracejado até onde o nível deixa */}
+          <span
+            className="absolute inset-y-0 left-0 rounded-full border border-dashed"
+            style={{ width: pctOf(cap), borderColor: "rgba(255,255,255,0.35)" }}
           />
+          {/* pontos que viram desconto */}
+          <motion.span
+            className="absolute inset-y-0 left-0 rounded-full"
+            style={{ width: pctOf(used), background: GOLD_GRADIENT, transformOrigin: "left" }}
+            initial={reduce ? false : { scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.9, delay: 0.3 + index * 0.15, ease: [0.16, 1, 0.3, 1] }}
+          />
+          {/* pontos que passam do limite: ficam guardados */}
+          {leftover > 0 && (
+            <motion.span
+              className="absolute inset-y-0 rounded-r-full"
+              style={{
+                left: pctOf(cap),
+                width: pctOf(leftover),
+                background: "repeating-linear-gradient(135deg, rgba(250,204,21,0.45) 0 4px, rgba(250,204,21,0.12) 4px 8px)",
+                transformOrigin: "left",
+              }}
+              initial={reduce ? false : { scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={viewportOnce}
+              transition={{ duration: 0.6, delay: 1.1 + index * 0.15, ease: [0.16, 1, 0.3, 1] }}
+            />
+          )}
+          {/* marca do limite */}
+          <span className="absolute -bottom-1.5 -top-1.5 w-[2px] rounded-full bg-white/70" style={{ left: pctOf(cap) }} />
         </div>
+        <div className="relative mt-2 h-4" style={{ fontFamily: INTER, fontSize: 11 }}>
+          <span className="absolute -translate-x-1/2 whitespace-nowrap text-ink-muted" style={{ left: pctOf(cap) }}>
+            limite {brl(cap)}
+          </span>
+        </div>
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-ink-muted" style={{ fontFamily: INTER, fontSize: 12 }}>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-3 rounded-sm" style={{ background: GOLD_GRADIENT }} />
+            vira desconto
+          </span>
+          {leftover > 0 && (
+            <span className="flex items-center gap-1.5">
+              <span
+                className="h-2 w-3 rounded-sm"
+                style={{ background: "repeating-linear-gradient(135deg, rgba(250,204,21,0.6) 0 2px, rgba(250,204,21,0.15) 2px 4px)" }}
+              />
+              fica guardado
+            </span>
+          )}
+        </div>
+      </div>
 
-        {/* ── a conta ── */}
-        <div className="mt-8 grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-2 rounded-card-md border border-edge bg-[#0d0d0d] p-4 text-center sm:gap-3 sm:p-5">
-          <div className="flex flex-col">
-            <span className="text-ink-muted" style={{ fontFamily: INTER, fontSize: 12 }}>
-              Pedido
-            </span>
-            <span className="tabular-nums text-ink-strong" style={{ fontFamily: FIGTREE, fontWeight: 700, fontSize: "clamp(15px, 1.6vw, 20px)" }}>
-              {brl(order)}
-            </span>
-          </div>
-          <span className="text-ink-muted" style={{ fontFamily: FIGTREE, fontSize: 22, fontWeight: 700 }}>
-            −
+      {/* a conta, como no resumo do pedido */}
+      <div className="mt-5 flex flex-col divide-y divide-white/[0.07] border-y border-white/[0.07]">
+        <div className={line}>
+          <span className="text-ink-muted" style={label}>
+            Valor do pedido
           </span>
-          <div className="flex flex-col">
-            <span className="text-ink-muted" style={{ fontFamily: INTER, fontSize: 12 }}>
-              Desconto
-            </span>
-            <span className="tabular-nums" style={{ fontFamily: FIGTREE, fontWeight: 700, fontSize: "clamp(15px, 1.6vw, 20px)", color: GOLD }}>
-              <AnimatedBRL value={used} />
-            </span>
-          </div>
-          <span className="text-ink-muted" style={{ fontFamily: FIGTREE, fontSize: 22, fontWeight: 700 }}>
-            =
+          <span className="tabular-nums text-ink" style={value}>
+            {brl(order)}
           </span>
-          <div className="flex flex-col">
-            <span className="text-ink-muted" style={{ fontFamily: INTER, fontSize: 12 }}>
-              Você paga
-            </span>
-            <span className="tabular-nums text-ink-strong" style={{ fontFamily: FIGTREE, fontWeight: 800, fontSize: "clamp(17px, 1.9vw, 24px)" }}>
-              <AnimatedBRL value={total} />
-            </span>
-          </div>
         </div>
-      </motion.div>
-    </div>
+        <div className={`${line} -mx-3 px-3`} style={decides(levelDecides)}>
+          <span className="text-ink-muted" style={label}>
+            Limite do nível (até 20%)
+          </span>
+          <span className="tabular-nums text-ink" style={value}>
+            {brl(cap)}
+          </span>
+        </div>
+        <div className={`${line} -mx-3 px-3`} style={decides(!levelDecides)}>
+          <span className="flex items-center gap-2 text-ink-muted" style={label}>
+            <PcyesCoin size={15} />
+            Seus pontos valem
+          </span>
+          <span className="tabular-nums text-ink" style={value}>
+            {brl(balance)}
+          </span>
+        </div>
+        <div className={line}>
+          <span className="text-ink-strong" style={{ ...label, fontWeight: 700 }}>
+            Desconto aplicado
+          </span>
+          <span className="tabular-nums" style={{ ...value, fontWeight: 800, fontSize: 20, color: GOLD }}>
+            − {brl(used)}
+          </span>
+        </div>
+        <div className={line}>
+          <span className="text-ink-strong" style={{ ...label, fontWeight: 700 }}>
+            Você paga
+          </span>
+          <span className="tabular-nums text-ink-strong" style={{ ...value, fontWeight: 800, fontSize: 20 }}>
+            {brl(order - used)}
+          </span>
+        </div>
+      </div>
+
+      <p className="mt-4 text-ink-muted" style={{ fontFamily: INTER, fontSize: 13, lineHeight: 1.55 }}>
+        {levelDecides ? (
+          <>
+            O limite é menor que os seus pontos, então ele define o desconto. Os <b className="text-ink">{brl(leftover)}</b> que
+            sobram continuam na sua conta para a próxima compra.
+          </>
+        ) : (
+          <>Os seus pontos são menores que o limite, então todos viram desconto.</>
+        )}
+      </p>
+    </motion.article>
   );
 }
 
