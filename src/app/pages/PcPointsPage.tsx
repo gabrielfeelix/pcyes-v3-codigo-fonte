@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type CSSProperties, type MouseEvent
 import { Link, useNavigate } from "react-router";
 import { animate, AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform, type Variants } from "motion/react";
 import {
+  ArrowDown,
   ArrowRight,
   ArrowUpRight,
   Ban,
@@ -447,7 +448,7 @@ export function PcPointsPage() {
     <>
       <SEO
         title="PC Points"
-        description="PC Points, o programa de fidelidade da PCYES: ganhe pontos em compras e ações, evolua de nível e use os pontos para pagar até 20% do pedido."
+        description="PC Points, o programa de fidelidade da PCYES: ganhe pontos, eleve seu nível e tenha até 20% de desconto nas suas compras."
         canonicalPath="/pc-points/"
       />
 
@@ -488,7 +489,7 @@ export function PcPointsPage() {
                 className="mt-6 max-w-[15ch] text-ink-strong"
                 style={{ fontFamily: FIGTREE, fontSize: "clamp(36px, 5vw, 72px)", fontWeight: 700, letterSpacing: "-0.045em", lineHeight: 1.0 }}
               >
-                Compre, junte pontos e <span style={goldText}>pague menos</span> na próxima.
+                <span style={goldText}>Your game:</span> eleve seu nível e tenha desconto nas suas compras.
               </motion.h1>
 
               <motion.p
@@ -497,8 +498,8 @@ export function PcPointsPage() {
                 className="mt-6 max-w-[46ch] text-ink-muted"
                 style={{ fontFamily: INTER, fontSize: "clamp(15px, 1.4vw, 18px)", lineHeight: 1.65 }}
               >
-                O PC Points é o programa de fidelidade da PCYES. Cada compra na loja rende pontos, e você usa esses
-                pontos para pagar uma parte das próximas compras. É grátis e começa quando você cria sua conta.
+                O PC Points é o programa de fidelidade da PCYES. Seus pedidos rendem pontos, e você usa esses pontos
+                para ter desconto nas suas próximas compras. Você começa a ganhar quando cria sua conta.
               </motion.p>
 
               <motion.div variants={reveal} custom={3} className="mt-9 flex flex-wrap items-center gap-3">
@@ -517,7 +518,7 @@ export function PcPointsPage() {
                 {[
                   ["500 pts", "ao criar a conta"],
                   ["6 níveis", "quanto mais alto, mais pontos"],
-                  ["até 20%", "da compra paga com pontos"],
+                  ["até 20%", "de desconto com pontos"],
                 ].map(([value, label]) => (
                   <div key={value} className="flex flex-col gap-1">
                     <dt className="sr-only">{label}</dt>
@@ -553,9 +554,9 @@ export function PcPointsPage() {
             <Eyebrow>Níveis</Eyebrow>
             <SectionTitle>Os 6 níveis do PC Points</SectionTitle>
             <Lede>
-              O nível muda duas coisas: quantos pontos você ganha a cada R$ 1 gasto e quanto de uma compra você
-              pode pagar com pontos. Você sobe de nível conforme compra e participa do programa, e acompanha o seu
-              na área da conta. Pontos que vencem não fazem você descer de nível.
+              O nível muda duas coisas: quantos pontos você ganha a cada R$ 1 gasto e até quanto de desconto você
+              pode ter com eles. Você sobe de nível conforme compra e participa do programa, e acompanha o seu na
+              área da conta.
             </Lede>
           </motion.div>
 
@@ -632,8 +633,8 @@ export function PcPointsPage() {
             </h2>
             <p className="mx-auto mt-4 max-w-[46ch] text-ink-muted" style={{ fontFamily: INTER, fontSize: "var(--text-base)", lineHeight: 1.6 }}>
               {isLoggedIn
-                ? "Na sua conta você vê o saldo, os pontos a liberar e os que estão perto de vencer."
-                : "Os 500 pontos entram quando você se cadastra. Depois disso, cada compra soma mais pontos."}
+                ? "Na sua conta você vê o seu saldo e os pontos a liberar."
+                : "Os 500 pontos entram quando você se cadastra. Depois disso, cada pedido entregue soma mais pontos."}
             </p>
             <div className="mt-9 flex justify-center">{primaryCta}</div>
           </motion.div>
@@ -649,9 +650,9 @@ export function PcPointsPage() {
 
 const STEPS = [
   { icon: ShoppingBag, title: "Compre", body: "Cada R$ 1 gasto na loja da PCYES vira pontos: de 1 a 2,5 pontos por real, conforme o seu nível." },
-  { icon: Hourglass, title: "Receba", body: "Os pontos entram na sua conta 30 dias depois da compra. A partir daí, valem por 6 meses." },
+  { icon: Hourglass, title: "Acumule", body: "Os pontos de cada pedido entram na sua conta depois que ele é entregue." },
   { icon: TrendingUp, title: "Suba de nível", body: "Quanto mais você compra e participa, mais alto fica o seu nível. Nível mais alto dá mais pontos." },
-  { icon: Wallet, title: "Use como desconto", body: "Na hora de pagar uma nova compra, escolha usar seus pontos. Eles abatem parte do valor." },
+  { icon: Wallet, title: "Use como desconto", body: "Ao finalizar um novo pedido, escolha usar seus pontos e tenha desconto nele." },
 ];
 
 /**
@@ -852,10 +853,11 @@ function LevelStairs() {
             >
               <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: level.color }} />
               <span className="tabular-nums" style={{ fontFamily: FIGTREE, fontWeight: 800, fontSize: 34, letterSpacing: "-0.03em", color: level.color, lineHeight: 1 }}>
+                <span style={{ fontSize: 15, fontWeight: 700, marginRight: 4 }}>até</span>
                 {pct(level.cap)}
               </span>
               <span className="mt-1 text-ink-muted" style={{ fontFamily: INTER, fontSize: 12, lineHeight: 1.35 }}>
-                da compra pode ser paga com pontos
+                de desconto com pontos
               </span>
               <span className="mt-4 border-t border-white/[0.08] pt-3 tabular-nums text-ink-strong" style={{ fontFamily: INTER, fontSize: 14, fontWeight: 700 }}>
                 {level.perReal.toLocaleString("pt-BR")} pt{level.perReal === 1 ? "" : "s"}
@@ -872,7 +874,7 @@ function LevelStairs() {
 
 const PRESETS = [200, 568.4, 1500, 4000];
 
-/** Pedido × nível: quantos pontos o pedido rende e quanto dele dá pra pagar com pontos. */
+/** Pedido × nível: quantos pontos o pedido rende e até quanto de desconto os pontos dão nele. */
 function OrderCalculator() {
   const [amount, setAmount] = useState(568.4);
   const [levelIdx, setLevelIdx] = useState(1);
@@ -889,7 +891,7 @@ function OrderCalculator() {
         <SectionTitle className="max-w-[16ch]">Faça a conta com a sua compra</SectionTitle>
         <Lede className="max-w-[44ch]">
           Escolha o valor da compra e o seu nível. O simulador mostra duas coisas: quantos pontos essa compra te
-          dá e qual o desconto máximo que você poderia usar nela com pontos que já tem.
+          dá e até quanto de desconto você poderia ter nela com pontos que já tem.
         </Lede>
       </motion.div>
 
@@ -996,45 +998,49 @@ function OrderCalculator() {
               <span style={{ fontSize: 15, fontWeight: 700 }}>pts</span>
             </span>
             <span className="text-ink-muted" style={{ fontFamily: INTER, fontSize: 12 }}>
-              entram na sua conta 30 dias depois
+              entram quando o pedido é entregue
             </span>
           </div>
           <div className="flex flex-col gap-1 bg-[#0d0d0d] p-5">
             <span className="text-ink-muted" style={{ fontFamily: INTER, fontSize: 13 }}>
-              Desconto máximo com pontos
+              Desconto com pontos
             </span>
             <span className="tabular-nums text-ink-strong" style={{ fontFamily: FIGTREE, fontWeight: 800, fontSize: 30, letterSpacing: "-0.02em" }}>
+              <span style={{ fontSize: 16, fontWeight: 700, marginRight: 6 }}>até</span>
               <AnimatedBRL value={maxRedeem} />
+              <span style={{ color: GOLD }}>*</span>
             </span>
             <span className="text-ink-muted" style={{ fontFamily: INTER, fontSize: 12 }}>
-              {pct(level.cap)} da compra, se você tiver pontos suficientes
+              até {pct(level.cap)} do pedido, se você tiver pontos suficientes
             </span>
           </div>
         </div>
+        <p className="mt-4 text-ink-muted" style={{ fontFamily: INTER, fontSize: 12, lineHeight: 1.6 }}>
+          <span style={{ color: GOLD }}>*</span> Valor estimado. O desconto final depende dos produtos do pedido e das
+          regras do programa.
+        </p>
       </motion.div>
     </div>
   );
 }
 
 /**
- * "Vale sempre o menor dos dois limites" (regulamento, seção 5).
+ * Como os pontos viram desconto (regulamento, seção 5: vale o menor entre o
+ * limite do nível e o saldo).
  *
- * Toda barra é a compra inteira (R$ 568,40, o exemplo do regulamento), na
- * mesma escala, com o limite de 20% do Mítico marcado por uma linha vermelha
- * que atravessa as três. Linha 1: até onde o nível deixa ir. Linha 2: até onde
- * os pontos chegam. Linha 3: o que acontece com a compra.
- *
- * Duas situações para alternar, porque a regra só fica óbvia vendo os dois
- * lados: pontos abaixo do limite (R$ 70, o caso do regulamento) e pontos
- * acima (R$ 150, derivado), quando a barra dourada passa da linha e é cortada.
+ * A primeira versão desenhava isso em barras na escala do pedido e não foi
+ * entendida. Esta usa o que qualquer pessoa já leu: o resumo do pedido no
+ * checkout. Em cima, os dois valores que competem lado a lado ("seu nível
+ * permite até" × "seus pontos valem"), com o menor destacado; embaixo, a nota
+ * do pedido com a linha de desconto. Duas situações para alternar: pontos
+ * abaixo do limite (R$ 70, o exemplo do regulamento) e acima (R$ 150).
  */
 const SCENARIOS = [
-  { id: "menos", tab: "Pontos abaixo do limite", balance: EXAMPLE.balance },
-  { id: "mais", tab: "Pontos acima do limite", balance: 150 },
+  { id: "menos", tab: "Tenho R$ 70 em pontos", balance: EXAMPLE.balance },
+  { id: "mais", tab: "Tenho R$ 150 em pontos", balance: 150 },
 ];
 
 function RedeemRule() {
-  const reduce = useReducedMotion();
   const [scenarioIdx, setScenarioIdx] = useState(0);
   const { balance } = SCENARIOS[scenarioIdx];
   const mitico = LEVELS[LEVELS.length - 1];
@@ -1042,29 +1048,31 @@ function RedeemRule() {
   const cap = (order * mitico.cap) / 100;
   const used = Math.min(cap, balance);
   const leftover = balance - used;
-  const rest = order - used;
-  const w = (v: number) => `${(v / order) * 100}%`;
-  const capAt = w(cap);
-  const limitedByLevel = balance > cap;
+  const total = order - used;
+  const levelWins = cap < balance;
 
-  const bar = { duration: reduce ? 0 : 0.9, ease: [0.16, 1, 0.3, 1] } as const;
-  const rowLabel = "flex items-baseline justify-between gap-4";
-  const labelText: CSSProperties = { fontFamily: INTER, fontSize: 14 };
-  const valueText: CSSProperties = { fontFamily: FIGTREE, fontWeight: 700, fontSize: 18 };
-  const track = "relative mt-2 h-7 overflow-hidden rounded-md bg-white/[0.06]";
+  const tile = (on: boolean): CSSProperties => ({
+    borderColor: on ? "rgba(250,204,21,0.7)" : "var(--edge)",
+    background: on ? "rgba(250,204,21,0.07)" : "rgba(255,255,255,0.015)",
+    opacity: on ? 1 : 0.55,
+  });
+  const rowText: CSSProperties = { fontFamily: INTER, fontSize: 15 };
 
   return (
     <div className="grid items-center gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
       <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={viewportOnce}>
         <Eyebrow>Usando os pontos</Eyebrow>
-        <SectionTitle className="max-w-[18ch]">Quanto dos meus pontos posso usar em uma compra?</SectionTitle>
+        <SectionTitle className="max-w-[18ch]">Como seus pontos viram desconto</SectionTitle>
         <Lede className="max-w-[46ch]">
-          Existem dois limites, e vale o menor deles. O primeiro é o limite do seu nível: uma porcentagem do
-          valor da compra. O segundo são os pontos que você tem: não dá para usar mais do que o seu saldo.
+          Ao finalizar o pedido, você escolhe usar seus pontos. O desconto tem um limite, que depende do seu nível:
+          até 5% do pedido no Indique e Ganhe, até 20% no Mítico.
+        </Lede>
+        <Lede className="max-w-[46ch]">
+          Se seus pontos valerem menos que esse limite, você usa todos. Se valerem mais, usa até o limite e o
+          resto fica guardado para a próxima compra.
         </Lede>
         <p className="mt-4 text-ink-muted" style={{ fontFamily: INTER, fontSize: 14, lineHeight: 1.6 }}>
-          Atenção: os 20% do nível Mítico não são um desconto automático. É o máximo da compra que você pode pagar
-          com pontos. Pontos também não podem ser trocados por dinheiro.
+          Pontos não podem ser trocados por dinheiro.
         </p>
       </motion.div>
 
@@ -1076,16 +1084,11 @@ function RedeemRule() {
         custom={1}
         className="rounded-card-lg border border-edge bg-white/[0.02] p-6 md:p-10"
       >
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <span className="text-ink-muted" style={{ fontFamily: INTER, fontSize: 14 }}>
-            Exemplo: compra no nível Mítico
-          </span>
-          <span className="tabular-nums text-ink-strong" style={{ fontFamily: FIGTREE, fontWeight: 800, fontSize: 26, letterSpacing: "-0.02em" }}>
-            {brl(order)}
-          </span>
-        </div>
+        <span className="text-ink-muted" style={{ fontFamily: INTER, fontSize: 13, fontWeight: 600 }}>
+          Exemplo: pedido de {brl(order)} no nível Mítico
+        </span>
 
-        <div role="tablist" aria-label="Situação do exemplo" className="mt-5 grid grid-cols-2 gap-1 rounded-full border border-edge p-1">
+        <div role="tablist" aria-label="Quanto você tem em pontos" className="mt-3 grid grid-cols-2 gap-1 rounded-full border border-edge p-1">
           {SCENARIOS.map((sc, i) => {
             const on = i === scenarioIdx;
             return (
@@ -1112,133 +1115,90 @@ function RedeemRule() {
           })}
         </div>
 
-        <div className="relative mt-8">
-
-          {/* A linha do limite se repete dentro de cada barra (e não atravessa
-              o bloco todo) para não riscar os rótulos entre elas. */}
-          <div className="flex flex-col gap-7">
-            {/* 1. limite do nível */}
-            <div>
-              <div className={rowLabel}>
-                <span className="text-ink" style={labelText}>
-                  <b className="mr-1.5" style={{ color: mitico.color }}>1</b>Limite do nível: {pct(mitico.cap)} da compra
-                </span>
-                <span className="tabular-nums" style={{ ...valueText, color: mitico.color }}>
-                  {brl(cap)}
-                </span>
-              </div>
-              <div className={track}>
-                <motion.div
-                  className="absolute inset-y-0 left-0"
-                  style={{ width: capAt, background: `repeating-linear-gradient(135deg, ${mitico.color}55 0 6px, ${mitico.color}22 6px 12px)`, transformOrigin: "left" }}
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={viewportOnce}
-                  transition={{ ...bar, delay: reduce ? 0 : 0.2 }}
-                />
-                <span aria-hidden className="absolute inset-y-0 z-10 w-0 border-l-2 border-dashed" style={{ left: capAt, borderColor: mitico.color }} />
-              </div>
-            </div>
-
-            {/* 2. quanto valem os pontos */}
-            <div>
-              <div className={rowLabel}>
-                <span className="text-ink" style={labelText}>
-                  <b className="mr-1.5" style={{ color: GOLD }}>2</b>Quanto valem os seus pontos
-                </span>
-                <span className="tabular-nums" style={{ ...valueText, color: GOLD }}>
-                  <AnimatedBRL value={balance} />
-                </span>
-              </div>
-              <div className={track}>
-                <motion.div
-                  className="absolute inset-y-0 left-0 rounded-r-md"
-                  style={{ background: GOLD_GRADIENT }}
-                  initial={{ width: "0%" }}
-                  whileInView={{ width: w(balance) }}
-                  animate={{ width: w(balance) }}
-                  viewport={viewportOnce}
-                  transition={{ ...bar, delay: reduce ? 0 : 0.35 }}
-                />
-                {/* o pedaço que passa do limite fica riscado: não pode ser usado */}
-                <AnimatePresence>
-                  {limitedByLevel && (
-                    <motion.div
-                      className="absolute inset-y-0"
-                      style={{ left: capAt, width: w(leftover), background: "repeating-linear-gradient(135deg, rgba(10,10,10,0.75) 0 5px, rgba(10,10,10,0.35) 5px 10px)" }}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4, delay: reduce ? 0 : 0.6 }}
-                    />
-                  )}
-                </AnimatePresence>
-                <span aria-hidden className="absolute inset-y-0 z-10 w-0 border-l-2 border-dashed" style={{ left: capAt, borderColor: mitico.color }} />
-              </div>
-            </div>
-
-            {/* 3. resultado */}
-            <div>
-              <div className={rowLabel}>
-                <span className="text-ink-strong" style={{ ...labelText, fontWeight: 700 }}>
-                  <b className="mr-1.5 text-ink-strong">3</b>Como a compra fica
-                </span>
-              </div>
-              <div className="relative mt-2 flex h-11 overflow-hidden rounded-md">
-                <motion.div
-                  className="flex h-full shrink-0 items-center justify-center"
-                  style={{ background: GOLD_GRADIENT }}
-                  initial={{ width: "0%" }}
-                  whileInView={{ width: w(used) }}
-                  animate={{ width: w(used) }}
-                  viewport={viewportOnce}
-                  transition={{ ...bar, delay: reduce ? 0 : 0.6 }}
-                >
-                  <PcyesCoin size={20} />
-                </motion.div>
-                <span aria-hidden className="absolute inset-y-0 z-10 w-0 border-l-2 border-dashed" style={{ left: capAt, borderColor: mitico.color }} />
-                <div className="flex h-full flex-1 items-center justify-end bg-white/[0.12] px-3">
-                  <span className="tabular-nums text-ink-strong" style={{ fontFamily: INTER, fontSize: 13, fontWeight: 700 }}>
-                    <AnimatedBRL value={rest} /> <span className="font-normal text-ink-muted">você paga</span>
-                  </span>
-                </div>
-              </div>
-              <div className="mt-2 flex items-center gap-2" style={{ fontFamily: INTER, fontSize: 13 }}>
-                <span className="h-2.5 w-2.5 rounded-sm" style={{ background: GOLD_GRADIENT }} />
-                <span className="text-ink">
-                  <b className="tabular-nums" style={{ color: GOLD }}>
-                    <AnimatedBRL value={used} />
-                  </b>{" "}
-                  pagos com pontos
-                </span>
-              </div>
-            </div>
-          </div>
+        {/* os dois valores que competem: o menor é o desconto */}
+        <div className="relative mt-6 grid grid-cols-2 gap-3">
+          <motion.div layout className="flex flex-col gap-1 rounded-card-md border p-4 transition-[opacity,border-color,background] duration-500" style={tile(levelWins)}>
+            <span className="flex items-center gap-2 text-ink" style={{ fontFamily: INTER, fontSize: 13 }}>
+              <LevelMedal level={mitico} index={LEVELS.length - 1} size={20} />
+              Seu nível permite até
+            </span>
+            <span className="tabular-nums text-ink-strong" style={{ fontFamily: FIGTREE, fontWeight: 800, fontSize: 24, letterSpacing: "-0.02em" }}>
+              {brl(cap)}
+            </span>
+            <span className="text-ink-muted" style={{ fontFamily: INTER, fontSize: 12 }}>
+              20% de {brl(order)}
+            </span>
+          </motion.div>
+          <motion.div layout className="flex flex-col gap-1 rounded-card-md border p-4 transition-[opacity,border-color,background] duration-500" style={tile(!levelWins)}>
+            <span className="flex items-center gap-2 text-ink" style={{ fontFamily: INTER, fontSize: 13 }}>
+              <PcyesCoin size={18} />
+              Seus pontos valem
+            </span>
+            <span className="tabular-nums text-ink-strong" style={{ fontFamily: FIGTREE, fontWeight: 800, fontSize: 24, letterSpacing: "-0.02em" }}>
+              <AnimatedBRL value={balance} />
+            </span>
+            <span className="text-ink-muted" style={{ fontFamily: INTER, fontSize: 12 }}>
+              seu saldo de pontos
+            </span>
+          </motion.div>
         </div>
 
         <AnimatePresence mode="wait">
           <motion.p
             key={scenarioIdx}
-            className="mt-8 rounded-card-md border p-4 text-ink"
-            style={{ fontFamily: INTER, fontSize: 14, lineHeight: 1.6, borderColor: "rgba(250,204,21,0.3)", background: "rgba(250,204,21,0.05)" }}
-            initial={{ opacity: 0, y: 6 }}
+            className="mt-3 flex items-center gap-2"
+            style={{ fontFamily: INTER, fontSize: 13, fontWeight: 600, color: GOLD }}
+            initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.3 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.25 }}
           >
-            {limitedByLevel ? (
-              <>
-                Seus pontos valem <b>{brl(balance)}</b>, mas o nível só deixa usar até <b>{brl(cap)}</b> nesta compra.
-                Você usa {brl(cap)} e os outros <b>{brl(leftover)}</b> continuam guardados para a próxima.
-              </>
-            ) : (
-              <>
-                O nível deixaria usar até <b>{brl(cap)}</b>, mas seus pontos valem <b>{brl(balance)}</b>. Você usa todos
-                eles e paga o resto, <b>{brl(rest)}</b>, normalmente.
-              </>
-            )}
+            <ArrowDown size={15} />
+            {levelWins
+              ? `O limite do nível é menor, então o desconto é ${brl(cap)}`
+              : `Seus pontos valem menos que o limite, então você usa todos: ${brl(balance)}`}
           </motion.p>
         </AnimatePresence>
+
+        {/* a nota do pedido, como no checkout */}
+        <div className="mt-4 rounded-card-md border border-edge bg-[#0d0d0d] p-5">
+          <div className="flex items-baseline justify-between gap-4 text-ink" style={rowText}>
+            <span>Produtos</span>
+            <span className="tabular-nums">{brl(order)}</span>
+          </div>
+          <div className="mt-3 flex items-baseline justify-between gap-4" style={{ ...rowText, color: GOLD, fontWeight: 700 }}>
+            <span className="flex items-center gap-2">
+              <PcyesCoin size={16} />
+              Desconto PC Points
+            </span>
+            <span className="tabular-nums">
+              − <AnimatedBRL value={used} />
+            </span>
+          </div>
+          <div className="my-4 border-t border-dashed border-white/[0.15]" />
+          <div className="flex items-baseline justify-between gap-4">
+            <span className="text-ink-strong" style={{ fontFamily: INTER, fontSize: 15, fontWeight: 700 }}>
+              Total a pagar
+            </span>
+            <span className="tabular-nums text-ink-strong" style={{ fontFamily: FIGTREE, fontWeight: 800, fontSize: 28, letterSpacing: "-0.02em" }}>
+              <AnimatedBRL value={total} />
+            </span>
+          </div>
+          <AnimatePresence>
+            {leftover > 0 && (
+              <motion.p
+                className="overflow-hidden text-ink-muted"
+                style={{ fontFamily: INTER, fontSize: 13, lineHeight: 1.5 }}
+                initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                animate={{ opacity: 1, height: "auto", marginTop: 12 }}
+                exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                transition={{ duration: 0.35 }}
+              >
+                Sobram <b className="text-ink">{brl(leftover)}</b> em pontos para a próxima compra.
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
       </motion.div>
     </div>
   );
@@ -1405,8 +1365,8 @@ function Quests() {
 }
 
 const RULES = [
-  { icon: Hourglass, title: "Os pontos entram em 30 dias", body: "Os pontos de uma compra aparecem no seu saldo 30 dias depois que ela é concluída. Esse prazo serve para confirmar a compra." },
-  { icon: Gift, title: "Os pontos valem 6 meses", body: "Exemplo: pontos recebidos em 1º de junho vencem em 1º de dezembro. Quando vencem, você não desce de nível." },
+  { icon: Hourglass, title: "Os pontos entram com o pedido entregue", body: "Os pontos de um pedido só valem depois que ele é entregue. Até lá, aparecem como pontos a liberar." },
+  { icon: Gift, title: "Acompanhe na sua conta", body: "Seu saldo, os pontos a liberar e o seu nível ficam na área da sua conta." },
   { icon: Undo2, title: "Se cancelar ou devolver", body: "Os pontos daquela compra podem ser retirados do saldo. Se devolver só parte, sai só a parte proporcional. O nível pode mudar." },
   { icon: UserRound, title: "Uma conta, um CPF", body: "Os pontos são pessoais e intransferíveis. Cada CPF participa com uma única conta." },
   { icon: Ban, title: "Pontos não viram dinheiro", body: "Não dá para sacar nem transferir para conta bancária. Eles servem só como desconto nas compras da PCYES." },
@@ -1432,10 +1392,9 @@ function Rules() {
         ))}
       </dl>
       <p className="mt-14 max-w-[80ch] border-t border-edge pt-6 text-ink-muted" style={{ fontFamily: INTER, fontSize: 13, lineHeight: 1.7 }}>
-        Quem pode participar: pessoas físicas que moram no Brasil e têm conta em pcyes.com.br. Onde ver seus pontos:
-        na área da sua conta, com saldo, pontos a liberar e pontos perto de vencer. Troca por produto: quando a
-        PCYES oferecer, é 1 troca por mês, sujeita a estoque, e o cupom vale 1 mês. A PCYES pode mudar as regras do
-        programa e avisa nos canais oficiais.
+        Quem pode participar: pessoas físicas que moram no Brasil e têm conta em pcyes.com.br. Troca por produto:
+        quando a PCYES oferecer, é 1 troca por mês, sujeita a estoque, e o cupom vale 1 mês. A PCYES pode mudar as
+        regras do programa e avisa nos canais oficiais.
       </p>
     </>
   );
