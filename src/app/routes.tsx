@@ -65,6 +65,7 @@ const MonteSeuPcPage = lazyRoute(() => import("./pages/MonteSeuPcPage").then(m =
 const DriversManuaisPage = lazyRoute(() => import("./pages/DriversManuaisPage").then(m => ({ default: m.DriversManuaisPage })));
 const DriverDetailPage = lazyRoute(() => import("./pages/DriverDetailPage").then(m => ({ default: m.DriverDetailPage })));
 const FaqPage = lazyRoute(() => import("./pages/FaqPage").then(m => ({ default: m.FaqPage })));
+const PcPointsPage = lazyRoute(() => import("./pages/PcPointsPage").then(m => ({ default: m.PcPointsPage })));
 const QuemSomosPage = lazyRoute(() => import("./pages/QuemSomosPage").then(m => ({ default: m.QuemSomosPage })));
 const PrivacyPage = lazyRoute(() => import("./pages/PrivacyPage").then(m => ({ default: m.PrivacyPage })));
 const WarrantyPage = lazyRoute(() => import("./pages/WarrantyPage").then(m => ({ default: m.WarrantyPage })));
@@ -110,6 +111,7 @@ export const router = createBrowserRouter([
       { path: "drivers-e-manuais/:slug", Component: DriverDetailPage },
       { path: "faq", Component: FaqPage },
       { path: "quem-somos", Component: QuemSomosPage },
+      { path: "pc-points", Component: PcPointsPage },
       { path: "politica-de-privacidade", Component: PrivacyPage },
       { path: "politica-de-garantia", Component: WarrantyPage },
       { path: "termos-de-uso", Component: TermsPage },

@@ -21,6 +21,7 @@ const columns = [
     links: [
       { label: "Quem somos", href: "/quem-somos" },
       { label: "Onde Encontrar", href: "/onde-encontrar" },
+      { label: "PC Points", href: "/pc-points" },
       { label: "Seja um Influenciador", href: "/influenciadores" },
       { label: "Seja um Revendedor", href: "/revendedor" },
       { label: "Maringá FC × PCYES", href: "/maringa-fc" },
