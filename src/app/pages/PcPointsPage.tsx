@@ -662,8 +662,8 @@ const STEPS = [
  *
  * Um único `active` comanda tudo, e o relógio só anda com a seção na tela.
  */
-const STOP_MS = 2700;
-const TRAVEL = { duration: 1.5, ease: [0.45, 0, 0.25, 1] } as const;
+const STOP_MS = 1900;
+const TRAVEL = { duration: 0.85, ease: [0.45, 0, 0.25, 1] } as const;
 
 function HowItWorks() {
   const reduce = useReducedMotion();
@@ -679,6 +679,9 @@ function HowItWorks() {
 
   const last = STEPS.length - 1;
   const restarting = active === 0;
+  /* Tudo da etapa (anel, ícone, número, título) acende quando a moeda chega,
+     não quando ela sai da anterior. */
+  const arrive = (isOn: boolean) => (isOn && !restarting ? TRAVEL.duration - 0.15 : 0);
 
   return (
     <div ref={ref} className="relative mt-14">
@@ -755,7 +758,7 @@ function HowItWorks() {
                       initial={{ scale: 1, opacity: 0.8 }}
                       animate={{ scale: 1.9, opacity: 0 }}
                       exit={{ opacity: 0 }}
-                      transition={{ duration: 1.1, delay: restarting ? 0.5 : TRAVEL.duration - 0.25, ease: "easeOut" }}
+                      transition={{ duration: 1.1, delay: restarting ? 0.4 : TRAVEL.duration - 0.15, ease: "easeOut" }}
                     />
                   )}
                 </AnimatePresence>
@@ -769,11 +772,11 @@ function HowItWorks() {
                       : "0 0 0 8px var(--surface-0), 0 0 0px 0px rgba(250,204,21,0)",
                     scale: isOn ? 1.08 : 1,
                   }}
-                  transition={{ duration: 0.6, delay: isOn && !restarting ? TRAVEL.duration - 0.3 : 0, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.6, delay: arrive(isOn), ease: [0.16, 1, 0.3, 1] }}
                 >
                   <motion.span
                     animate={{ color: isOn ? GOLD : visited ? "rgba(250,204,21,0.7)" : "rgba(255,255,255,0.45)" }}
-                    transition={{ duration: 0.5, delay: isOn && !restarting ? TRAVEL.duration - 0.3 : 0 }}
+                    transition={{ duration: 0.5, delay: arrive(isOn) }}
                     className="flex"
                   >
                     <step.icon size={26} strokeWidth={1.75} />
@@ -784,7 +787,7 @@ function HowItWorks() {
                 <motion.span
                   className="block tabular-nums md:mt-6"
                   animate={{ color: isOn || visited ? GOLD : "rgba(255,255,255,0.4)" }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.4, delay: arrive(isOn) }}
                   style={{ fontFamily: INTER, fontSize: 12, letterSpacing: "0.2em", fontWeight: 700 }}
                 >
                   0{i + 1}
@@ -792,7 +795,7 @@ function HowItWorks() {
                 <motion.h3
                   className="mt-2"
                   animate={{ color: isOn ? "#ffffff" : "rgba(255,255,255,0.7)" }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.4, delay: arrive(isOn) }}
                   style={{ fontFamily: FIGTREE, fontSize: "clamp(22px, 2.2vw, 28px)", fontWeight: 700, letterSpacing: "-0.02em" }}
                 >
                   {step.title}
