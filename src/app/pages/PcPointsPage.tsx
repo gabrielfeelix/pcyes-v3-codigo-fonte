@@ -485,10 +485,10 @@ export function PcPointsPage() {
               <motion.h1
                 variants={reveal}
                 custom={1}
-                className="mt-6 max-w-[15ch] text-ink-strong"
+                className="mt-6 max-w-[16ch] text-ink-strong"
                 style={{ fontFamily: FIGTREE, fontSize: "clamp(36px, 5vw, 72px)", fontWeight: 700, letterSpacing: "-0.045em", lineHeight: 1.0 }}
               >
-                <span style={goldText}>Your game:</span> eleve seu nível e tenha desconto nas suas compras.
+                <span style={goldText}>Power up your game:</span> eleve seu nível e tenha desconto nas suas compras.
               </motion.h1>
 
               <motion.p
