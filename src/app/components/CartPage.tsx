@@ -29,7 +29,7 @@ import { Footer } from "./Footer";
 import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
-import { BrindePill, GiftProgressBlock, Price, PreOrderPill } from "./section";
+import { BrindePill, GiftProgressBlock, Price, PreOrderPill, installmentCountFor } from "./section";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { cepUf, isValidCep } from "../../utils/cep";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
@@ -943,7 +943,9 @@ export function CartPage() {
                     </p>
                   )}
                   <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                    ou {formatBRL(total)} no cartão, em até 10× de {formatBRL(total / 10)} sem juros
+                    {installmentCountFor(total) > 1
+                      ? `ou ${formatBRL(total)} no cartão, em até ${installmentCountFor(total)}× de ${formatBRL(total / installmentCountFor(total))} sem juros`
+                      : `ou 1× de ${formatBRL(total)} sem juros no cartão`}
                   </p>
                   {/* Dentro do card de total, porque é sobre ESTE pedido. */}
                   <div className="mt-3 border-t border-foreground/8 pt-3">

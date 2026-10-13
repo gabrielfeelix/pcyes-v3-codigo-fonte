@@ -10,7 +10,7 @@ import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { artFitClass } from "../lib/setupImages";
 import { getPixPrice, formatBRL } from "./productEnhancements";
-import { SectionHeader, CTAButton, DiscountBadge } from "./section";
+import { SectionHeader, CTAButton, DiscountBadge, installmentCountFor } from "./section";
 
 const DROP_IDS = [446, 433, 30];
 
@@ -190,7 +190,7 @@ export function DropDoDiaSection() {
                           color: "rgba(var(--foreground-rgb), 0.55)",
                         }}
                       >
-                        ou {product.price} em 10x sem juros
+                        ou {product.price} em {installmentCountFor(product.priceNum)}x sem juros
                       </p>
                       {economy > 0 && (
                         <p

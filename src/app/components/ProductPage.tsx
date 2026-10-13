@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { getPreOrderInfo } from "./PreOrderData";
 import type { PreOrderInfo } from "./PreOrderData";
 import { PreOrderBanner, useCountdown } from "./PreOrderBanner";
-import { CTAButton, DiscountBadge, PriceBlock, QtyStepper } from "./section";
+import { CTAButton, DiscountBadge, PriceBlock, QtyStepper, installmentCountFor } from "./section";
 import { PointsChip } from "./points/ProductPoints";
 import { EarnPreview } from "./points/EarnPreview";
 import { PcyesCoin } from "./PcyesCoin";
@@ -684,10 +684,12 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
   }, [open]);
 
   const pixPrice = priceNum * 0.9;
-  const installments = Array.from({ length: 10 }, (_, i) => ({
+  // Só as parcelas de R$ 50 ou mais. As duas colunas dividem a lista ao meio.
+  const installments = Array.from({ length: installmentCountFor(priceNum) }, (_, i) => ({
     n: i + 1,
     value: priceNum / (i + 1),
   }));
+  const half = Math.ceil(installments.length / 2);
 
   /* Portal para o body — mesma saída que o Sheet do design system usa.
      Renderizado dentro da árvore da página, o overlay ficava preso a um
@@ -817,9 +819,9 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
                     className="overflow-hidden border border-foreground/8"
                     style={{ borderRadius: "var(--radius-button)" }}
                   >
-                    <div className="grid grid-cols-2 divide-x divide-foreground/6">
+                    <div className={`grid divide-x divide-foreground/6 ${installments.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}>
                       <div className="divide-y divide-foreground/6">
-                        {installments.slice(0, 5).map((inst) => (
+                        {installments.slice(0, half).map((inst) => (
                           <div
                             key={inst.n}
                             className="flex items-center justify-between px-3.5 py-2.5"
@@ -839,8 +841,8 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
                           </div>
                         ))}
                       </div>
-                      <div className="divide-y divide-foreground/6">
-                        {installments.slice(5, 10).map((inst) => (
+                      {installments.length > 1 && <div className="divide-y divide-foreground/6">
+                        {installments.slice(half).map((inst) => (
                           <div
                             key={inst.n}
                             className="flex items-center justify-between px-3.5 py-2.5"
@@ -859,7 +861,7 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
                             </span>
                           </div>
                         ))}
-                      </div>
+                      </div>}
                     </div>
                   </div>
                   <p
@@ -939,6 +941,7 @@ type StickyCardProps = {
 function StickyPriceCard({
   product, qty, setQty, onBuyNow, onAddToCart, addedToCart, pixPrice, installment, discount,
 }: StickyCardProps) {
+  const installmentCount = installmentCountFor(product.priceNum);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const stockStatus = getStockStatus(product);
   const inStock = stockStatus === "in-stock";
@@ -1016,11 +1019,17 @@ function StickyPriceCard({
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: "1.55" }}
           >
             <span aria-hidden="true">
-              ou <span className="text-foreground font-semibold">{product.price}</span> em até{" "}
-              <span className="text-foreground font-semibold">10× {formatBRL(installment)}</span> sem juros
+              {installmentCount > 1 ? (
+                <>ou <span className="text-foreground font-semibold">{product.price}</span> em até{" "}
+                <span className="text-foreground font-semibold">{installmentCount}× {formatBRL(installment)}</span> sem juros</>
+              ) : (
+                <>ou <span className="text-foreground font-semibold">1× {product.price}</span> sem juros</>
+              )}
             </span>
             <span className="sr-only">
-              ou {formatBRLSpoken(product.priceNum)} em até 10 vezes de {formatBRLSpoken(installment)} sem juros
+              {installmentCount > 1
+                ? `ou ${formatBRLSpoken(product.priceNum)} em até ${installmentCount} vezes de ${formatBRLSpoken(installment)} sem juros`
+                : `ou 1 vez de ${formatBRLSpoken(product.priceNum)} sem juros`}
             </span>
           </p>
 
@@ -1121,6 +1130,7 @@ function MobilePurchaseFlow({
   shippingRef?: React.RefObject<HTMLDivElement>;
   preOrderInfo?: PreOrderInfo | null;
 }) {
+  const installmentCount = installmentCountFor(product.priceNum);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const stockStatus = getStockStatus(product);
   const inStock = stockStatus === "in-stock";
@@ -1279,11 +1289,17 @@ function MobilePurchaseFlow({
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: "1.6" }}
           >
             <span aria-hidden="true">
-              ou <span className="text-foreground font-bold">{product.price}</span> em até{" "}
-              <span className="text-foreground font-bold">10x de {formatBRL(installment)}</span> sem juros no cartão
+              {installmentCount > 1 ? (
+                <>ou <span className="text-foreground font-bold">{product.price}</span> em até{" "}
+                <span className="text-foreground font-bold">{installmentCount}x de {formatBRL(installment)}</span> sem juros no cartão</>
+              ) : (
+                <>ou <span className="text-foreground font-bold">1x de {product.price}</span> sem juros no cartão</>
+              )}
             </span>
             <span className="sr-only">
-              ou {formatBRLSpoken(product.priceNum)} em até 10 vezes de {formatBRLSpoken(installment)} sem juros no cartão
+              {installmentCount > 1
+                ? `ou ${formatBRLSpoken(product.priceNum)} em até ${installmentCount} vezes de ${formatBRLSpoken(installment)} sem juros no cartão`
+                : `ou 1 vez de ${formatBRLSpoken(product.priceNum)} sem juros no cartão`}
             </span>
           </p>
         )}
@@ -3250,7 +3266,7 @@ export function ProductPage() {
     : 0;
 
   const pixPrice = product.priceNum * 0.9;
-  const installment = product.priceNum / 10;
+  const installment = product.priceNum / installmentCountFor(product.priceNum);
   const preOrderInfo = getPreOrderInfo(product.id);
 
   const cartPayload = () => ({

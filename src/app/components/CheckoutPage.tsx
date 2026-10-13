@@ -36,6 +36,7 @@ import { Footer } from "./Footer";
 import { CheckoutHeader } from "./CheckoutHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
+import { installmentCountFor } from "./section/PriceBlock";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { EarnPreview } from "./points/EarnPreview";
@@ -442,6 +443,12 @@ export function CheckoutPage() {
   const baseTotal = subtotal - discountValue + shippingPrice - pointsValue;
   const pixDiscount = payment === "pix" ? Math.max(0, (subtotal - discountValue - pointsValue)) * 0.1 : 0;
   const total = baseTotal - pixDiscount;
+  // Parcela mínima de R$ 50: o select só oferece o que o total comporta, e se o
+  // total cair (cupom, pontos) a escolha anterior desce junto.
+  const maxInstallments = installmentCountFor(baseTotal);
+  useEffect(() => {
+    if (installments > maxInstallments) setInstallments(maxInstallments);
+  }, [installments, maxInstallments]);
   // Mesmo total com o desconto do Pix, calculado à parte: é o preço que a
   // vitrine mostra, e aparece como alternativa quando outra forma está escolhida.
   const pixTotal = baseTotal - Math.max(0, subtotal - discountValue - pointsValue) * 0.1;
@@ -2018,7 +2025,7 @@ export function CheckoutPage() {
                                     className="w-[var(--radix-select-trigger-width)] border-edge bg-surface-1 text-ink-strong shadow-2xl shadow-black/60"
                                     style={{ borderRadius: "var(--radius-card-sm)" }}
                                   >
-                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                                    {Array.from({ length: maxInstallments }, (_, i) => i + 1).map((n) => (
                                       <SelectItem
                                         key={n}
                                         value={String(n)}

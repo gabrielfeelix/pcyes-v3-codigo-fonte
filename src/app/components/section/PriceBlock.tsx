@@ -41,6 +41,19 @@ export const pixPriceOf = (priceNum: number) => Math.round(priceNum * PIX_RATE *
 /** Parcelamento máximo da loja. Não temos 12x. */
 export const INSTALLMENTS = 10;
 
+/** Parcela mínima da loja. Abaixo dela o número de parcelas cai. */
+export const MIN_INSTALLMENT = 50;
+
+/**
+ * Quantas parcelas o valor comporta: até 10, nenhuma abaixo de R$ 50.
+ * R$ 399,90 vai em 7x (8x daria R$ 49,99); abaixo de R$ 100 só 1x.
+ * A conta é em centavos para R$ 100,00 não virar 1,999... parcelas.
+ */
+export function installmentCountFor(total: number): number {
+  const cents = Math.round(total * 100);
+  return Math.max(1, Math.min(INSTALLMENTS, Math.floor(cents / (MIN_INSTALLMENT * 100))));
+}
+
 const SCALE: Record<PriceScale, { price: string; installment: string; alpha: number }> = {
   card: { price: "var(--text-lg)", installment: "var(--text-caption)", alpha: 0.55 },
   catalog: { price: "var(--text-xl)", installment: "var(--text-sm)", alpha: 0.6 },
@@ -60,7 +73,10 @@ interface InstallmentLineProps {
  * tem o desconto à vista, e prometer a parcela menor seria mentira no checkout.
  */
 export function InstallmentLine({ priceNum, scale = "card", className = "mt-1" }: InstallmentLineProps) {
-  const parcela = priceNum / INSTALLMENTS;
+  // A linha existe em todo card, até no produto de R$ 15 (vira "1x"): sem ela
+  // o card barato fica uma linha mais baixo e desnivela o botão do vizinho.
+  const count = installmentCountFor(priceNum);
+  const parcela = priceNum / count;
   const cfg = SCALE[scale];
 
   return (
@@ -79,10 +95,10 @@ export function InstallmentLine({ priceNum, scale = "card", className = "mt-1" }
           cartão" quebrava e desalinhava os cards vizinhos. Forma curta de
           vitrine; a versão falada segue completa. */}
       <span aria-hidden="true">
-        ou {INSTALLMENTS}x {formatBRL(parcela)} sem juros
+        ou {count}x {formatBRL(parcela)} sem juros
       </span>
       <span className="sr-only">
-        ou {INSTALLMENTS} vezes de {formatBRLSpoken(parcela)} sem juros no cartão
+        ou {count === 1 ? "1 vez" : `${count} vezes`} de {formatBRLSpoken(parcela)} sem juros no cartão
       </span>
     </p>
   );
