@@ -2,6 +2,7 @@
   import { createRoot } from "react-dom/client";
   import App from "./app/App.tsx";
   import { initAnalytics, reportWebVitals } from "./utils/analytics";
+  import { installChatOffset } from "./app/lib/chatWidget";
   import "./styles/index.css";
 
   // Remove o bloco de conteúdo prerender (Fase 3 — SSG): existe só no HTML cru
@@ -12,5 +13,8 @@
   // Analytics com Consent Mode v2 (default negado até aceite no banner de cookies).
   initAnalytics();
   reportWebVitals(); // LCP/INP/CLS/FCP/TTFB reais → dataLayer
+
+  // Balão do chat sobe acima das barras fixas do rodapé (ver lib/chatWidget).
+  installChatOffset();
 
   createRoot(document.getElementById("root")!).render(<App />);

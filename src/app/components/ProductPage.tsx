@@ -1,5 +1,6 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { setChatOffset } from "../lib/chatWidget";
 import { useParams, Link, useNavigate } from "react-router";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import {
@@ -3262,6 +3263,22 @@ export function ProductPage() {
   const [qty, setQty] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
   const [showMobileStickyCta, setShowMobileStickyCta] = useState(false);
+  const mobileStickyRef = useRef<HTMLDivElement>(null);
+
+  /* Com a barra fixa visível, o balão do chat sobe para ficar logo acima dela
+     (sem isso ele cobria o botão Comprar). A barra só existe abaixo de lg. */
+  useEffect(() => {
+    const el = mobileStickyRef.current;
+    if (!showMobileStickyCta || !el || window.matchMedia("(min-width: 1024px)").matches) {
+      setChatOffset(null);
+      return;
+    }
+    const publish = () => setChatOffset(`calc(var(--cookie-h, 0px) + ${Math.round(el.offsetHeight)}px)`);
+    publish();
+    const ro = new ResizeObserver(publish);
+    ro.observe(el);
+    return () => { ro.disconnect(); setChatOffset(null); };
+  }, [showMobileStickyCta]);
 
   // GA4 view_item ao abrir/trocar de produto.
   useEffect(() => {
@@ -3920,6 +3937,7 @@ export function ProductPage() {
       {/* Mobile sticky CTA — ancorado acima do aviso de cookies, que é fixed
           num z maior e cobria este botão por inteiro. Ver `--cookie-h`. */}
       <div
+        ref={mobileStickyRef}
         style={{ bottom: "var(--cookie-h, 0px)" }}
         className={`fixed left-0 right-0 z-40 lg:hidden transition-all duration-300 ${
           showMobileStickyCta ? "translate-y-0 opacity-100" : "translate-y-full opacity-0 pointer-events-none"
