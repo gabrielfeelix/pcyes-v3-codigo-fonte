@@ -144,6 +144,23 @@ function ProductGallery({ images, name, isDark, fullBleedFirst = false }: { imag
   const prev = () => setActive((i) => (i - 1 + images.length) % images.length);
   const next = () => setActive((i) => (i + 1) % images.length);
 
+  /* Lightbox aberto: o fundo não rola (no celular o dedo arrastava a página
+     por trás da foto) e o teclado manda: Esc fecha, setas trocam a foto. */
+  useEffect(() => {
+    if (!zoomed) return;
+    const html = document.documentElement;
+    const prevOverflow = html.style.overflow;
+    html.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setZoomed(false);
+      else if (e.key === "ArrowLeft") { setLbZoom(false); prev(); }
+      else if (e.key === "ArrowRight") { setLbZoom(false); next(); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => { html.style.overflow = prevOverflow; window.removeEventListener("keydown", onKey); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoomed]);
+
   // Rail vertical de miniaturas: sem barra de rolagem, navega com setas.
   // A altura vem medida do palco da imagem — o rail não pode crescer com o conteúdo,
   // senão ele é que passa a definir a altura da linha flex.
@@ -365,19 +382,26 @@ function ProductGallery({ images, name, isDark, fullBleedFirst = false }: { imag
 	        </div>
 	      )}
 
-      {/* Lightbox */}
-      <AnimatePresence>
+      {/* Lightbox num portal no body. Dentro da galeria ele herdava um ancestral
+          com transform, e `fixed` passava a valer em relação a esse ancestral,
+          não à tela: o overlay cobria só a galeria, o header e o card de preço
+          ficavam por cima sem escurecer, e a foto crescia até a altura da
+          galeria, cortada pelo header. No body, ele cobre a tela inteira. */}
+      {createPortal(<AnimatePresence>
         {zoomed && (
           <>
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/90 z-[60] cursor-zoom-out"
+              className="fixed inset-0 bg-black/90 z-[200] cursor-zoom-out"
               onClick={() => setZoomed(false)}
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
-              className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-16 md:inset-10 md:px-12 md:py-10"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${name}, imagem ampliada`}
+              className="fixed inset-0 z-[200] flex items-center justify-center px-4 py-16 md:px-24 md:py-16"
               onClick={() => setZoomed(false)}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
@@ -448,7 +472,7 @@ function ProductGallery({ images, name, isDark, fullBleedFirst = false }: { imag
             </motion.div>
           </>
         )}
-      </AnimatePresence>
+      </AnimatePresence>, document.body)}
     </div>
   );
 }
