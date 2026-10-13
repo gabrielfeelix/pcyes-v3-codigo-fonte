@@ -1,4 +1,5 @@
 import { formatBRL, formatBRLSpoken } from "../../../utils/format";
+import { PcyesCoin } from "../PcyesCoin";
 
 /**
  * Bloco de preço do card — preço anterior, preço à vista e parcela.
@@ -100,6 +101,36 @@ export function InstallmentLine({ priceNum, scale = "card", className = "mt-1" }
       <span className="sr-only">
         ou {count === 1 ? "1 vez" : `${count} vezes`} de {formatBRLSpoken(parcela)} sem juros no cartão
       </span>
+    </p>
+  );
+}
+
+/**
+ * Pontos que o card promete: 1 por real do preço cheio, arredondado para baixo
+ * na dezena. É o número que a loja (Magento) mostra para quem não está logado:
+ * R$ 1.499,00 rende 1.490, R$ 16,57 rende 10.
+ */
+export const cardPointsFor = (priceNum: number) => Math.floor(priceNum / 10) * 10;
+
+/** "Ganhe 160 PC Points" — mesmo desenho da loja: moeda e frase em dourado. */
+export function PointsLine({ priceNum, className = "mt-1.5" }: { priceNum: number; className?: string }) {
+  const points = cardPointsFor(priceNum);
+  const label = points.toLocaleString("pt-BR");
+
+  // Abaixo de R$ 10 não rende ponto, mas a linha fica reservada: sem ela o
+  // card desce uma linha e desnivela o botão do vizinho.
+  if (points <= 0) {
+    return <p aria-hidden="true" className={`invisible leading-tight ${className}`} style={{ fontSize: "var(--text-caption)" }}>&nbsp;</p>;
+  }
+
+  return (
+    <p
+      className={`flex items-center gap-1 leading-tight whitespace-nowrap ${className}`}
+      style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#facc15" }}
+    >
+      <PcyesCoin size={13} />
+      <span aria-hidden="true" className="tabular-nums">Ganhe {label} PC Points</span>
+      <span className="sr-only">Este produto rende {label} PC Points</span>
     </p>
   );
 }
@@ -206,6 +237,7 @@ export function PriceBlock({
       </div>
 
       <InstallmentLine priceNum={priceNum} scale={scale} className="mt-1.5" />
+      <PointsLine priceNum={priceNum} />
     </div>
   );
 }

@@ -31,7 +31,7 @@ import {
 } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { searchProducts } from "../../utils/search";
-import { DiscountBadge, InstallmentLine, PixLabel, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge, SpecChip, pixPriceOf } from "./section";
+import { DiscountBadge, InstallmentLine, PixLabel, PointsLine, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge, SpecChip, pixPriceOf } from "./section";
 import { formatBRL as formatMoney } from "../../utils/format";
 import { SEO } from "./SEO";
 import { getListingSeo } from "../lib/listingSeo";
@@ -1905,6 +1905,7 @@ export function ProductsPage() {
                               {displayProduct.oldPrice && <p className="text-foreground/40 line-through text-sm" style={{ fontFamily: "var(--font-family-inter)" }}>{displayProduct.oldPrice}</p>}
                             </div>
                             <InstallmentLine scale="catalog" priceNum={displayProduct.priceNum} className="mt-1" />
+                            <PointsLine priceNum={displayProduct.priceNum} className="mt-1" />
                             {/* Mobile buy button — full width below info */}
                             <button onClick={() => handleAddToCart(displayProduct)}
                               className="sm:hidden mt-2.5 flex w-full items-center justify-center gap-2 rounded-full py-2 cursor-pointer"

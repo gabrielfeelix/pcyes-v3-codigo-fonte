@@ -10,7 +10,7 @@ import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { artFitClass } from "../lib/setupImages";
 import { getPixPrice, formatBRL } from "./productEnhancements";
-import { SectionHeader, CTAButton, DiscountBadge, installmentCountFor } from "./section";
+import { SectionHeader, CTAButton, DiscountBadge, PointsLine, installmentCountFor } from "./section";
 
 const DROP_IDS = [446, 433, 30];
 
@@ -192,6 +192,7 @@ export function DropDoDiaSection() {
                       >
                         ou {product.price} em {installmentCountFor(product.priceNum)}x sem juros
                       </p>
+                      <PointsLine priceNum={product.priceNum} />
                       {economy > 0 && (
                         <p
                           className="mt-2 inline-flex items-center gap-1.5 rounded-md px-2 py-1"
