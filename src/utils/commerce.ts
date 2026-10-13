@@ -14,6 +14,9 @@ export const POINTS_PER_BRL = 100;
 /** Convert a PC Points balance into its BRL discount value. */
 export const pointsToBRL = (points: number) => points / POINTS_PER_BRL;
 
-/** Max points redeemable: capped by balance and by 30% of the eligible amount. */
-export const maxRedeemablePoints = (balance: number, eligibleAmount: number) =>
-  Math.max(0, Math.min(balance, Math.floor(eligibleAmount * 0.3 * POINTS_PER_BRL)));
+/**
+ * Max points redeemable: the smaller of the balance and the tier's cap
+ * (`capPct`% of the eligible amount, 5% to 20% by tier, per the program rules).
+ */
+export const maxRedeemablePoints = (balance: number, eligibleAmount: number, capPct: number) =>
+  Math.max(0, Math.min(balance, Math.floor(eligibleAmount * (capPct / 100) * POINTS_PER_BRL)));

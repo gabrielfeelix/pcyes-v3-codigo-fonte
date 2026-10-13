@@ -12,6 +12,7 @@ import {
   getTierProgress,
   pointsToBRL,
   referralUrl,
+  tierFor,
 } from "../../lib/pcyesPoints";
 import { formatBRL } from "../../../utils/format";
 
@@ -36,6 +37,7 @@ export function BalanceCard({
 }) {
   const expiring = expiringSoon(history);
   const next = expiring[0];
+  const tier = tierFor(history);
 
   return (
     <div
@@ -78,7 +80,7 @@ export function BalanceCard({
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
           >
             Vale <span className="font-semibold text-foreground">{formatBRL(pointsToBRL(points))}</span> de desconto ·
-            até 30% por pedido
+            até {tier.cap}% do pedido
           </p>
         </div>
       </div>
@@ -586,8 +588,8 @@ export function ExpiryNote() {
       style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
     >
       <Gift size={11} className="mr-1 inline" />
-      Pontos valem {EXPIRY_DAYS} dias a partir do crédito. 100 pts = {formatBRL(1)} · resgate até 30% do valor do
-      pedido.
+      Pontos valem {EXPIRY_DAYS} dias a partir do crédito. 100 pts = {formatBRL(1)} · resgate de 5% a 20% do valor do
+      pedido, conforme o nível.
     </p>
   );
 }

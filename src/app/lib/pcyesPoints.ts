@@ -13,6 +13,12 @@ import type { PcyesPointsTx } from "../components/AuthContext";
  * pronta: cinza, azul, roxo, dourado, vermelho. Nível por pedidos dizia
  * "compre mais vezes"; nível por pontos dá motivo pra juntar, e ponto que só
  * serve de moeda não sustenta programa.
+ *
+ * Níveis, taxas e tetos de resgate seguem o "Regulamento do Programa de
+ * Fidelidade PCYES, versão para o consumidor final", o mesmo da página
+ * /pc-points. O regulamento NÃO diz quantos pontos sobem cada nível: o `min`
+ * de cada degrau é do protótipo. O primeiro (Indique e Ganhe) vai até 500
+ * porque o cadastro rende 500 e já leva a conta para o Comum.
  */
 
 export interface PointsTier {
@@ -24,57 +30,75 @@ export interface PointsTier {
   color: string;
   /** Quanto rende comprando neste degrau, escrito. Sai na lista de regras. */
   rate: string;
-  /** O mesmo, em número: pontos por R$ 10 gastos. */
-  ratePer10: number;
-  /** O que o degrau entrega ALÉM da taxa. É o motivo de subir. */
+  /** O mesmo, em número: pontos por R$ 1,00 em compras. */
+  perReal: number;
+  /** Teto do pedido que pode ser pago com pontos, em %. Não é desconto automático. */
+  cap: number;
+  /** O que o degrau entrega ALÉM da taxa, escrito. Hoje só o teto de resgate:
+   *  o regulamento não promete outro benefício por nível. */
   perks: string[];
 }
 
 export const POINT_TIERS: PointsTier[] = [
   {
+    id: "indique",
+    name: "Indique e Ganhe",
+    min: 0,
+    color: "#64748b",
+    rate: "1 pt a cada R$ 1",
+    perReal: 1,
+    cap: 5,
+    perks: ["paga até 5% do pedido com pontos"],
+  },
+  {
     id: "comum",
     name: "Comum",
-    min: 0,
+    min: 500,
     color: "#94a3b8",
-    rate: "1 pt a cada R$ 10",
-    ratePer10: 1,
-    perks: ["Cupom de boas-vindas"],
+    rate: "1,2 pt a cada R$ 1",
+    perReal: 1.2,
+    cap: 8,
+    perks: ["paga até 8% do pedido com pontos"],
   },
   {
     id: "raro",
     name: "Raro",
     min: 1000,
     color: "#38bdf8",
-    rate: "1,5 pt a cada R$ 10",
-    ratePer10: 1.5,
-    perks: ["Frete grátis acima de R$ 199"],
+    rate: "1,5 pt a cada R$ 1",
+    perReal: 1.5,
+    cap: 10,
+    perks: ["paga até 10% do pedido com pontos"],
   },
   {
     id: "epico",
     name: "Épico",
     min: 5000,
     color: "#a855f7",
-    rate: "2 pt a cada R$ 10",
-    ratePer10: 2,
-    perks: ["Acesso antecipado a pré-vendas"],
+    rate: "2 pts a cada R$ 1",
+    perReal: 2,
+    cap: 12,
+    perks: ["paga até 12% do pedido com pontos"],
   },
   {
     id: "lendario",
     name: "Lendário",
     min: 10000,
     color: "#facc15",
-    rate: "2,5 pt a cada R$ 10",
-    ratePer10: 2.5,
-    perks: ["Brinde exclusivo por trimestre"],
+    rate: "2,3 pts a cada R$ 1",
+    perReal: 2.3,
+    cap: 15,
+    perks: ["paga até 15% do pedido com pontos"],
   },
   {
     id: "mitico",
     name: "Mítico",
     min: 20000,
     color: "#e10600",
-    rate: "3 pt a cada R$ 10",
-    ratePer10: 3,
-    perks: ["Fila prioritária de GPU", "Concierge dedicado"],
+    rate: "2,5 pts a cada R$ 1",
+    perReal: 2.5,
+    cap: 20,
+    perks: ["paga até 20% do pedido com pontos"],
   },
 ];
 
@@ -130,13 +154,20 @@ export interface EarnRule {
  * escrever avaliação); com o número solto em cada tela, um dia eles divergem e
  * a loja promete valores diferentes pela mesma ação.
  */
-export const REVIEW_POINTS = 100;
+export const REVIEW_POINTS = 250;
 
+/** Regras do regulamento, seção 3. Seguir e curtir são ações de campanha. */
 export const EARN_RULES: EarnRule[] = [
+  {
+    id: "cadastro",
+    title: "Criar a conta",
+    detail: "Uma vez, ao se cadastrar.",
+    reward: "+500 pts",
+  },
   {
     id: "compra",
     title: "Comprar",
-    detail: "Creditado 24h após o pedido ser entregue.",
+    detail: "Os pontos entram quando o pedido é entregue.",
     reward: "",
     fromTier: true,
     action: { label: "Ver ofertas", to: "/produtos?promo=1" },
@@ -144,21 +175,27 @@ export const EARN_RULES: EarnRule[] = [
   {
     id: "avaliacao",
     title: "Avaliar o que comprou",
-    detail: "Até 2 avaliações por dia.",
+    detail: "Até 3 avaliações por mês, de produtos diferentes.",
     reward: `+${REVIEW_POINTS} pts`,
     action: { label: "Avaliar", to: "/perfil?tab=orders" },
   },
   {
-    id: "indicacao",
-    title: "Indicar um amigo",
-    detail: "Cai quando ele fecha o primeiro pedido.",
-    reward: "+500 pts",
+    id: "experiencia",
+    title: "Responder a pesquisa da compra",
+    detail: "Enviada depois que o pedido chega.",
+    reward: "+250 pts",
   },
   {
-    id: "aniversario",
-    title: "Aniversário",
-    detail: "Todo ano, no seu dia.",
+    id: "redes",
+    title: "Seguir a PCYES nas redes",
+    detail: "Quando houver campanha ativa.",
     reward: "+100 pts",
+  },
+  {
+    id: "indicacao",
+    title: "Indicar um amigo",
+    detail: "Na campanha atual, R$ 100 para cada um em compras acima de R$ 500, depois da primeira compra dele.",
+    reward: "R$ 100",
   },
 ];
 
@@ -188,13 +225,18 @@ export const referralCode = (email: string) =>
 
 export const referralUrl = (email: string) => `https://pcyes.com.br/r/${referralCode(email)}`;
 
-/** Pontos que um pedido de `amount` reais rende no degrau informado. */
+/**
+ * Pontos que um pedido de `amount` reais rende no degrau informado. Conta por
+ * dezena de reais inteira, como a loja (Magento) mostra: R$ 1.499,00 no
+ * primeiro degrau rende 1.490, R$ 16,57 rende 10.
+ */
 export const pointsForOrder = (amount: number, tier: PointsTier) =>
-  Math.floor((amount / 10) * tier.ratePer10);
+  Math.floor(Math.floor(amount / 10) * 10 * tier.perReal);
 
 /**
- * O degrau de quem está comprando. Sem sessão, todo mundo entra como Comum —
- * é a taxa que a pessoa teria ao criar a conta, então não promete a mais.
+ * O degrau de quem está comprando. Sem sessão, entra no primeiro degrau
+ * (Indique e Ganhe, 1 pt por real), que é o número que a loja mostra para quem
+ * não está logado — então o card nunca promete a mais.
  */
 export const tierFor = (history: PcyesPointsTx[] | undefined) =>
   getTierProgress(lifetimeFrom(history ?? [])).current;

@@ -12,7 +12,7 @@ import { POINT_TIERS, getTierProgress, type PointsTier } from "../../lib/pcyesPo
  * 1. **Cada degrau tem a cor da sua raridade.** Cinza, azul, roxo, dourado,
  *    vermelho. A pessoa lê a distância pela cor antes de ler o número.
  * 2. **O degrau é clicável e diz o que entrega.** Um número solto ("5000") não
- *    dá motivo pra subir; "2 pt a cada R$ 10 + acesso antecipado" dá. Essa
+ *    dá motivo pra subir; "2 pts a cada R$ 1, paga até 12% com pontos" dá. Essa
  *    informação existe no programa e não aparecia em lugar nenhum.
  * 3. **O marcador fica ENTRE degraus, na posição real.** A régua do /dev
  *    acende a bolinha do degrau atual e some com o resto do caminho; aqui o

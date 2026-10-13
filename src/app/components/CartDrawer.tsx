@@ -15,11 +15,14 @@ import { formatBRL, parseBRL } from "../../utils/format";
 import { maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { useGiftCampaign } from "../lib/useGiftCampaign";
 import { EarnPreview } from "./points/EarnPreview";
+import { useAuth } from "./AuthContext";
+import { tierFor } from "../lib/pcyesPoints";
 import { toast } from "sonner";
 
 const USER_PCYES_POINTS = 1479;
 
 export function CartDrawer() {
+  const { user } = useAuth();
   const { items, isOpen, setIsOpen, removeItem, restoreItem, updateQuantity, totalItems, lastAdded, setGiftItem, clearCart } = useCart();
   const removeWithUndo = (item: (typeof items)[number]) => {
     const idx = items.findIndex((i) => i.cartKey === item.cartKey);
@@ -54,7 +57,7 @@ export function CartDrawer() {
   const formatInt = (n: number) => n.toLocaleString("pt-BR");
 
   const subtotal = paidItems.reduce((sum, i) => sum + parsePrice(i.price) * i.quantity, 0);
-  const maxPointsRedeem = maxRedeemablePoints(USER_PCYES_POINTS, subtotal);
+  const maxPointsRedeem = maxRedeemablePoints(USER_PCYES_POINTS, subtotal, tierFor(user?.pcyesPointsHistory).cap);
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
   const pointsValue = pointsToBRL(pointsUsed);
   const total = Math.max(0, subtotal - pointsValue);

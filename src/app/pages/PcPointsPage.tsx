@@ -26,6 +26,7 @@ import { Footer } from "../components/Footer";
 import { SEO } from "../components/SEO";
 import { PcyesCoin } from "../components/PcyesCoin";
 import { useAuth } from "../components/AuthContext";
+import { POINT_TIERS, type PointsTier } from "../lib/pcyesPoints";
 
 const FIGTREE = "var(--font-family-figtree)";
 const INTER = "var(--font-family-inter)";
@@ -60,35 +61,17 @@ const pct = (n: number) => `${n.toLocaleString("pt-BR")}%`;
  * Regras do PC Points conforme "Regulamento do Programa de Fidelidade PCYES,
  * versão para o consumidor final" (Regulamento_PC_POINTS_Consumidor_Final.docx).
  *
- * NÃO são as regras de `lib/pcyesPoints.ts`: aquele arquivo é o modelo antigo
- * da v3 (cinco raridades, pontos por R$ 10, validade de 365 dias), desenhado
- * antes do regulamento. Até o perfil ser alinhado, esta página segue o
- * regulamento.
+ * Níveis, taxas e tetos de resgate moram em `lib/pcyesPoints.ts`, que segue o
+ * mesmo regulamento: página, perfil, carrinho e checkout leem de lá.
  *
  * O regulamento NÃO define (e por isso a página não promete):
  *  - quantos pontos sobem cada nível;
  *  - quanto vale 1 ponto em reais no resgate.
  */
-interface Level {
-  id: string;
-  name: string;
-  /** Pontos por R$ 1,00 em compras. */
-  perReal: number;
-  /** Teto do pedido que pode ser pago com pontos, em %. */
-  cap: number;
-  /** Cores da escada de raridade que o perfil já usa; o primeiro degrau,
-      que a escada antiga não tinha, fica num cinza mais apagado que o Comum. */
-  color: string;
-}
-
-const LEVELS: Level[] = [
-  { id: "indique", name: "Indique e Ganhe", perReal: 1, cap: 5, color: "#64748b" },
-  { id: "comum", name: "Comum", perReal: 1.2, cap: 8, color: "#94a3b8" },
-  { id: "raro", name: "Raro", perReal: 1.5, cap: 10, color: "#38bdf8" },
-  { id: "epico", name: "Épico", perReal: 2, cap: 12, color: "#a855f7" },
-  { id: "lendario", name: "Lendário", perReal: 2.3, cap: 15, color: GOLD },
-  { id: "mitico", name: "Mítico", perReal: 2.5, cap: 20, color: "#e10600" },
-];
+/* Níveis vêm de `lib/pcyesPoints`, a mesma escada do perfil, do carrinho e
+   do checkout: taxa por real, teto de resgate e cor de cada raridade. */
+type Level = PointsTier;
+const LEVELS: Level[] = POINT_TIERS;
 
 
 /** O exemplo do regulamento (seção 6): pedido de R$ 568,40 no Mítico, saldo de R$ 70. */

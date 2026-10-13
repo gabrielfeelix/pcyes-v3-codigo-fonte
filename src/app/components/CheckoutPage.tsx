@@ -30,6 +30,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
 import { useAuth } from "./AuthContext";
+import { tierFor } from "../lib/pcyesPoints";
 import { AddressFormModal } from "./AddressFormModal";
 import { CardFormModal } from "./CardFormModal";
 import { Footer } from "./Footer";
@@ -437,7 +438,7 @@ export function CheckoutPage() {
   const shippingPrice = shippingOptions.find((o) => o.id === selectedShipping)?.price ?? 0;
   const discountPct = appliedCoupon ? COUPONS[appliedCoupon] || 0 : 0;
   const discountValue = (subtotal * discountPct) / 100;
-  const maxPointsRedeem = maxRedeemablePoints(userPoints, subtotal - discountValue);
+  const maxPointsRedeem = maxRedeemablePoints(userPoints, subtotal - discountValue, tierFor(user?.pcyesPointsHistory).cap);
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
   const pointsValue = pointsToBRL(pointsUsed);
   const baseTotal = subtotal - discountValue + shippingPrice - pointsValue;

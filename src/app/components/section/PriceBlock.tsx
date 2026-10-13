@@ -1,5 +1,7 @@
 import { formatBRL, formatBRLSpoken } from "../../../utils/format";
 import { PcyesCoin } from "../PcyesCoin";
+import { useAuth } from "../AuthContext";
+import { pointsForOrder, tierFor } from "../../lib/pcyesPoints";
 
 /**
  * Bloco de preço do card — preço anterior, preço à vista e parcela.
@@ -105,16 +107,12 @@ export function InstallmentLine({ priceNum, scale = "card", className = "mt-1" }
   );
 }
 
-/**
- * Pontos que o card promete: 1 por real do preço cheio, arredondado para baixo
- * na dezena. É o número que a loja (Magento) mostra para quem não está logado:
- * R$ 1.499,00 rende 1.490, R$ 16,57 rende 10.
- */
-export const cardPointsFor = (priceNum: number) => Math.floor(priceNum / 10) * 10;
-
 /** "Ganhe 160 PC Points" — mesmo desenho da loja: moeda e frase em dourado. */
 export function PointsLine({ priceNum, className = "mt-1.5" }: { priceNum: number; className?: string }) {
-  const points = cardPointsFor(priceNum);
+  // Mesma conta do carrinho e da PDP (`pointsForOrder`), no degrau de quem
+  // está vendo. Sem sessão, 1 pt por real: R$ 1.499,00 rende 1.490.
+  const { user } = useAuth();
+  const points = pointsForOrder(priceNum, tierFor(user?.pcyesPointsHistory));
   const label = points.toLocaleString("pt-BR");
 
   // Abaixo de R$ 10 não rende ponto, mas a linha fica reservada: sem ela o

@@ -9,9 +9,9 @@ import { pointsForOrder, tierFor } from "../../lib/pcyesPoints";
  * não uma releitura: a primeira versão inventou borda e ouro próprios e ficou
  * sendo um elemento que não existia em nenhuma outra tela.
  *
- * A taxa vem do degrau de quem está comprando (Raro rende 1,5 pt a cada R$ 10,
- * Mítico rende 3). Sem sessão, calcula como Comum — a taxa que a pessoa teria
- * ao criar a conta agora, então o número nunca promete a mais.
+ * A taxa vem do degrau de quem está comprando (Raro rende 1,5 pt a cada R$ 1,
+ * Mítico rende 2,5). Sem sessão, calcula pelo primeiro degrau (Indique e
+ * Ganhe, 1 pt por real), o número que a loja mostra a quem não está logado.
  */
 export function PointsChip({ amount, className = "" }: { amount: number; className?: string }) {
   const { user } = useAuth();

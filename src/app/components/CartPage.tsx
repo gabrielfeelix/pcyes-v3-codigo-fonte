@@ -24,6 +24,7 @@ import { artFitClass } from "../lib/setupImages";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
+import { tierFor } from "../lib/pcyesPoints";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
 import { Footer } from "./Footer";
 import { allProducts } from "./productsData";
@@ -95,7 +96,7 @@ export function CartPage() {
   };
   const navigate = useNavigate();
   const { appliedCoupon, setAppliedCoupon, pointsApplied, setPointsApplied, pointsToUse, setPointsToUse } = useCheckoutPrefs();
-  const { isLoggedIn, promptLogin } = useAuth();
+  const { user, isLoggedIn, promptLogin } = useAuth();
   const handleFinalize = () =>
     isLoggedIn ? navigate("/checkout") : promptLogin("/checkout");
   const [coupon, setCoupon] = useState("");
@@ -144,7 +145,7 @@ export function CartPage() {
     (shippingOptions && selectedShipping && shippingOptions.find((o) => o.id === selectedShipping)) || null;
   const shippingPrice = chosenShipping?.price ?? 0;
   const cepUfLabel = cepUf(cep);
-  const maxPointsRedeem = maxRedeemablePoints(userPoints, subtotal - discountValue);
+  const maxPointsRedeem = maxRedeemablePoints(userPoints, subtotal - discountValue, tierFor(user?.pcyesPointsHistory).cap);
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
   const pointsValue = pointsToBRL(pointsUsed);
   const baseAfterPoints = subtotal - discountValue + shippingPrice - pointsValue;
