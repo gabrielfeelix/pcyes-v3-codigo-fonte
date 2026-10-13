@@ -283,6 +283,7 @@ function ProductGallery({ images, name, isDark, fullBleedFirst = false }: { imag
       )}
       <div
         ref={stageRef}
+        data-pdp-stage
         className="relative w-full max-w-full md:flex-1 aspect-square overflow-hidden group cursor-zoom-in"
         style={{
           borderRadius: "var(--radius-card-lg)",
@@ -1711,11 +1712,15 @@ function SetupComponentsDrawer({
 
 function AboutProduct({
   product,
+  fitToGallery = false,
   onSeeDescription,
   onSeeComponents,
   onSeeWorkloads,
 }: {
   product: any;
+  /** Desktop: fechado, o resumo termina na altura da foto do lado. Sem isso
+   *  (celular, galeria em cima), fecha em MOBILE_VISIBLE itens. */
+  fitToGallery?: boolean;
   onSeeDescription: () => void;
   onSeeComponents?: () => void;
   /** Rola até a seção "o que roda" já na aba pedida. */
@@ -1733,6 +1738,74 @@ function AboutProduct({
         .split("\n")
         .map((s: string) => s.trim())
         .filter(Boolean);
+
+  /* Accordion do resumo. Sem limite, produto com 20 itens (placa de vídeo)
+     esticava a coluna do meio muito além da foto. Fechado, a lista para na
+     altura da foto (desktop) ou em MOBILE_VISIBLE itens (celular), com um
+     esmaecido no corte; "Ver mais (+N)" abre no lugar e vira "Ver menos".
+     Aberta, a página cresce, mas galeria e card de compra são sticky e
+     acompanham. Scroll interno foi descartado: rolagem dentro de rolagem
+     prende a roda do mouse e o dedo. */
+  const MOBILE_VISIBLE = 5;
+  /* Nunca menos que isso fechado: em tela de notebook a foto é baixa e, com
+     título longo, a lista começa quase no pé dela; seguir a foto à risca
+     deixaria dois itens. */
+  const MIN_VISIBLE = 4;
+  const sectionRef = useRef<HTMLElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [clamp, setClamp] = useState<{ max: number; full: number; hidden: number } | null>(null);
+
+  useEffect(() => { setExpanded(false); }, [product.id]);
+
+  useEffect(() => {
+    const ul = listRef.current;
+    if (!ul) return;
+    const measure = () => {
+      const items = Array.from(ul.children) as HTMLElement[];
+      const full = ul.scrollHeight;
+      let max: number;
+      if (fitToGallery) {
+        const stage = document.querySelector<HTMLElement>("[data-pdp-stage]");
+        const wrap = stage?.closest<HTMLElement>("[data-pdp-gallery]");
+        const row = wrap?.parentElement;
+        if (!stage || !wrap || !row) { setClamp(null); return; }
+        /* Posições "naturais", sem a rolagem: a galeria é sticky e muda de
+           lugar ao rolar; galeria e coluna do meio começam no topo da mesma
+           linha. 40px ficam para o botão. */
+        const stageBottom = stage.getBoundingClientRect().top - wrap.getBoundingClientRect().top + stage.offsetHeight;
+        const listTop = ul.getBoundingClientRect().top - row.getBoundingClientRect().top;
+        const minItem = items[Math.min(MIN_VISIBLE, items.length) - 1];
+        const minMax = minItem ? minItem.offsetTop + minItem.offsetHeight : 0;
+        max = Math.max(minMax, Math.floor(stageBottom - listTop - 40));
+      } else {
+        const last = items[MOBILE_VISIBLE - 1];
+        max = last ? last.offsetTop + last.offsetHeight : full;
+      }
+      const hidden = items.filter((li) => li.offsetTop + li.offsetHeight > max).length;
+      // Esconder um item só atrás de um botão é pior que mostrar a lista toda.
+      if (full <= max + 8 || hidden < 2) { setClamp(null); return; }
+      setClamp({ max, full, hidden });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(ul);
+    const stage = fitToGallery ? document.querySelector<HTMLElement>("[data-pdp-stage]") : null;
+    if (stage) ro.observe(stage);
+    return () => ro.disconnect();
+  }, [fitToGallery, product.id, bullets.length]);
+
+  const toggle = () => {
+    if (expanded) {
+      setExpanded(false);
+      /* Fechar puxa a lista para cima; se o topo do resumo já saiu da tela,
+         volta até ele, senão a pessoa fica perdida no meio da descrição. */
+      const top = sectionRef.current?.getBoundingClientRect().top ?? 0;
+      if (top < 0) window.scrollBy({ top: top - 200, behavior: "smooth" });
+    } else {
+      setExpanded(true);
+    }
+  };
 
   if (setup) {
     const lead = (product.description ?? "").split("\n").find((s: string) => s.trim());
@@ -1802,7 +1875,7 @@ function AboutProduct({
   if (!bullets.length) return null;
 
   return (
-    <section>
+    <section ref={sectionRef}>
       <p
         className="text-primary font-bold tracking-wide mb-4"
         style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", letterSpacing: "0.3em" }}
@@ -1810,7 +1883,14 @@ function AboutProduct({
         // SOBRE O PRODUTO
       </p>
 
-      <ul key={product.id} className="space-y-3">
+      <div className="relative">
+      <ul
+        key={product.id}
+        ref={listRef}
+        id={`sobre-${product.id}`}
+        className="space-y-3 overflow-hidden transition-[max-height] duration-300 ease-out"
+        style={clamp ? { maxHeight: expanded ? clamp.full : clamp.max } : undefined}
+      >
         {bullets.map((bullet, i) => (
           <motion.li
             key={`${i}-${bullet.slice(0, 20)}`}
@@ -1831,15 +1911,28 @@ function AboutProduct({
           </motion.li>
         ))}
       </ul>
+      {/* Esmaecido no corte: diz que a lista continua. */}
+      {clamp && !expanded && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-14"
+          style={{ background: "linear-gradient(to bottom, transparent, var(--surface-0, var(--background)))" }}
+        />
+      )}
+      </div>
 
-      <button
-        onClick={onSeeDescription}
-        className="mt-4 inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors cursor-pointer group"
-        style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
-      >
-        Ver mais
-        <ChevronRight size={13} className="rotate-90 transition-transform group-hover:translate-y-0.5" />
-      </button>
+      {clamp && (
+        <button
+          onClick={toggle}
+          aria-expanded={expanded}
+          aria-controls={`sobre-${product.id}`}
+          className="mt-4 inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors cursor-pointer group"
+          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
+        >
+          {expanded ? "Ver menos" : `Ver mais (+${clamp.hidden})`}
+          <ChevronRight size={13} className={`transition-transform ${expanded ? "-rotate-90" : "rotate-90"}`} />
+        </button>
+      )}
     </section>
   );
 }
@@ -3430,6 +3523,7 @@ export function ProductPage() {
                o resumo "Sobre o produto" é longo, a coluna da imagem terminava
                no meio e deixava um vazio enorme até o fim do texto. Só a partir
                de lg — no empilhado a imagem vem antes e não há o que grudar. */
+            data-pdp-gallery
             className="order-2 w-full flex-shrink-0 lg:order-none lg:w-[56%] xl:w-[58%] lg:sticky lg:top-[190px] lg:self-start"
           >
             <ProductGallery
@@ -3636,6 +3730,7 @@ export function ProductPage() {
             <div className="hidden lg:block">
               <AboutProduct
                 product={product}
+                fitToGallery
                 onSeeDescription={scrollToDescription}
                 onSeeComponents={setupComponents?.length ? () => setComponentsOpen(true) : undefined}
                 onSeeWorkloads={setupPlaybook ? showWorkloads : undefined}
