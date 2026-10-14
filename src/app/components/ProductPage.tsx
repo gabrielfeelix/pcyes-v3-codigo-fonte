@@ -1529,7 +1529,9 @@ function MobilePurchaseFlow({
         <AutoShippingCalculator productPrice={product.priceNum} />
       </div>
 
-      <div className="py-5 border-b border-foreground/8">
+      {/* No empilhado (abaixo de lg) a seção seguinte já abre com border-t:
+          as duas linhas ficavam uma em cima da outra com um vão no meio. */}
+      <div className="py-5 border-b border-foreground/8 max-lg:border-b-0">
         <AboutProduct
           product={product}
           onSeeDescription={onSeeDescription}
