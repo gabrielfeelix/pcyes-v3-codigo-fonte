@@ -37,7 +37,7 @@ import { Footer } from "./Footer";
 import { CheckoutHeader } from "./CheckoutHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
-import { installmentCountFor } from "./section/PriceBlock";
+import { installmentCountFor, PIX_DISCOUNT, PIX_PERCENT, pixTotalLine, cardTotalLine } from "./section/PriceBlock";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { EarnPreview } from "./points/EarnPreview";
@@ -442,7 +442,7 @@ export function CheckoutPage() {
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
   const pointsValue = pointsToBRL(pointsUsed);
   const baseTotal = subtotal - discountValue + shippingPrice - pointsValue;
-  const pixDiscount = payment === "pix" ? Math.max(0, (subtotal - discountValue - pointsValue)) * 0.1 : 0;
+  const pixDiscount = payment === "pix" ? Math.max(0, (subtotal - discountValue - pointsValue)) * PIX_DISCOUNT : 0;
   const total = baseTotal - pixDiscount;
   // Parcela mínima de R$ 50: o select só oferece o que o total comporta, e se o
   // total cair (cupom, pontos) a escolha anterior desce junto.
@@ -452,7 +452,7 @@ export function CheckoutPage() {
   }, [installments, maxInstallments]);
   // Mesmo total com o desconto do Pix, calculado à parte: é o preço que a
   // vitrine mostra, e aparece como alternativa quando outra forma está escolhida.
-  const pixTotal = baseTotal - Math.max(0, subtotal - discountValue - pointsValue) * 0.1;
+  const pixTotal = baseTotal - Math.max(0, subtotal - discountValue - pointsValue) * PIX_DISCOUNT;
 
   const handleApplyCoupon = () => {
     const c = coupon.trim().toUpperCase();
@@ -545,7 +545,7 @@ export function CheckoutPage() {
 
   const paymentLabel = (() => {
     switch (payment) {
-      case "pix": return "PIX · 10% OFF";
+      case "pix": return `PIX · ${PIX_PERCENT}% OFF`;
       case "credit": return `Cartão · ${installments}× sem juros`;
       case "apple": return "Apple Pay";
       case "google": return "Google Pay";
@@ -1325,7 +1325,7 @@ export function CheckoutPage() {
                       </span>
                     </div>
                   )}
-                  {pixDiscount > 0 && <Line label="Desconto PIX (10%)" value={`−${formatBRL(pixDiscount)}`} amount={pixDiscount} positive />}
+                  {pixDiscount > 0 && <Line label={`Desconto PIX (${PIX_PERCENT}%)`} value={`−${formatBRL(pixDiscount)}`} amount={pixDiscount} positive />}
                 </div>
 
                 <div
@@ -1337,7 +1337,7 @@ export function CheckoutPage() {
                       className={payment === "pix" ? "" : "text-ink-muted"}
                       style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: payment === "pix" ? "#22c55e" : undefined }}
                     >
-                      {payment === "pix" ? "Total no Pix" : "Total"}
+                      Total
                     </span>
                     <span
                       style={{
@@ -1354,11 +1354,11 @@ export function CheckoutPage() {
                   </div>
                   {payment === "pix" ? (
                     <p className="mt-1 text-right text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                      ou {formatBRL(baseTotal)} no cartão, em até 10× de {formatBRL(baseTotal / 10)}
+                      {pixTotalLine(baseTotal)}
                     </p>
                   ) : (
                     <p className="mt-1 text-right text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                      no Pix sai por <span className="font-bold text-green-400">{formatBRL(pixTotal)}</span>
+                      {cardTotalLine(pixTotal)}
                     </p>
                   )}
                 </div>
@@ -1766,7 +1766,7 @@ export function CheckoutPage() {
                         Como vai pagar?
                       </h2>
                       <p className="mb-6 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
-                        Escolha um método. PIX dá 10% off automático.
+                        Escolha um método. PIX dá {PIX_PERCENT}% off automático.
                       </p>
 
                       {/* Express checkout — 1-click */}
@@ -1845,7 +1845,7 @@ export function CheckoutPage() {
 
                       {/* Traditional methods */}
                       <div className="grid grid-cols-1 gap-3 md:grid-cols-3 mb-6">
-                        <PaymentOption icon={<PixLogo size={18} />} label="Pix" description="Aprovação instantânea · 10% OFF" badge="-10%" active={payment === "pix"} onClick={() => setPayment("pix")} color="#22c55e" accentBg="rgba(34,197,94,0.14)" />
+                        <PaymentOption icon={<PixLogo size={18} />} label="Pix" description={`Aprovação instantânea · ${PIX_PERCENT}% OFF`} badge={`-${PIX_PERCENT}%`} active={payment === "pix"} onClick={() => setPayment("pix")} color="#22c55e" accentBg="rgba(34,197,94,0.14)" />
                         <PaymentOption icon={<CreditCard size={18} strokeWidth={2} />} label="Cartão" description="Até 10x · seu cartão salvo" active={payment === "credit"} onClick={() => setPayment("credit")} />
                         <PaymentOption icon={<Wallet size={18} strokeWidth={2} />} label="Boleto" description="Vence em 3 dias úteis" active={payment === "boleto"} onClick={() => setPayment("boleto")} />
                       </div>
@@ -2061,7 +2061,7 @@ export function CheckoutPage() {
                               <Zap size={18} strokeWidth={2.4} className="mt-0.5 text-green-400 flex-shrink-0" fill="currentColor" />
                               <div>
                                 <p className="text-green-300" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
-                                  10% OFF automático no PIX
+                                  {PIX_PERCENT}% OFF automático no PIX
                                 </p>
                                 <p className="mt-1 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.5 }}>
                                   Após finalizar, vamos gerar o QR Code pra pagamento instantâneo. Compensação em até 1 minuto.
@@ -2124,7 +2124,7 @@ export function CheckoutPage() {
 
                         <ReviewCard icon={<CreditCard size={14} strokeWidth={2} />} label="Pagamento" onEdit={() => setStep(2)}>
                           <p className="text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
-                            {payment === "pix" && "PIX · 10% OFF automático"}
+                            {payment === "pix" && `PIX · ${PIX_PERCENT}% OFF automático`}
                             {payment === "credit" && `Cartão de crédito · ${installments}× sem juros`}
                             {payment === "apple" && "Apple Pay"}
                             {payment === "google" && "Google Pay"}
@@ -2287,7 +2287,7 @@ export function CheckoutPage() {
               className="block text-ink-muted"
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" }}
             >
-              {payment === "pix" ? "Total no Pix" : "Total"}
+              Total
             </span>
             <span
               className="block text-ink-strong"

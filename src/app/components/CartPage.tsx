@@ -30,7 +30,8 @@ import { Footer } from "./Footer";
 import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
-import { BrindePill, GiftProgressBlock, Price, PreOrderPill, installmentCountFor } from "./section";
+import { BrindePill, GiftProgressBlock, Price, PreOrderPill } from "./section";
+import { PIX_DISCOUNT, pixTotalLine } from "./section/PriceBlock";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { cepUf, isValidCep } from "../../utils/cep";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
@@ -149,7 +150,7 @@ export function CartPage() {
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
   const pointsValue = pointsToBRL(pointsUsed);
   const baseAfterPoints = subtotal - discountValue + shippingPrice - pointsValue;
-  const pixDiscount = baseAfterPoints * 0.1;
+  const pixDiscount = baseAfterPoints * PIX_DISCOUNT;
   const total = baseAfterPoints;
   const totalPix = total - pixDiscount;
 
@@ -931,7 +932,7 @@ export function CartPage() {
                       pessoa escolhia Pix no checkout. */}
                   <div className="mb-1 flex items-baseline justify-between">
                     <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#22c55e" }}>
-                      Total no Pix
+                      Total
                     </span>
                     <Price value={totalPix} label="Total no Pix" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 800, color: "#22c55e", letterSpacing: "-0.02em" }} />
                   </div>
@@ -944,9 +945,7 @@ export function CartPage() {
                     </p>
                   )}
                   <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                    {installmentCountFor(total) > 1
-                      ? `ou ${formatBRL(total)} no cartão, em até ${installmentCountFor(total)}× de ${formatBRL(total / installmentCountFor(total))} sem juros`
-                      : `ou 1× de ${formatBRL(total)} sem juros no cartão`}
+                    {pixTotalLine(total)}
                   </p>
                   {/* Dentro do card de total, porque é sobre ESTE pedido. */}
                   <div className="mt-3 border-t border-foreground/8 pt-3">
@@ -1153,7 +1152,7 @@ export function CartPage() {
               className="text-ink-muted"
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" }}
             >
-              Total no Pix
+              Total
             </p>
             <p>
               <Price

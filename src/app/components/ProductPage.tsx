@@ -29,6 +29,7 @@ import { getPreOrderInfo } from "./PreOrderData";
 import type { PreOrderInfo } from "./PreOrderData";
 import { PreOrderBanner, useCountdown } from "./PreOrderBanner";
 import { CTAButton, DiscountBadge, PriceBlock, QtyStepper, installmentCountFor } from "./section";
+import { PIX_RATE, PIX_PERCENT } from "./section/PriceBlock";
 import { PointsChip } from "./points/ProductPoints";
 import { EarnPreview } from "./points/EarnPreview";
 import { PcyesCoin } from "./PcyesCoin";
@@ -710,7 +711,7 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  const pixPrice = priceNum * 0.9;
+  const pixPrice = priceNum * PIX_RATE;
   // Só as parcelas de R$ 50 ou mais. As duas colunas dividem a lista ao meio.
   const installments = Array.from({ length: installmentCountFor(priceNum) }, (_, i) => ({
     n: i + 1,
@@ -799,7 +800,7 @@ function PaymentModal({ open, onClose, priceNum }: { open: boolean; onClose: () 
                       className="px-2 py-0.5 bg-green-500/15 text-green-500 font-bold flex-shrink-0"
                       style={{ borderRadius: "var(--radius)", fontSize: "var(--text-caption)", fontFamily: "var(--font-family-inter)" }}
                     >
-                      10% OFF
+                      {PIX_PERCENT}% OFF
                     </span>
                   </header>
                   <div
@@ -1036,7 +1037,7 @@ function StickyPriceCard({
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
           >
             no <span className="text-green-500 font-semibold">PIX</span> com{" "}
-            <span className="text-green-500 font-semibold">10% de desconto</span>
+            <span className="text-green-500 font-semibold">{PIX_PERCENT}% de desconto</span>
           </p>
 
           <div className="h-px bg-foreground/6 my-3" />
@@ -1304,7 +1305,7 @@ function MobilePurchaseFlow({
                 style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: "1.55" }}
               >
                 à vista no <span className="text-[#4CAF50] font-bold">PIX</span> com{" "}
-                <span className="text-[#4CAF50] font-bold">10% de desconto</span>
+                <span className="text-[#4CAF50] font-bold">{PIX_PERCENT}% de desconto</span>
               </p>
             </>
           )}
@@ -3404,7 +3405,7 @@ export function ProductPage() {
     ? Math.round(((product.oldPriceNum - product.priceNum) / product.oldPriceNum) * 100)
     : 0;
 
-  const pixPrice = product.priceNum * 0.9;
+  const pixPrice = product.priceNum * PIX_RATE;
   const installment = product.priceNum / installmentCountFor(product.priceNum);
   const preOrderInfo = getPreOrderInfo(product.id);
 

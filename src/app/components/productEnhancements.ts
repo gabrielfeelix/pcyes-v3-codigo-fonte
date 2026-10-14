@@ -1,3 +1,4 @@
+import { PIX_RATE } from "./section/PriceBlock";
 import type { Product } from "./productsData";
 export { formatBRL } from "../../utils/format";
 
@@ -13,9 +14,9 @@ export function getEconomy(p: Product): number {
   return Math.round((p.oldPriceNum - p.priceNum) * 100) / 100;
 }
 
-/** PIX price = priceNum with 10% extra discount. */
+/** Preço no PIX: priceNum com o desconto de `PIX_DISCOUNT` (5%). */
 export function getPixPrice(p: Product): number {
-  return Math.round(p.priceNum * 0.9 * 100) / 100;
+  return Math.round(p.priceNum * PIX_RATE * 100) / 100;
 }
 
 /** 10x installment. */

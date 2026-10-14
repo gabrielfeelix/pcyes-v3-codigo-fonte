@@ -37,8 +37,12 @@ import { pointsForOrder, tierFor } from "../../lib/pcyesPoints";
 
 type PriceScale = "card" | "catalog";
 
-/** Os 10% do PIX. Mesma conta de `getPixPrice` em productEnhancements. */
-export const PIX_RATE = 0.9;
+/** Desconto do PIX na loja real: 5% (R$ 24,90 vira R$ 23,66 na PDP da
+    loja nova). O protótipo usava 10% e os números não batiam. Toda conta e
+    todo texto de desconto do PIX saem daqui. */
+export const PIX_DISCOUNT = 0.05;
+export const PIX_PERCENT = Math.round(PIX_DISCOUNT * 100);
+export const PIX_RATE = 1 - PIX_DISCOUNT;
 export const pixPriceOf = (priceNum: number) => Math.round(priceNum * PIX_RATE * 100) / 100;
 
 /** Parcelamento máximo da loja. Não temos 12x. */
@@ -55,6 +59,22 @@ export const MIN_INSTALLMENT = 50;
 export function installmentCountFor(total: number): number {
   const cents = Math.round(total * 100);
   return Math.max(1, Math.min(INSTALLMENTS, Math.floor(cents / (MIN_INSTALLMENT * 100))));
+}
+
+/** Linha embaixo do total do carrinho e do checkout, numa linha só: o total
+    grande é o do PIX; a linha diz o desconto e quanto fica no cartão.
+    `cardTotal` é o total sem o desconto do PIX. */
+export function pixTotalLine(cardTotal: number): string {
+  const n = installmentCountFor(cardTotal);
+  const card = n > 1
+    ? `${formatBRL(cardTotal)} no cartão, em até ${n}× de ${formatBRL(cardTotal / n)} sem juros`
+    : `${formatBRL(cardTotal)} no cartão`;
+  return `no PIX, com ${PIX_PERCENT}% de desconto, ou ${card}`;
+}
+
+/** O inverso, quando a forma escolhida é cartão ou boleto. */
+export function cardTotalLine(pixTotal: number): string {
+  return `ou ${formatBRL(pixTotal)} no PIX, com ${PIX_PERCENT}% de desconto`;
 }
 
 const SCALE: Record<PriceScale, { price: string; installment: string; alpha: number }> = {
