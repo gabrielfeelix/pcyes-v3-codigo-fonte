@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { Heart, ShoppingCart } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useAuth } from "./AuthContext";
+import { useFavorites } from "./FavoritesContext";
 import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getProductSwatches, getStockStatus, getCardSwatches } from "./productPresentation";
 import { artFitClass, setupArtVariant } from "../lib/setupImages";
@@ -65,7 +66,7 @@ export function ProductCard({
   href = `/produto/${product.id}`,
   rank,
   swatches = false,
-  favorite = false,
+  favorite = true,
   hoverMedia,
   emphasizeDiscount = false,
   onAdd,
@@ -74,9 +75,13 @@ export function ProductCard({
   style,
 }: ProductCardProps) {
   const cfg = VARIANT[variant];
-  const [isFavorited, setIsFavorited] = useState(false);
   const [selectedSwatchId, setSelectedSwatchId] = useState<number | null>(null);
   const { isLoggedIn } = useAuth();
+  /* O coração lê e grava na lista de favoritos da conta, a mesma do contador
+     do header e da PDP. Antes era um estado só do card: marcava aqui e não
+     aparecia em lugar nenhum. */
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const isFavorited = isFavorite(product.id);
 
   /* Toda card mostra a linha de cor (uma bolinha ou mais), como no catálogo:
      sem ela o preço dos cards vizinhos desalinhava. */
@@ -98,7 +103,8 @@ export function ProductCard({
 
   const handleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsFavorited(!isFavorited);
+    e.stopPropagation();
+    toggleFavorite(product.id);
     onFavorite?.(product);
   };
 
@@ -173,10 +179,13 @@ export function ProductCard({
           </span>
         )}
 
+        {/* Só logado: favorito é da conta. Sempre visível, não só no hover:
+            escondido, ninguém achava onde favoritar. */}
         {favorite && isLoggedIn && (
           <button
             onClick={handleFavorite}
-            className="absolute right-3 top-3 z-20 flex h-9 w-9 md:h-8 md:w-8 items-center justify-center rounded-full border opacity-100 md:opacity-0 transition-all duration-200 md:group-hover:opacity-100 cursor-pointer"
+            aria-pressed={isFavorited}
+            className="absolute right-3 top-3 z-20 flex h-9 w-9 md:h-8 md:w-8 items-center justify-center rounded-full border transition-all duration-200 hover:scale-105 cursor-pointer"
             style={{
               background: isFavorited ? "rgba(225, 6, 0, 0.2)" : "rgba(0, 0, 0, 0.55)",
               border: isFavorited
@@ -185,9 +194,9 @@ export function ProductCard({
               color: isFavorited ? "#ff2419" : "rgba(var(--foreground-rgb), 0.85)",
               backdropFilter: "blur(8px)",
             }}
-            aria-label="Favoritar"
+            aria-label={isFavorited ? "Remover dos favoritos" : "Adicionar aos favoritos"}
           >
-            <Heart size={13} strokeWidth={isFavorited ? 0 : 1.8} fill={isFavorited ? "#ff2419" : "none"} />
+            <Heart size={14} strokeWidth={isFavorited ? 0 : 1.8} fill={isFavorited ? "#ff2419" : "none"} />
           </button>
         )}
 

@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import { motion, useInView } from "motion/react";
 import { useCart } from "./CartContext";
-import { useFavorites } from "./FavoritesContext";
 import { allProducts, type Product } from "./productsData";
 import {
   getPrimaryProductImage,
@@ -50,7 +49,6 @@ export function ProductShelf({
   const [canNext, setCanNext] = useState(true);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
   const { addItem } = useCart();
-  const { addFavorite } = useFavorites();
 
   const products = useMemo(() => {
     const visible = getShowcaseProducts(allProducts);
@@ -134,14 +132,6 @@ export function ProductShelf({
                   style={{ width: "clamp(264px, 78vw, 380px)" }}
                   onAdd={(p) =>
                     addItem({
-                      id: p.id,
-                      name: p.name,
-                      price: p.price,
-                      image: getPrimaryProductImage(p),
-                    })
-                  }
-                  onFavorite={(p) =>
-                    addFavorite({
                       id: p.id,
                       name: p.name,
                       price: p.price,

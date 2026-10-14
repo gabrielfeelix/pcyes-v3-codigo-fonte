@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 
 interface FavoritesContextType {
   favorites: Set<number>;
@@ -17,8 +17,30 @@ export function useFavorites() {
   return ctx;
 }
 
+/* Favoritos ficam na sessão do navegador: recarregar a página não zera o
+   coração nem o contador do header. Sem conta real no protótipo, a sessão
+   faz o papel da lista salva. */
+const STORAGE_KEY = "pcyes-favorites";
+
+function loadFavorites(): Set<number> {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    return new Set(raw ? (JSON.parse(raw) as number[]) : []);
+  } catch {
+    return new Set();
+  }
+}
+
 export function FavoritesProvider({ children }: { children: ReactNode }) {
-  const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const [favorites, setFavorites] = useState<Set<number>>(loadFavorites);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify([...favorites]));
+    } catch {
+      /* sessão bloqueada: segue só em memória */
+    }
+  }, [favorites]);
 
   const toggleFavorite = useCallback((id: number) => {
     setFavorites((prev) => {

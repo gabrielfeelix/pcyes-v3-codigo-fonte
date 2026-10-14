@@ -15,6 +15,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { ScrollArea } from "./ui/scroll-area";
 import { useCart } from "./CartContext";
 import { useFavorites } from "./FavoritesContext";
+import { useAuth } from "./AuthContext";
 import { useTheme } from "./ThemeProvider";
 import { allProducts } from "./productsData";
 import { Footer } from "./Footer";
@@ -3259,6 +3260,8 @@ export function ProductPage() {
 
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
+  /* Favorito é da conta: o coração só aparece para quem está logado. */
+  const { isLoggedIn } = useAuth();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
 
@@ -3629,8 +3632,9 @@ export function ProductPage() {
 
               {/* Like + Share */}
               <div className="flex items-center gap-1.5">
-                <button
+                {isLoggedIn && <button
                   onClick={() => toggleFavorite(product.id)}
+                  aria-pressed={liked}
                   className={`w-11 h-11 md:w-9 md:h-9 flex items-center justify-center rounded-full transition-all duration-300 cursor-pointer ${
                     liked
                       ? "bg-red-500/10 text-red-500"
@@ -3639,7 +3643,7 @@ export function ProductPage() {
                   aria-label={liked ? "Remover dos favoritos" : "Adicionar aos favoritos"}
                 >
                   <Heart size={15} className={liked ? "fill-red-500" : ""} strokeWidth={1.7} />
-                </button>
+                </button>}
                 <button
                   onClick={handleShare}
                   className="w-11 h-11 md:w-9 md:h-9 flex items-center justify-center rounded-full text-foreground/35 hover:text-foreground/70 hover:bg-foreground/5 transition-all duration-300 cursor-pointer"

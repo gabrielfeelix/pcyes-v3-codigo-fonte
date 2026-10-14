@@ -10,7 +10,6 @@ import {
   getShowcaseProducts,
 } from "./productPresentation";
 import { useCart } from "./CartContext";
-import { useFavorites } from "./FavoritesContext";
 import { CarouselDots } from "./CarouselDots";
 import { SectionHeader, CarouselNavButton } from "./section";
 import { ProductCard } from "./ProductCard";
@@ -100,7 +99,6 @@ export function FlashDealsStrip() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
   const { addItem } = useCart();
-  const { addFavorite } = useFavorites();
   const endRef = useRef(getDealEnd());
   const time = useCountdown(endRef.current);
 
@@ -204,9 +202,6 @@ export function FlashDealsStrip() {
                   style={{ width: "clamp(264px, 78vw, 380px)" }}
                   onAdd={(p) =>
                     addItem({ id: p.id, name: p.name, price: p.price, image: getPrimaryProductImage(p) })
-                  }
-                  onFavorite={(p) =>
-                    addFavorite({ id: p.id, name: p.name, price: p.price, image: getPrimaryProductImage(p) })
                   }
                 />
               </motion.div>

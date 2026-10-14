@@ -4,7 +4,6 @@ import { useMemo, useRef } from "react";
 import { useNavigate } from "react-router";
 import { motion, useInView } from "motion/react";
 import { useCart } from "./CartContext";
-import { useFavorites } from "./FavoritesContext";
 import { allProducts, type Product } from "./productsData";
 import {
   getCatalogHref,
@@ -54,7 +53,6 @@ export function DealsHighlight({
   const isInView = useInView(ref, { once: true, amount: 0.1 });
   const navigate = useNavigate();
   const { addItem } = useCart();
-  const { addFavorite } = useFavorites();
 
   /**
    * Oito produtos, sempre — a grade é 4×2 e um buraco na segunda fileira salta
@@ -90,14 +88,6 @@ export function DealsHighlight({
       price: p.price,
       image: getPrimaryProductImage(p),
     });
-  const handleFavorite = (p: Product) =>
-    addFavorite({
-      id: p.id,
-      name: p.name,
-      price: p.price,
-      image: getPrimaryProductImage(p),
-    });
-
   return (
     <section
       ref={ref}
@@ -152,7 +142,6 @@ export function DealsHighlight({
                      ali a pílula de pré-venda ocupa o mesmo canto. */
                   emphasizeDiscount
                   onAdd={handleAdd}
-                  onFavorite={handleFavorite}
                 />
               </motion.div>
             ))}

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useCart } from "./CartContext";
 import { useFavorites } from "./FavoritesContext";
+import { useAuth } from "./AuthContext";
 import { useTheme } from "./ThemeProvider";
 import { Footer } from "./Footer";
 import { allProducts, allTags as productTags, brands as productBrands, categories as productCategories, type Product } from "./productsData";
@@ -488,6 +489,8 @@ export function ProductsPage() {
 
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
+  /* Favorito é da conta: o coração só aparece para quem está logado. */
+  const { isLoggedIn } = useAuth();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark" || resolvedTheme === undefined;
   const activeCategoryLabel = initialCategory ? categoryMap[initialCategory] ?? initialCategory : "";
@@ -1737,12 +1740,13 @@ export function ProductsPage() {
 
                             {/* Favorite + Quick View — top-right */}
                             <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
-                              <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(displayProduct.id); }}
-                                className="w-9 h-9 lg:w-9 lg:h-9 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center opacity-100 lg:opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/50 hover:scale-105 cursor-pointer"
+                              {isLoggedIn && <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(displayProduct.id); }}
+                                aria-pressed={isFavorite(displayProduct.id)}
+                                className="w-9 h-9 lg:w-9 lg:h-9 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center transition-all duration-300 hover:bg-black/50 hover:scale-105 cursor-pointer"
                                 aria-label={isFavorite(displayProduct.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
                               >
                                 <Heart size={16} className={isFavorite(displayProduct.id) ? "fill-red-500 text-red-500" : "text-ink-strong"} strokeWidth={2} />
-                              </button>
+                              </button>}
                               <button onClick={(e) => { e.preventDefault(); setQuickViewProduct(displayProduct); }}
                                 className="w-9 h-9 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center opacity-100 lg:opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 hover:bg-black/50 hover:scale-105 hidden lg:flex cursor-pointer"
                                 aria-label="Visualização Rápida"
@@ -1913,10 +1917,11 @@ export function ProductsPage() {
                             ><ShoppingCart size={14} strokeWidth={2} /> Adicionar</button>
                           </div>
                           {/* Favorite — absolute top-right on mobile, inline column on desktop */}
-                          <button onClick={() => toggleFavorite(displayProduct.id)}
+                          {isLoggedIn && <button onClick={() => toggleFavorite(displayProduct.id)}
+                            aria-pressed={isFavorite(displayProduct.id)}
                             className="absolute top-2.5 right-2.5 sm:hidden w-9 h-9 border border-foreground/15 rounded-full flex items-center justify-center text-foreground/40 hover:text-foreground transition-all bg-black/30 backdrop-blur-md cursor-pointer"
                             aria-label={isFavorite(displayProduct.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-                          ><Heart size={15} className={isFavorite(displayProduct.id) ? "fill-red-500 text-red-500" : ""} strokeWidth={2} /></button>
+                          ><Heart size={15} className={isFavorite(displayProduct.id) ? "fill-red-500 text-red-500" : ""} strokeWidth={2} /></button>}
                           {/* Desktop actions column */}
                           <div className="hidden sm:flex sm:flex-col items-end justify-between gap-3 flex-shrink-0 self-stretch">
                             <button onClick={() => toggleFavorite(displayProduct.id)}
