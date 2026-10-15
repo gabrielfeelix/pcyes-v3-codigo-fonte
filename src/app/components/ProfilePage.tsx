@@ -19,6 +19,7 @@ import { useTheme } from "./ThemeProvider";
 import { allProducts } from "./productsData";
 import { Footer } from "./Footer";
 import { getPrimaryProductImage, getVisibleCatalogProducts } from "./productPresentation";
+import { ProductCard } from "./ProductCard";
 import { CardBrandLogo } from "./CardBrandLogo";
 import { PcyesCoin } from "./PcyesCoin";
 import { PointsTab } from "./points/PointsTab";
@@ -1423,72 +1424,27 @@ export function ProfilePage() {
                       <Link to="/produtos" className="inline-block px-4 py-2 bg-primary text-primary-foreground hover:brightness-110 transition-all" style={{ borderRadius: "var(--radius-card)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "var(--font-weight-medium)" }}>Ver produtos</Link>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                      {favoriteProducts.map((product) => {
-                        const hasDiscount = !!product.oldPrice;
-                        const inStock = product.inStock !== false;
-                        return (
-                          <div key={product.id} className="group overflow-hidden transition-all" style={{ borderRadius: "var(--radius-card-sm)", background: isDark ? "rgba(var(--foreground-rgb), 0.02)" : "rgba(0,0,0,0.015)", border: isDark ? "1px solid rgba(var(--foreground-rgb), 0.06)" : "1px solid rgba(0,0,0,0.06)" }}>
-                            <Link to={`/produto/${product.id}`} className="deal-card-img block relative aspect-square overflow-hidden transition-all duration-300" style={{
-                              /* Visual match com ProductCard do ProductShelf: gradient + inner shine. */
-                              background: isDark
-                                ? "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.10) 0%, rgba(var(--foreground-rgb), 0.03) 100%)"
-                                : "linear-gradient(135deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.01) 100%)",
-                            }}>
-                              {isDark && (
-                                <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(circle at 30% 25%, rgba(var(--foreground-rgb), 0.06) 0%, transparent 55%)" }} />
-                              )}
-                              <ImageWithFallback src={getPrimaryProductImage(product)} alt={product.name} className={`w-full h-full object-contain p-5 group-hover:scale-[1.05] transition-transform duration-500 relative z-[1] ${!inStock ? "opacity-50" : ""}`} />
-                              {/* Badges sobre imagem */}
-                              <div className="absolute top-2 left-2 flex flex-col gap-1">
-                                {hasDiscount && (
-                                  <span className="px-1.5 py-0.5 bg-primary text-primary-foreground flex items-center gap-0.5" style={{ borderRadius: "var(--radius-card)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.04em" }}>
-                                    <Sparkles size={8} /> OFERTA
-                                  </span>
-                                )}
-                                {!inStock && (
-                                  <span className="px-1.5 py-0.5 bg-foreground/70 text-background" style={{ borderRadius: "var(--radius-card)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800, letterSpacing: "0.04em" }}>
-                                    SEM ESTOQUE
-                                  </span>
-                                )}
-                              </div>
-                              <button onClick={(e) => { e.preventDefault(); toggleFavorite(product.id); }}
-                                className="absolute top-2 right-2 w-11 h-11 md:w-7 md:h-7 flex items-center justify-center text-primary hover:bg-black/40 transition-all backdrop-blur-md cursor-pointer"
-                                style={{ borderRadius: "var(--radius-card)", background: "rgba(0,0,0,0.3)" }}
-                              ><Heart size={12} className="fill-primary" /></button>
-                            </Link>
-                            <div className="p-3">
-                              <div className="flex items-center justify-between gap-2 mb-1">
-                                <div className="flex items-center gap-1">
-                                  <Star size={9} className="fill-primary text-primary" />
-                                  <span className="text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>{product.rating}</span>
-                                </div>
-                                {inStock && (
-                                  <span className="flex items-center gap-1 text-green-500" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.04em" }}>
-                                    <span className="relative flex h-1.5 w-1.5">
-                                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-60" />
-                                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
-                                    </span>
-                                    EM ESTOQUE
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-foreground truncate mb-1" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "var(--font-weight-medium)" }}>{product.name}</p>
-                              <div className="flex items-baseline gap-1.5 mb-3">
-                                <p className="text-foreground/80" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>{product.price}</p>
-                                {hasDiscount && (
-                                  <p className="text-foreground/35 line-through" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>{product.oldPrice}</p>
-                                )}
-                              </div>
-                              <button onClick={() => addItem(product)}
-                                disabled={!inStock}
-                                className={`w-full min-h-[44px] md:min-h-[24px] py-1.5 inline-flex items-center justify-center gap-1.5 transition-all cursor-pointer ${inStock ? "bg-primary text-primary-foreground hover:brightness-110" : "bg-foreground/8 text-foreground/40 cursor-not-allowed"}`}
-                                style={{ borderRadius: "var(--radius-card)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
-                              ><ShoppingCart size={11} /> {inStock ? "Adicionar" : "Avisar quando voltar"}</button>
-                            </div>
-                          </div>
-                        );
-                      })}
+                    /* O mesmo ProductCard da home (variante grid: imagem quadrada, nome em
+                       2 linhas, preço no PIX, "Adicionar" verde). Antes o perfil tinha um
+                       card próprio, com estrela, selo, preço e botão diferentes da vitrine.
+                       O coração do card tira o produto da lista. */
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {favoriteProducts.map((product) => (
+                        <ProductCard
+                          key={product.id}
+                          product={product}
+                          variant="grid"
+                          favorite
+                          onAdd={(p) =>
+                            addItem({
+                              id: p.id,
+                              name: p.name,
+                              price: p.price,
+                              image: getPrimaryProductImage(p),
+                            })
+                          }
+                        />
+                      ))}
                     </div>
                   )}
                   </>

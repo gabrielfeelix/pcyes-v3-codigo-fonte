@@ -175,7 +175,16 @@ export function ProductCard({
 
         {preOrderInfo && (
           <span className="absolute z-20" style={{ left: rank !== undefined ? "60px" : "12px", top: "12px" }}>
-            <PreOrderPill info={preOrderInfo} />
+            {variant === "grid" ? (
+              /* Grade no celular (2 colunas, ~170px): com a data, a pill passava
+                 por baixo do coração. A data fica no desktop e na PDP. */
+              <>
+                <span className="md:hidden"><PreOrderPill info={preOrderInfo} hideDate /></span>
+                <span className="hidden md:inline"><PreOrderPill info={preOrderInfo} /></span>
+              </>
+            ) : (
+              <PreOrderPill info={preOrderInfo} />
+            )}
           </span>
         )}
 

@@ -4,10 +4,13 @@ import type { PreOrderInfo } from "../PreOrderData";
 type PreOrderPillProps = {
   info: PreOrderInfo;
   compact?: boolean;
+  /** Só "Pré-venda", sem a data: para card estreito, onde a data empurrava
+      a pill para baixo do coração. */
+  hideDate?: boolean;
   className?: string;
 };
 
-export function PreOrderPill({ info, compact = false, className = "" }: PreOrderPillProps) {
+export function PreOrderPill({ info, compact = false, hideDate = false, className = "" }: PreOrderPillProps) {
   const release = new Date(info.releaseDate);
   const label = release.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 
@@ -30,7 +33,7 @@ export function PreOrderPill({ info, compact = false, className = "" }: PreOrder
       }}
     >
       <Rocket size={compact ? 8 : 9} strokeWidth={2.6} />
-      Pré-venda · {label}
+      Pré-venda{hideDate ? "" : ` · ${label}`}
     </span>
   );
 }
