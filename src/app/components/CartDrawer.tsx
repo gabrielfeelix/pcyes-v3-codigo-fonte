@@ -14,7 +14,8 @@ import { getPreOrderInfo } from "./PreOrderData";
 import { formatBRL, parseBRL } from "../../utils/format";
 import { maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { useGiftCampaign } from "../lib/useGiftCampaign";
-import { EarnPreview } from "./points/EarnPreview";
+import { OrderTotal } from "./OrderTotal";
+import { PIX_DISCOUNT } from "./section/PriceBlock";
 import { useAuth } from "./AuthContext";
 import { tierFor } from "../lib/pcyesPoints";
 import { toast } from "sonner";
@@ -61,6 +62,7 @@ export function CartDrawer() {
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
   const pointsValue = pointsToBRL(pointsUsed);
   const total = Math.max(0, subtotal - pointsValue);
+  const pixTotal = total - Math.max(0, subtotal - pointsValue) * PIX_DISCOUNT;
   return (
     <AnimatePresence>
       {isOpen && (
@@ -194,16 +196,9 @@ export function CartDrawer() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-1">
-                  <span className="text-foreground/50" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>Total</span>
-                  <Price value={total} label="Total" className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: "var(--font-weight-medium)" }} />
-                </div>
-
-                {/* Colado no total e alinhado à direita, embaixo do preço: é sobre
-                    ESTE pedido, e perto do número a pessoa associa os pontos ao
-                    valor (como Shopee e cia). O saldo que ela já tem mora no
-                    topo e responde outra pergunta. */}
-                <EarnPreview amount={total} className="justify-end" />
+                {/* Total: o mesmo card do carrinho e do checkout. Antes o lateral
+                    mostrava só o preço cheio e não falava do PIX. */}
+                <OrderTotal cardTotal={total} pixTotal={pixTotal} />
 
                 <button
                   className="w-full py-4 rounded-full text-ink-strong transition-transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"

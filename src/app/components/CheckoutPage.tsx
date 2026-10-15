@@ -37,10 +37,11 @@ import { Footer } from "./Footer";
 import { CheckoutHeader } from "./CheckoutHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
-import { installmentCountFor, PIX_DISCOUNT, PIX_PERCENT, PixLabel, pixTotalLine, cardTotalLine } from "./section/PriceBlock";
+import { installmentCountFor, PIX_DISCOUNT, PIX_PERCENT } from "./section/PriceBlock";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { EarnPreview } from "./points/EarnPreview";
+import { OrderTotal } from "./OrderTotal";
 import { toast } from "sonner";
 import { PcyesCoin } from "./PcyesCoin";
 
@@ -1328,47 +1329,8 @@ export function CheckoutPage() {
                   {pixDiscount > 0 && <Line label={`Desconto PIX (${PIX_PERCENT}%)`} value={`−${formatBRL(pixDiscount)}`} amount={pixDiscount} positive />}
                 </div>
 
-                <div
-                  className="rounded-[var(--radius-card-sm)] p-4"
-                  style={{ background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}
-                >
-                  <div className="flex items-baseline justify-between">
-                    <span
-                      className={payment === "pix" ? "" : "text-ink-muted"}
-                      style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: payment === "pix" ? "#22c55e" : undefined }}
-                    >
-                      Total
-                    </span>
-                    <span className="flex items-baseline gap-1.5">
-                      <span
-                        style={{
-                          fontFamily: "var(--font-family-figtree)",
-                          fontSize: "var(--text-xl)",
-                          fontWeight: 800,
-                          letterSpacing: "-0.02em",
-                          color: payment === "pix" ? "#22c55e" : "#fff",
-                        }}
-                      >
-                        <span aria-hidden="true">{formatBRL(total)}</span>
-                        <span className="sr-only">Total, {formatBRLSpoken(total)}</span>
-                      </span>
-                      {payment === "pix" && <PixLabel scale="catalog" />}
-                    </span>
-                  </div>
-                  {payment === "pix" ? (
-                    <p className="mt-1 text-right text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                      {pixTotalLine(baseTotal)}
-                    </p>
-                  ) : (
-                    <p className="mt-1 text-right text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                      {cardTotalLine(pixTotal)}
-                    </p>
-                  )}
-                </div>
-                {/* Quanto o pedido rende, logo abaixo do card do total e à direita,
-                    colado no preço: perto do número a pessoa associa os pontos
-                    ao valor. */}
-                <EarnPreview amount={total} className="mt-0.5 justify-end" />
+                {/* Total: o mesmo card do carrinho e do carrinho lateral. */}
+                <OrderTotal cardTotal={baseTotal} pixTotal={pixTotal} method={payment} />
 
     </>
   );

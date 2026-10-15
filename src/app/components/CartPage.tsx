@@ -31,12 +31,12 @@ import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { BrindePill, GiftProgressBlock, Price, PreOrderPill } from "./section";
-import { PIX_DISCOUNT, PixLabel, pixTotalLine } from "./section/PriceBlock";
+import { PIX_DISCOUNT } from "./section/PriceBlock";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { cepUf, isValidCep } from "../../utils/cep";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { useGiftCampaign } from "../lib/useGiftCampaign";
-import { EarnPreview } from "./points/EarnPreview";
+import { OrderTotal } from "./OrderTotal";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { toast } from "sonner";
 
@@ -150,7 +150,8 @@ export function CartPage() {
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
   const pointsValue = pointsToBRL(pointsUsed);
   const baseAfterPoints = subtotal - discountValue + shippingPrice - pointsValue;
-  const pixDiscount = baseAfterPoints * PIX_DISCOUNT;
+  /* Desconto do PIX só sobre os produtos, sem o frete: mesma conta do checkout. */
+  const pixDiscount = Math.max(0, subtotal - discountValue - pointsValue) * PIX_DISCOUNT;
   const total = baseAfterPoints;
   const totalPix = total - pixDiscount;
 
@@ -924,36 +925,14 @@ export function CartPage() {
                   )}
                 </div>
 
-                {/* Total */}
-                <div className="rounded-[var(--radius-card-sm)] p-4" style={{ background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}>
-                  {/* O número grande é o do Pix, o mesmo que a vitrine e a PDP
-                      mostram. Com o preço cheio em destaque, o total parecia
-                      subir entre a PDP e o carrinho e só "voltar" quando a
-                      pessoa escolhia Pix no checkout. */}
-                  <div className="mb-1 flex items-baseline justify-between">
-                    <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#22c55e" }}>
-                      Total
-                    </span>
-                    <span className="flex items-baseline gap-1.5">
-                      <Price value={totalPix} label="Total no Pix" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 800, color: "#22c55e", letterSpacing: "-0.02em" }} />
-                      <PixLabel scale="catalog" />
-                    </span>
-                  </div>
-                  {/* O total só é fechado quando não há frete estimado dentro
-                      dele. Com CEP informado, o número acima é estimativa e
-                      precisa dizer isso ao lado do próprio número. */}
-                  {chosenShipping && (
-                    <p className="mb-1 text-ink-subtle" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                      Com frete estimado para o CEP informado
-                    </p>
-                  )}
-                  <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                    {pixTotalLine(total)}
-                  </p>
-                </div>
-                {/* Logo abaixo do card do total, à direita, colado no preço: perto
-                    do número a pessoa associa os pontos ao valor deste pedido. */}
-                <EarnPreview amount={total} className="mt-0.5 mb-5 justify-end" />
+                {/* Total: o mesmo card do carrinho lateral e do checkout. */}
+                <OrderTotal
+                  cardTotal={total}
+                  pixTotal={totalPix}
+                  /* O total só é fechado quando não há frete estimado dentro dele. */
+                  note={chosenShipping ? "Com frete estimado para o CEP informado" : undefined}
+                  className="mb-5"
+                />
 
                 {/* CTA */}
                 <button
