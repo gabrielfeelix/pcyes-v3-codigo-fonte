@@ -39,6 +39,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { installmentCountFor, PIX_DISCOUNT, PIX_PERCENT } from "./section/PriceBlock";
 import { LineItemPrice } from "./section/LineItemPrice";
+import { setChatHidden } from "../lib/chatWidget";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { EarnPreview } from "./points/EarnPreview";
@@ -377,6 +378,11 @@ export function CheckoutPage() {
   // Resumo do pedido no mobile: fica escondido atrás de "Ver detalhes" na barra
   // fixa, para a pessoa focar só na etapa atual. No desktop segue na coluna.
   const [detailsOpen, setDetailsOpen] = useState(false);
+  /* O balão do chat ficava em cima do total do resumo aberto. */
+  useEffect(() => {
+    setChatHidden(detailsOpen);
+    return () => setChatHidden(false);
+  }, [detailsOpen]);
   const detailsSheetRef = useRef<HTMLDivElement>(null);
 
   // Abre o resumo e, quando vem de um atalho da barra, rola até a seção pedida.

@@ -10,9 +10,16 @@
  * custom properties), então quem tem barra fixa só publica a altura dela.
  *
  * Aberto (`.aberto`), o chat ocupa a tela inteira e fica como está.
+ *
+ * Fechado, o balão some enquanto um painel ocupa o pé da tela (o resumo do
+ * checkout no celular): ele ficava em cima do "Total no PIX". Mesma técnica,
+ * via `--chat-visibility`.
  */
 const STYLE_ID = "pcyes-chat-offset";
 const CSS = `
+.raiz:not(.aberto) {
+  visibility: var(--chat-visibility, visible) !important;
+}
 @media (max-width: 1023px) {
   .raiz:not(.aberto) {
     bottom: calc(14px + var(--chat-offset, 0px)) !important;
@@ -44,6 +51,13 @@ export function installChatOffset() {
   mo.observe(document.body, { childList: true, subtree: true });
   // O widget monta a `.raiz` logo depois do host; não vale observar para sempre.
   setTimeout(() => mo.disconnect(), 30_000);
+}
+
+/** Esconde o balão (fechado) enquanto um painel cobre o pé da tela. */
+export function setChatHidden(hidden: boolean) {
+  const root = document.documentElement.style;
+  if (hidden) root.setProperty("--chat-visibility", "hidden");
+  else root.removeProperty("--chat-visibility");
 }
 
 /** Publica (ou zera) quanto o balão precisa subir. */
