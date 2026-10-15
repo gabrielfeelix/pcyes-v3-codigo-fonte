@@ -37,7 +37,7 @@ import { Footer } from "./Footer";
 import { CheckoutHeader } from "./CheckoutHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
-import { installmentCountFor, PIX_DISCOUNT, PIX_PERCENT, pixTotalLine, cardTotalLine } from "./section/PriceBlock";
+import { installmentCountFor, PIX_DISCOUNT, PIX_PERCENT, PixLabel, pixTotalLine, cardTotalLine } from "./section/PriceBlock";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { EarnPreview } from "./points/EarnPreview";
@@ -1339,17 +1339,20 @@ export function CheckoutPage() {
                     >
                       Total
                     </span>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-family-figtree)",
-                        fontSize: "var(--text-xl)",
-                        fontWeight: 800,
-                        letterSpacing: "-0.02em",
-                        color: payment === "pix" ? "#22c55e" : "#fff",
-                      }}
-                    >
-                      <span aria-hidden="true">{formatBRL(total)}</span>
-                      <span className="sr-only">Total, {formatBRLSpoken(total)}</span>
+                    <span className="flex items-baseline gap-1.5">
+                      <span
+                        style={{
+                          fontFamily: "var(--font-family-figtree)",
+                          fontSize: "var(--text-xl)",
+                          fontWeight: 800,
+                          letterSpacing: "-0.02em",
+                          color: payment === "pix" ? "#22c55e" : "#fff",
+                        }}
+                      >
+                        <span aria-hidden="true">{formatBRL(total)}</span>
+                        <span className="sr-only">Total, {formatBRLSpoken(total)}</span>
+                      </span>
+                      {payment === "pix" && <PixLabel scale="catalog" />}
                     </span>
                   </div>
                   {payment === "pix" ? (
@@ -1362,6 +1365,10 @@ export function CheckoutPage() {
                     </p>
                   )}
                 </div>
+                {/* Quanto o pedido rende, logo abaixo do card do total e à direita,
+                    colado no preço: perto do número a pessoa associa os pontos
+                    ao valor. */}
+                <EarnPreview amount={total} className="mt-0.5 justify-end" />
 
     </>
   );

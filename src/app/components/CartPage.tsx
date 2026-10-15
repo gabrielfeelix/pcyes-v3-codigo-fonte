@@ -31,7 +31,7 @@ import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
 import { BrindePill, GiftProgressBlock, Price, PreOrderPill } from "./section";
-import { PIX_DISCOUNT, pixTotalLine } from "./section/PriceBlock";
+import { PIX_DISCOUNT, PixLabel, pixTotalLine } from "./section/PriceBlock";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { cepUf, isValidCep } from "../../utils/cep";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
@@ -925,7 +925,7 @@ export function CartPage() {
                 </div>
 
                 {/* Total */}
-                <div className="mb-5 rounded-[var(--radius-card-sm)] p-4" style={{ background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}>
+                <div className="rounded-[var(--radius-card-sm)] p-4" style={{ background: "rgba(var(--foreground-rgb), 0.03)", border: "1px solid rgba(var(--foreground-rgb), 0.06)" }}>
                   {/* O número grande é o do Pix, o mesmo que a vitrine e a PDP
                       mostram. Com o preço cheio em destaque, o total parecia
                       subir entre a PDP e o carrinho e só "voltar" quando a
@@ -934,7 +934,10 @@ export function CartPage() {
                     <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, color: "#22c55e" }}>
                       Total
                     </span>
-                    <Price value={totalPix} label="Total no Pix" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 800, color: "#22c55e", letterSpacing: "-0.02em" }} />
+                    <span className="flex items-baseline gap-1.5">
+                      <Price value={totalPix} label="Total no Pix" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 800, color: "#22c55e", letterSpacing: "-0.02em" }} />
+                      <PixLabel scale="catalog" />
+                    </span>
                   </div>
                   {/* O total só é fechado quando não há frete estimado dentro
                       dele. Com CEP informado, o número acima é estimativa e
@@ -947,11 +950,10 @@ export function CartPage() {
                   <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
                     {pixTotalLine(total)}
                   </p>
-                  {/* Dentro do card de total, porque é sobre ESTE pedido. */}
-                  <div className="mt-3 border-t border-foreground/8 pt-3">
-                    <EarnPreview amount={total} />
-                  </div>
                 </div>
+                {/* Logo abaixo do card do total, à direita, colado no preço: perto
+                    do número a pessoa associa os pontos ao valor deste pedido. */}
+                <EarnPreview amount={total} className="mt-0.5 mb-5 justify-end" />
 
                 {/* CTA */}
                 <button

@@ -61,15 +61,16 @@ export function installmentCountFor(total: number): number {
   return Math.max(1, Math.min(INSTALLMENTS, Math.floor(cents / (MIN_INSTALLMENT * 100))));
 }
 
-/** Linha embaixo do total do carrinho e do checkout, numa linha só: o total
-    grande é o do PIX; a linha diz o desconto e quanto fica no cartão.
+/** Linha embaixo do total do carrinho e do checkout. O "no PIX" fica ao lado
+    do preço (PixLabel), como nos cards; aqui só a alternativa do cartão.
+    A frase com "com 5% de desconto" no meio ficava longa demais, e
+    "no cartão," sai porque "sem juros" já diz que é cartão: cabe numa linha.
     `cardTotal` é o total sem o desconto do PIX. */
 export function pixTotalLine(cardTotal: number): string {
   const n = installmentCountFor(cardTotal);
-  const card = n > 1
-    ? `${formatBRL(cardTotal)} no cartão, em até ${n}× de ${formatBRL(cardTotal / n)} sem juros`
-    : `${formatBRL(cardTotal)} no cartão`;
-  return `no PIX, com ${PIX_PERCENT}% de desconto, ou ${card}`;
+  return n > 1
+    ? `ou ${formatBRL(cardTotal)} em até ${n}× de ${formatBRL(cardTotal / n)} sem juros`
+    : `ou ${formatBRL(cardTotal)} no cartão`;
 }
 
 /** O inverso, quando a forma escolhida é cartão ou boleto. */

@@ -199,9 +199,11 @@ export function CartDrawer() {
                   <Price value={total} label="Total" className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: "var(--font-weight-medium)" }} />
                 </div>
 
-                {/* Colado no total, porque é sobre ESTE pedido. O saldo que a
-                    pessoa já tem mora no topo e responde outra pergunta. */}
-                <EarnPreview amount={total} />
+                {/* Colado no total e alinhado à direita, embaixo do preço: é sobre
+                    ESTE pedido, e perto do número a pessoa associa os pontos ao
+                    valor (como Shopee e cia). O saldo que ela já tem mora no
+                    topo e responde outra pergunta. */}
+                <EarnPreview amount={total} className="justify-end" />
 
                 <button
                   className="w-full py-4 rounded-full text-ink-strong transition-transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
