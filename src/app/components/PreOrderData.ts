@@ -8,12 +8,15 @@ export interface PreOrderInfo {
 }
 
 /**
- * ATENÇÃO: `releaseDate` no PASSADO mata o contador.
+ * ATENÇÃO: `releaseDate` no PASSADO tira o item da pré-venda.
  *
- * O card de pré-venda troca a contagem regressiva por "Já disponível" assim que
- * a data vence (`countdown.isLive`). Com datas fixas isso acontece sozinho com
- * o tempo: em agosto/2026 dez dos quinze itens já tinham vencido e só um punhado
- * ainda contava. Ao revisar o protótipo, empurre as datas vencidas para frente.
+ * Produto lançado é produto normal: `getPreOrderInfo` devolve null e a PDP, os
+ * cards e o carrinho mostram "Adicionar ao carrinho" em verde, não "Comprar
+ * agora" em laranja. Antes a pré-venda vencida ficava pela metade: o bloco
+ * dizia "Já disponível" e o botão seguia de pré-venda (a RTX 3060, id 433,
+ * lançou em 12/09 e em 15/10 ainda dizia "Comprar agora"). Com datas fixas os
+ * itens vencem sozinhos com o tempo; para manter a vitrine de pré-venda cheia,
+ * empurre as datas para frente.
  */
 export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   {
@@ -139,5 +142,6 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
 ];
 
 export function getPreOrderInfo(productId: number): PreOrderInfo | null {
-  return PRE_ORDER_ITEMS.find((p) => p.productId === productId) ?? null;
+  const info = PRE_ORDER_ITEMS.find((p) => p.productId === productId);
+  return info && new Date(info.releaseDate).getTime() > Date.now() ? info : null;
 }
