@@ -30,7 +30,7 @@ import { Footer } from "./Footer";
 import { allProducts } from "./productsData";
 import { getPrimaryProductImage, getShowcaseProducts } from "./productPresentation";
 import { getPreOrderInfo } from "./PreOrderData";
-import { BrindePill, GiftProgressBlock, Price, PreOrderPill } from "./section";
+import { BrindePill, GiftProgressBlock, LineItemPrice, Price, PreOrderPill } from "./section";
 import { PIX_DISCOUNT } from "./section/PriceBlock";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { cepUf, isValidCep } from "../../utils/cep";
@@ -400,27 +400,7 @@ export function CartPage() {
                       </p>
                     </>
                   ) : (
-                    <>
-                      <p
-                        className="text-ink-strong"
-                        style={{
-                          fontFamily: "var(--font-family-figtree)",
-                          fontSize: "var(--text-lg)",
-                          fontWeight: 800,
-                          letterSpacing: "-0.015em",
-                        }}
-                      >
-                        <Price value={unit * item.quantity} />
-                      </p>
-                      {item.quantity > 1 && (
-                        <p
-                          className="text-ink-subtle"
-                          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
-                        >
-                          {item.quantity}× <Price value={unit} />
-                        </p>
-                      )}
-                    </>
+                    <LineItemPrice unit={unit} quantity={item.quantity} variant="cart" />
                   );
                   return (
                     <motion.div
@@ -1129,11 +1109,12 @@ export function CartPage() {
           style={{ background: "rgba(14,14,14,0.95)", backdropFilter: "blur(20px)" }}
         >
           <div className="flex-1 min-w-0">
+            {/* "no PIX" no rótulo, como no OrderTotal: o número verde é o do PIX. */}
             <p
-              className="text-ink-muted"
-              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" }}
+              aria-hidden="true"
+              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#22c55e" }}
             >
-              Total
+              Total no PIX
             </p>
             <p>
               <Price

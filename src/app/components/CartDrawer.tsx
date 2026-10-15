@@ -8,7 +8,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { getPrimaryProductImage } from "./productPresentation";
 import { PointsPill } from "./points/PointsPill";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
-import { BrindePill, GiftProgressBlock, Price, PreOrderPill, QtyStepper, ScrollFade } from "./section";
+import { BrindePill, GiftProgressBlock, LineItemPrice, Price, PreOrderPill, QtyStepper, ScrollFade } from "./section";
 import { useFocusTrap } from "../lib/useFocusTrap";
 import { getPreOrderInfo } from "./PreOrderData";
 import { formatBRL, parseBRL } from "../../utils/format";
@@ -155,9 +155,15 @@ export function CartDrawer() {
                               {item.isGift && item.originalPrice && (
                                 <p className="text-foreground/20 line-through" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>{item.originalPrice}</p>
                               )}
-                              <p className={item.isGift ? "text-primary" : "text-foreground/50"} style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: item.isGift ? "600" : "400" }}>
-                                <Price value={parsePrice(item.price)} />
-                              </p>
+                              {item.isGift ? (
+                                <p className="text-primary" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: "600" }}>
+                                  <Price value={parsePrice(item.price)} />
+                                </p>
+                              ) : (
+                                <div>
+                                  <LineItemPrice unit={parsePrice(item.price)} quantity={item.quantity} variant="drawer" />
+                                </div>
+                              )}
                             </div>
                           </div>
                           <div className="mt-2 flex items-center justify-between">

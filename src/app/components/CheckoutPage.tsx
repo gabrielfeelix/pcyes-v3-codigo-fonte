@@ -38,6 +38,7 @@ import { CheckoutHeader } from "./CheckoutHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { installmentCountFor, PIX_DISCOUNT, PIX_PERCENT } from "./section/PriceBlock";
+import { LineItemPrice } from "./section/LineItemPrice";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { EarnPreview } from "./points/EarnPreview";
@@ -1043,7 +1044,7 @@ export function CheckoutPage() {
                             marginTop: "3px",
                           }}
                         >
-                          {item.isGift ? "Brinde · Cortesia PCYES" : `${item.quantity}× ${item.price}`}
+                          {item.isGift ? "Brinde · Cortesia PCYES" : <LineItemPrice unit={parseBRL(item.price)} quantity={item.quantity} variant="summary" method={payment === "pix" ? "pix" : "card"} />}
                         </p>
                       </div>
                     </motion.div>
@@ -1148,7 +1149,7 @@ export function CheckoutPage() {
                             marginTop: "2px",
                           }}
                         >
-                          {item.isGift ? "Brinde · Grátis" : item.price}
+                          {item.isGift ? "Brinde · Grátis" : <LineItemPrice unit={parseBRL(item.price)} quantity={item.quantity} variant="summary" method={payment === "pix" ? "pix" : "card"} />}
                         </p>
                       </div>
                     </div>
@@ -2129,7 +2130,7 @@ export function CheckoutPage() {
                                     {item.name}
                                   </p>
                                   <p className="text-ink-subtle" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                                    {item.quantity}× {item.isGift ? "Brinde" : item.price}
+                                    {item.isGift ? `${item.quantity}× Brinde` : <LineItemPrice unit={parseBRL(item.price)} quantity={item.quantity} variant="summary" method={payment === "pix" ? "pix" : "card"} />}
                                   </p>
                                 </div>
                               </div>
@@ -2253,10 +2254,10 @@ export function CheckoutPage() {
                 afordância de expandir, e dois alvos para a mesma ação viram
                 ruído. */}
             <span
-              className="block text-ink-muted"
-              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" }}
+              className={payment === "pix" ? "block" : "block text-ink-muted"}
+              style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: payment === "pix" ? "#22c55e" : undefined }}
             >
-              Total
+              {payment === "pix" ? "Total no PIX" : "Total"}
             </span>
             <span
               className="block text-ink-strong"
