@@ -1427,8 +1427,11 @@ export function ProfilePage() {
                     /* O mesmo ProductCard da home (variante grid: imagem quadrada, nome em
                        2 linhas, preço no PIX, "Adicionar" verde). Antes o perfil tinha um
                        card próprio, com estrela, selo, preço e botão diferentes da vitrine.
-                       O coração do card tira o produto da lista. */
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                       O coração do card tira o produto da lista. Espaço entre linhas
+                       igual ao da listagem (ProductsPage); entre colunas, 12px no celular
+                       para a parcela caber inteira. Com gap-3 o PC Points de
+                       uma linha encostava na foto da linha de baixo. */
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-x-3 sm:gap-x-6 gap-y-8 md:gap-y-14">
                       {favoriteProducts.map((product) => (
                         <ProductCard
                           key={product.id}
