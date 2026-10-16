@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "./ThemeProvider";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { SOCIAL_BRANDS, SocialBrandIcon, socialNetworkFromUrl } from "./SocialBrandIcon";
 
 /**
  * Feed de influenciador, não vitrine.
@@ -32,20 +33,106 @@ interface Post {
    * não servir.
    */
   imgPos?: string;
+  /** Perfis da pessoa, na ordem em que aparecem no modal. Vazio = o bloco some. */
+  socials?: Social[];
 }
 
-/* Fotos finais do design (Site V2), 1200×1600 (3:4). O @ saiu do nome do
-   arquivo e ainda não foi confirmado; `role` e `about` ficam vazios até o
-   marketing mandar a apresentação de cada criador — não inventar bio. */
+interface Social {
+  /** Nome da rede, como aparece na pílula. Duas contas na mesma rede levam o @ junto. */
+  label: string;
+  url: string;
+}
+
+/* Fotos finais do design (Site V2), 1200×1600 (3:4). @, nome, seguidores, bio e
+   redes vêm da apresentação dos criadores enviada pelo marketing (out/2026). */
 const posts: Post[] = [
-  { id: 1, image: "/influencers/king.webp", username: "king" },
-  { id: 2, image: "/influencers/atri.webp", username: "atri" },
-  { id: 3, image: "/influencers/butterzinho.webp", username: "butterzinho" },
-  { id: 4, image: "/influencers/kaciane.webp", username: "kaciane" },
-  { id: 5, image: "/influencers/lucas-incrivel-filme.webp", username: "lucasincrivelfilme" },
-  { id: 6, image: "/influencers/paivinha.webp", username: "paivinha" },
-  { id: 7, image: "/influencers/projeto-trivia.webp", username: "projetotrivia" },
-  { id: 8, image: "/influencers/wesley.webp", username: "wesley" },
+  {
+    id: 1, image: "/influencers/king.webp", username: "kingsizejoga",
+    role: "King · +334,6k seguidores",
+    about: "King (KingSizejoga) é criador de conteúdo gamer, conhecido por seus conteúdos de jogos e entretenimento, com presença em diferentes redes sociais e uma comunidade de mais de 334 mil seguidores.",
+    socials: [
+      { label: "Instagram", url: "https://www.instagram.com/kingsizejoga/" },
+      { label: "Twitch", url: "https://www.twitch.tv/kingsizejoga" },
+      { label: "TikTok", url: "https://www.tiktok.com/@kingsizejoga" },
+      { label: "YouTube", url: "https://www.youtube.com/@KingSizejoga" },
+    ],
+  },
+  {
+    id: 2, image: "/influencers/atri.webp", username: "atriaki",
+    role: "Atri · +113,7k seguidores",
+    about: "Amanda Nickhorn, conhecida como Atri, é criadora de conteúdo do universo gamer, com conteúdos voltados para games e entretenimento.",
+    socials: [
+      { label: "Instagram", url: "https://www.instagram.com/atriakii/" },
+      { label: "Twitch", url: "https://www.twitch.tv/atriaki" },
+      { label: "TikTok", url: "https://www.tiktok.com/@atriaki" },
+    ],
+  },
+  {
+    id: 3, image: "/influencers/butterzinho.webp", username: "butterzim",
+    role: "Butterzim · +609,3k seguidores",
+    about: "Butterzim é criador de conteúdo gamer, conhecido por seus vídeos de jogos e entretenimento nas redes sociais, com uma comunidade de mais de 609 mil seguidores.",
+    socials: [
+      { label: "Instagram", url: "https://www.instagram.com/butterzim/" },
+      { label: "YouTube", url: "https://www.youtube.com/@butterzim" },
+      { label: "TikTok", url: "https://www.tiktok.com/@butterzim" },
+      { label: "X", url: "https://x.com/butterzimm" },
+    ],
+  },
+  {
+    id: 4, image: "/influencers/kaciane.webp", username: "kacianecaroline",
+    role: "Kaciane · +904,5k seguidores",
+    about: "Kaciane Caroline é criadora de conteúdo conhecida por seus vídeos de games, humor e entretenimento, com presença em diferentes redes sociais e uma comunidade de mais de 904 mil seguidores.",
+    socials: [
+      { label: "Instagram", url: "https://www.instagram.com/kacianecaroline/" },
+      { label: "YouTube", url: "https://www.youtube.com/@kacianecaroline" },
+      { label: "TikTok", url: "https://www.tiktok.com/@kacianecaroline" },
+      { label: "Facebook", url: "https://www.facebook.com/kacianecarolinee" },
+    ],
+  },
+  {
+    id: 5, image: "/influencers/lucas-incrivel-filme.webp", username: "incrivelfilme",
+    role: "Lucas · +2M seguidores",
+    about: "Lucas Dominic do perfil Incrível Filme é criador de conteúdo conhecido por falar sobre filmes e cinema, com mais de 2 milhões de seguidores.",
+    socials: [
+      { label: "Instagram", url: "https://www.instagram.com/incrivelfilme/" },
+      { label: "YouTube", url: "https://www.youtube.com/@incrivelfilme" },
+      { label: "TikTok", url: "https://www.tiktok.com/@incrivelfilme" },
+      { label: "Facebook", url: "https://www.facebook.com/incrivelfilmeoficial" },
+    ],
+  },
+  {
+    id: 6, image: "/influencers/paivinha.webp", username: "paivinha29",
+    role: "Paivinha · +1,1M seguidores",
+    about: "Gustavo Paiva, conhecido como Paivinha, é criador de conteúdo gamer, conhecido por seus conteúdos de futebol virtual, com uma comunidade de mais de 1,1 milhão de seguidores.",
+    socials: [
+      { label: "Instagram", url: "https://www.instagram.com/paivinha29/" },
+      { label: "Twitch", url: "https://www.twitch.tv/paivinha29" },
+      { label: "YouTube", url: "https://www.youtube.com/@PAIVINHA_29" },
+      { label: "TikTok", url: "https://www.tiktok.com/@paivinha29_" },
+      { label: "Kick", url: "https://kick.com/paivinha" },
+    ],
+  },
+  {
+    id: 7, image: "/influencers/projeto-trivia.webp", username: "oprojetotrivia",
+    role: "Projeto Trivia · +1,5M seguidores",
+    about: "Estevão e Eduardo, do Projeto Trivia, são irmãos e criadores de conteúdo conhecidos por seus vídeos de perguntas e respostas e desafios de conhecimentos gerais, com mais de 1,5 milhão de seguidores.",
+    socials: [
+      { label: "Instagram", url: "https://www.instagram.com/oprojetotrivia/" },
+      { label: "TikTok", url: "https://www.tiktok.com/@oprojetotrivia" },
+      { label: "YouTube", url: "https://www.youtube.com/@PROJETOTRIVIA2" },
+    ],
+  },
+  {
+    id: 8, image: "/influencers/wesley.webp", username: "wesyfrancisco",
+    role: "Wesley · +603k seguidores",
+    about: "Wesley Francisco, conhecido como Wesy, é criador de conteúdo gamer, com vídeos voltados para jogos e entretenimento e uma comunidade de mais de 603 mil seguidores.",
+    socials: [
+      { label: "Instagram", url: "https://www.instagram.com/wesyfrancisco/" },
+      { label: "YouTube @wesy", url: "https://www.youtube.com/@wesy" },
+      { label: "YouTube @WesyTvz", url: "https://www.youtube.com/@WesyTvz" },
+      { label: "TikTok", url: "https://www.tiktok.com/@wesyfrancisco" },
+    ],
+  },
 ];
 
 export function InRealLifeSection() {
@@ -379,8 +466,10 @@ export function InRealLifeSection() {
                 </button>
               </div>
 
-              {/* Direita: quem é a pessoa. */}
-              <div className="md:w-[40%] p-6 md:p-8 flex flex-col overflow-y-auto">
+              {/* Direita: quem é a pessoa. `min-h-0` deixa a coluna encolher
+                  dentro do modal no celular e rolar; sem ele o fim (redes e
+                  "Próximo") ficava cortado pelo `overflow-hidden` do modal. */}
+              <div className="md:w-[40%] min-h-0 p-6 md:p-8 flex flex-col overflow-y-auto">
                 <button
                   onClick={() => setSelectedIdx(null)}
                   aria-label="Fechar"
@@ -419,6 +508,39 @@ export function InRealLifeSection() {
                 >
                   {selectedPost.about}
                 </p>
+                </>
+                )}
+
+                {selectedPost.socials && selectedPost.socials.length > 0 && (
+                <>
+                <span
+                  className="text-foreground/25 block mt-7 mb-3 tracking-wider"
+                  style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
+                >
+                  REDES
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {/* Cada pílula carrega a cor da rede em `--brand`: o logo já
+                      vem nela, e no hover a borda e o fundo acendem no mesmo tom. */}
+                  {selectedPost.socials.map((s) => {
+                    const network = socialNetworkFromUrl(s.url);
+                    const brand = network ? SOCIAL_BRANDS[network].color : "#ffffff";
+                    return (
+                      <a
+                        key={s.url}
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${s.label} de @${selectedPost.username} (abre em nova aba)`}
+                        className="inline-flex h-10 items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] pl-3 pr-4 text-foreground/80 transition-all duration-200 hover:-translate-y-px hover:text-foreground hover:border-[color-mix(in_srgb,var(--brand)_55%,transparent)] hover:bg-[color-mix(in_srgb,var(--brand)_14%,transparent)]"
+                        style={{ "--brand": brand, fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 } as CSSProperties}
+                      >
+                        {network && <SocialBrandIcon network={network} size={16} />}
+                        {s.label}
+                      </a>
+                    );
+                  })}
+                </div>
                 </>
                 )}
 
