@@ -21,13 +21,53 @@ const MESSAGES: { texto: string; cupom?: string }[] = [
   { texto: "I am your father... do desconto. 10% extra com o cupom", cupom: "NERDPRIDE" },
 ];
 
+/**
+ * Faixa em imagem: o marketing sobe um PNG para o desktop e outro para o
+ * celular, e a faixa mostra a imagem no lugar dos textos. Sem imagem
+ * configurada, volta para os textos acima.
+ *
+ * Arte gerada por operacao/assets-site/faixa-topo/gerar-faixa.mjs (marca pcyes).
+ * Tamanhos (2x, para tela retina): desktop 3840 × 80 (aparece com 40 px de
+ * altura) e celular 780 × 72 (36 px). A imagem preenche a largura e corta as
+ * laterais em telas menores, então texto e selo ficam nos 1200 px centrais no
+ * desktop e nos 340 px centrais no celular.
+ *
+ * O selo do cupom está desenhado na imagem; clicar em qualquer ponto da faixa
+ * copia o código.
+ */
+const BANNER_IMAGEM: {
+  desktop: string;
+  mobile: string;
+  alt: string;
+  cupom?: string;
+} | null = {
+  desktop: "/banners/faixa-bemvindo10-desktop.png",
+  mobile: "/banners/faixa-bemvindo10-mobile.png",
+  alt: "Primeira compra? Ganhe 10% OFF com o cupom BEMVINDO10",
+  cupom: "BEMVINDO10",
+};
+
+/** Altura da faixa em imagem: 40 px no desktop e 36 px no celular. */
+const ALTURA_IMAGEM = { desktop: 40, mobile: 36 };
+
 export function AnnouncementBar() {
   const [dismissed, setDismissed] = useState(false);
   const [idx, setIdx] = useState(0);
   const [copiado, setCopiado] = useState(false);
   const timerCopia = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [celular, setCelular] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const onChange = () => setCelular(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   const mensagem = MESSAGES[idx];
+  const alturaFaixa = BANNER_IMAGEM ? (celular ? ALTURA_IMAGEM.mobile : ALTURA_IMAGEM.desktop) : 40;
 
   /* Um cupom por vez: trocar de anúncio limpa o "copiado" do anterior. */
   useEffect(() => {
@@ -50,14 +90,79 @@ export function AnnouncementBar() {
   };
 
   useEffect(() => {
-    document.documentElement.style.setProperty("--announce-h", dismissed ? "0px" : "40px");
-  }, [dismissed]);
+    document.documentElement.style.setProperty("--announce-h", dismissed ? "0px" : `${alturaFaixa}px`);
+  }, [dismissed, alturaFaixa]);
 
   useEffect(() => () => {
     document.documentElement.style.setProperty("--announce-h", "0px");
   }, []);
 
   if (dismissed) return null;
+
+  if (BANNER_IMAGEM) {
+    const { desktop, mobile, alt, cupom } = BANNER_IMAGEM;
+    return (
+      <div
+        role="region"
+        aria-label="Aviso promocional"
+        className="announce-bar fixed inset-x-0 top-0 z-[60] w-full overflow-hidden"
+        style={{ height: alturaFaixa, background: "#9b0f1e" }}
+      >
+        <button
+          type="button"
+          onClick={() => cupom && copiar(cupom)}
+          aria-label={cupom ? (copiado ? `Cupom ${cupom} copiado` : `${alt}. Copiar cupom ${cupom}`) : alt}
+          className="block h-full w-full cursor-pointer"
+        >
+          {/* `object-cover` centralizado: a imagem ocupa a largura toda e, em
+              tela menor que 1920, perde só as pontas, que são fundo. */}
+          <picture>
+            <source media="(max-width: 767px)" srcSet={mobile} />
+            <img src={desktop} alt="" className="h-full w-full object-cover object-center" draggable={false} />
+          </picture>
+        </button>
+
+        {/* Confirma a cópia por cima da imagem, no centro, sem esconder o X. */}
+        {copiado && (
+          <span
+            className="pointer-events-none absolute inset-0 flex items-center justify-center gap-1.5"
+            style={{
+              background: "rgba(10,10,10,0.82)",
+              color: "#4ade80",
+              fontFamily: "var(--font-family-inter)",
+              fontSize: "var(--text-sm)",
+              fontWeight: 700,
+              animation: "fadeSlide 0.25s ease",
+            }}
+          >
+            <Check size={14} strokeWidth={2.6} aria-hidden="true" />
+            Cupom {cupom} copiado
+          </span>
+        )}
+        <span role="status" aria-live="polite" className="sr-only">
+          {copiado ? `Cupom ${cupom} copiado` : ""}
+        </span>
+
+        {/* Só do md pra cima: no celular a arte ocupa a largura toda e, em 360
+            px, o X caía em cima do selo do cupom. Lá a faixa já some ao rolar,
+            junto com o header. */}
+        <button
+          onClick={() => setDismissed(true)}
+          aria-label="Fechar aviso"
+          className="absolute right-4 top-1/2 hidden h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-black/25 hover:text-white md:flex"
+        >
+          <X size={12} strokeWidth={2.4} />
+        </button>
+
+        <style>{`
+          @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(2px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div
