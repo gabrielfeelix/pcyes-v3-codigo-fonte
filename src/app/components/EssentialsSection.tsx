@@ -7,7 +7,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getProductSwatches, getProductVariants } from "./productPresentation";
-import { CTAButton } from "./section";
+import { CTAButton, PriceBlock } from "./section";
 
 const ESSENTIAL_IDS = [128, 173, 72, 436, 329] as const;
 
@@ -216,17 +216,14 @@ function EssentialCard({ product }: EssentialCardProps) {
             border: "1px solid rgba(var(--foreground-rgb), 0.06)",
           }}
         >
-          <span
-            className="text-ink-strong whitespace-nowrap"
-            style={{
-              fontFamily: "var(--font-family-figtree)",
-              fontSize: "var(--text-xl)",
-              fontWeight: 700,
-              letterSpacing: "-0.01em",
-            }}
-          >
-            {product.price}
-          </span>
+          {/* Mesmo bloco de preço do resto da loja: PIX em destaque com o "no
+              PIX" ao lado, parcela e PC Points embaixo. Antes era só o preço
+              cheio, um número seco que nem batia com o do card da home. */}
+          <PriceBlock
+            scale="catalog"
+            priceNum={product.priceNum}
+            oldPriceNum={product.oldPriceNum && product.oldPriceNum > product.priceNum ? product.oldPriceNum : undefined}
+          />
 
           <CTAButton
             onClick={handleAdd}
