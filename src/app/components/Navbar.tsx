@@ -296,7 +296,7 @@ const megaMenus: Record<string, MegaMenu> = {
         eyebrow: "Parcerias",
         tagline: "Leve sua marca para o setup de quem joga.",
         image: "https://pcyes-cdn.oderco.com.br/Produtos/Cadeira-Gamer/Maringafc/1.png",
-        href: "/fale-conosco",
+        href: "/fale-conosco?assunto=collab",
         cta: "Falar com a gente",
         status: "em-breve",
       },
