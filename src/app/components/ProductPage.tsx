@@ -56,6 +56,7 @@ import { useFocusTrap } from "../lib/useFocusTrap";
 import { trackViewItem } from "../../utils/analytics";
 import { productDetails } from "./productDetails";
 import { getDriverForProduct, type DriverFile } from "./driversData";
+import { ProductSpecs } from "./ProductSpecs";
 
 /* ── helpers ─────────────────────────────────────────── */
 
@@ -2956,13 +2957,6 @@ function ProductStandardDescription({
   const primaryImage = images[0] ?? getPrimaryProductImage(product);
   const secondaryImage = images[1] ?? primaryImage;
   const tertiaryImage = images[2] ?? secondaryImage;
-  const specs = product.specs?.length
-    ? product.specs
-    : [
-        { label: "Categoria", value: product.category },
-        { label: "Modelo", value: product.sku ? String(product.sku) : product.name },
-        { label: "Marca", value: product.brand ?? "PCYES" },
-      ];
 
   const lead = product.description?.split("\n").find((item: string) => item.trim()) ??
     `${product.name} foi desenvolvido para entregar desempenho, acabamento e confiabilidade no uso diário.`;
@@ -3085,33 +3079,6 @@ function ProductStandardDescription({
                 allowFullScreen
               />
             </div>
-          </section>
-
-          <section className="border-t border-edge-subtle px-6 py-10 md:px-10">
-            <article className="relative overflow-hidden" style={{ borderRadius: "var(--radius-card-xl)", ...productImageBg }}>
-              <div className="relative z-10 w-full p-7 md:w-[62%] md:p-9">
-                <p className="mb-4 text-primary tracking-[0.22em]" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800 }}>
-                  // RAIO-X DO PRODUTO
-                </p>
-                <h3 className="text-foreground" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "clamp(28px, 4vw, 38px)", lineHeight: 1.08, fontWeight: 700 }}>
-                  Especificações técnicas
-                </h3>
-                <dl className="mt-6 grid gap-3">
-                  {specs.slice(0, 8).map((spec: { label: string; value: string }) => (
-                    <div key={spec.label} className="grid gap-2 border-b border-edge-subtle pb-3 sm:grid-cols-[170px_1fr]">
-                      <dt className="text-foreground/48 tracking-[0.12em]" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 800 }}>
-                        {spec.label}
-                      </dt>
-                      <dd className="text-foreground/85" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
-                        {spec.value}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-              <ImageWithFallback src={tertiaryImage} alt={`${product.name} especificações`} className="absolute inset-y-0 right-0 hidden h-full w-[40%] object-contain p-6 md:block" />
-              <div className="absolute inset-y-0 left-0 w-[70%] bg-gradient-to-r from-[#161617] via-[#161617]/60 to-transparent pointer-events-none" />
-            </article>
           </section>
         </div>
       </div>
@@ -3821,6 +3788,8 @@ export function ProductPage() {
                 onOpenWorkloadsCatalog={showWorkloads}
               />
             </div>
+
+            {!isSetupProduct(product) && <ProductSpecs key={product.id} sku={product.sku} />}
 
             <ProductDownloads key={product.id} productId={product.id} />
 
