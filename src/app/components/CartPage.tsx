@@ -906,11 +906,10 @@ export function CartPage() {
                 </div>
 
                 {/* Total: o mesmo card do carrinho lateral e do checkout. */}
+                {/* Sem nota de frete estimado: o aviso já fica embaixo do cálculo de frete. */}
                 <OrderTotal
                   cardTotal={total}
                   pixTotal={totalPix}
-                  /* O total só é fechado quando não há frete estimado dentro dele. */
-                  note={chosenShipping ? "Com frete estimado para o CEP informado" : undefined}
                   className="mb-5"
                 />
 

@@ -84,7 +84,7 @@ export function OrderTotal({
           {isPix ? pixTotalLine(cardTotal) : cardTotalLine(pixTotal)}
         </p>
       </div>
-      <EarnPreview amount={payable} className="mt-0.5 justify-center" />
+      <EarnPreview amount={payable} className="mt-3 justify-center" />
     </div>
   );
 }

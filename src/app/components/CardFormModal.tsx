@@ -110,11 +110,15 @@ export function CardFormModal({ open, onClose, initial, onSubmit }: Props) {
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent
-        className="!max-w-[560px] !p-0 !gap-0 !border-0"
+        /* Largura: 560px, mas nunca sem os 16px de cada lado no celular (o
+           `!max-w-[560px]` sozinho apagava o `calc(100%-2rem)` do Dialog e a janela
+           ia de borda a borda). Altura: cabe na tela e rola por dentro. */
+        className="!w-[calc(100%-2rem)] !max-w-[560px] max-h-[calc(100dvh-2rem)] !p-0 !gap-0 !border-0"
         style={{
           background: "var(--surface-1)",
           borderRadius: "var(--radius-card-lg)",
-          overflow: "hidden",
+          overflowX: "hidden",
+          overflowY: "auto",
           color: isDark ? "#fafafa" : "#0a0a0a",
         }}
       >
@@ -127,7 +131,7 @@ export function CardFormModal({ open, onClose, initial, onSubmit }: Props) {
               {initial ? "Editar cartão" : "Adicionar cartão"}
             </DialogTitle>
             <DialogDescription style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", color: isDark ? "rgba(var(--foreground-rgb), 0.55)" : "rgba(0,0,0,0.55)" }}>
-              Os dados ficam salvos pra agilizar o checkout.
+              Guardamos só os 4 últimos dígitos e a validade. O CVV, nunca.
             </DialogDescription>
           </div>
         </div>
@@ -135,7 +139,7 @@ export function CardFormModal({ open, onClose, initial, onSubmit }: Props) {
         {/* ─── Card preview com flip 3D ─── */}
         <div className="px-6 pt-5 pb-2 flex justify-center" style={{ perspective: 1200 }}>
           <div
-            className="relative w-full max-w-[340px]"
+            className="relative w-full max-w-[260px] sm:max-w-[340px]"
             style={{
               aspectRatio: "1.586 / 1",
               transformStyle: "preserve-3d",

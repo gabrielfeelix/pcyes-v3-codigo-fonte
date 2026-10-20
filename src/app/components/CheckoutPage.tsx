@@ -16,6 +16,7 @@ import {
   ArrowRight,
   Zap,
   Wallet,
+  Barcode,
   Apple,
   Fingerprint,
   X,
@@ -40,6 +41,9 @@ import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/for
 import { installmentCountFor, PIX_DISCOUNT, PIX_PERCENT } from "./section/PriceBlock";
 import { LineItemPrice } from "./section/LineItemPrice";
 import { setChatHidden } from "../lib/chatWidget";
+import visaLogo from "./icons/visa-logo.svg";
+import mastercardLogo from "./icons/mastercard-logo.svg";
+import amexLogo from "./icons/amex-logo.svg";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { EarnPreview } from "./points/EarnPreview";
@@ -348,6 +352,7 @@ export function CheckoutPage() {
      da etapa correspondente automaticamente quando o usuário seleciona um. */
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const savedCards = user?.cards ?? [];
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [cardModalOpen, setCardModalOpen] = useState(false);
   const [address, setAddress] = useState<Address>({
@@ -369,6 +374,7 @@ export function CheckoutPage() {
   const [cardNumber, setCardNumber] = useState("");
   const [cardExp, setCardExp] = useState("");
   const [cardCvc, setCardCvc] = useState("");
+  const [payerDoc, setPayerDoc] = useState("");
   const [installments, setInstallments] = useState(1);
   const { appliedCoupon, setAppliedCoupon, pointsApplied, setPointsApplied, pointsToUse, setPointsToUse } = useCheckoutPrefs();
   const [coupon, setCoupon] = useState("");
@@ -477,13 +483,13 @@ export function CheckoutPage() {
   const step0Valid = address.zip.length >= 9 && !!address.street && !!address.number && !!address.city && !!address.recipient;
   const step1Valid = !!selectedShipping;
   const step2Valid =
+    isValidDoc(payerDoc) && (
     payment === "pix" ||
     payment === "boleto" ||
-    payment === "apple" ||
-    payment === "google" ||
     // Cartão salvo selecionado já é válido (CVV é mock, sem campo). Cartão NOVO
     // exige o formulário completo. Antes o cartão salvo travava o "Continuar".
-    (payment === "credit" && (selectedCardId !== null || (!!cardName && cardNumber.length >= 15 && cardExp.length === 5 && cardCvc.length >= 3)));
+    (payment === "credit" && selectedCardId !== null) ||
+    (payment === "mercadopago" && !!cardName && cardNumber.length >= 15 && cardExp.length === 5 && cardCvc.length >= 3));
 
   const canAdvance = step === 0 ? step0Valid : step === 1 ? step1Valid : step === 2 ? step2Valid : true;
 
@@ -668,9 +674,9 @@ export function CheckoutPage() {
   /* Auto-seleciona cartão default ao escolher pagamento crédito. */
   useEffect(() => {
     if (payment !== "credit" || !isLoggedIn || !user || selectedCardId !== null) return;
-    const def = user.cards.find((c) => c.isDefault) || user.cards[0];
+    const def = savedCards.find((c) => c.isDefault) || savedCards[0];
     if (def) setSelectedCardId(def.id);
-  }, [payment, isLoggedIn, user, selectedCardId]);
+  }, [payment, isLoggedIn, user, selectedCardId, savedCards]);
 
   /* Sincroniza form de cartão com o saved selecionado (CVV continua vazio — usuário digita toda vez). */
   useEffect(() => {
@@ -1345,6 +1351,7 @@ export function CheckoutPage() {
   return (
     <>
       <CheckoutHeader onBack={goBack} backLabel={step === 0 ? "Voltar ao carrinho" : "Voltar"} />
+
       <div className="pt-16 md:pt-[72px] pb-44 lg:pb-0" style={{ background: "var(--surface-0)", minHeight: "100vh" }}>
         <div className="mx-auto max-w-[1320px] px-5 py-4 md:px-8 md:py-6">
           <div className="mb-6">
@@ -1406,7 +1413,7 @@ export function CheckoutPage() {
                     // senão sobra um vão à direita e os ícones deixam de ficar
                     // igualmente espaçados. No desktop todos esticam, como antes.
                     className={`flex items-center gap-2 min-h-[44px] md:min-h-[24px] disabled:cursor-not-allowed ${
-                      i < STEPS.length - 1 ? "flex-1" : "flex-none md:flex-1"
+                      i < STEPS.length - 1 ? "flex-1" : "flex-none"
                     }`}
                   >
                     <div
@@ -1742,110 +1749,44 @@ export function CheckoutPage() {
                         Como vai pagar?
                       </h2>
                       <p className="mb-6 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
-                        Escolha um método. PIX dá {PIX_PERCENT}% off automático.
+                        Escolha um método. À vista no PIX com {PIX_PERCENT}% de desconto.
                       </p>
 
-                      {/* Express checkout — 1-click */}
-                      <div className="grid grid-cols-1 gap-2.5 md:grid-cols-3 mb-5">
-                        <button
-                          onClick={() => { setPayment("apple"); setWalletSheet("apple"); }}
-                          aria-label="Pagar com Apple Pay"
-                          className="inline-flex h-12 items-center justify-center gap-2 rounded-full transition-transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
-                          style={{
-                            background: "#000",
-                            color: "#fff",
-                            border: "1px solid rgba(var(--foreground-rgb), 0.14)",
-                            fontFamily: "var(--font-family-inter)",
-                            fontSize: "var(--text-sm)",
-                            fontWeight: 700,
-                            letterSpacing: "0.02em",
-                          }}
-                        >
-                          <Apple size={16} strokeWidth={1.8} fill="currentColor" />
-                          <span className="font-light">Pay</span>
-                        </button>
-                        <button
-                          onClick={() => { setPayment("google"); setWalletSheet("google"); }}
-                          aria-label="Pagar com Google Pay"
-                          className="inline-flex h-12 items-center justify-center gap-2 rounded-full transition-transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
-                          style={{
-                            background: "#fff",
-                            color: "#000",
-                            fontFamily: "var(--font-family-inter)",
-                            fontSize: "var(--text-sm)",
-                            fontWeight: 700,
-                            boxShadow: "0 4px 14px -4px rgba(0,0,0,0.4)",
-                          }}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden>
-                            <path d="M22 11.4c0-.7-.06-1.4-.18-2.05H12v3.87h5.62c-.24 1.3-.97 2.4-2.06 3.13v2.6h3.33C20.83 17.2 22 14.55 22 11.4z" fill="#4285F4" />
-                            <path d="M12 22c2.78 0 5.12-.92 6.83-2.5l-3.33-2.6c-.92.62-2.1.99-3.5.99-2.7 0-4.97-1.82-5.78-4.27H2.78v2.68C4.48 19.6 8 22 12 22z" fill="#34A853" />
-                            <path d="M6.22 13.62c-.2-.62-.32-1.28-.32-1.96s.12-1.34.32-1.96V7.02H2.78A9.99 9.99 0 002 12c0 1.6.38 3.13 1.05 4.47l3.17-2.85z" fill="#FBBC05" />
-                            <path d="M12 5.78c1.52 0 2.88.52 3.95 1.55l2.96-2.96C17.12 2.83 14.78 2 12 2 8 2 4.48 4.4 2.78 7.02l3.44 2.68C7.03 7.6 9.3 5.78 12 5.78z" fill="#EA4335" />
-                          </svg>
-                          Pay
-                        </button>
-                        <button
-                          onClick={() => { setPayment("mercadopago"); setWalletSheet("mercadopago"); }}
-                          aria-label="Pagar com Mercado Pago"
-                          className="inline-flex h-12 items-center justify-center gap-2 rounded-full transition-transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
-                          style={{
-                            background: "#009ee3",
-                            color: "#fff",
-                            fontFamily: "var(--font-family-inter)",
-                            fontSize: "var(--text-sm)",
-                            fontWeight: 800,
-                            letterSpacing: "0.02em",
-                            boxShadow: "0 8px 22px -8px rgba(0,158,227,0.55)",
-                          }}
-                        >
-                          <svg width="18" height="14" viewBox="0 0 30 22" fill="none" aria-hidden>
-                            <ellipse cx="15" cy="11" rx="14" ry="9" fill="#FFF159" />
-                            <path d="M9 12c1.5-2 4-3 6-3s4.5 1 6 3" stroke="#009ee3" strokeWidth="2" strokeLinecap="round" fill="none" />
-                          </svg>
-                          Mercado Pago
-                        </button>
-                      </div>
-
-                      {/* Divider OR */}
-                      <div className="mb-5 flex items-center gap-4">
-                        <div className="h-px flex-1 bg-white/8" />
-                        <span
-                          className="text-ink-subtle"
-                          style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase" }}
-                        >
-                          ou
-                        </span>
-                        <div className="h-px flex-1 bg-white/8" />
-                      </div>
-
-                      {/* Traditional methods */}
-                      <div className="grid grid-cols-1 gap-3 md:grid-cols-3 mb-6">
-                        <PaymentOption icon={<PixLogo size={18} />} label="Pix" description={`Aprovação instantânea · ${PIX_PERCENT}% OFF`} badge={`-${PIX_PERCENT}%`} active={payment === "pix"} onClick={() => setPayment("pix")} color="#22c55e" accentBg="rgba(34,197,94,0.14)" />
-                        <PaymentOption icon={<CreditCard size={18} strokeWidth={2} />} label="Cartão" description="Até 10x · seu cartão salvo" active={payment === "credit"} onClick={() => setPayment("credit")} />
-                        <PaymentOption icon={<Wallet size={18} strokeWidth={2} />} label="Boleto" description="Vence em 3 dias úteis" active={payment === "boleto"} onClick={() => setPayment("boleto")} />
+                      {/* As quatro formas da loja: uma por linha no celular (como na loja),
+                          2×2 a partir de sm (em 3+1 o Mercado Pago sobrava sozinho numa
+                          linha). Pix primeiro pelo desconto. Apple/Google Pay não existem na
+                          loja e saíram daqui. */}
+                      <div className="grid grid-cols-1 gap-3 mb-6 sm:grid-cols-2">
+                        <PaymentOption icon={<PixLogo size={18} />} label="Pix" description="Aprovação instantânea" badge={`-${PIX_PERCENT}%`} active={payment === "pix"} onClick={() => setPayment("pix")} color="#22c55e" accentBg="rgba(34,197,94,0.14)" />
+                        <PaymentOption icon={<CreditCard size={18} strokeWidth={2} />} label="Cartão de crédito" description={`Em até ${maxInstallments}×, direto no site`} active={payment === "credit"} onClick={() => setPayment("credit")} />
+                        <PaymentOption icon={<Barcode size={18} strokeWidth={2} />} label="Boleto" description="Compensa em até 2 dias úteis" active={payment === "boleto"} onClick={() => setPayment("boleto")} />
+                        <PaymentOption icon={<CreditCard size={18} strokeWidth={2} />} label="Mercado Pago" description="Cartão processado pelo Mercado Pago" active={payment === "mercadopago"} onClick={() => { setPayment("mercadopago"); setSelectedCardId(null); setCardName(""); setCardNumber(""); setCardExp(""); setCardCvc(""); }} />
                       </div>
 
                       <AnimatePresence mode="wait">
-                        {payment === "credit" && (
+                        {(payment === "credit" || payment === "mercadopago") && (
                           <motion.div
                             key="credit"
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.2 }}
-                            className="overflow-hidden"
+                            /* -m-1/p-1: folga para o anel de foco (4px para fora) não
+                               ser cortado pelo overflow-hidden da animação de altura. */
+                            className="-m-1 overflow-hidden p-1"
                           >
-                            {/* Saved cards picker — só logado + cartões existentes. */}
-                            {isLoggedIn && user && user.cards.length > 0 && (
+                            {/* Cartão de crédito (Asaas), como na loja: cartões salvos + "Adicionar
+                                novo cartão", que abre a janela. Nunca formulário aberto aqui. */}
+                            {payment === "credit" && isLoggedIn && user && (
                               <div className="mt-3 mb-5">
                                 <div className="flex items-center justify-between mb-2.5">
                                   <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(var(--foreground-rgb), 0.55)" }}>
-                                    Cartões salvos
+                                    {savedCards.length > 0 ? "Cartões salvos" : "Seu cartão"}
                                   </span>
+                                  <AcceptedBrands active={null} />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                  {user.cards.map((c) => {
+                                  {savedCards.map((c) => {
                                     const sel = selectedCardId === c.id;
                                     return (
                                       <div
@@ -1880,11 +1821,11 @@ export function CheckoutPage() {
                                       </div>
                                     );
                                   })}
-                                  {/* Card 'Adicionar novo' */}
+                                  {/* Card 'Adicionar novo' — sem cartão salvo, ocupa a linha toda. */}
                                   <button
                                     type="button"
                                     onClick={() => setCardModalOpen(true)}
-                                    className="flex items-center gap-2 justify-center p-3 transition-all cursor-pointer hover:brightness-110"
+                                    className={`flex items-center gap-2 justify-center p-3 transition-all cursor-pointer hover:brightness-110 ${savedCards.length === 0 ? "sm:col-span-2" : ""}`}
                                     style={{
                                       borderRadius: 12,
                                       background: "rgba(255,43,46,0.04)",
@@ -1896,17 +1837,22 @@ export function CheckoutPage() {
                                     <span className="text-primary" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}>Adicionar novo cartão</span>
                                   </button>
                                 </div>
-                                {selectedCardId && (
-                                  <p className="mt-3 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
-                                    CVV precisa ser digitado a cada compra por segurança.
-                                  </p>
-                                )}
                               </div>
                             )}
 
                             {/* Form de novo cartão só aparece se: não logado / sem cartões / clicou em 'Usar outro cartão' */}
-                            {(!isLoggedIn || !user || user.cards.length === 0 || selectedCardId === null) && (
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mt-2">
+                            {payment === "mercadopago" && (
+                            <div
+                              className="mt-1 mb-4 grid grid-cols-1 gap-4 p-5 md:grid-cols-2"
+                              style={{ borderRadius: "var(--radius-card-sm)", border: "1px solid rgba(var(--foreground-rgb), 0.08)", background: "rgba(var(--foreground-rgb), 0.02)" }}
+                            >
+                              {/* Mesmas bandeiras do cartão de crédito (Elo aceito, mas sem logo). */}
+                              <div className="md:col-span-2 flex items-center justify-between">
+                                <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(var(--foreground-rgb), 0.55)" }}>
+                                  Dados do cartão
+                                </span>
+                                <AcceptedBrands active={detectCardBrand(cardNumber.replace(/\D/g, ""))} />
+                              </div>
                               <Field label="Nome no cartão" required className="md:col-span-2">
                                 <input
                                   value={cardName}
@@ -1953,9 +1899,9 @@ export function CheckoutPage() {
                             </div>
                             )}
 
-                            {/* Parcelas — visível sempre que payment=credit (cartão novo ou salvo) */}
+                            {/* Parcelas e CPF/CNPJ do titular lado a lado a partir de md; um embaixo do outro no celular. */}
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mt-2">
-                              <Field label="Parcelas" className="md:col-span-2">
+                              <Field label="Parcelas">
                                 {/*
                                   Select do DS, não `<select>` nativo. O nativo tinha três
                                   problemas aqui, todos fora do alcance de CSS:
@@ -2015,6 +1961,7 @@ export function CheckoutPage() {
                                   </SelectContent>
                                 </Select>
                               </Field>
+                              <PayerDocField label="CPF/CNPJ do titular do cartão" value={payerDoc} onChange={setPayerDoc} />
                             </div>
                           </motion.div>
                         )}
@@ -2025,8 +1972,9 @@ export function CheckoutPage() {
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="overflow-hidden"
+                            className="-m-1 overflow-hidden p-1"
                           >
+                            <PayerDocField label="CPF/CNPJ do pagador" value={payerDoc} onChange={setPayerDoc} className="mb-4 mt-1" />
                             <div
                               className="flex items-start gap-3 rounded-[var(--radius-card-sm)] p-4"
                               style={{
@@ -2040,25 +1988,19 @@ export function CheckoutPage() {
                                   {PIX_PERCENT}% OFF automático no PIX
                                 </p>
                                 <p className="mt-1 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.5 }}>
-                                  Após finalizar, vamos gerar o QR Code pra pagamento instantâneo. Compensação em até 1 minuto.
+                                  O QR Code e o Pix copia e cola aparecem na tela assim que o pedido for fechado.
                                 </p>
                               </div>
                             </div>
                           </motion.div>
                         )}
 
-                        {(payment === "apple" || payment === "google") && (
-                          <motion.div key="wallet" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                            <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.5 }}>
-                              Autenticação acontece direto no seu dispositivo. Toque em finalizar pra abrir o {payment === "apple" ? "Apple Pay" : "Google Pay"}.
-                            </p>
-                          </motion.div>
-                        )}
 
                         {payment === "boleto" && (
                           <motion.div key="boleto" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                            <PayerDocField label="CPF/CNPJ do pagador" value={payerDoc} onChange={setPayerDoc} className="mb-4 mt-1" />
                             <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.5 }}>
-                              Boleto gerado após confirmação. Vencimento em 3 dias úteis. Compensação em até 2 dias úteis após pagamento.
+                              O link do boleto aparece na tela ao fechar o pedido e chega por e-mail. Vence em 3 dias úteis; o estoque só é reservado depois da compensação (até 2 dias úteis).
                             </p>
                           </motion.div>
                         )}
@@ -2681,16 +2623,82 @@ export function CheckoutPage() {
   );
 }
 
-function CardBrand({ digits }: { digits: string }) {
+type DetectedBrand = "visa" | "master" | "amex" | "elo" | "hiper";
+
+function detectCardBrand(digits: string): DetectedBrand | null {
   if (digits.length < 1) return null;
   const first = digits[0];
   const first2 = digits.slice(0, 2);
-  let brand: "visa" | "master" | "amex" | "elo" | "hiper" | null = null;
-  if (first === "4") brand = "visa";
-  else if (["51", "52", "53", "54", "55"].includes(first2) || (Number(first2) >= 22 && Number(first2) <= 27)) brand = "master";
-  else if (first2 === "34" || first2 === "37") brand = "amex";
-  else if (["40", "43", "44", "45", "63", "65", "50"].includes(first2)) brand = "elo";
-  else if (first === "6") brand = "hiper";
+  if (first === "4") return "visa";
+  if (["51", "52", "53", "54", "55"].includes(first2) || (Number(first2) >= 22 && Number(first2) <= 27)) return "master";
+  if (first2 === "34" || first2 === "37") return "amex";
+  if (["40", "43", "44", "45", "63", "65", "50"].includes(first2)) return "elo";
+  if (first === "6") return "hiper";
+  return null;
+}
+
+/* Bandeiras mostradas no checkout, iguais no Asaas e no Mercado Pago. O MP também
+   aceita Elo (o Checkout Transparente não tem exclusão no admin), mas o logo fica
+   de fora por decisão da PCYES, para não incentivar. Com o número digitado, a
+   reconhecida acende e as outras apagam. */
+type BrandLogo = { key: DetectedBrand; src: string; label: string };
+const ACCEPTED_BRANDS: BrandLogo[] = [
+  { key: "visa", src: visaLogo, label: "Visa" },
+  { key: "master", src: mastercardLogo, label: "Mastercard" },
+  { key: "amex", src: amexLogo, label: "American Express" },
+];
+
+function AcceptedBrands({ active, brands = ACCEPTED_BRANDS }: { active: DetectedBrand | null; brands?: BrandLogo[] }) {
+  return (
+    <span className="inline-flex flex-shrink-0 items-center gap-1.5" aria-label={`Aceitamos ${brands.map((b) => b.label).join(", ")}`}>
+      {brands.map((b) => (
+        <img
+          key={b.key}
+          src={b.src}
+          alt=""
+          className="h-5 w-auto transition-opacity"
+          style={{ opacity: active === null || active === b.key ? 1 : 0.25 }}
+        />
+      ))}
+    </span>
+  );
+}
+
+function formatDoc(value: string) {
+  const d = value.replace(/\D/g, "").slice(0, 14);
+  if (d.length <= 11) return d.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  return d.replace(/^(\d{2})(\d)/, "$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3").replace(/\.(\d{3})(\d)/, ".$1/$2").replace(/(\d{4})(\d)/, "$1-$2");
+}
+
+/* CPF/CNPJ pedido pelo Asaas em todo método: no cartão é o do titular, no Pix e
+   no boleto é o do pagador. Um estado só, para não pedir duas vezes ao trocar. */
+function PayerDocField({ label, hint, value, onChange, className }: { label: string; hint?: string; value: string; onChange: (v: string) => void; className?: string }) {
+  return (
+    <Field label={label} required className={className}>
+      <input
+        inputMode="numeric"
+        value={value}
+        placeholder="000.000.000-00"
+        onChange={(e) => onChange(formatDoc(e.target.value))}
+        className={`${inputClass} checkout-field`}
+        style={inputStyle}
+      />
+      {hint && (
+        <p className="mt-1.5 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+          {hint}
+        </p>
+      )}
+    </Field>
+  );
+}
+
+function isValidDoc(value: string) {
+  const n = value.replace(/\D/g, "").length;
+  return n === 11 || n === 14;
+}
+
+function CardBrand({ digits }: { digits: string }) {
+  const brand = detectCardBrand(digits);
   if (!brand) return null;
 
   const wrap = (children: React.ReactNode, bg: string) => (
