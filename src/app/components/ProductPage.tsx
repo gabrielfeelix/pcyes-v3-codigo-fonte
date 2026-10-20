@@ -8,7 +8,7 @@ import {
   Check, Share2, MapPin, CreditCard, Banknote, QrCode,
   Loader2, ArrowUpRight, Zap, X, Clock, Info,
   Rocket, CalendarDays, ShieldCheck, ZoomIn, Settings2, ImagePlus,
-  Download, FileText, Cpu,
+  Download, FileText, Cpu, BellRing,
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "./ui/sheet";
@@ -138,7 +138,7 @@ function calcShipping(digits: string, productPrice: number): ShippingOption[] {
  * fundo próprio e foi feita para preencher o quadrado. Com o padding herdado
  * sobrava uma faixa do fundo do card em volta dela.
  */
-function ProductGallery({ images, name, isDark, fullBleedFirst = false }: { images: string[]; name: string; isDark: boolean; fullBleedFirst?: boolean }) {
+function ProductGallery({ images, name, isDark, fullBleedFirst = false, soldOutLabel }: { images: string[]; name: string; isDark: boolean; fullBleedFirst?: boolean; soldOutLabel?: string }) {
   const [active, setActive] = useState(0);
   const [zoomed, setZoomed] = useState(false);
   const [lbZoom, setLbZoom] = useState(false);
@@ -320,6 +320,15 @@ function ProductGallery({ images, name, isDark, fullBleedFirst = false }: { imag
         >
           <ZoomIn size={13} /> Ampliar
         </span>
+        {/* Esgotado: mesma tag do ProductCard, do lado oposto ao "Ampliar". */}
+        {soldOutLabel && (
+          <span
+            className="absolute top-3 left-3 z-10 bg-foreground/80 px-2.5 py-1 text-background shadow-sm pointer-events-none"
+            style={{ borderRadius: "var(--radius)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
+          >
+            {soldOutLabel}
+          </span>
+        )}
         <AnimatePresence mode="wait">
           <motion.div
             key={active}
@@ -1079,26 +1088,26 @@ function StickyPriceCard({
             {inStock && (
               <span className="absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-65 animate-ping" />
             )}
-            <span className={`relative inline-flex rounded-full h-2 w-2 ${inStock ? "bg-green-500" : "bg-foreground/30"}`} />
+            <span className={`relative inline-flex rounded-full h-2 w-2 ${inStock ? "bg-green-500" : discontinued ? "bg-foreground/30" : "bg-primary"}`} />
           </span>
           <span
-            className={inStock ? "text-[#4CAF50]" : "text-foreground/45"}
+            className={inStock ? "text-[#4CAF50]" : discontinued ? "text-foreground/45" : "text-primary"}
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
           >
             {inStock ? `${stockLabel} · envio em 24h úteis` : discontinued ? "Fora de linha" : "Sem estoque"}
           </span>
         </div>
 
-        {/* Qty selector */}
-        <div className="flex items-center justify-between mb-3">
+        {/* Qty selector — sem estoque não há o que quantificar. */}
+        {inStock && <div className="flex items-center justify-between mb-3">
           <span
             className="text-foreground/55 font-semibold tracking-wide"
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", letterSpacing: "0.08em" }}
           >
             QUANTIDADE
           </span>
-          <QtyStepper value={qty} onChange={setQty} disabled={!inStock} />
-        </div>
+          <QtyStepper value={qty} onChange={setQty} />
+        </div>}
 
         {/* CTAs — esgotado troca a compra pelo aviso de reposição. */}
         <div className="relative flex flex-col gap-2 mb-5">
@@ -1235,7 +1244,7 @@ function MobilePurchaseFlow({
             </span>
           ) : (
             <span
-              className={inStock ? "text-green-500" : "text-foreground/45"}
+              className={inStock ? "text-green-500" : discontinued ? "text-foreground/45" : "text-primary"}
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700 }}
             >
               {inStock ? stockLabel : discontinued ? "Fora de linha" : "Sem estoque"}
@@ -1471,7 +1480,8 @@ function MobilePurchaseFlow({
           </div>
         )}
 
-        <div className="flex items-center justify-between mb-3">
+        {/* Sem estoque (fora pré-venda) não há o que quantificar. */}
+        {(isPreOrder || inStock) && <div className="flex items-center justify-between mb-3">
           <span
             className="text-foreground/50 font-semibold tracking-wide"
             style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", letterSpacing: "0.08em" }}
@@ -1485,7 +1495,7 @@ function MobilePurchaseFlow({
             shape="pill"
             disabled={isPreOrder ? preOrderSoldOut : !inStock}
           />
-        </div>
+        </div>}
 
         {/* Esgotado (fora pré-venda): o slot primário vira a única ação possível —
             cadastrar aviso de reposição — em vez de um botão de compra morto. */}
@@ -3408,6 +3418,12 @@ export function ProductPage() {
   const pixPrice = product.priceNum * PIX_RATE;
   const installment = product.priceNum / installmentCountFor(product.priceNum);
   const preOrderInfo = getPreOrderInfo(product.id);
+  /* Pré-venda tem selo próprio; o resto sem estoque ganha selo na foto e
+     ao lado da marca. Fora de linha não promete volta, então não diz Esgotado. */
+  const pageStock = getStockStatus(product);
+  const soldOutLabel = preOrderInfo || pageStock === "in-stock"
+    ? undefined
+    : pageStock === "discontinued" ? "Fora de linha" : "Esgotado";
 
   const cartPayload = () => ({
     id: product.id,
@@ -3555,6 +3571,7 @@ export function ProductPage() {
               isDark={isDark}
               /* Só setup tem arte quadrada de campanha na primeira posição. */
               fullBleedFirst={Boolean(setupComponents?.length)}
+              soldOutLabel={soldOutLabel}
             />
           </motion.div>
 
@@ -3618,6 +3635,14 @@ export function ProductPage() {
                     style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", letterSpacing: "0.14em" }}
                   >
                     {product.brand}
+                  </span>
+                )}
+                {soldOutLabel && (
+                  <span
+                    className="bg-foreground/80 px-2.5 py-0.5 text-background"
+                    style={{ borderRadius: "var(--radius)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600 }}
+                  >
+                    {soldOutLabel}
                   </span>
                 )}
                 {product.brand && product.badge && <span className="text-foreground/15">·</span>}
@@ -3969,6 +3994,31 @@ export function ProductPage() {
               )}
             </p>
           </div>
+          {soldOutLabel === "Esgotado" ? (
+            /* Esgotado: o "Adicionar" verde desabilitado vira o avise-me,
+               levando ao formulário do card de compra. */
+            <button
+              onClick={() => {
+                /* Os dois cards de compra (desktop e celular) estão no DOM, um
+                   escondido por CSS: pega o que está visível. */
+                const box = Array.from(document.querySelectorAll<HTMLElement>("[data-avise-me]"))
+                  .find((el) => el.offsetParent !== null);
+                box?.scrollIntoView({ behavior: "smooth", block: "center" });
+                box?.querySelector("button")?.click();
+              }}
+              className="px-5 py-3 flex items-center gap-2 font-semibold transition-all cursor-pointer text-white"
+              style={{
+                borderRadius: 9999,
+                fontFamily: "var(--font-family-inter)",
+                fontSize: "var(--text-sm)",
+                whiteSpace: "nowrap",
+                background: "var(--gradient-brand)",
+                boxShadow: "var(--shadow-brand-cta-sm)",
+              }}
+            >
+              <BellRing size={14} strokeWidth={2.4} /> Avise-me
+            </button>
+          ) : (
           <button
             onClick={handleBuyNow}
             disabled={preOrderInfo ? (preOrderInfo.reservedUnits >= preOrderInfo.totalUnits) : (product.inStock === false)}
@@ -3999,6 +4049,7 @@ export function ProductPage() {
               <><ShoppingCart size={14} strokeWidth={2.4} /> Adicionar</>
             )}
           </button>
+          )}
         </div>
       </div>
 
