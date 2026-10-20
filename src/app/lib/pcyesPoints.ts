@@ -194,8 +194,8 @@ export const EARN_RULES: EarnRule[] = [
   {
     id: "indicacao",
     title: "Indicar um amigo",
-    detail: "Na campanha atual, R$ 100 para cada um em compras acima de R$ 500, depois da primeira compra dele.",
-    reward: "R$ 100",
+    detail: "Quando houver campanha de indicação, você ganha 100 pontos depois da primeira compra do amigo.",
+    reward: "+100 pts",
   },
 ];
 

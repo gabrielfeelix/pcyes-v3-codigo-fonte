@@ -91,7 +91,7 @@ type Quest = {
   title: string;
   detail: string;
   reward: string;
-  action: QuestAction;
+  action?: QuestAction;
 };
 
 /* Mesmos endereços do rodapé (Footer.tsx, socialLinks). */
@@ -133,6 +133,12 @@ const QUESTS: Quest[] = [
     detail: "A PCYES envia por e-mail depois que você compra.",
     reward: "+250",
     action: { kind: "note", label: "Chega no seu e-mail" },
+  },
+  {
+    icon: Users,
+    title: "Indicar um amigo",
+    detail: "Quando houver campanha de indicação, você ganha 100 pontos depois da primeira compra do amigo.",
+    reward: "+100",
   },
 ];
 
@@ -1345,9 +1351,11 @@ function Quests() {
             <span className="mt-1 text-ink-muted" style={{ fontFamily: INTER, fontSize: 13, lineHeight: 1.5 }}>
               {q.detail}
             </span>
-            <div className="mt-auto">
-              <QuestButton action={q.action} />
-            </div>
+            {q.action && (
+              <div className="mt-auto">
+                <QuestButton action={q.action} />
+              </div>
+            )}
           </div>
           <span className="flex shrink-0 items-center gap-1.5 self-start whitespace-nowrap tabular-nums" style={{ fontFamily: FIGTREE, fontWeight: 800, fontSize: 16, color: GOLD }}>
             <span className="transition-transform duration-500 group-hover:[transform:rotateY(360deg)]">
@@ -1357,34 +1365,6 @@ function Quests() {
           </span>
         </motion.div>
       ))}
-
-      {/* Indicação depende de campanha e paga em cupom, não em pontos: fica
-          separada para não parecer mais uma linha de "+pts". */}
-      <motion.div
-        variants={reveal}
-        initial="hidden"
-        whileInView="show"
-        viewport={viewportOnce}
-        custom={2}
-        className="flex items-start gap-4 rounded-card-md border p-5"
-        style={{ borderColor: "rgba(255,43,46,0.3)", background: "linear-gradient(120deg, rgba(255,43,46,0.10), rgba(255,255,255,0.01) 70%)" }}
-      >
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/15">
-          <Users size={20} className="text-primary" strokeWidth={1.75} />
-        </span>
-        <div className="flex min-w-0 flex-1 flex-col">
-          <span className="text-ink-strong" style={{ fontFamily: FIGTREE, fontWeight: 700, fontSize: 17 }}>
-            Indicar um amigo
-          </span>
-          <span className="mt-1 text-ink-muted" style={{ fontFamily: INTER, fontSize: 13, lineHeight: 1.5 }}>
-            Quando houver campanha de indicação, você e o amigo ganham R$ 100 de desconto em compras acima de
-            R$ 500. O seu desconto sai depois da primeira compra dele.
-          </span>
-        </div>
-        <span className="shrink-0 whitespace-nowrap text-primary" style={{ fontFamily: FIGTREE, fontWeight: 800, fontSize: 16 }}>
-          R$ 100
-        </span>
-      </motion.div>
     </div>
   );
 }

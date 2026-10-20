@@ -286,7 +286,7 @@ export function ReferralPanel({ email }: { email: string }) {
           className="mt-0.5 text-foreground/55"
           style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}
         >
-          +500 pts quando seu amigo fecha o primeiro pedido. Ele ganha 10% de desconto.
+          +100 pts quando seu amigo fecha o primeiro pedido.
         </p>
       </div>
 
