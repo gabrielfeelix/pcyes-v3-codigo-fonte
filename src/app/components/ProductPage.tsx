@@ -67,20 +67,10 @@ function formatBRL(v: number) {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-function getRemainingUnits(product: { id: number; inStock?: boolean; reviews?: number; rating?: number }) {
-  if (product.inStock === false) return 0;
-
-  const reviewSeed = product.reviews ?? 0;
-  const ratingSeed = Math.round((product.rating ?? 0) * 10);
-  // Regra: nunca exibir mais de 27 unidades restantes.
-  return Math.min(27, 4 + ((product.id * 7 + reviewSeed + ratingSeed) % 9));
-}
-
-function getStockLabel(product: { id: number; inStock?: boolean; reviews?: number; rating?: number }) {
-  const remainingUnits = getRemainingUnits(product);
-  if (remainingUnits <= 0) return "Sem estoque";
-  if (remainingUnits === 1) return "1 unidade restante";
-  return `${remainingUnits} unidades restantes`;
+/* Sem contagem de unidades: "10 unidades restantes" cria urgência falsa e
+   muda de produto para produto sem motivo. Só diz se dá para comprar. */
+function getStockLabel(product: { inStock?: boolean }) {
+  return product.inStock === false ? "Sem estoque" : "Em estoque";
 }
 
 /* ── shipping mock ─────────────────────────────────────── */
