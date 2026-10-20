@@ -89,8 +89,8 @@ const resolve = (ids: number[]) => ids.map(byId).filter((p): p is Product => Boo
 export const GIFT_CAMPAIGNS: Record<string, GiftCampaign> = {
   valor: {
     id: "valor",
-    headline: "Gaste R$ 1.500 e ganhe um brinde",
-    goal: { kind: "subtotal", target: 1500 },
+    headline: "Gaste R$ 20.000 e ganhe um brinde",
+    goal: { kind: "subtotal", target: 20000 },
     giftIds: [296, 27, 322],
   },
   qtd: {

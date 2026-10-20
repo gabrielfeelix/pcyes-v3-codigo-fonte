@@ -14,7 +14,7 @@ import { ImageWithFallback } from "../figma/ImageWithFallback";
  * Três das quatro metas são a MESMA leitura — "quanto do caminho eu já
  * andei" — e por isso usam a mesma régua, mudando só o rótulo do fim:
  *
- * - valor      → 0 ────── R$ 1.500
+ * - valor      → 0 ────── R$ 20.000
  * - quantidade → 0 ────── 3 produtos
  * - categoria  → 0 ────── 3 periféricos
  *
