@@ -47,11 +47,14 @@ import amexLogo from "./icons/amex-logo.svg";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
 import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
 import { EarnPreview } from "./points/EarnPreview";
-import { OrderTotal } from "./OrderTotal";
+import { OrderTotal, SkeletonBar } from "./OrderTotal";
 import { toast } from "sonner";
 import { PcyesCoin } from "./PcyesCoin";
 
 type Step = 0 | 1 | 2 | 3;
+
+/** Quanto a loja leva para devolver o total ao trocar a forma de pagamento. */
+const PAYMENT_QUOTE_MS = 1000;
 
 const STEPS = [
   { key: 0, label: "Endereço", icon: MapPin },
@@ -306,6 +309,18 @@ function FakeQrCode() {
   );
 }
 
+/* Linha do resumo com o valor ainda chegando (troca de forma de pagamento). */
+function SkeletonLine({ label }: { label: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
+        {label}
+      </span>
+      <SkeletonBar width={84} height={14} />
+    </div>
+  );
+}
+
 /* `amount` opcional: quando informado, o valor é lido por extenso ("mil e
    duzentos reais"). O texto visual traz "R$", que o NVDA não fala na
    configuração padrão — sem isso a linha sai sem moeda alguma. */
@@ -456,7 +471,20 @@ export function CheckoutPage() {
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
   const pointsValue = pointsToBRL(pointsUsed);
   const baseTotal = subtotal - discountValue + shippingPrice - pointsValue;
-  const pixDiscount = payment === "pix" ? Math.max(0, (subtotal - discountValue - pointsValue)) * PIX_DISCOUNT : 0;
+  // Na loja, trocar a forma de pagamento recalcula o carrinho no Magento e leva
+  // ~1 s. Três cliques seguidos enfileiravam três respostas e o total passava
+  // por cada uma devagar, parecendo já ser o do último card. Aqui o card
+  // escolhido acende na hora, o total vira skeleton e só a última escolha vale:
+  // o cleanup do efeito cancela a espera da anterior (na loja, abortar a
+  // requisição antiga).
+  const [quotedPayment, setQuotedPayment] = useState<PaymentMethod>(payment);
+  const quoting = quotedPayment !== payment;
+  useEffect(() => {
+    if (payment === quotedPayment) return;
+    const t = setTimeout(() => setQuotedPayment(payment), PAYMENT_QUOTE_MS);
+    return () => clearTimeout(t);
+  }, [payment, quotedPayment]);
+  const pixDiscount = quotedPayment === "pix" ? Math.max(0, (subtotal - discountValue - pointsValue)) * PIX_DISCOUNT : 0;
   const total = baseTotal - pixDiscount;
   // Parcela mínima de R$ 50: o select só oferece o que o total comporta, e se o
   // total cair (cupom, pontos) a escolha anterior desce junto.
@@ -491,7 +519,7 @@ export function CheckoutPage() {
     (payment === "credit" && selectedCardId !== null) ||
     (payment === "mercadopago" && !!cardName && cardNumber.length >= 15 && cardExp.length === 5 && cardCvc.length >= 3));
 
-  const canAdvance = step === 0 ? step0Valid : step === 1 ? step1Valid : step === 2 ? step2Valid : true;
+  const canAdvance = step === 0 ? step0Valid : step === 1 ? step1Valid : step === 2 ? step2Valid && !quoting : true;
 
   // Botão "Continuar" clicável sempre (em vez de disabled mudo): se o passo está
   // incompleto, marca os campos vazios (erro por campo + role=alert) em vez de
@@ -501,6 +529,8 @@ export function CheckoutPage() {
   const goBack = () => (step === 0 ? navigate("/carrinho") : setStep((s) => (s - 1) as Step));
 
   const tryAdvance = () => {
+    // Total ainda chegando: não avança nem acusa erro, só espera.
+    if (quoting) return;
     if (canAdvance) {
       setAttempted(false);
       setStep((s) => (s + 1) as Step);
@@ -1339,11 +1369,15 @@ export function CheckoutPage() {
                       </span>
                     </div>
                   )}
-                  {pixDiscount > 0 && <Line label={`Desconto PIX (${PIX_PERCENT}%)`} value={`−${formatBRL(pixDiscount)}`} amount={pixDiscount} positive />}
+                  {quoting ? (
+                    payment === "pix" && <SkeletonLine label={`Desconto PIX (${PIX_PERCENT}%)`} />
+                  ) : (
+                    pixDiscount > 0 && <Line label={`Desconto PIX (${PIX_PERCENT}%)`} value={`−${formatBRL(pixDiscount)}`} amount={pixDiscount} positive />
+                  )}
                 </div>
 
                 {/* Total: o mesmo card do carrinho e do carrinho lateral. */}
-                <OrderTotal cardTotal={baseTotal} pixTotal={pixTotal} method={payment} />
+                <OrderTotal cardTotal={baseTotal} pixTotal={pixTotal} method={payment} loading={quoting} />
 
     </>
   );
@@ -2211,7 +2245,7 @@ export function CheckoutPage() {
               className="block text-ink-strong"
               style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1, color: payment === "pix" ? "#22c55e" : undefined }}
             >
-              {formatBRL(total)}
+              {quoting ? <SkeletonBar width={112} height={20} className="mt-0.5 align-middle" /> : formatBRL(total)}
             </span>
           </div>
           {step < 3 ? (
