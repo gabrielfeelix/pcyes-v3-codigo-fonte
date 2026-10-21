@@ -55,6 +55,17 @@ type Step = 0 | 1 | 2 | 3;
 
 /** Quanto a loja leva para devolver o total ao trocar a forma de pagamento. */
 const PAYMENT_QUOTE_MS = 1000;
+/** Quanto a loja leva para montar cada etapa (frete, formas de pagamento...). */
+const STEP_LOAD_MS = 1200;
+
+/* Título e texto de cada etapa: aparecem já no esqueleto, porque não dependem
+   do que está carregando. */
+const STEP_HEADINGS: Record<Step, { title: string; subtitle: string }> = {
+  0: { title: "Endereço de entrega", subtitle: "Pra onde mandamos sua build?" },
+  1: { title: "Como entregar?", subtitle: "" },
+  2: { title: "Como vai pagar?", subtitle: `Escolha um método. À vista no PIX com ${PIX_PERCENT}% de desconto.` },
+  3: { title: "Revisão final", subtitle: "Confirme se tá tudo certo antes de fechar." },
+};
 
 const STEPS = [
   { key: 0, label: "Endereço", icon: MapPin },
@@ -84,6 +95,8 @@ interface ShippingOption {
   id: string;
   label: string;
   eta: string;
+  /** Prazo em dias úteis (0 = hoje): desempata a escolha automática. */
+  days: number;
   price: number;
   badge?: string;
 }
@@ -309,6 +322,99 @@ function FakeQrCode() {
   );
 }
 
+/* Esqueleto de cada etapa. Na loja, Continuar segurava a tela parada com o
+   botão girando e, do nada, trocava de página: parecia travado. Agora o clique
+   já abre a próxima etapa com título e texto (que não dependem de nada) e a
+   forma do conteúdo em cinza, enquanto ele chega. Cada formato copia o da
+   etapa real, para nada pular quando o conteúdo entra. */
+const skeletonBox = {
+  borderRadius: "var(--radius-card-sm)",
+  background: "rgba(var(--foreground-rgb), 0.02)",
+  border: "1px solid rgba(var(--foreground-rgb), 0.08)",
+} as const;
+
+function StepSkeleton({ step, hasSavedAddresses }: { step: Step; hasSavedAddresses: boolean }) {
+  return (
+    <div aria-hidden="true">
+      {step === 0 && !hasSavedAddresses && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i}>
+              <SkeletonBar width={90} height={12} className="mb-2 block" />
+              <SkeletonBar width={400} height={44} className="block !rounded-[var(--radius-card-sm)]" />
+            </div>
+          ))}
+        </div>
+      )}
+      {step === 0 && hasSavedAddresses && (
+        <>
+          <SkeletonBar width={130} height={12} className="mb-3 block" />
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            {[0, 1].map((i) => (
+              <div key={i} className="flex items-start gap-3 p-4" style={skeletonBox}>
+                <SkeletonBar width={16} height={16} className="mt-0.5 shrink-0 !rounded-full" />
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  <SkeletonBar width={120} height={14} />
+                  <SkeletonBar width={200} height={12} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-2.5 flex items-center justify-center p-4" style={{ ...skeletonBox, borderStyle: "dashed", minHeight: 52 }}>
+            <SkeletonBar width={150} height={12} />
+          </div>
+        </>
+      )}
+      {step === 1 && (
+        <div className="flex flex-col gap-3">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="flex items-center gap-2.5 p-4 md:gap-4" style={skeletonBox}>
+              <SkeletonBar width={20} height={20} className="shrink-0 !rounded-full" />
+              <SkeletonBar width={18} height={18} className="shrink-0" />
+              <div className="flex min-w-0 flex-1 flex-col gap-2">
+                <SkeletonBar width={140} height={14} />
+                <SkeletonBar width={90} height={12} />
+              </div>
+              <SkeletonBar width={64} height={18} className="shrink-0" />
+            </div>
+          ))}
+        </div>
+      )}
+      {step === 2 && (
+        <>
+          <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="p-4" style={{ ...skeletonBox, minHeight: 88 }}>
+                <div className="flex items-center gap-3">
+                  <SkeletonBar width={32} height={32} className="shrink-0 !rounded-lg" />
+                  <SkeletonBar width={110} height={14} />
+                </div>
+                <SkeletonBar width={160} height={12} className="mt-3" />
+              </div>
+            ))}
+          </div>
+          <SkeletonBar width={170} height={12} className="mb-2.5 block" />
+          <SkeletonBar width={352} height={44} className="block !rounded-[var(--radius-card-sm)]" />
+        </>
+      )}
+      {step === 3 && (
+        <div className="flex flex-col gap-3">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="p-4" style={skeletonBox}>
+              <div className="mb-3 flex items-center justify-between">
+                <SkeletonBar width={90} height={12} />
+                <SkeletonBar width={44} height={12} />
+              </div>
+              <SkeletonBar width={220} height={14} className="block" />
+              <SkeletonBar width={160} height={12} className="mt-2 block" />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* Linha do resumo com o valor ainda chegando (troca de forma de pagamento). */
 function SkeletonLine({ label }: { label: string }) {
   return (
@@ -363,6 +469,14 @@ export function CheckoutPage() {
   }, [isLoggedIn, promptLogin, navigate]);
 
   const [step, setStep] = useState<Step>(0);
+  // A etapa nova abre na hora em esqueleto e o conteúdo entra quando chega.
+  // Começa carregando: vindo do carrinho, a primeira etapa também monta.
+  const [stepLoading, setStepLoading] = useState(true);
+  useEffect(() => {
+    if (!stepLoading) return;
+    const t = setTimeout(() => setStepLoading(false), STEP_LOAD_MS);
+    return () => clearTimeout(t);
+  }, [stepLoading, step]);
   /* Picker state — quando logged in c/ endereços/cartões salvos, preenche o form
      da etapa correspondente automaticamente quando o usuário seleciona um. */
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
@@ -383,7 +497,7 @@ export function CheckoutPage() {
   });
   const [loadingCep, setLoadingCep] = useState(false);
   const [cepError, setCepError] = useState("");
-  const [selectedShipping, setSelectedShipping] = useState<string>("sedex");
+  const [selectedShipping, setSelectedShipping] = useState<string>("");
   const [payment, setPayment] = useState<PaymentMethod>("pix");
   const [cardName, setCardName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -446,23 +560,34 @@ export function CheckoutPage() {
         id: "sedex",
         label: "Sedex Expresso",
         eta: "2 dias úteis",
+        days: 2,
         price: free ? 0 : 35.9,
       },
       {
         id: "pac",
         label: "PAC Econômico",
         eta: "7 dias úteis",
+        days: 7,
         price: free ? 0 : 14.9,
       },
       {
         id: "today",
         label: "Entrega no mesmo dia",
         eta: "Hoje · só capitais",
+        days: 0,
         price: 59.9,
         badge: "EXPRESS",
       },
     ];
   }, [subtotal]);
+
+  // A entrega mais barata já vem marcada (empate: a mais rápida). Quem chega
+  // na etapa só confirma; trocar continua a um clique.
+  useEffect(() => {
+    if (shippingOptions.some((o) => o.id === selectedShipping)) return;
+    const cheapest = [...shippingOptions].sort((a, b) => a.price - b.price || a.days - b.days)[0];
+    if (cheapest) setSelectedShipping(cheapest.id);
+  }, [shippingOptions, selectedShipping]);
 
   const shippingPrice = shippingOptions.find((o) => o.id === selectedShipping)?.price ?? 0;
   const discountPct = appliedCoupon ? COUPONS[appliedCoupon] || 0 : 0;
@@ -479,6 +604,10 @@ export function CheckoutPage() {
   // requisição antiga).
   const [quotedPayment, setQuotedPayment] = useState<PaymentMethod>(payment);
   const quoting = quotedPayment !== payment;
+  // Frete só existe depois que a etapa de entrega carrega: até lá, frete e
+  // total do resumo ficam em esqueleto em vez de mostrar um valor provisório.
+  const shippingLoading = stepLoading && step === 1;
+  const totalLoading = quoting || shippingLoading;
   useEffect(() => {
     if (payment === quotedPayment) return;
     const t = setTimeout(() => setQuotedPayment(payment), PAYMENT_QUOTE_MS);
@@ -519,20 +648,26 @@ export function CheckoutPage() {
     (payment === "credit" && selectedCardId !== null) ||
     (payment === "mercadopago" && !!cardName && cardNumber.length >= 15 && cardExp.length === 5 && cardCvc.length >= 3));
 
-  const canAdvance = step === 0 ? step0Valid : step === 1 ? step1Valid : step === 2 ? step2Valid && !quoting : true;
+  const canAdvance = (step === 0 ? step0Valid : step === 1 ? step1Valid : step === 2 ? step2Valid && !quoting : true) && !stepLoading;
 
   // Botão "Continuar" clicável sempre (em vez de disabled mudo): se o passo está
   // incompleto, marca os campos vazios (erro por campo + role=alert) em vez de
   // só travar. Melhor p/ Nielsen (prevenção de erro) e p/ leitor de tela.
   const [attempted, setAttempted] = useState(false);
   const err = (cond: boolean, msg: string) => (attempted && cond ? msg : undefined);
-  const goBack = () => (step === 0 ? navigate("/carrinho") : setStep((s) => (s - 1) as Step));
+  // Voltar não carrega: a etapa anterior já estava pronta.
+  const goBack = () => {
+    if (step === 0) return navigate("/carrinho");
+    setStepLoading(false);
+    setStep((s) => (s - 1) as Step);
+  };
 
   const tryAdvance = () => {
-    // Total ainda chegando: não avança nem acusa erro, só espera.
-    if (quoting) return;
+    // Total ou etapa ainda chegando: não avança nem acusa erro, só espera.
+    if (quoting || stepLoading) return;
     if (canAdvance) {
       setAttempted(false);
+      setStepLoading(true);
       setStep((s) => (s + 1) as Step);
     } else {
       setAttempted(true);
@@ -1358,7 +1493,11 @@ export function CheckoutPage() {
                 <div className="mb-4 space-y-2">
                   <Line label="Subtotal" value={formatBRL(subtotal)} amount={subtotal} />
                   {discountValue > 0 && <Line label={`Cupom ${appliedCoupon}`} value={`−${formatBRL(discountValue)}`} amount={discountValue} positive />}
-                  <Line label="Frete" value={shippingPrice === 0 ? "Grátis" : formatBRL(shippingPrice)} positive={shippingPrice === 0} />
+                  {shippingLoading ? (
+                    <SkeletonLine label="Frete" />
+                  ) : (
+                    <Line label="Frete" value={shippingPrice === 0 ? "Grátis" : formatBRL(shippingPrice)} positive={shippingPrice === 0} />
+                  )}
                   {pointsValue > 0 && (
                     <div className="flex items-center justify-between">
                       <span style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", color: "#facc15", fontWeight: 600 }}>
@@ -1377,7 +1516,7 @@ export function CheckoutPage() {
                 </div>
 
                 {/* Total: o mesmo card do carrinho e do carrinho lateral. */}
-                <OrderTotal cardTotal={baseTotal} pixTotal={pixTotal} method={payment} loading={quoting} />
+                <OrderTotal cardTotal={baseTotal} pixTotal={pixTotal} method={payment} loading={totalLoading} />
 
     </>
   );
@@ -1507,7 +1646,20 @@ export function CheckoutPage() {
                     boxShadow: "var(--shadow-card-hairline)",
                   }}
                 >
-                  {step === 0 && (
+                  {stepLoading && (
+                    <>
+                      <h2 className="mb-2 text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, letterSpacing: "-0.02em" }}>
+                        {STEP_HEADINGS[step].title}
+                      </h2>
+                      <p className="mb-6 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
+                        {step === 1 ? `Para ${address.city || "—"}/${address.state || "—"}` : STEP_HEADINGS[step].subtitle}
+                      </p>
+                      <span className="sr-only" role="status">Carregando {STEPS[step].label.toLowerCase()}</span>
+                      <StepSkeleton step={step} hasSavedAddresses={!!(isLoggedIn && user && user.addresses.length > 0)} />
+                    </>
+                  )}
+
+                  {!stepLoading && step === 0 && (
                     <>
                       <h2
                         className="mb-2 text-ink-strong"
@@ -1697,7 +1849,7 @@ export function CheckoutPage() {
                     </>
                   )}
 
-                  {step === 1 && (
+                  {!stepLoading && step === 1 && (
                     <>
                       <h2 className="mb-2 text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, letterSpacing: "-0.02em" }}>
                         Como entregar?
@@ -1777,7 +1929,7 @@ export function CheckoutPage() {
                     </>
                   )}
 
-                  {step === 2 && (
+                  {!stepLoading && step === 2 && (
                     <>
                       <h2 className="mb-2 text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, letterSpacing: "-0.02em" }}>
                         Como vai pagar?
@@ -2039,10 +2191,26 @@ export function CheckoutPage() {
                           </motion.div>
                         )}
                       </AnimatePresence>
+
+                      {/* No lugar do botão flutuante do WhatsApp, que no checkout
+                          cobria total e resumo: uma frase, onde a dúvida de
+                          pagamento aparece. Vermelho de link, como "Adicionar
+                          novo cartão". */}
+                      <p className="mt-6 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
+                        Dúvida no pagamento?{" "}
+                        <a
+                          href="https://wa.me/554421011387"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-primary underline-offset-2 hover:underline"
+                        >
+                          Fale com a gente no WhatsApp
+                        </a>
+                      </p>
                     </>
                   )}
 
-                  {step === 3 && (
+                  {!stepLoading && step === 3 && (
                     <>
                       <h2 className="mb-2 text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, letterSpacing: "-0.02em" }}>
                         Revisão final
@@ -2245,7 +2413,7 @@ export function CheckoutPage() {
               className="block text-ink-strong"
               style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-lg)", fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1, color: payment === "pix" ? "#22c55e" : undefined }}
             >
-              {quoting ? <SkeletonBar width={112} height={20} className="mt-0.5 align-middle" /> : formatBRL(total)}
+              {totalLoading ? <SkeletonBar width={112} height={20} className="mt-0.5 align-middle" /> : formatBRL(total)}
             </span>
           </div>
           {step < 3 ? (
