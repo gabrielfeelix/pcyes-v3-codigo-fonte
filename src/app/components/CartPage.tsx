@@ -717,7 +717,9 @@ export function CartPage() {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.22 }}
-                      className="overflow-hidden"
+                      // clip, não hidden: hidden deixa o navegador rolar a caixa
+                      // de lado ao focar o campo, cortando borda e mensagem.
+                      style={{ overflow: "clip" }}
                     >
                       <div className="mb-4 flex gap-2">
                         <input
@@ -735,7 +737,7 @@ export function CartPage() {
                              FORA). Sem a classe, o foco vira um retângulo de
                              cantos retos destacado do campo, em vez do realce da
                              própria borda. Mesmo tratamento do cupom do checkout. */
-                          className="pcyes-coupon-input flex-1 px-3.5 py-2.5 text-ink-strong placeholder:text-ink-subtle focus:outline-none transition-all cart-field"
+                          className="pcyes-coupon-input min-w-0 flex-1 px-3.5 py-2.5 text-ink-strong placeholder:text-ink-subtle focus:outline-none transition-all cart-field"
                           style={{
                             borderRadius: "var(--radius-card-sm)",
                             border: "1px solid rgba(var(--foreground-rgb), 0.1)",

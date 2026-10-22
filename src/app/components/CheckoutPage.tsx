@@ -1376,10 +1376,12 @@ export function CheckoutPage() {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.22 }}
-                        className="overflow-hidden"
+                        // clip, não hidden: hidden deixa o navegador rolar a caixa
+                        // de lado ao focar o campo, cortando borda e mensagem.
+                        style={{ overflow: "clip" }}
                       >
                         {/* p-[2px]: folga para o anel de foco não encostar na
-                            borda do container recortado pelo overflow-hidden. */}
+                            borda do container recortado. */}
                         <div className="mt-2 flex gap-2 p-[2px]">
                           <input
                             type="text"
@@ -1388,7 +1390,7 @@ export function CheckoutPage() {
                             onChange={(e) => { setCoupon(e.target.value.toUpperCase()); setCouponError(""); }}
                             onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
                             aria-label="Código do cupom"
-                            className="pcyes-coupon-input flex-1 rounded-[var(--radius-card-sm)] px-3 py-2 text-ink-strong placeholder:text-ink-subtle focus:outline-none"
+                            className="pcyes-coupon-input min-w-0 flex-1 rounded-[var(--radius-card-sm)] px-3 py-2 text-ink-strong placeholder:text-ink-subtle focus:outline-none"
                             style={{
                               background: "rgba(var(--foreground-rgb), 0.03)",
                               border: "1px solid rgba(var(--foreground-rgb), 0.1)",
