@@ -27,11 +27,13 @@ import {
   ChevronUp,
   FileText,
   UserRound,
+  AlertCircle,
 } from "lucide-react";
 import { artFitClass } from "../lib/setupImages";
 import { formatCpf, isValidCpf } from "../lib/cpf";
 import { isValidPhone } from "../lib/phone";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { Button } from "./ui/button";
 import { useCart } from "./CartContext";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
 import { useAuth } from "./AuthContext";
@@ -463,7 +465,7 @@ function Line({ label, value, positive, amount }: { label: string; value: string
 export function CheckoutPage() {
   const { items, clearCart } = useCart();
   const navigate = useNavigate();
-  const { user, isLoggedIn, addAddress, addCard, promptLogin, updateUser } = useAuth();
+  const { user, isLoggedIn, addAddress, addCard, promptLogin, updateUser, findCpfOwner, logout } = useAuth();
   /* Guard: checkout exige login. Deslogado (URL/refresh) → carrinho + abre login.
      Após logar, authRedirect("/checkout") traz o usuário de volta. */
   useEffect(() => {
@@ -519,6 +521,19 @@ export function CheckoutPage() {
   const [identityOpen, setIdentityOpen] = useState(needsData);
   const [identitySaved, setIdentitySaved] = useState(!needsData);
   const [identity, setIdentity] = useState(() => ({ name: user?.name ?? "", cpf: user?.cpf ?? "", phone: user?.phone ?? "" }));
+  /* CPF é um por conta: se já está em outra, a nota e o histórico ficariam
+     divididos. Confere assim que o número fecha válido. Celular não entra na
+     regra: família divide número e linha troca de dono. */
+  const [cpfOwner, setCpfOwner] = useState<string | null>(null);
+  const [cpfChecking, setCpfChecking] = useState(false);
+  useEffect(() => {
+    setCpfOwner(null);
+    if (!isValidCpf(identity.cpf) || identity.cpf === user?.cpf) return;
+    let alive = true;
+    setCpfChecking(true);
+    findCpfOwner(identity.cpf).then((owner) => { if (alive) { setCpfOwner(owner); setCpfChecking(false); } });
+    return () => { alive = false; };
+  }, [identity.cpf, user?.cpf, findCpfOwner]);
   const [installments, setInstallments] = useState(1);
   const { appliedCoupon, setAppliedCoupon, pointsApplied, setPointsApplied, pointsToUse, setPointsToUse } = useCheckoutPrefs();
   const [coupon, setCoupon] = useState("");
@@ -658,7 +673,7 @@ export function CheckoutPage() {
     }
   };
 
-  const identityValid = identity.name.trim().split(/\s+/).length >= 2 && isValidCpf(identity.cpf) && isValidPhone(identity.phone);
+  const identityValid = identity.name.trim().split(/\s+/).length >= 2 && isValidCpf(identity.cpf) && !cpfOwner && !cpfChecking && isValidPhone(identity.phone);
   const step0Valid = address.zip.length >= 9 && !!address.street && !!address.number && !!address.city && !!address.recipient;
   const step1Valid = !!selectedShipping;
   const step2Valid =
@@ -710,7 +725,7 @@ export function CheckoutPage() {
       setStep((s) => (s + 1) as Step);
     } else {
       setAttempted(true);
-      toast.error(identityOpen ? "Confira seus dados destacados." : step === 0 ? "Preencha os campos de endereço destacados." : step === 2 ? "Confira os dados do cartão." : "Complete este passo para continuar.");
+      toast.error(identityOpen ? (cpfOwner ? "Esse CPF já tem conta na PCYES." : "Confira seus dados destacados.") : step === 0 ? "Preencha os campos de endereço destacados." : step === 2 ? "Confira os dados do cartão." : "Complete este passo para continuar.");
       // Foca o 1º campo inválido (a11y 3.3.1/2.4.3) após o re-render marcar aria-invalid.
       setTimeout(() => {
         document.querySelector<HTMLElement>('.checkout-field[aria-invalid="true"]')?.focus();
@@ -1781,14 +1796,56 @@ export function CheckoutPage() {
                             autoComplete="off"
                             placeholder="000.000.000-00"
                             value={identity.cpf}
-                            aria-invalid={(identity.cpf.length === 14 && !isValidCpf(identity.cpf)) || (attempted && !isValidCpf(identity.cpf))}
+                            aria-invalid={!!cpfOwner || (identity.cpf.length === 14 && !isValidCpf(identity.cpf)) || (attempted && !isValidCpf(identity.cpf))}
                             onChange={(e) => setIdentity((d) => ({ ...d, cpf: formatCpf(e.target.value) }))}
                             className={`${inputClass} checkout-field`}
                             style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }}
                           />
-                          <p className="mt-1.5 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.5 }}>
-                            Vai na nota fiscal.
-                          </p>
+                          {cpfOwner ? (
+                            /* Beco sem saída se não oferecer a saída: quase sempre é a
+                               própria pessoa com outra conta, e o que ela precisa é entrar
+                               nela. Sair desta conta devolve ao carrinho com o login aberto. */
+                            <div
+                              role="alert"
+                              className="mt-2 p-3"
+                              style={{ borderRadius: 10, background: "rgba(255,43,46,0.06)", border: "1px solid rgba(255,43,46,0.22)" }}
+                            >
+                              {/* Estilo em cada texto, não no wrapper: o p global do tema impõe o próprio tamanho. */}
+                              <div className="flex items-start gap-2">
+                                <AlertCircle size={14} strokeWidth={2.2} className="mt-[2px] shrink-0 text-primary" aria-hidden="true" />
+                                <div className="min-w-0">
+                                  <p className="text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, lineHeight: 1.4 }}>
+                                    Esse CPF já tem uma conta
+                                  </p>
+                                  <p className="mt-0.5 truncate text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.4 }}>
+                                    {cpfOwner}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 pl-[22px]">
+                                {/* outline do DS usa --input no escuro (preto 50%): some no painel.
+                                    Tokens de superfície e borda do tema no lugar. */}
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={logout}
+                                  className="border-edge bg-surface-glass text-ink-strong hover:border-edge-strong hover:bg-foreground/10 hover:text-ink-strong dark:border-edge dark:bg-surface-glass dark:hover:bg-foreground/10"
+                                >
+                                  Entrar nessa conta
+                                </Button>
+                                {/* link do DS vem em --primary; aqui fica neutro pra não somar
+                                    vermelho ao aviso, que já é vermelho. */}
+                                <Button variant="link" size="sm" asChild className="h-auto px-0 text-ink-muted hover:text-ink">
+                                  <a href="https://wa.me/554421011387" target="_blank" rel="noreferrer">Esse e-mail não é meu</a>
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="mt-1.5 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.5 }}>
+                              {cpfChecking ? "Conferindo…" : "Vai na nota fiscal."}
+                            </p>
+                          )}
                         </Field>
                         <Field
                           label="Celular"

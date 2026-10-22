@@ -100,6 +100,8 @@ interface AuthContextType {
   registerCompany: (data: CompanyRegistration) => Promise<void>;
   /** true quando já existe conta para esse CNPJ. */
   isCnpjRegistered: (cnpj: string) => Promise<boolean>;
+  /** E-mail mascarado da conta que já usa o CPF, ou null se está livre. */
+  findCpfOwner: (cpf: string) => Promise<string | null>;
   logout: () => void;
   updateUser: (data: Partial<UserData>) => void;
   /* Address helpers — quando isDefault=true entra, todos outros viram false. */
@@ -287,6 +289,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return ["11222333000181", "19131243000197"].includes(digits);
   }, []);
 
+  /* Protótipo: no Magento é consulta ao customer por taxvat. 111.444.777-35 dá
+     "já tem conta" para testar a tela; qualquer outro CPF válido está livre. */
+  const findCpfOwner = useCallback(async (cpf: string) => {
+    await new Promise((r) => setTimeout(r, 300));
+    return cpf.replace(/\D/g, "") === "11144477735" ? "j•••••@gmail.com" : null;
+  }, []);
+
   const registerCompany = useCallback(async (data: CompanyRegistration) => {
     await new Promise((r) => setTimeout(r, 800));
     setUser({
@@ -389,7 +398,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider value={{
       user, isLoggedIn: !!user,
-      login, socialLogin, register, registerCompany, isCnpjRegistered, logout, updateUser,
+      login, socialLogin, register, registerCompany, isCnpjRegistered, findCpfOwner, logout, updateUser,
       addAddress, updateAddress, removeAddress, setDefaultAddress,
       addCard, updateCard, removeCard, setDefaultCard,
       authModalOpen, setAuthModalOpen, authModalTab, setAuthModalTab,
