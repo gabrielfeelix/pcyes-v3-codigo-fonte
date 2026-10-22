@@ -256,9 +256,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthModalOpen(false);
   }, []);
 
+  /* Google e Facebook devolvem nome, e-mail e foto; CPF e celular nunca. A conta
+     nasce sem eles e sem endereço: é o 1º pedido, e o checkout pede o que falta. */
   const socialLogin = useCallback(async (_provider: string) => {
     await new Promise((r) => setTimeout(r, 800));
-    setUser(MOCK_USER);
+    setUser({ ...MOCK_USER, cpf: "", phone: "", addresses: [] });
     setAuthModalOpen(false);
   }, []);
 

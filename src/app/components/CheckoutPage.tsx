@@ -25,8 +25,12 @@ import {
   RefreshCw,
   Ticket,
   ChevronUp,
+  FileText,
+  UserRound,
 } from "lucide-react";
 import { artFitClass } from "../lib/setupImages";
+import { formatCpf, isValidCpf } from "../lib/cpf";
+import { isValidPhone } from "../lib/phone";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useCart } from "./CartContext";
 import { useCheckoutPrefs } from "./CheckoutPrefsContext";
@@ -459,7 +463,7 @@ function Line({ label, value, positive, amount }: { label: string; value: string
 export function CheckoutPage() {
   const { items, clearCart } = useCart();
   const navigate = useNavigate();
-  const { user, isLoggedIn, addAddress, addCard, promptLogin } = useAuth();
+  const { user, isLoggedIn, addAddress, addCard, promptLogin, updateUser } = useAuth();
   /* Guard: checkout exige login. Deslogado (URL/refresh) → carrinho + abre login.
      Após logar, authRedirect("/checkout") traz o usuário de volta. */
   useEffect(() => {
@@ -472,7 +476,8 @@ export function CheckoutPage() {
   const [step, setStep] = useState<Step>(0);
   // A etapa nova abre na hora em esqueleto e o conteúdo entra quando chega.
   // Começa carregando: vindo do carrinho, a primeira etapa também monta.
-  const [stepLoading, setStepLoading] = useState(true);
+  // "Seus dados" é exceção: não busca nada, só mostra o que a conta já tem.
+  const [stepLoading, setStepLoading] = useState(() => !!(user?.cpf && user?.phone));
   useEffect(() => {
     if (!stepLoading) return;
     const t = setTimeout(() => setStepLoading(false), STEP_LOAD_MS);
@@ -505,6 +510,15 @@ export function CheckoutPage() {
   const [cardExp, setCardExp] = useState("");
   const [cardCvc, setCardCvc] = useState("");
   const [payerDoc, setPayerDoc] = useState("");
+  /* Login social (Google, Facebook) cria a conta só com nome e e-mail: sem CPF
+     não sai nota fiscal, sem celular a transportadora não tem com quem falar.
+     Quem tem dado faltando ganha a etapa "Seus dados" antes do endereço; quem
+     tem tudo nem vê. A decisão congela ao abrir o checkout, senão a etapa
+     sumiria da barra assim que os dados fossem salvos. */
+  const [needsData] = useState(() => !user?.cpf || !user?.phone);
+  const [identityOpen, setIdentityOpen] = useState(needsData);
+  const [identitySaved, setIdentitySaved] = useState(!needsData);
+  const [identity, setIdentity] = useState(() => ({ name: user?.name ?? "", cpf: user?.cpf ?? "", phone: user?.phone ?? "" }));
   const [installments, setInstallments] = useState(1);
   const { appliedCoupon, setAppliedCoupon, pointsApplied, setPointsApplied, pointsToUse, setPointsToUse } = useCheckoutPrefs();
   const [coupon, setCoupon] = useState("");
@@ -644,6 +658,7 @@ export function CheckoutPage() {
     }
   };
 
+  const identityValid = identity.name.trim().split(/\s+/).length >= 2 && isValidCpf(identity.cpf) && isValidPhone(identity.phone);
   const step0Valid = address.zip.length >= 9 && !!address.street && !!address.number && !!address.city && !!address.recipient;
   const step1Valid = !!selectedShipping;
   const step2Valid =
@@ -655,7 +670,7 @@ export function CheckoutPage() {
     (payment === "credit" && selectedCardId !== null) ||
     (payment === "mercadopago" && !!cardName && cardNumber.length >= 15 && cardExp.length === 5 && cardCvc.length >= 3));
 
-  const canAdvance = (step === 0 ? step0Valid : step === 1 ? step1Valid : step === 2 ? step2Valid && !quoting : true) && !stepLoading;
+  const canAdvance = (identityOpen ? identityValid : step === 0 ? step0Valid : step === 1 ? step1Valid : step === 2 ? step2Valid && !quoting : true) && !stepLoading;
 
   // Botão "Continuar" clicável sempre (em vez de disabled mudo): se o passo está
   // incompleto, marca os campos vazios (erro por campo + role=alert) em vez de
@@ -664,21 +679,38 @@ export function CheckoutPage() {
   const err = (cond: boolean, msg: string) => (attempted && cond ? msg : undefined);
   // Voltar não carrega: a etapa anterior já estava pronta.
   const goBack = () => {
+    // Editando os dados a partir de outra etapa: Voltar devolve pra ela.
+    if (identityOpen) return identitySaved ? setIdentityOpen(false) : navigate("/carrinho");
+    if (step === 0 && needsData) return setIdentityOpen(true);
     if (step === 0) return navigate("/carrinho");
     setStepLoading(false);
     setStep((s) => (s - 1) as Step);
   };
 
+  const atStart = identityOpen ? !identitySaved : step === 0 && !needsData;
+
   const tryAdvance = () => {
     // Total ou etapa ainda chegando: não avança nem acusa erro, só espera.
     if (quoting || stepLoading) return;
+    if (canAdvance && identityOpen) {
+      setAttempted(false);
+      updateUser({ name: identity.name.trim(), cpf: identity.cpf, phone: identity.phone });
+      // Quase sempre quem paga é quem compra, e quem recebe também: já deixa
+      // o CPF do pagador e o contato da entrega prontos.
+      if (!payerDoc) setPayerDoc(identity.cpf);
+      setAddress((a) => ({ ...a, recipient: a.recipient || identity.name.trim(), phone: a.phone || identity.phone }));
+      setIdentitySaved(true);
+      setIdentityOpen(false);
+      setStepLoading(true);
+      return;
+    }
     if (canAdvance) {
       setAttempted(false);
       setStepLoading(true);
       setStep((s) => (s + 1) as Step);
     } else {
       setAttempted(true);
-      toast.error(step === 0 ? "Preencha os campos de endereço destacados." : step === 2 ? "Confira os dados do cartão." : "Complete este passo para continuar.");
+      toast.error(identityOpen ? "Confira seus dados destacados." : step === 0 ? "Preencha os campos de endereço destacados." : step === 2 ? "Confira os dados do cartão." : "Complete este passo para continuar.");
       // Foca o 1º campo inválido (a11y 3.3.1/2.4.3) após o re-render marcar aria-invalid.
       setTimeout(() => {
         document.querySelector<HTMLElement>('.checkout-field[aria-invalid="true"]')?.focus();
@@ -1532,7 +1564,7 @@ export function CheckoutPage() {
 
   return (
     <>
-      <CheckoutHeader onBack={goBack} backLabel={step === 0 ? "Voltar ao carrinho" : "Voltar"} />
+      <CheckoutHeader onBack={goBack} backLabel={atStart ? "Voltar ao carrinho" : "Voltar"} />
 
       <div className="pt-16 md:pt-[72px] pb-44 lg:pb-0" style={{ background: "var(--surface-0)", minHeight: "100vh" }}>
         <div className="mx-auto max-w-[1320px] px-5 py-4 md:px-8 md:py-6">
@@ -1582,14 +1614,39 @@ export function CheckoutPage() {
                 </span>
                 <div className="hidden h-px flex-1 md:block" style={{ background: "rgba(34,197,94,0.4)" }} />
               </button>
+              {(needsData || identityOpen) && (
+                <button
+                  onClick={() => identitySaved && setIdentityOpen(true)}
+                  disabled={!identitySaved || identityOpen}
+                  className="flex flex-1 items-center gap-2 min-h-[44px] md:min-h-[24px] disabled:cursor-not-allowed"
+                >
+                  <div
+                    className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full transition-all"
+                    style={{
+                      background: identityOpen ? "var(--gradient-brand)" : "var(--gradient-buy)",
+                      color: "#fff",
+                      boxShadow: identityOpen ? "0 8px 22px -6px rgba(225,6,0,0.5)" : "0 8px 22px -6px rgba(34,197,94,0.45)",
+                    }}
+                  >
+                    {identityOpen ? <UserRound size={14} strokeWidth={2.2} /> : <Check size={14} strokeWidth={2.6} />}
+                  </div>
+                  <span
+                    className={`hidden md:inline ${identityOpen ? "text-ink-strong" : "text-ink"}`}
+                    style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.04em" }}
+                  >
+                    Seus dados
+                  </span>
+                  <div className="hidden h-px flex-1 md:block" style={{ background: identityOpen ? "rgba(var(--foreground-rgb), 0.08)" : "rgba(34,197,94,0.4)" }} />
+                </button>
+              )}
               {STEPS.map((s, i) => {
                 const Icon = s.icon;
-                const active = step === s.key;
+                const active = !identityOpen && step === s.key;
                 const done = step > s.key;
                 return (
                   <button
                     key={s.key}
-                    onClick={() => done && setStep(s.key as Step)}
+                    onClick={() => { if (!done || (identityOpen && !identitySaved)) return; setIdentityOpen(false); setStep(s.key as Step); }}
                     disabled={!done}
                     // No mobile só o ícone aparece: o último passo não pode esticar,
                     // senão sobra um vão à direita e os ícones deixam de ficar
@@ -1634,7 +1691,9 @@ export function CheckoutPage() {
               className="md:hidden mt-2 text-ink-muted"
               style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 600, letterSpacing: "0.04em" }}
             >
-              Etapa {step + 2} de 5 · {STEPS[step].label}
+              {identityOpen
+                ? `Etapa 2 de 6 · Seus dados`
+                : `Etapa ${step + (needsData ? 3 : 2)} de ${needsData ? 6 : 5} · ${STEPS[step].label}`}
             </p>
           </div>
 
@@ -1642,7 +1701,7 @@ export function CheckoutPage() {
             <div className="min-w-0">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={step}
+                  key={identityOpen ? "dados" : step}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
@@ -1655,7 +1714,7 @@ export function CheckoutPage() {
                     boxShadow: "var(--shadow-card-hairline)",
                   }}
                 >
-                  {stepLoading && (
+                  {stepLoading && !identityOpen && (
                     <>
                       <h2 className="mb-2 text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, letterSpacing: "-0.02em" }}>
                         {STEP_HEADINGS[step].title}
@@ -1668,7 +1727,93 @@ export function CheckoutPage() {
                     </>
                   )}
 
-                  {!stepLoading && step === 0 && (
+                  {identityOpen && (
+                    <>
+                      <h2 className="mb-2 text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, letterSpacing: "-0.02em" }}>
+                        Seus dados
+                      </h2>
+                      <p className="mb-6 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)" }}>
+                        Sua conta veio sem alguns dados. Você preenche só desta vez: fica tudo salvo.
+                      </p>
+
+                      {/* Conta conectada: lembra com qual e-mail a nota e os avisos vão sair. */}
+                      <div className="mb-6 flex items-center gap-3 p-3" style={{ borderRadius: 12, background: "rgba(var(--foreground-rgb), 0.02)", border: "1px solid rgba(var(--foreground-rgb), 0.08)" }}>
+                        <span className="flex items-center justify-center shrink-0 text-ink" style={{ width: 32, height: 32, borderRadius: 9999, background: "rgba(var(--foreground-rgb), 0.06)" }}>
+                          <UserRound size={16} strokeWidth={2} />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>Conta conectada</p>
+                          <p className="text-ink-strong truncate" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>{user?.email}</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <Field
+                          label="Nome completo"
+                          required
+                          className="sm:col-span-2"
+                          error={err(identity.name.trim().split(/\s+/).length < 2, "Informe nome e sobrenome, como no documento.")}
+                        >
+                          <input
+                            autoComplete="name"
+                            value={identity.name}
+                            placeholder="Como está no seu documento"
+                            aria-invalid={attempted && identity.name.trim().split(/\s+/).length < 2}
+                            onChange={(e) => setIdentity((d) => ({ ...d, name: e.target.value }))}
+                            className={`${inputClass} checkout-field`}
+                            style={inputStyle}
+                          />
+                          <p className="mt-1.5 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.5 }}>
+                            Veio da sua conta. A nota fiscal sai com este nome.
+                          </p>
+                        </Field>
+                        <Field
+                          label="CPF"
+                          required
+                          error={
+                            identity.cpf.length === 14 && !isValidCpf(identity.cpf) ? "CPF inválido. Confira os números."
+                            : err(!isValidCpf(identity.cpf), "Informe o CPF para a nota fiscal.")
+                          }
+                        >
+                          {/* Tabular-nums porque CPF é conferido dígito a dígito. */}
+                          <input
+                            inputMode="numeric"
+                            autoComplete="off"
+                            placeholder="000.000.000-00"
+                            value={identity.cpf}
+                            aria-invalid={(identity.cpf.length === 14 && !isValidCpf(identity.cpf)) || (attempted && !isValidCpf(identity.cpf))}
+                            onChange={(e) => setIdentity((d) => ({ ...d, cpf: formatCpf(e.target.value) }))}
+                            className={`${inputClass} checkout-field`}
+                            style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }}
+                          />
+                          <p className="mt-1.5 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.5 }}>
+                            Vai na nota fiscal.
+                          </p>
+                        </Field>
+                        <Field
+                          label="Celular"
+                          required
+                          error={err(!isValidPhone(identity.phone), "Informe o celular com DDD.")}
+                        >
+                          <input
+                            inputMode="numeric"
+                            autoComplete="tel-national"
+                            placeholder="(00) 00000-0000"
+                            value={identity.phone}
+                            aria-invalid={attempted && !isValidPhone(identity.phone)}
+                            onChange={(e) => setIdentity((d) => ({ ...d, phone: formatPhone(e.target.value) }))}
+                            className={`${inputClass} checkout-field`}
+                            style={{ ...inputStyle, fontVariantNumeric: "tabular-nums" }}
+                          />
+                          <p className="mt-1.5 text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.5 }}>
+                            Pra transportadora e pros avisos do pedido.
+                          </p>
+                        </Field>
+                      </div>
+                    </>
+                  )}
+
+                  {!stepLoading && !identityOpen && step === 0 && (
                     <>
                       <h2
                         className="mb-2 text-ink-strong"
@@ -1858,7 +2003,7 @@ export function CheckoutPage() {
                     </>
                   )}
 
-                  {!stepLoading && step === 1 && (
+                  {!stepLoading && !identityOpen && step === 1 && (
                     <>
                       <h2 className="mb-2 text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, letterSpacing: "-0.02em" }}>
                         Como entregar?
@@ -1938,7 +2083,7 @@ export function CheckoutPage() {
                     </>
                   )}
 
-                  {!stepLoading && step === 2 && (
+                  {!stepLoading && !identityOpen && step === 2 && (
                     <>
                       <h2 className="mb-2 text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, letterSpacing: "-0.02em" }}>
                         Como vai pagar?
@@ -2219,7 +2364,7 @@ export function CheckoutPage() {
                     </>
                   )}
 
-                  {!stepLoading && step === 3 && (
+                  {!stepLoading && !identityOpen && step === 3 && (
                     <>
                       <h2 className="mb-2 text-ink-strong" style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-xl)", fontWeight: 700, letterSpacing: "-0.02em" }}>
                         Revisão final
@@ -2229,6 +2374,15 @@ export function CheckoutPage() {
                       </p>
 
                       <div className="space-y-4">
+                        <ReviewCard icon={<FileText size={14} strokeWidth={2} />} label="Nota fiscal" onEdit={() => { setAttempted(false); setIdentityOpen(true); }}>
+                          <p className="text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
+                            {user?.name}
+                          </p>
+                          <p className="text-ink-muted" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontVariantNumeric: "tabular-nums" }}>
+                            CPF {user?.cpf}{user?.phone ? ` · ${user.phone}` : ""}
+                          </p>
+                        </ReviewCard>
+
                         <ReviewCard icon={<MapPin size={14} strokeWidth={2} />} label="Endereço" onEdit={() => setStep(0)}>
                           <p className="text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
                             {address.recipient}
@@ -2370,7 +2524,7 @@ export function CheckoutPage() {
                     style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}
                   >
                     <ChevronLeft size={14} strokeWidth={2.4} />
-                    {step === 0 ? "Voltar ao carrinho" : "Voltar"}
+                    {atStart ? "Voltar ao carrinho" : "Voltar"}
                   </button>
                 </div>
               </div>
