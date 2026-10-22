@@ -34,7 +34,8 @@ import { BrindePill, GiftProgressBlock, LineItemPrice, Price, PreOrderPill } fro
 import { PIX_DISCOUNT } from "./section/PriceBlock";
 import { formatBRL, formatBRLSpoken, parseBRL, formatCep } from "../../utils/format";
 import { cepUf, isValidCep } from "../../utils/cep";
-import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
+import { maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
+import { couponPct, validateCoupon } from "../../utils/coupons";
 import { useGiftCampaign } from "../lib/useGiftCampaign";
 import { OrderTotal } from "./OrderTotal";
 import { ConfirmDialog } from "./ConfirmDialog";
@@ -139,7 +140,7 @@ export function CartPage() {
     [items],
   );
 
-  const discountPct = appliedCoupon ? COUPONS[appliedCoupon] || 0 : 0;
+  const discountPct = couponPct(appliedCoupon);
   const discountValue = (subtotal * discountPct) / 100;
   const freeShipping = subtotal >= 299;
   const chosenShipping =
@@ -177,13 +178,19 @@ export function CartPage() {
   }, [maxPointsRedeem, pointsToUse]);
 
   const handleApplyCoupon = () => {
-    const c = coupon.trim().toUpperCase();
-    if (COUPONS[c]) {
-      setAppliedCoupon(c);
+    // Recusa com o motivo (expirado, mínimo, 1ª compra...): ver utils/coupons.
+    const result = validateCoupon(coupon, {
+      subtotal,
+      isLoggedIn,
+      hasOrders: !!user && user.orders.length > 0,
+      itemNames: items.map((i) => i.name),
+    });
+    if (result.ok) {
+      setAppliedCoupon(result.code);
       setCouponError("");
       setCouponOpen(false);
     } else {
-      setCouponError(`Cupom inválido. Tente: ${Object.keys(COUPONS).join(", ")}`);
+      setCouponError(result.message);
       setAppliedCoupon(null);
     }
   };

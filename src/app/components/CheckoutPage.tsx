@@ -45,7 +45,8 @@ import visaLogo from "./icons/visa-logo.svg";
 import mastercardLogo from "./icons/mastercard-logo.svg";
 import amexLogo from "./icons/amex-logo.svg";
 import { trackBeginCheckout, trackPurchase } from "../../utils/analytics";
-import { COUPONS, maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
+import { maxRedeemablePoints, pointsToBRL } from "../../utils/commerce";
+import { couponPct, validateCoupon } from "../../utils/coupons";
 import { EarnPreview } from "./points/EarnPreview";
 import { OrderTotal, SkeletonBar } from "./OrderTotal";
 import { toast } from "sonner";
@@ -590,7 +591,7 @@ export function CheckoutPage() {
   }, [shippingOptions, selectedShipping]);
 
   const shippingPrice = shippingOptions.find((o) => o.id === selectedShipping)?.price ?? 0;
-  const discountPct = appliedCoupon ? COUPONS[appliedCoupon] || 0 : 0;
+  const discountPct = couponPct(appliedCoupon);
   const discountValue = (subtotal * discountPct) / 100;
   const maxPointsRedeem = maxRedeemablePoints(userPoints, subtotal - discountValue, tierFor(user?.pcyesPointsHistory).cap);
   const pointsUsed = pointsApplied ? Math.min(pointsToUse, maxPointsRedeem) : 0;
@@ -626,13 +627,19 @@ export function CheckoutPage() {
   const pixTotal = baseTotal - Math.max(0, subtotal - discountValue - pointsValue) * PIX_DISCOUNT;
 
   const handleApplyCoupon = () => {
-    const c = coupon.trim().toUpperCase();
-    if (COUPONS[c]) {
-      setAppliedCoupon(c);
+    // Recusa com o motivo (expirado, mínimo, 1ª compra...): ver utils/coupons.
+    const result = validateCoupon(coupon, {
+      subtotal,
+      isLoggedIn,
+      hasOrders: !!user && user.orders.length > 0,
+      itemNames: items.map((i) => i.name),
+    });
+    if (result.ok) {
+      setAppliedCoupon(result.code);
       setCouponError("");
       setCouponOpen(false);
     } else {
-      setCouponError("Cupom inválido");
+      setCouponError(result.message);
       setAppliedCoupon(null);
     }
   };
