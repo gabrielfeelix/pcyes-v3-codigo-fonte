@@ -33,6 +33,7 @@ export function AuthModal() {
   const [lastName, setLastName] = useState("");
   const [cpf, setCpf] = useState("");
   const [phone, setPhone] = useState("");
+  const [whatsappOptIn, setWhatsappOptIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -92,6 +93,7 @@ export function AuthModal() {
       if (!isValidCpf(cpf)) { setError("CPF inválido. Confira os números."); return; }
       /* Celular é opcional, mas meio celular não é: só cobra quem começou. */
       if (phone && !isValidPhone(phone)) { setError("Celular incompleto. Use DDD e 9 dígitos."); return; }
+      if (whatsappOptIn && !phone) { setError("Informe o celular para receber pelo WhatsApp."); return; }
       const weak = passwordIssue(password);
       if (weak) { setError(weak); return; }
     }
@@ -102,7 +104,7 @@ export function AuthModal() {
         await login(email, password);
         afterAuth();
       } else {
-        await register({ firstName, lastName, cpf: formatCpf(cpf), email, phone, password } satisfies PersonRegistration);
+        await register({ firstName, lastName, cpf: formatCpf(cpf), email, phone, password, whatsappOptIn } satisfies PersonRegistration);
         setSuccess({ kind: "pf", name: firstName.trim() });
       }
     } finally { setLoading(false); }
@@ -125,7 +127,7 @@ export function AuthModal() {
     finally { setSocialLoading(null); }
   };
 
-  const reset = () => { setEmail(""); setPassword(""); setFirstName(""); setLastName(""); setCpf(""); setPhone(""); setError(null); setSuccess(null); setShowPassword(false); setForgotPassword(false); };
+  const reset = () => { setEmail(""); setPassword(""); setFirstName(""); setLastName(""); setCpf(""); setPhone(""); setWhatsappOptIn(false); setError(null); setSuccess(null); setShowPassword(false); setForgotPassword(false); };
   const dismiss = () => { if (success) { finishRegister(); return; } setAuthModalOpen(false); setAuthRedirect(null); reset(); };
 
   /* Genérico nas duas abas do cadastro: a tab ativa já diz qual é, e trocar o
@@ -294,6 +296,18 @@ export function AuthModal() {
                           className="w-full pl-10 pr-4 py-3 bg-foreground/[0.03] border border-foreground/8 text-foreground placeholder:text-foreground/20 focus:border-foreground/20 focus:outline-none transition-colors"
                           style={{ borderRadius: "var(--radius-button)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontVariantNumeric: "tabular-nums" }} />
                       </div>
+                    )}
+                    {/* Aceite da Meta e da LGPD: nasce desmarcado, senão não vale
+                        como consentimento. Fica colado no celular porque é sobre ele. */}
+                    {authModalTab === "register" && (
+                      <label className="flex items-start gap-2.5 cursor-pointer select-none px-0.5">
+                        <input type="checkbox" checked={whatsappOptIn}
+                          onChange={(e) => { setWhatsappOptIn(e.target.checked); setError(null); }}
+                          className="accent-primary mt-0.5 shrink-0 cursor-pointer" style={{ width: 16, height: 16 }} />
+                        <span className="text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.5 }}>
+                          Quero receber pelo WhatsApp as atualizações do meu pedido e uma pesquisa rápida sobre a compra.
+                        </span>
+                      </label>
                     )}
                     <div className="relative">
                       <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground/20" />

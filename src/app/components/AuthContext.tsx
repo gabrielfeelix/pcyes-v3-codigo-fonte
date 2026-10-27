@@ -84,6 +84,9 @@ export interface UserData {
   birthday?: string;
   updatedAt?: string;
   avatar?: string;
+  /** Aceite de mensagem pelo WhatsApp (avisos do pedido e pesquisa pós-compra).
+      No Magento é o atributo de cliente `aceita_whatsapp`; nasce desmarcado. */
+  whatsappOptIn?: boolean;
   pcyesPoints?: number;
   pcyesPointsHistory?: PcyesPointsTx[];
   addresses: UserAddress[];
@@ -135,6 +138,7 @@ export interface PersonRegistration {
   /** Único campo opcional do cadastro PF — vem vazio quando não preenchido. */
   phone: string;
   password: string;
+  whatsappOptIn: boolean;
 }
 
 export interface CompanyRegistration {
@@ -262,7 +266,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      nasce sem eles e sem endereço: é o 1º pedido, e o checkout pede o que falta. */
   const socialLogin = useCallback(async (_provider: string) => {
     await new Promise((r) => setTimeout(r, 800));
-    setUser({ ...MOCK_USER, cpf: "", phone: "", addresses: [] });
+    setUser({ ...MOCK_USER, cpf: "", phone: "", addresses: [], whatsappOptIn: false });
     setAuthModalOpen(false);
   }, []);
 
@@ -277,6 +281,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email: data.email,
       cpf: data.cpf,
       phone: data.phone,
+      whatsappOptIn: data.whatsappOptIn,
       accountType: "pf",
     });
   }, []);

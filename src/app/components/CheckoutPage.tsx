@@ -520,7 +520,7 @@ export function CheckoutPage() {
   const [needsData] = useState(() => !user?.cpf || !user?.phone);
   const [identityOpen, setIdentityOpen] = useState(needsData);
   const [identitySaved, setIdentitySaved] = useState(!needsData);
-  const [identity, setIdentity] = useState(() => ({ name: user?.name ?? "", cpf: user?.cpf ?? "", phone: user?.phone ?? "" }));
+  const [identity, setIdentity] = useState(() => ({ name: user?.name ?? "", cpf: user?.cpf ?? "", phone: user?.phone ?? "", whatsappOptIn: user?.whatsappOptIn ?? false }));
   /* CPF é um por conta: se já está em outra, a nota e o histórico ficariam
      divididos. Confere assim que o número fecha válido. Celular não entra na
      regra: família divide número e linha troca de dono. */
@@ -709,7 +709,7 @@ export function CheckoutPage() {
     if (quoting || stepLoading) return;
     if (canAdvance && identityOpen) {
       setAttempted(false);
-      updateUser({ name: identity.name.trim(), cpf: identity.cpf, phone: identity.phone });
+      updateUser({ name: identity.name.trim(), cpf: identity.cpf, phone: identity.phone, whatsappOptIn: identity.whatsappOptIn });
       // Quase sempre quem paga é quem compra, e quem recebe também: já deixa
       // o CPF do pagador e o contato da entrega prontos.
       if (!payerDoc) setPayerDoc(identity.cpf);
@@ -1866,6 +1866,20 @@ export function CheckoutPage() {
                             Pra transportadora e pros avisos do pedido.
                           </p>
                         </Field>
+                        {/* Quem entrou pelo Google nunca viu o cadastro: o aceite do
+                            WhatsApp que lá fica embaixo do celular aparece aqui. */}
+                        <label className="sm:col-span-2 flex items-start gap-2.5 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={identity.whatsappOptIn}
+                            onChange={(e) => setIdentity((d) => ({ ...d, whatsappOptIn: e.target.checked }))}
+                            className="accent-primary mt-0.5 shrink-0 cursor-pointer"
+                            style={{ width: 16, height: 16 }}
+                          />
+                          <span className="text-ink" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.5 }}>
+                            Quero receber pelo WhatsApp as atualizações do meu pedido e uma pesquisa rápida sobre a compra.
+                          </span>
+                        </label>
                       </div>
                     </>
                   )}
