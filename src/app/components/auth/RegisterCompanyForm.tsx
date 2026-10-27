@@ -57,6 +57,7 @@ export function RegisterCompanyForm({ submitting, onSubmit, onGoToLogin }: Regis
   const [atividade, setAtividade] = useState("");
   const [ramo, setRamo] = useState("");
   const [phone, setPhone] = useState("");
+  const [whatsappOptIn, setWhatsappOptIn] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -123,7 +124,7 @@ export function RegisterCompanyForm({ submitting, onSubmit, onGoToLogin }: Regis
 
     const escolhida = atividades.find((a) => a.codigo === atividade) ?? company.atividadePrincipal;
     onSubmit({
-      firstName, lastName, email, phone, password,
+      firstName, lastName, email, phone, password, whatsappOptIn,
       company: {
         cnpj: formatCnpj(company.cnpj),
         razaoSocial: company.razaoSocial,
@@ -301,6 +302,14 @@ export function RegisterCompanyForm({ submitting, onSubmit, onGoToLogin }: Regis
             <input type="tel" inputMode="numeric" placeholder="Celular" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} required
               className={inputClass} style={inputStyle} />
           </div>
+          {/* Mesmo aceite do cadastro PF; aqui o celular já é obrigatório. */}
+          <label className="flex items-start gap-2.5 cursor-pointer select-none px-0.5">
+            <input type="checkbox" checked={whatsappOptIn} onChange={(e) => setWhatsappOptIn(e.target.checked)}
+              className="accent-primary mt-0.5 shrink-0 cursor-pointer" style={{ width: 16, height: 16 }} />
+            <span className="text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.5 }}>
+              Quero receber pelo WhatsApp as atualizações do meu pedido e uma pesquisa rápida sobre a compra.
+            </span>
+          </label>
         </>
       )}
 

@@ -147,6 +147,7 @@ export interface CompanyRegistration {
   email: string;
   phone: string;
   password: string;
+  whatsappOptIn: boolean;
   company: CompanyData;
 }
 
@@ -308,6 +309,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name: `${data.firstName} ${data.lastName}`.trim(),
       email: data.email,
       phone: data.phone,
+      whatsappOptIn: data.whatsappOptIn,
       accountType: "pj",
       company: data.company,
     });

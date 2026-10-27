@@ -1576,6 +1576,22 @@ export function ProfilePage() {
                         </label>
                         <input value={user.cpf} disabled className="w-full text-foreground placeholder:text-foreground/40 focus:outline-none transition-all opacity-60 cursor-not-allowed profile-field" style={{ padding: "11px 13px", borderRadius: "var(--radius-card-sm)", border: isDark ? "1px solid rgba(var(--foreground-rgb), 0.06)" : "1px solid rgba(0,0,0,0.06)", background: isDark ? "rgba(var(--foreground-rgb), 0.015)" : "rgba(0,0,0,0.015)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", fontWeight: 500 }} />
                       </div>
+                      {/* Quem se cadastrou antes da caixinha existir marca aqui; e é
+                          aqui que desmarca. Sem telefone, marcar não manda nada. */}
+                      <div className="md:col-span-2">
+                        <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                          <input type="checkbox" checked={!!user.whatsappOptIn} onChange={(e) => updateUser({ whatsappOptIn: e.target.checked })}
+                            className="accent-primary mt-0.5 shrink-0 cursor-pointer" style={{ width: 16, height: 16 }} />
+                          <span className="text-foreground/80" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.5 }}>
+                            Quero receber pelo WhatsApp as atualizações do meu pedido e uma pesquisa rápida sobre a compra.
+                          </span>
+                        </label>
+                        {user.whatsappOptIn && !user.phone && (
+                          <p className="mt-1.5 pl-[26px] text-primary" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
+                            Adicione um telefone acima para receber pelo WhatsApp.
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2">
                       <button onClick={() => updateUser({ updatedAt: new Date().toISOString() })} className="w-full md:w-auto min-h-[44px] md:min-h-[24px] px-5 py-2.5 bg-primary text-primary-foreground hover:brightness-110 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
