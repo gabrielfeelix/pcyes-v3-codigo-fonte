@@ -1583,7 +1583,8 @@ export function ProfilePage() {
                           <input type="checkbox" checked={!!user.whatsappOptIn} onChange={(e) => updateUser({ whatsappOptIn: e.target.checked })}
                             className="accent-primary mt-0.5 shrink-0 cursor-pointer" style={{ width: 16, height: 16 }} />
                           <span className="text-foreground/80" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.5 }}>
-                            Quero receber pelo WhatsApp as atualizações do meu pedido e uma pesquisa rápida sobre a compra.
+                            Aceito receber por WhatsApp e e-mail atualizações dos meus pedidos, pesquisas e ofertas.
+                            <span className="block opacity-70">Você pode cancelar quando quiser.</span>
                           </span>
                         </label>
                         {user.whatsappOptIn && !user.phone && (
