@@ -307,8 +307,8 @@ export function RegisterCompanyForm({ submitting, onSubmit, onGoToLogin }: Regis
             <input type="checkbox" checked={whatsappOptIn} onChange={(e) => setWhatsappOptIn(e.target.checked)}
               className="accent-primary mt-0.5 shrink-0 cursor-pointer" style={{ width: 16, height: 16 }} />
             <span className="text-foreground/55" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", lineHeight: 1.5 }}>
-              Aceito receber as atualizações dos meus pedidos por WhatsApp e e-mail, além de pesquisas, ofertas e lançamentos.
-              <span className="block opacity-70">Você pode cancelar quando quiser.</span>
+              Aceito receber atualizações dos pedidos por WhatsApp e e-mail, além de pesquisas e ofertas.
+              <span className="block text-foreground/35">Cancele quando quiser.</span>
             </span>
           </label>
         </>
