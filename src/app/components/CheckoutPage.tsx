@@ -1877,7 +1877,7 @@ export function CheckoutPage() {
                             style={{ width: 16, height: 16 }}
                           />
                           <span className="text-ink" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.5 }}>
-                            Aceito receber por WhatsApp e e-mail atualizações dos meus pedidos, pesquisas e ofertas.
+                            Aceito receber as atualizações dos meus pedidos por WhatsApp e e-mail, além de pesquisas, ofertas e lançamentos.
                             <span className="block opacity-70">Você pode cancelar quando quiser.</span>
                           </span>
                         </label>
