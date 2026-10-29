@@ -1584,7 +1584,6 @@ export function ProfilePage() {
                             className="accent-primary mt-0.5 shrink-0 cursor-pointer" style={{ width: 16, height: 16 }} />
                           <span className="text-foreground/80" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-sm)", lineHeight: 1.5 }}>
                             Aceito receber atualizações dos pedidos por WhatsApp e e-mail, além de pesquisas e ofertas.
-                            <span className="block mt-0.5 text-foreground/45" style={{ fontSize: "var(--text-caption)" }}>Cancele quando quiser.</span>
                           </span>
                         </label>
                         {user.whatsappOptIn && !user.phone && (
