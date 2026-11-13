@@ -12,7 +12,7 @@ import { allProducts, type Product } from "./productsData";
 import { findProductBySwatch, getPrimaryProductImage, getProductHoverMedia, getProductSwatches, getShowcaseProducts } from "./productPresentation";
 import { artFitClass, setupArtVariant } from "../lib/setupImages";
 import { getGiftInfo, getPreOrderInfo } from "./PreOrderData";
-import { GiftCardRow } from "./GiftOffer";
+import { GiftBand } from "./GiftOffer";
 import { PreOrderPill, DiscountBadge, PriceBlock, QuickAddButton, CarouselNavButton } from "./section";
 
 interface ProductCarouselProps {
@@ -300,11 +300,11 @@ export function ProductCarousel({
                   )}
 
 
-                  {/* Compre e ganhe: no celular acima do botão (sempre visível);
-                      no desktop no pé, sai no hover quando o botão entra. */}
-                  <GiftCardRow
+                  {/* Compre e ganhe: faixa no pé; no celular sobe acima do botão
+                      (sempre visível), no desktop sai no hover quando ele entra. */}
+                  <GiftBand
                     info={getGiftInfo(displayProduct.id)}
-                    className="absolute bottom-[68px] md:bottom-4 left-4 right-4 z-10 transition-opacity duration-300 md:group-hover:opacity-0"
+                    className="!bottom-[64px] md:!bottom-0 transition-opacity duration-300 md:group-hover:opacity-0"
                   />
 
                   <div className="absolute bottom-4 left-4 right-4 opacity-100 translate-y-0 md:opacity-0 md:translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-400">

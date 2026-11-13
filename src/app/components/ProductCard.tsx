@@ -10,7 +10,7 @@ import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getProductSwatches, getStockStatus, getCardSwatches } from "./productPresentation";
 import { artFitClass, setupArtVariant } from "../lib/setupImages";
 import { getGiftInfo, getPreOrderInfo } from "./PreOrderData";
-import { GiftCardRow } from "./GiftOffer";
+import { GiftBand } from "./GiftOffer";
 import { CTAButton, DiscountBadge, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge } from "./section";
 
 /**
@@ -191,9 +191,9 @@ export function ProductCard({
 
 
         {/* Compre e ganhe. No desktop sai no hover, quando entra o "Adicionar". */}
-        <GiftCardRow
+        <GiftBand
           info={getGiftInfo(product.id)}
-          className={`absolute bottom-3 left-3 right-3 z-20 transition-opacity duration-200 ${onAdd && !outOfStock ? "md:group-hover:opacity-0" : ""}`}
+          className={`z-20 transition-opacity duration-200 ${onAdd && !outOfStock ? "md:group-hover:opacity-0" : ""}`}
         />
 
         {/* Só logado: favorito é da conta. Sempre visível, não só no hover:

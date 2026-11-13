@@ -1,7 +1,12 @@
-export interface GiftDef {
+/** Um item de brinde. `qty` padrão 1. */
+export interface GiftItem {
   productId: number;
-  /** curto, cabe no card: "Cadeira" */
-  cardLabel: string;
+  qty?: number;
+}
+
+/** Compre e ganhe: um ou mais produtos de brinde. */
+export interface GiftDef {
+  items: GiftItem[];
 }
 
 export interface PreOrderInfo {
@@ -11,9 +16,6 @@ export interface PreOrderInfo {
   reservedUnits: number;
   totalUnits: number;
   highlight: string;
-  /** Compre e ganhe: produto que vai de brinde. Aparece no card (selo com a
-      foto do brinde) e na PDP (bloco acima do botão). O carrinho já adiciona. */
-  gift?: GiftDef;
 }
 
 /**
@@ -67,7 +69,6 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
     reservedUnits: 180,
     totalUnits: 600,
     highlight: "Monitor curvo 49\" · 5K 120Hz",
-    gift: { productId: 468, cardLabel: "Cadeira" },
   },
   {
     productId: 30,
@@ -156,13 +157,23 @@ export function getPreOrderInfo(productId: number): PreOrderInfo | null {
   return info && new Date(info.releaseDate).getTime() > Date.now() ? info : null;
 }
 
-/** Compre e ganhe em produto normal (fora da pré-venda). */
-export const REGULAR_GIFTS: Record<number, GiftDef> = {
-  260: { productId: 173, cardLabel: "Headset" },
+/**
+ * Compre e ganhe, por produto (pré-venda ou não). O carrinho já adiciona os
+ * brindes; aqui é a vitrine: selo no card (faixa C) e bloco na PDP.
+ */
+export const GIFTS: Record<number, GiftDef> = {
+  // pré-venda
+  509: { items: [{ productId: 468 }] },                              // Z49C49 → cadeira STI Turbo Black
+  32: { items: [{ productId: 322, qty: 2 }, { productId: 339 }] },    // Mini PC → 2 fones + 1 mouse
+  35: { items: [{ productId: 175 }] },                               // One B500 → kit teclado e mouse
+  // venda normal
+  260: { items: [{ productId: 173 }] },                              // Z10 → headset CM300
+  72: { items: [{ productId: 296 }] },                               // Arkeum → mouse pad
+  446: { items: [{ productId: 181 }, { productId: 295 }] },          // cadeira Maringá → headset + mouse pad
+  436: { items: [{ productId: 333 }] },                              // Forcefield Dome → mouse Basaran
 };
 
-/** Brinde do produto, venha da pré-venda ou de campanha normal. */
 export function getGiftInfo(productId: number): { gift: GiftDef } | null {
-  const gift = getPreOrderInfo(productId)?.gift ?? REGULAR_GIFTS[productId];
+  const gift = GIFTS[productId];
   return gift ? { gift } : null;
 }

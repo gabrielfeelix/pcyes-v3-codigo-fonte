@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Rocket, Lock, CalendarDays, Sparkles, ShieldCheck } from "lucide-react";
 import type { PreOrderInfo } from "./PreOrderData";
+import { getGiftInfo } from "./PreOrderData";
 import { EarnPreview } from "./points/EarnPreview";
 import { GiftOfferBlock } from "./GiftOffer";
 import { parseBRL } from "../../utils/format";
@@ -327,7 +328,7 @@ export function PreOrderBanner({ info, productPrice, onReserve, variant = "card"
           />
         </div>
 
-        {!hideGift && <GiftOfferBlock info={info} className="mb-4" />}
+        {!hideGift && <GiftOfferBlock info={getGiftInfo(info.productId)} className="mb-4" />}
 
         {/* CTA */}
         <button
