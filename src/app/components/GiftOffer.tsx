@@ -44,7 +44,9 @@ const eyebrow = {
 };
 
 /** Fotos dos brindes empilhadas, com a quantidade quando passa de 1.
-    No card cabem 2 fotos (1 no celular); o resto vira um quadrado "+N". */
+    Faixa com 260px ou mais: 2 fotos; menor: 1. O resto vira "+N". A regra
+    é pela largura da faixa (container query), não da tela: card estreito
+    em tela larga (tablet, carrossel) cortava o texto. */
 function GiftThumbs({ items, size }: { items: ResolvedItem[]; size: string }) {
   const shown = items.slice(0, 2);
   const tile = (n: number, cls: string) => (
@@ -60,7 +62,7 @@ function GiftThumbs({ items, size }: { items: ResolvedItem[]; size: string }) {
       {shown.map((it, i) => (
         <span
           key={it.product.id}
-          className={`relative ${size} flex-shrink-0 rounded-[9px] ${i > 0 ? "-ml-3 hidden sm:block" : ""}`}
+          className={`relative ${size} flex-shrink-0 rounded-[9px] ${i > 0 ? "-ml-3 hidden @min-[260px]:block" : ""}`}
           style={{ background: "#fff", boxShadow: i > 0 ? "-3px 0 0 0 rgba(21,110,55,1)" : undefined, zIndex: shown.length - i + 1 }}
         >
           <ImageWithFallback src={it.product.image} alt={it.product.name} className="h-full w-full rounded-[9px] object-contain p-1" />
@@ -74,8 +76,8 @@ function GiftThumbs({ items, size }: { items: ResolvedItem[]; size: string }) {
           )}
         </span>
       ))}
-      {items.length > 1 && tile(items.length - 1, "flex sm:hidden")}
-      {items.length > 2 && tile(items.length - 2, "hidden sm:flex")}
+      {items.length > 1 && tile(items.length - 1, "flex @min-[260px]:hidden")}
+      {items.length > 2 && tile(items.length - 2, "hidden @min-[260px]:flex")}
     </span>
   );
 }
@@ -85,7 +87,7 @@ function BandContent({ gift }: { gift: NonNullable<ReturnType<typeof useGift>> }
      contam o que é; o texto só diz quantos (nomes e valor total na PDP —
      no card o valor não cabia ao lado das fotos). */
   const strike = (
-    <span className="hidden sm:inline min-w-0 truncate text-white/60 line-through" style={{ fontFamily: "var(--font-family-inter)", fontSize: "10.5px" }}>
+    <span className="hidden @min-[230px]:inline min-w-0 truncate text-white/60 line-through" style={{ fontFamily: "var(--font-family-inter)", fontSize: "10.5px" }}>
       {BRL.format(gift.value)}
     </span>
   );
@@ -96,12 +98,12 @@ function BandContent({ gift }: { gift: NonNullable<ReturnType<typeof useGift>> }
         <span className="min-w-0 flex-1 leading-tight">
           <span className="flex items-baseline gap-2">
             <span className="whitespace-nowrap text-white/75" style={eyebrow}>
-              <span className="sm:hidden">Ganhe</span>
-              <span className="hidden sm:inline">Compre e ganhe</span>
+              <span className="@min-[260px]:hidden">Ganhe</span>
+              <span className="hidden @min-[260px]:inline">Compre e ganhe</span>
             </span>
           </span>
           <span className="mt-0.5 block whitespace-nowrap text-white text-[12px] md:text-[13px]" style={{ fontFamily: "var(--font-family-inter)", fontWeight: 800 }}>
-            {gift.count} brindes<span className="hidden sm:inline"> grátis</span>
+            {gift.count} brindes<span className="hidden @min-[260px]:inline"> grátis</span>
           </span>
         </span>
       ) : (
@@ -129,7 +131,7 @@ export function GiftBand({ info, className = "" }: { info: GiftInfo; className?:
   if (!gift) return null;
   return (
     <div
-      className={`absolute inset-x-0 bottom-0 z-10 flex items-center gap-2.5 px-3 py-2 ${className}`}
+      className={`@container absolute inset-x-0 bottom-0 z-10 flex items-center gap-2.5 px-3 py-2 ${className}`}
       style={{ background: bandBg, borderTop: "1px solid rgba(134,239,172,0.35)" }}
     >
       <BandContent gift={gift} />
@@ -143,7 +145,7 @@ export function GiftInline({ info, className = "" }: { info: GiftInfo; className
   if (!gift) return null;
   return (
     <div
-      className={`flex max-w-[520px] items-center gap-2.5 rounded-[12px] px-2.5 py-2 ${className}`}
+      className={`@container flex max-w-[520px] items-center gap-2.5 rounded-[12px] px-2.5 py-2 ${className}`}
       style={{ background: bandBg, border: "1px solid rgba(134,239,172,0.35)" }}
     >
       <BandContent gift={gift} />
