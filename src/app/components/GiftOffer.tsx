@@ -70,25 +70,26 @@ function GiftThumbs({ items, size }: { items: ResolvedItem[]; size: string }) {
 }
 
 function BandContent({ gift }: { gift: NonNullable<ReturnType<typeof useGift>> }) {
-  /* Três linhas empilhadas (chamada, nome, valor): em card estreito uma
-     coluna de preço à direita espremia o nome e sobrepunha. */
+  /* Duas linhas só: chamada + valor riscado, e o nome em uma linha.
+     Com quatro (chamada, nome em 2, valor) a faixa engolia metade da foto. */
   return (
     <>
-      <GiftThumbs items={gift.items} size="h-10 w-10" />
+      <GiftThumbs items={gift.items} size="h-9 w-9" />
       <span className="min-w-0 flex-1 leading-tight">
-        <span className="block truncate text-white/75" style={eyebrow}>
-          {gift.multi ? `Ganhe ${gift.count} brindes` : "Compre e ganhe"}
+        <span className="flex items-baseline gap-2">
+          <span className="whitespace-nowrap text-white" style={{ ...eyebrow, fontWeight: 900 }}>
+            {gift.multi ? `${gift.count} brindes grátis` : "Brinde grátis"}
+          </span>
+          <span className="hidden sm:inline min-w-0 truncate text-white/60 line-through" style={{ fontFamily: "var(--font-family-inter)", fontSize: "10.5px" }}>
+            {BRL.format(gift.value)}
+          </span>
         </span>
         <span
-          className="mt-0.5 line-clamp-2 text-white text-[12px] md:text-[13px]"
+          className="mt-0.5 block truncate text-white text-[12px] md:text-[13px]"
           title={gift.label}
           style={{ fontFamily: "var(--font-family-inter)", fontWeight: 700 }}
         >
           {gift.label}
-        </span>
-        <span className="mt-0.5 flex items-baseline gap-1.5 whitespace-nowrap" style={{ fontFamily: "var(--font-family-inter)" }}>
-          <span className="text-white/60 line-through" style={{ fontSize: "10.5px" }}>{BRL.format(gift.value)}</span>
-          <span className="text-white" style={{ fontSize: "10.5px", fontWeight: 900, letterSpacing: "0.1em" }}>GRÁTIS</span>
         </span>
       </span>
     </>
@@ -101,7 +102,7 @@ export function GiftBand({ info, className = "" }: { info: GiftInfo; className?:
   if (!gift) return null;
   return (
     <div
-      className={`absolute inset-x-0 bottom-0 z-10 flex items-center gap-2.5 px-3 py-2.5 ${className}`}
+      className={`absolute inset-x-0 bottom-0 z-10 flex items-center gap-2.5 px-3 py-2 ${className}`}
       style={{ background: bandBg, borderTop: "1px solid rgba(134,239,172,0.35)" }}
     >
       <BandContent gift={gift} />
