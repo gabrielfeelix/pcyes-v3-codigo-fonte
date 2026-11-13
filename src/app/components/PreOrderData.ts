@@ -169,7 +169,7 @@ export const GIFTS: Record<number, GiftDef> = {
   // venda normal
   260: { items: [{ productId: 173 }] },                              // Z10 → headset CM300
   72: { items: [{ productId: 296 }] },                               // Arkeum → mouse pad
-  446: { items: [{ productId: 181 }, { productId: 295 }] },          // cadeira Maringá → headset + mouse pad
+  446: { items: [{ productId: 181 }, { productId: 295 }, { productId: 339 }, { productId: 322 }] }, // cadeira Maringá → 4 brindes
   436: { items: [{ productId: 333 }] },                              // Forcefield Dome → mouse Basaran
 };
 
