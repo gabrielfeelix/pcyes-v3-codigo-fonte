@@ -19,7 +19,7 @@ function useGift(info: GiftInfo) {
   if (!info?.gift) return null;
   const product = allProducts.find((p) => p.id === info.gift!.productId);
   if (!product) return null;
-  return { product, shortName: info.gift.shortName, cardLabel: info.gift.cardLabel };
+  return { product, name: product.name, cardLabel: info.gift.cardLabel };
 }
 
 const thumbStyle = {
@@ -57,10 +57,10 @@ export function GiftCardRow({ info, className = "" }: { info: GiftInfo; classNam
           <span className="hidden md:inline">Ganhe de brinde</span>
         </span>
         <span
-          className="mt-0.5 block line-clamp-2 text-white text-[11.5px] md:text-[13px]"
+          className="mt-0.5 line-clamp-2 text-white text-[11.5px] md:text-[13px]" title={gift.name}
           style={{ fontFamily: "var(--font-family-inter)", fontWeight: 600, lineHeight: 1.25 }}
         >
-          {gift.shortName}
+          {gift.name}
         </span>
       </span>
     </div>
@@ -92,10 +92,11 @@ export function GiftOfferBlock({ info, className = "" }: { info: GiftInfo; class
           <Gift size={12} strokeWidth={2.4} /> Compre e ganhe
         </p>
         <p
-          className="mt-1 text-ink-strong"
+          className="mt-1 line-clamp-2 text-ink-strong"
+          title={gift.name}
           style={{ fontFamily: "var(--font-family-figtree)", fontSize: "var(--text-base)", fontWeight: 650, lineHeight: 1.2 }}
         >
-          {gift.shortName}
+          {gift.name}
         </p>
         <p className="mt-1 flex items-baseline gap-2" style={{ fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)" }}>
           <span className="line-through text-ink-subtle">{gift.product.price}</span>
@@ -168,8 +169,8 @@ export function GiftBadge({ info, look = "float", hoverHide = "" }: { info: Gift
           <span className="block whitespace-nowrap text-white/75" style={{ fontFamily: "var(--font-family-inter)", fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
             Compre e ganhe
           </span>
-          <span className="mt-0.5 block truncate text-white text-[12px] md:text-[13px]" style={{ fontFamily: "var(--font-family-inter)", fontWeight: 700 }}>
-            {gift.shortName}
+          <span className="mt-0.5 line-clamp-2 text-white text-[12px] md:text-[13px]" title={gift.name} style={{ fontFamily: "var(--font-family-inter)", fontWeight: 700 }}>
+            {gift.name}
           </span>
         </span>
         <span className="hidden md:block flex-shrink-0 text-right leading-tight">
@@ -237,8 +238,8 @@ export function GiftBadge({ info, look = "float", hoverHide = "" }: { info: Gift
             <span className="block" style={{ color: "#5fd068", fontFamily: "var(--font-family-inter)", fontSize: "9.5px", fontWeight: 900, letterSpacing: "0.14em", textTransform: "uppercase" }}>
               Vale-brinde
             </span>
-            <span className="mt-0.5 block line-clamp-2 text-white text-[11.5px] md:text-[13px]" style={{ fontFamily: "var(--font-family-inter)", fontWeight: 700 }}>
-              {gift.shortName}
+            <span className="mt-0.5 line-clamp-2 text-white text-[11.5px] md:text-[13px]" title={gift.name} style={{ fontFamily: "var(--font-family-inter)", fontWeight: 700 }}>
+              {gift.name}
             </span>
           </div>
         </div>

@@ -1,6 +1,5 @@
 export interface GiftDef {
   productId: number;
-  shortName: string;
   /** curto, cabe no card: "Cadeira" */
   cardLabel: string;
 }
@@ -68,7 +67,7 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
     reservedUnits: 180,
     totalUnits: 600,
     highlight: "Monitor curvo 49\" · 5K 120Hz",
-    gift: { productId: 468, shortName: "Cadeira STI Turbo Black", cardLabel: "Cadeira" },
+    gift: { productId: 468, cardLabel: "Cadeira" },
   },
   {
     productId: 30,
@@ -159,7 +158,7 @@ export function getPreOrderInfo(productId: number): PreOrderInfo | null {
 
 /** Compre e ganhe em produto normal (fora da pré-venda). */
 export const REGULAR_GIFTS: Record<number, GiftDef> = {
-  260: { productId: 173, shortName: "Headset Comfort CM300", cardLabel: "Headset" },
+  260: { productId: 173, cardLabel: "Headset" },
 };
 
 /** Brinde do produto, venha da pré-venda ou de campanha normal. */
