@@ -64,6 +64,7 @@ const MaringaFCCollabPage = lazyRoute(() => import("./components/pages/MaringaFC
 const MonteSeuPcPage = lazyRoute(() => import("./pages/MonteSeuPcPage").then(m => ({ default: m.MonteSeuPcPage })));
 const DriversManuaisPage = lazyRoute(() => import("./pages/DriversManuaisPage").then(m => ({ default: m.DriversManuaisPage })));
 const DriverDetailPage = lazyRoute(() => import("./pages/DriverDetailPage").then(m => ({ default: m.DriverDetailPage })));
+const CompreEGanhePage = lazyRoute(() => import("./pages/CompreEGanhePage").then(m => ({ default: m.CompreEGanhePage })));
 const FaqPage = lazyRoute(() => import("./pages/FaqPage").then(m => ({ default: m.FaqPage })));
 const PcPointsPage = lazyRoute(() => import("./pages/PcPointsPage").then(m => ({ default: m.PcPointsPage })));
 const QuemSomosPage = lazyRoute(() => import("./pages/QuemSomosPage").then(m => ({ default: m.QuemSomosPage })));
@@ -110,6 +111,7 @@ export const router = createBrowserRouter([
       { path: "drivers-e-manuais", Component: DriversManuaisPage },
       { path: "drivers-e-manuais/:slug", Component: DriverDetailPage },
       { path: "faq", Component: FaqPage },
+      { path: "compre-e-ganhe", Component: CompreEGanhePage },
       { path: "quem-somos", Component: QuemSomosPage },
       { path: "pc-points", Component: PcPointsPage },
       { path: "politica-de-privacidade", Component: PrivacyPage },

@@ -9,7 +9,7 @@ import { useFavorites } from "./FavoritesContext";
 import { allProducts, type Product } from "./productsData";
 import { getPrimaryProductImage, getProductSwatches, getStockStatus, getCardSwatches } from "./productPresentation";
 import { artFitClass, setupArtVariant } from "../lib/setupImages";
-import { getGiftInfo, getPreOrderInfo } from "./PreOrderData";
+import { getGiftInfo, getPreOrderInfo, type GiftDef } from "./PreOrderData";
 import { GiftBand } from "./GiftOffer";
 import { CTAButton, DiscountBadge, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge } from "./section";
 
@@ -57,6 +57,8 @@ interface ProductCardProps {
   emphasizeDiscount?: boolean;
   onAdd?: (product: Product) => void;
   onFavorite?: (product: Product) => void;
+  /** Força um brinde (vitrine de cenários). Sem isso, lê o mapa GIFTS. */
+  gift?: GiftDef;
   className?: string;
   style?: CSSProperties;
 }
@@ -72,6 +74,7 @@ export function ProductCard({
   emphasizeDiscount = false,
   onAdd,
   onFavorite,
+  gift,
   className = "",
   style,
 }: ProductCardProps) {
@@ -192,7 +195,7 @@ export function ProductCard({
 
         {/* Compre e ganhe. No desktop sai no hover, quando entra o "Adicionar". */}
         <GiftBand
-          info={getGiftInfo(product.id)}
+          info={gift ? { gift } : getGiftInfo(product.id)}
           className={`z-20 transition-opacity duration-200 ${onAdd && !outOfStock ? "md:group-hover:opacity-0" : ""}`}
         />
 
