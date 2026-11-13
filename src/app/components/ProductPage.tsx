@@ -25,13 +25,19 @@ import {
   getShowcaseProducts, getStockStatus, getVisibleCatalogProducts,
 } from "./productPresentation";
 import { toast } from "sonner";
-import { getPreOrderInfo } from "./PreOrderData";
+import { getGiftInfo, getPreOrderInfo } from "./PreOrderData";
 import type { PreOrderInfo } from "./PreOrderData";
 import { PreOrderBanner, useCountdown } from "./PreOrderBanner";
 import { CTAButton, DiscountBadge, PriceBlock, QtyStepper, installmentCountFor } from "./section";
 import { PIX_RATE, PIX_PERCENT } from "./section/PriceBlock";
 import { PointsChip } from "./points/ProductPoints";
 import { EarnPreview } from "./points/EarnPreview";
+import { GiftOfferBlock } from "./GiftOffer";
+
+/* Teste A/B do bloco "compre e ganhe" na PDP. Padrão: no card de compra.
+   ?brinde=sobre: abaixo de "Sobre o produto". */
+const giftBelowAbout = () =>
+  typeof window !== "undefined" && new URLSearchParams(window.location.search).get("brinde") === "sobre";
 import { PcyesCoin } from "./PcyesCoin";
 import { REVIEW_POINTS } from "../lib/pcyesPoints";
 import { SEO } from "./SEO";
@@ -1071,6 +1077,8 @@ function StickyPriceCard({
           </button>
 
           <EarnPreview amount={product.priceNum * qty} label="Este produto rende" className="mt-3" />
+
+          {!giftBelowAbout() && <GiftOfferBlock info={getGiftInfo(product.id)} className="mt-4" />}
         </div>
 
         {/* Stock indicator */}
@@ -1351,6 +1359,8 @@ function MobilePurchaseFlow({
           className={isPreOrder ? "mt-4" : "mb-5 -mt-2"}
         />
 
+        {!giftBelowAbout() && <GiftOfferBlock info={getGiftInfo(product.id)} className={isPreOrder ? "mt-4" : "mb-5"} />}
+
         {isPreOrder && (
           <div className="mt-4 mb-5">
             {/* countdown */}
@@ -1541,6 +1551,7 @@ function MobilePurchaseFlow({
           onSeeComponents={onSeeComponents}
           onSeeWorkloads={onSeeWorkloads}
         />
+        {giftBelowAbout() && <GiftOfferBlock info={getGiftInfo(product.id)} className="mt-5" />}
       </div>
 
       <PaymentModal
@@ -3741,6 +3752,7 @@ export function ProductPage() {
                 onSeeComponents={setupComponents?.length ? () => setComponentsOpen(true) : undefined}
                 onSeeWorkloads={setupPlaybook ? showWorkloads : undefined}
               />
+              {giftBelowAbout() && <GiftOfferBlock info={getGiftInfo(product.id)} className="mt-6" />}
             </div>
           </motion.div>
             </div>
@@ -3759,6 +3771,7 @@ export function ProductPage() {
             >
               {preOrderInfo ? (
                 <PreOrderBanner
+                  hideGift={giftBelowAbout()}
                   info={preOrderInfo}
                   productPrice={product.price}
                   onReserve={handleBuyNow}

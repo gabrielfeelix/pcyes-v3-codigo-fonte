@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Rocket, Lock, CalendarDays, Sparkles, ShieldCheck } from "lucide-react";
 import type { PreOrderInfo } from "./PreOrderData";
 import { EarnPreview } from "./points/EarnPreview";
+import { GiftOfferBlock } from "./GiftOffer";
 import { parseBRL } from "../../utils/format";
 
 type Props = {
@@ -11,6 +12,8 @@ type Props = {
   productPrice: string;
   onReserve: () => void;
   variant?: "card" | "hero";
+  /** Teste ?brinde=sobre: o bloco do brinde sai daqui e vai pra coluna do meio. */
+  hideGift?: boolean;
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -41,7 +44,7 @@ function formatReleaseDate(iso: string) {
   });
 }
 
-export function PreOrderBanner({ info, productPrice, onReserve, variant = "card" }: Props) {
+export function PreOrderBanner({ info, productPrice, onReserve, variant = "card", hideGift = false }: Props) {
   const { days, hours, minutes, seconds, isLive } = useCountdown(info.releaseDate);
   const reservedPct = Math.min(100, Math.round((info.reservedUnits / info.totalUnits) * 100));
   const remaining = Math.max(0, info.totalUnits - info.reservedUnits);
@@ -323,6 +326,8 @@ export function PreOrderBanner({ info, productPrice, onReserve, variant = "card"
             className="mt-2.5"
           />
         </div>
+
+        {!hideGift && <GiftOfferBlock info={info} className="mb-4" />}
 
         {/* CTA */}
         <button

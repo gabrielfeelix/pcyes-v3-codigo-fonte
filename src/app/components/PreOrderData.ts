@@ -1,3 +1,10 @@
+export interface GiftDef {
+  productId: number;
+  shortName: string;
+  /** curto, cabe no card: "Cadeira" */
+  cardLabel: string;
+}
+
 export interface PreOrderInfo {
   productId: number;
   releaseDate: string; // ISO date
@@ -5,6 +12,9 @@ export interface PreOrderInfo {
   reservedUnits: number;
   totalUnits: number;
   highlight: string;
+  /** Compre e ganhe: produto que vai de brinde. Aparece no card (selo com a
+      foto do brinde) e na PDP (bloco acima do botão). O carrinho já adiciona. */
+  gift?: GiftDef;
 }
 
 /**
@@ -53,11 +63,12 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
   },
   {
     productId: 509,
-    releaseDate: "2026-09-20T19:00:00",
+    releaseDate: "2026-11-30T20:00:00",
     preOrderPrice: "R$ 3.499,00",
     reservedUnits: 180,
     totalUnits: 600,
-    highlight: "Monitor curvo 34\" UltraWide HDR",
+    highlight: "Monitor curvo 49\" · 5K 120Hz",
+    gift: { productId: 468, shortName: "Cadeira STI Turbo Black", cardLabel: "Cadeira" },
   },
   {
     productId: 30,
@@ -144,4 +155,15 @@ export const PRE_ORDER_ITEMS: PreOrderInfo[] = [
 export function getPreOrderInfo(productId: number): PreOrderInfo | null {
   const info = PRE_ORDER_ITEMS.find((p) => p.productId === productId);
   return info && new Date(info.releaseDate).getTime() > Date.now() ? info : null;
+}
+
+/** Compre e ganhe em produto normal (fora da pré-venda). */
+export const REGULAR_GIFTS: Record<number, GiftDef> = {
+  260: { productId: 173, shortName: "Headset Comfort CM300", cardLabel: "Headset" },
+};
+
+/** Brinde do produto, venha da pré-venda ou de campanha normal. */
+export function getGiftInfo(productId: number): { gift: GiftDef } | null {
+  const gift = getPreOrderInfo(productId)?.gift ?? REGULAR_GIFTS[productId];
+  return gift ? { gift } : null;
 }

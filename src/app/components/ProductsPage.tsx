@@ -30,7 +30,8 @@ import {
   getNewArrivals,
   getSkuRecency,
 } from "./productPresentation";
-import { getPreOrderInfo } from "./PreOrderData";
+import { getGiftInfo, getPreOrderInfo } from "./PreOrderData";
+import { GiftBadge, GiftCardRow, GIFT_LOOKS } from "./GiftOffer";
 import { searchProducts } from "../../utils/search";
 import { DiscountBadge, InstallmentLine, PixLabel, PointsLine, PreOrderPill, PriceBlock, RatingChip, SetupTierBadge, SpecChip, pixPriceOf } from "./section";
 import { formatBRL as formatMoney } from "../../utils/format";
@@ -389,6 +390,8 @@ function PriceRangeSlider({
 
 export function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  /* Teste de selos do brinde: ?selos=1 mostra o mesmo produto 4x, um selo em cada. */
+  const seloTest = searchParams.get("selos") === "1";
 
   /* Recorte por CAMPANHA de brinde (`?campanha=itens`).
      Mesma natureza do `showcase` logo abaixo: é a PÁGINA que recorta, não um
@@ -1676,7 +1679,7 @@ export function ProductsPage() {
                   {gridMode === "grid" ? (
                     <div className="grid gap-x-4 sm:gap-x-6 gap-y-8 md:gap-y-14 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                       <AnimatePresence mode="popLayout">
-                    {paginatedProducts.map((product, i) => {
+                    {(seloTest ? Array(8).fill(productById.get(509)!) as Product[] : paginatedProducts).map((product, i) => {
                       const displayProduct = getColorMatchedProduct(product);
                       const discount = getDiscount(displayProduct);
                       const productImages = getProductImages(displayProduct);
@@ -1692,10 +1695,15 @@ export function ProductsPage() {
                            chip de switch, cor, preço com ou sem riscado), então
                            sem isso o botão de comprar parava numa altura
                            diferente em cada card e a grade ficava torta. */
-                        <motion.div key={`grid-${product.id}`} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                        <motion.div key={seloTest ? `selo-${i}` : `grid-${product.id}`} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                           transition={{ duration: 0.3, delay: Math.min(i * 0.025, 0.35) }}
                           className="group relative flex h-full flex-col"
                         >
+                          {seloTest && (
+                            <span className="mb-2 self-start rounded-md bg-foreground/10 px-2 py-1 text-ink-strong" style={{ fontFamily: "var(--font-family-inter)", fontSize: "12px", fontWeight: 800 }}>
+                              {["A · atual", "B · combo", "C · faixa", "D · selo", "E · fita", "F · tag", "G · cupom", "H · valor"][i % 8]}
+                            </span>
+                          )}
                           <div className={`relative shrink-0 overflow-hidden mb-4 aspect-[5/6] transition-all duration-300 deal-card-img ${displayProduct.inStock === false ? 'opacity-60 grayscale-[0.5]' : ''}`} style={{ borderRadius: "var(--radius-card-lg)", background: "linear-gradient(135deg, rgba(var(--foreground-rgb), 0.10) 0%, rgba(var(--foreground-rgb), 0.03) 100%)", border: "1px solid rgba(var(--foreground-rgb), 0.08)" }}>
                             {/* Inner shine */}
                             <div className="pointer-events-none absolute inset-0 z-[1]" style={{ background: "radial-gradient(circle at 30% 25%, rgba(var(--foreground-rgb), 0.06) 0%, transparent 55%)", borderRadius: "var(--radius-card-lg)" }} />
@@ -1732,6 +1740,8 @@ export function ProductsPage() {
                                 )}
                               </div>
                             )}
+                            {/* Compre e ganhe. No desktop sai no hover, quando entra o "Adicionar". */}
+                            <GiftBadge info={getGiftInfo(displayProduct.id)} look={seloTest ? GIFT_LOOKS[i % 8] : "float"} hoverHide="lg:group-hover:opacity-0" />
                             {displayProduct.inStock === false && (
                               <span className="absolute top-3 right-12 z-10 px-2.5 py-1 bg-foreground/80 text-background shadow-sm" style={{ borderRadius: "var(--radius)", fontFamily: "var(--font-family-inter)", fontSize: "var(--text-caption)", fontWeight: "600" }}>
                                 Esgotado
@@ -1910,6 +1920,8 @@ export function ProductsPage() {
                             </div>
                             <InstallmentLine scale="catalog" priceNum={displayProduct.priceNum} className="mt-1" />
                             <PointsLine priceNum={displayProduct.priceNum} className="mt-1" />
+                            {/* Compre e ganhe na lista: linha compacta sob o preço (a foto do card é pequena demais para um selo por cima). */}
+                            <GiftCardRow info={getGiftInfo(displayProduct.id)} className="mt-2.5 w-fit max-w-full" />
                             {/* Mobile buy button — full width below info */}
                             <button onClick={() => handleAddToCart(displayProduct)}
                               className="sm:hidden mt-2.5 flex w-full items-center justify-center gap-2 rounded-full py-2 cursor-pointer"
