@@ -43,41 +43,40 @@ const eyebrow = {
   textTransform: "uppercase" as const,
 };
 
-/** Fotos dos brindes empilhadas, com a quantidade quando passa de 1.
-    Faixa com 260px ou mais: 2 fotos; menor: 1. O resto vira "+N". A regra
-    é pela largura da faixa (container query), não da tela: card estreito
-    em tela larga (tablet, carrossel) cortava o texto. */
+/** Fotos dos brindes como grupo de avatares: círculos sobrepostos com aro
+    da cor da faixa e um círculo "+N" no fim (padrão "+85 curtiram").
+    Até 2 fotos; o resto entra no contador. */
 function GiftThumbs({ items, size }: { items: ResolvedItem[]; size: string }) {
   const shown = items.slice(0, 2);
-  const tile = (n: number, cls: string) => (
-    <span
-      className={`relative ${size} -ml-3 flex-shrink-0 items-center justify-center rounded-[9px] text-white ${cls}`}
-      style={{ background: "#0f3d22", boxShadow: "-3px 0 0 0 rgba(21,110,55,1)", fontFamily: "var(--font-family-inter)", fontSize: "12px", fontWeight: 900 }}
-    >
-      +{n}
-    </span>
-  );
+  const rest = items.length - shown.length;
+  const ring = "0 0 0 2px #17783d";
   return (
     <span className="flex flex-shrink-0 items-center">
       {shown.map((it, i) => (
         <span
           key={it.product.id}
-          className={`relative ${size} flex-shrink-0 rounded-[9px] ${i > 0 ? "-ml-3 hidden @min-[260px]:block" : ""}`}
-          style={{ background: "#fff", boxShadow: i > 0 ? "-3px 0 0 0 rgba(21,110,55,1)" : undefined, zIndex: shown.length - i + 1 }}
+          className={`relative ${size} flex-shrink-0 rounded-full ${i > 0 ? "-ml-2.5" : ""}`}
+          style={{ background: "#fff", boxShadow: ring, zIndex: i + 1 }}
         >
-          <ImageWithFallback src={it.product.image} alt={it.product.name} className="h-full w-full rounded-[9px] object-contain p-1" />
+          <ImageWithFallback src={it.product.image} alt={it.product.name} className="h-full w-full rounded-full object-contain p-1" />
           {it.qty > 1 && (
             <span
               className="absolute -bottom-1 -right-1 rounded-full px-1 text-white"
-              style={{ background: "#111", border: "1.5px solid #16a34a", fontFamily: "var(--font-family-inter)", fontSize: "9px", fontWeight: 900, lineHeight: "14px" }}
+              style={{ background: "#111", boxShadow: ring, fontFamily: "var(--font-family-inter)", fontSize: "9px", fontWeight: 900, lineHeight: "13px" }}
             >
               {it.qty}×
             </span>
           )}
         </span>
       ))}
-      {items.length > 1 && tile(items.length - 1, "flex @min-[260px]:hidden")}
-      {items.length > 2 && tile(items.length - 2, "hidden @min-[260px]:flex")}
+      {rest > 0 && (
+        <span
+          className={`relative ${size} -ml-2.5 flex flex-shrink-0 items-center justify-center rounded-full text-white`}
+          style={{ background: "rgba(255,255,255,0.22)", boxShadow: ring, backdropFilter: "blur(6px)", fontFamily: "var(--font-family-inter)", fontSize: "11px", fontWeight: 800, zIndex: 5 }}
+        >
+          +{rest}
+        </span>
+      )}
     </span>
   );
 }
@@ -93,7 +92,7 @@ function BandContent({ gift }: { gift: NonNullable<ReturnType<typeof useGift>> }
   );
   return (
     <>
-      <GiftThumbs items={gift.items} size="h-9 w-9" />
+      <GiftThumbs items={gift.items} size="h-8 w-8" />
       {gift.multi ? (
         <span className="min-w-0 flex-1 leading-tight">
           <span className="flex items-baseline gap-2">
