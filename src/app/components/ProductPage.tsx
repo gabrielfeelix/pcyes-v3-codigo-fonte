@@ -1077,8 +1077,6 @@ function StickyPriceCard({
           </button>
 
           <EarnPreview amount={product.priceNum * qty} label="Este produto rende" className="mt-3" />
-
-          {!giftBelowAbout() && <GiftOfferBlock info={getGiftInfo(product.id)} className="mt-4" />}
         </div>
 
         {/* Stock indicator */}
@@ -1096,6 +1094,10 @@ function StickyPriceCard({
             {inStock ? `${stockLabel} · envio em 24h úteis` : discontinued ? "Fora de linha" : "Sem estoque"}
           </span>
         </div>
+
+        {/* Brinde depois do estoque: estoque/entrega fica colado no preço, e o
+            brinde é o último argumento antes de quantidade e botão. */}
+        {!giftBelowAbout() && <GiftOfferBlock info={getGiftInfo(product.id)} className="mb-4" />}
 
         {/* Qty selector — sem estoque não há o que quantificar. */}
         {inStock && <div className="flex items-center justify-between mb-3">

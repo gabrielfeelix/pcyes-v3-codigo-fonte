@@ -187,9 +187,12 @@ export function GiftOfferBlock({ info, className = "" }: { info: GiftInfo; class
                 {it.qty > 1 && <span style={{ color: GREEN, fontWeight: 900 }}>{it.qty}× </span>}
                 {it.product.name}
               </span>
-              <span className="mt-0.5 block text-ink-subtle line-through" style={{ fontFamily: "var(--font-family-inter)", fontSize: "11px" }}>
-                {BRL.format(it.product.priceNum * it.qty)}
-              </span>
+              {/* Um brinde só: o valor já está no cabeçalho, não repete. */}
+              {gift.multi && (
+                <span className="mt-0.5 block text-ink-subtle line-through" style={{ fontFamily: "var(--font-family-inter)", fontSize: "11px" }}>
+                  {BRL.format(it.product.priceNum * it.qty)}
+                </span>
+              )}
             </span>
           </li>
         ))}
