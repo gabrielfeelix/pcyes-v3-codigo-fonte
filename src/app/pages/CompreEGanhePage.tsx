@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { ProductCard } from "../components/ProductCard";
+import { useCart } from "../components/CartContext";
+import { getPrimaryProductImage } from "../components/productPresentation";
 import { GiftInline, GiftOfferBlock } from "../components/GiftOffer";
 import { allProducts } from "../components/productsData";
 import type { GiftDef } from "../components/PreOrderData";
@@ -64,6 +66,7 @@ function Block({ eyebrow, title, children }: { eyebrow: string; title: string; c
 const product = (id: number) => allProducts.find((p) => p.id === id)!;
 
 export function CompreEGanhePage() {
+  const { addItem } = useCart();
   return (
     <SectionContainer>
       <Block eyebrow="Compre e ganhe" title="Card de produto">
@@ -71,7 +74,12 @@ export function CompreEGanhePage() {
           {CARDS.map((s) => (
             <div key={s.title}>
               <Label title={s.title} note={s.note} />
-              <ProductCard product={product(s.productId)} gift={s.gift} variant="shelf" />
+              <ProductCard
+                product={product(s.productId)}
+                gift={s.gift}
+                variant="shelf"
+                onAdd={(p) => addItem({ id: p.id, name: p.name, price: p.price, image: getPrimaryProductImage(p) })}
+              />
             </div>
           ))}
         </div>
