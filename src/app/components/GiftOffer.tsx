@@ -94,16 +94,10 @@ function BandContent({ gift }: { gift: NonNullable<ReturnType<typeof useGift>> }
               <span className="@min-[260px]:hidden">Ganhe</span>
               <span className="hidden @min-[260px]:inline">Compre e ganhe</span>
             </span>
+            {strike}
           </span>
-          {/* Valor somado riscado ao lado da contagem, como no brinde único;
-              some quando o card é estreito. */}
-          <span className="mt-0.5 flex min-w-0 items-baseline gap-2">
-            <span className="whitespace-nowrap text-white text-[12px] md:text-[13px]" style={{ fontFamily: "var(--font-family-inter)", fontWeight: 800 }}>
-              {gift.count} brindes<span className="hidden @min-[260px]:inline"> grátis</span>
-            </span>
-            <span className="hidden @min-[280px]:inline min-w-0 truncate text-white/60 line-through" style={{ fontFamily: "var(--font-family-inter)", fontSize: "10.5px" }}>
-              {BRL.format(gift.value)}
-            </span>
+          <span className="mt-0.5 block whitespace-nowrap text-white text-[12px] md:text-[13px]" style={{ fontFamily: "var(--font-family-inter)", fontWeight: 800 }}>
+            {gift.count} brindes<span className="hidden @min-[260px]:inline"> grátis</span>
           </span>
         </span>
       ) : (
