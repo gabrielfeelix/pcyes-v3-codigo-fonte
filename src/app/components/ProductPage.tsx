@@ -1253,6 +1253,9 @@ function MobilePurchaseFlow({
           )}
         </div>
 
+        {/* Pré-venda: brinde antes do preço de pré-venda, para não parecer que o preço é do brinde. */}
+        {isPreOrder && !giftBelowAbout() && <GiftOfferBlock info={getGiftInfo(product.id)} className="mb-4" />}
+
         <div className="mb-3">
           {isPreOrder ? (
             <>
@@ -1482,9 +1485,6 @@ function MobilePurchaseFlow({
             </div>
           </div>
         )}
-
-        {/* Pré-venda: brinde perto de quantidade e botão, como no fluxo normal. */}
-        {isPreOrder && !giftBelowAbout() && <GiftOfferBlock info={getGiftInfo(product.id)} className="mb-4" />}
 
         {/* Sem estoque (fora pré-venda) não há o que quantificar. */}
         {(isPreOrder || inStock) && <div className="flex items-center justify-between mb-3">

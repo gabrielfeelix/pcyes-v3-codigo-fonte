@@ -263,6 +263,9 @@ export function PreOrderBanner({ info, productPrice, onReserve, variant = "card"
           </p>
         </div>
 
+        {/* Brinde antes do preço: o preço de pré-venda é do produto, não do brinde. */}
+        {!hideGift && <GiftOfferBlock info={getGiftInfo(info.productId)} className="mb-4" />}
+
         {/* price */}
         <div
           className="mb-4 p-3"
@@ -327,8 +330,6 @@ export function PreOrderBanner({ info, productPrice, onReserve, variant = "card"
             className="mt-2.5"
           />
         </div>
-
-        {!hideGift && <GiftOfferBlock info={getGiftInfo(info.productId)} className="mb-4" />}
 
         {/* CTA */}
         <button
