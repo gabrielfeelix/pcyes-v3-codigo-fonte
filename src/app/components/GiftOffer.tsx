@@ -45,28 +45,22 @@ const eyebrow = {
 
 /** Fotos dos brindes como grupo de avatares: círculos sobrepostos com aro
     da cor da faixa e um círculo "+N" no fim (padrão "+85 curtiram").
-    Até 2 fotos; o resto entra no contador. */
+    Conta por unidade (2 fones + 1 mouse = 3): até 2 fotos e o resto no
+    contador, sem selo de quantidade em cima da foto. */
 function GiftThumbs({ items, size }: { items: ResolvedItem[]; size: string }) {
-  const shown = items.slice(0, 2);
-  const rest = items.length - shown.length;
+  const units = items.flatMap((it) => Array.from({ length: it.qty }, () => it.product));
+  const shown = units.slice(0, 2);
+  const rest = units.length - shown.length;
   const ring = "0 0 0 2px #17783d";
   return (
     <span className="flex flex-shrink-0 items-center">
-      {shown.map((it, i) => (
+      {shown.map((product, i) => (
         <span
-          key={it.product.id}
+          key={`${product.id}-${i}`}
           className={`relative ${size} flex-shrink-0 rounded-full ${i > 0 ? "-ml-2.5" : ""}`}
           style={{ background: "#fff", boxShadow: ring, zIndex: i + 1 }}
         >
-          <ImageWithFallback src={it.product.image} alt={it.product.name} className="h-full w-full rounded-full object-contain p-1" />
-          {it.qty > 1 && (
-            <span
-              className="absolute -bottom-1 -right-1 rounded-full px-1 text-white"
-              style={{ background: "#111", boxShadow: ring, fontFamily: "var(--font-family-inter)", fontSize: "9px", fontWeight: 900, lineHeight: "13px" }}
-            >
-              {it.qty}×
-            </span>
-          )}
+          <ImageWithFallback src={product.image} alt={product.name} className="h-full w-full rounded-full object-contain p-1" />
         </span>
       ))}
       {rest > 0 && (
