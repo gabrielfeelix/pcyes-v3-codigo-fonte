@@ -1361,7 +1361,7 @@ function MobilePurchaseFlow({
           className={isPreOrder ? "mt-4" : "mb-5 -mt-2"}
         />
 
-        {!giftBelowAbout() && <GiftOfferBlock info={getGiftInfo(product.id)} className={isPreOrder ? "mt-4" : "mb-5"} />}
+        {!isPreOrder && !giftBelowAbout() && <GiftOfferBlock info={getGiftInfo(product.id)} className="mb-5" />}
 
         {isPreOrder && (
           <div className="mt-4 mb-5">
@@ -1482,6 +1482,9 @@ function MobilePurchaseFlow({
             </div>
           </div>
         )}
+
+        {/* Pré-venda: brinde perto de quantidade e botão, como no fluxo normal. */}
+        {isPreOrder && !giftBelowAbout() && <GiftOfferBlock info={getGiftInfo(product.id)} className="mb-4" />}
 
         {/* Sem estoque (fora pré-venda) não há o que quantificar. */}
         {(isPreOrder || inStock) && <div className="flex items-center justify-between mb-3">
