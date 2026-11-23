@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
  * Collab Drop Dead × PCYES — o jogo DROP LINE ocupa a página.
  *
  * O jogo é estático (Canvas 2D) e mora em public/collab/dropdead/jogo/.
- * A fonte de verdade fica em projetos/collab-dropdead/jogo; para atualizar,
- * rode projetos/collab-dropdead/jogo/tools/publicar_v3.sh.
+ * A fonte de verdade fica em projetos/collab-dropdead/jogo-1; para atualizar,
+ * rode projetos/collab-dropdead/jogo-1/tools/publicar_v3.sh.
  * O jogo tem botão próprio de tela cheia (e tecla F).
  */
 export function DropDeadCollabPage() {

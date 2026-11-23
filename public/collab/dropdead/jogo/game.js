@@ -187,7 +187,7 @@ function buildTrack() {
   road(30, 50, 30, -1.6, 0);
   act('LADEIRA', '#F6A927');
   road(40, 30, 10, 0, 14);          // sobe até a crista
-  road(10, 20, 60, 0, -46);          // despenca
+  road(10, 30, 60, 0, -34);          // despenca
   road(30, 60, 30, 2.2, -10);
   road(30, 40, 30, -2.4, -14);
   act('VIADUTO', '#F08A2A');
@@ -270,12 +270,13 @@ function buildTrack() {
     coinRow(i + 2, l, Math.floor(len / 3), C.railH + 60); }
   // produtos (um por ato)
   [['p-shape', ACTS[1].from - 20], ['p-meia', ACTS[2].from + 30], ['p-teclado', ACTS[3].from + 10], ['p-mouse', ACTS[4].from + 20]]
-    .forEach(([k, i], n) => segs[i].items.push({ k, l: n % 3, x: C.lanes[n % 3], z: 90, got: false, prod: true }));
+    .forEach(([k, i], n) => { for (let q = i - 14; q <= i + 8; q++) if (segs[q]) { segs[q].items = segs[q].items.filter(it => it.prod); segs[q].obs = []; segs[q].rail = null; }
+      segs[i].items.push({ k, l: n % 3, x: C.lanes[n % 3], z: 90, got: false, prod: true }); });
 }
 const segAt = z => segs[clamp(Math.floor(z / C.segL), 0, segs.length - 1)];
 
 // ---------- estado ----------
-let flyers = [], ROBO = { x: 0, y: 0, h: 100 };
+let flyers = [], ROBO = { x: 0, y: 0, h: 100 }, PITCH = 0;
 let P, state = 'load', popups = [], parts = [], shake = 0, hitstop = 0, clock = 0, boilF = 0, dropT = 0, flash = 0, skyX = 0;
 function reset() {
   buildTrack();
@@ -466,7 +467,7 @@ function start() { ac(); reset(); state = 'play'; if (QS.has('z')) { P.pos = +QS
 // ---------- render ----------
 function project(p, camX, camY, camZ) {
   const X = p.x - camX, Y = p.y - camY, Z = p.z - camZ, sc = C.camD / Z;
-  p.s.Z = Z; p.s.sc = sc; p.s.x = W / 2 + sc * X * F; p.s.y = HOR - sc * Y * F; p.s.w = sc * C.roadW * F;
+  p.s.Z = Z; p.s.sc = sc; p.s.x = W / 2 + sc * X * F; p.s.y = HOR - sc * Y * F - PITCH * (1 - Math.min(1, C.playerZ / Z)); p.s.w = sc * C.roadW * F;
 }
 function poly(c, ...pts) { ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(pts[0], pts[1]); for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]); ctx.closePath(); ctx.fill(); }
 
@@ -477,6 +478,7 @@ function skyColor() {
 function drawSky() {
   ctx.fillStyle = skyColor(); ctx.fillRect(0, 0, W, H);
   const night = P && P.pos / C.segL > (ACTS[4] ? ACTS[4].from - 30 : 1e9);
+  ctx.save(); ctx.translate(0, -PITCH);
   if (!night) ctx.drawImage(SUN, W * .5 - 150 - skyX * 20 % 60, HOR - 330, 300, 300);
   else { ctx.fillStyle = PAL.paper; ctx.beginPath(); ctx.arc(W * .7, HOR - 220, 34, 0, 7); ctx.fill(); }
   const tile = (img, f, y, h) => { const w = img.width * (h / img.height), off = ((-skyX * f) % w + w) % w; for (let x = off - w; x < W; x += w) ctx.drawImage(img, x, y, w, h); };
@@ -484,6 +486,7 @@ function drawSky() {
   const sk = (night && SPR.obj['skyline-noite']) || (ACTS[3] && P && P.pos / C.segL > ACTS[3].from - 30 && SPR.obj['skyline-tarde']) || SPR.obj.skyline;
   if (sk) tile(sk[boilF], 60, HOR - 175, 180);
   else tile(SKY_NEAR, 60, HOR - 120, 140);
+  ctx.restore();
 }
 
 function drawWall(s, side, a, b, near) {
@@ -554,9 +557,13 @@ function drawSegment(s, n) {
   for (const o of s.obs) if (!(o.k === 'rampa' && false)) drawSprite(SPR.obj[o.k], a, o.x, { cone: 230, cavalete: 270, carrinho: 320, caixotes: 340, rampa: 300, buraco: 130 }[o.k], 0);
   for (const it of s.items) if (!it.got) {
     const bob = Math.sin(clock * 5 + s.i) * 18;
-    if (it.prod) { const h = 340 * a.sc * F, sx = a.x + a.sc * it.x * C.roadW * F, sy = a.y - (it.z + bob) * a.sc * F - h / 2;
+    if (it.prod) { const h = 460 * a.sc * F, sx = a.x + a.sc * it.x * C.roadW * F, sy = a.y - (it.z + bob) * a.sc * F - h / 2;
+      if (h > 1) { const bw = Math.max(16 + Math.sin(clock * 8) * 4, h * .55), top = a.y - 5200 * a.sc * F; // facho de luz visível de longe
+        ctx.fillStyle = `rgba(246,190,39,${.5 + Math.sin(clock * 8) * .12})`; ctx.fillRect(sx - bw / 2, top, bw, a.y - top);
+        ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(sx - bw * .15, top, bw * .3, a.y - top);
+        ctx.strokeStyle = PAL.ink; ctx.lineWidth = Math.max(1, bw * .05); ctx.setLineDash([bw * .25, bw * .2]); ctx.strokeRect(sx - bw / 2, top, bw, a.y - top); ctx.setLineDash([]); }
       if (h > 3) burst(sx, sy, h * (.95 + Math.sin(clock * 6) * .08), clock * .8);
-      drawSprite(SPR.obj[it.k] || PROD[it.k], a, it.x, 340, it.z + bob, false, null, true);
+      drawSprite(SPR.obj[it.k] || PROD[it.k], a, it.x, 460, it.z + bob, false, null, true);
       if (h > 3) sparkles(sx, sy, h * .75, s.i); }
     else { drawSprite(COIN, a, it.x, 120, it.z + bob * .5, false, null, true);
       if ((s.i + Math.floor(clock * 4)) % 5 === 0) { const h = 120 * a.sc * F; if (h > 6) sparkles(a.x + a.sc * it.x * C.roadW * F, a.y - (it.z + bob * .5) * a.sc * F - h * .6, h * .5, s.i); } }
@@ -882,6 +889,9 @@ function render() {
     const pos = P.pos, base = segAt(pos), pct = (pos % C.segL) / C.segL;
     const ps = segAt(pos + C.playerZ), pp = ((pos + C.playerZ) % C.segL) / C.segL;
     const pY = lerp(ps.p1.y, ps.p2.y, pp), camX = P.x * .6 * C.roadW;
+    // olha pra onde a rua vai: na descida a câmera "abaixa a cabeça", na subida levanta
+    const ahead = segs[Math.min(segs.length - 1, ps.i + 28)], dyA = ahead.p1.y - pY, scA = C.camD / (28 * C.segL);
+    PITCH = lerp(PITCH, clamp(-dyA * scA * F * .85, -110, 230), .08);
     let x = 0, dx = -(base.curve * pct);
     const vis = [];
     for (let n = 0; n < C.draw; n++) {
