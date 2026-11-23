@@ -290,7 +290,7 @@ const keys = {};
 addEventListener('keydown', e => {
   const k = e.key; if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '].includes(k)) e.preventDefault();
   if (e.repeat) return; keys[k] = true;
-  if (k === 'm' || k === 'M') { muted = !muted; MUS.muted = muted; if (!muted && state === 'play') music(true); return; }
+  if (k === 'm' || k === 'M') { toggleMute(); return; }
   if (state !== 'play') { if (k === ' ' || k === 'Enter' || k === 'r' || k === 'R') start(); return; }
   if (k === 'ArrowLeft' || k === 'a' || k === 'A') input('left');
   else if (k === 'ArrowRight' || k === 'd' || k === 'D') input('right');
@@ -300,7 +300,11 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => { keys[e.key] = false; if (e.key === ' ' && P) P.grab = false; });
 let tStart = null;
-cv.addEventListener('click', () => { if (state === 'title' || state === 'end' || state === 'over') start(); });
+function hitAt(e) { const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * H;
+  return state === 'play' ? null : HIT.find(q => x >= q.x && x <= q.x + q.w && y >= q.y && y <= q.y + q.h); }
+cv.addEventListener('mousemove', e => { const h = hitAt(e); HOVER = h ? h.act : null; cv.style.cursor = h ? 'pointer' : 'default'; });
+cv.addEventListener('mouseleave', () => { HOVER = null; });
+cv.addEventListener('click', e => { const h = hitAt(e); if (!h) return; if (h.act === 'start') start(); else if (h.act === 'mute') toggleMute(); cv.style.cursor = 'default'; HOVER = null; });
 cv.addEventListener('touchstart', e => { e.preventDefault(); const t = e.changedTouches[0]; tStart = { x: t.clientX, y: t.clientY, t: performance.now(), held: false };
   if (state !== 'play') { start(); tStart = null; } }, { passive: false });
 cv.addEventListener('touchmove', e => { e.preventDefault(); if (!tStart) return; const t = e.changedTouches[0], dx = t.clientX - tStart.x, dy = t.clientY - tStart.y;
@@ -453,7 +457,7 @@ function bail(why) {
   if (navigator.vibrate) navigator.vibrate(180);
   rate(.5, 520); // disco freando na mão
 }
-function end(ok) { if (state !== 'play') return; bank(false); state = ok ? 'end' : 'over'; cv.classList.remove('drop'); }
+function end(ok) { if (state !== 'play') return; bank(false); if (P.score > BEST) { BEST = P.score; try { localStorage.setItem('dropline-best', BEST); } catch (e) {} } state = ok ? 'end' : 'over'; cv.classList.remove('drop'); }
 const QS = new URLSearchParams(location.search);
 if (QS.has('god')) window.__P = () => P;
 function start() { ac(); reset(); state = 'play'; if (QS.has('z')) { P.pos = +QS.get('z') * C.segL; P.pushT = 0; P.speed = 5000; } MUS.currentTime = 0; rate(1); music(true); }
@@ -734,12 +738,30 @@ function chip(t, font, x, y, bg, fg, rot = 0, pad = 14, shadow = 5) {
   const m = ctx.measureText(t), w = m.width + pad * 2, h = (parseInt(font.match(/(\d+)px/)[1]) * 1.25) + pad;
   ctx.fillStyle = PAL.ink; ctx.fillRect(-w / 2 + shadow, -h / 2 + shadow, w, h);
   ctx.fillStyle = bg; ctx.fillRect(-w / 2, -h / 2, w, h); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 3; ctx.strokeRect(-w / 2, -h / 2, w, h);
-  ctx.fillStyle = fg; ctx.fillText(t, 0, 2); ctx.restore(); return w;
+  ctx.fillStyle = fg; ctx.fillText(t, 0, 2); ctx.restore(); return { w, h };
 }
 function tape(x, y, w, rot) { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.fillStyle = 'rgba(236,226,196,.88)'; ctx.fillRect(-w / 2, -11, w, 22);
   ctx.strokeStyle = 'rgba(17,17,17,.25)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(-w / 2, -11); ctx.lineTo(-w / 2, 11); ctx.moveTo(w / 2, -11); ctx.lineTo(w / 2, 11); ctx.stroke(); ctx.setLineDash([]); ctx.restore(); }
-function keycap(x, y, w, label) { ctx.fillStyle = PAL.ink; ctx.fillRect(x + 3, y + 4, w, 34); ctx.fillStyle = '#fff'; ctx.fillRect(x, y, w, 34);
-  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2.5; ctx.strokeRect(x, y, w, 34); ctx.fillStyle = PAL.ink; ctx.font = '18px Graduate'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, x + w / 2, y + 18); }
+function keycap(x, y, w, label) { // tecla com relevo: base, lateral e topo
+  ctx.fillStyle = PAL.ink; ctx.fillRect(x + 2, y + 3, w, 36);
+  ctx.fillStyle = PAL.paper3; ctx.fillRect(x, y, w, 34); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2.5; ctx.strokeRect(x, y, w, 34);
+  ctx.fillStyle = '#fff'; ctx.fillRect(x + 4, y + 3, w - 8, 23); ctx.lineWidth = 1.5; ctx.strokeRect(x + 4, y + 3, w - 8, 23);
+  ctx.fillStyle = PAL.ink; ctx.font = '15px Graduate'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, x + w / 2, y + 15); }
+let HIT = [], HOVER = null, BEST = 0;
+try { BEST = +localStorage.getItem('dropline-best') || 0; } catch (e) {}
+function hit(x, y, w, h, act) { HIT.push({ x: x - w / 2, y: y - h / 2, w, h, act }); }
+function button(label, x, y, size, act) {
+  const hov = HOVER === act, sc = hov ? 1.08 : 1 + Math.sin(clock * 5) * .025;
+  ctx.save(); ctx.translate(x, y); ctx.scale(sc, sc); ctx.rotate(hov ? 0 : -.025);
+  ctx.font = `${size}px Graduate`; const w = ctx.measureText(label).width + size * 1.7, h = size * 1.9;
+  if (hov) { ctx.fillStyle = PAL.ink; star(4, 4, w * .5, 14, clock * .6); ctx.fill(); ctx.fillStyle = PAL.red; star(0, 0, w * .48, 14, clock * .6); ctx.fill(); }
+  ctx.fillStyle = PAL.ink; ctx.fillRect(-w / 2 + 8, -h / 2 + 8, w, h);
+  ctx.fillStyle = hov ? '#fff' : PAL.yellow; ctx.fillRect(-w / 2, -h / 2, w, h);
+  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 4; ctx.strokeRect(-w / 2, -h / 2, w, h);
+  ctx.fillStyle = PAL.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, 0, 3);
+  ctx.restore(); hit(x, y, w * sc + 8, h * sc + 8, act);
+}
+function toggleMute() { muted = !muted; MUS.muted = muted; if (!muted && state === 'play') music(true); }
 function cover(img) { const s = Math.max(W / img.width, H / img.height), w = img.width * s, h = img.height * s; ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h); }
 function dropDeadMark(x, y, h) { // logo oficial se existir em sprites/ui/dropdead.webp; senão, marca provisória
   if (UI.dropdead) { const w = h * UI.dropdead.width / UI.dropdead.height; ctx.drawImage(UI.dropdead, x, y - h / 2, w, h); return w; }
@@ -759,30 +781,33 @@ function lockup(cx, y, scale) { // PCYES × DROP DEAD numa tira de papel com fit
 }
 function drawTitle() {
   const img = UI.keyart || UI.capa; if (img) cover(img); else { ctx.fillStyle = PAL.yellow; ctx.fillRect(0, 0, W, H); }
-  ctx.fillStyle = UI.keyart ? 'rgba(17,17,17,.04)' : 'rgba(17,17,17,.18)'; ctx.fillRect(0, 0, W, H);
   const portrait = W < H * .9, cx = portrait ? W / 2 : W * .25, k = portrait ? .78 : .9;
-  lockup(cx, H * .13, k);
-  // título
-  ctx.save(); ctx.translate(cx, H * .33); ctx.rotate(-.06); const fs = Math.min(120, W * (portrait ? .2 : .1));
-  ctx.font = `${fs}px "Sedgwick Ave Display"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.lineJoin = 'round'; ctx.lineWidth = fs * .22; ctx.strokeStyle = PAL.ink; ctx.strokeText('DROP LINE', 8, 8);
+  lockup(cx, H * .12, k);
+  ctx.save(); ctx.translate(cx, H * .31); ctx.rotate(-.06); const fs = Math.min(118, W * (portrait ? .2 : .1));
+  ctx.font = `${fs}px "Sedgwick Ave Display"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+  ctx.lineWidth = fs * .22; ctx.strokeStyle = PAL.ink; ctx.strokeText('DROP LINE', 8, 8);
   ctx.lineWidth = fs * .16; ctx.strokeStyle = PAL.yellow; ctx.strokeText('DROP LINE', 0, 0); ctx.fillStyle = PAL.ink; ctx.fillText('DROP LINE', 0, 0); ctx.restore();
-  chip('35 ANOS DE DROP DEAD', `${Math.round(22 * k)}px Graduate`, cx, H * .45, PAL.blue, PAL.paper, .03);
-  // botão
-  const pulse = 1 + Math.sin(clock * 5) * .04; ctx.save(); ctx.translate(cx, H * .57); ctx.scale(pulse, pulse);
-  chip(isTouch ? 'TOCA PRA JOGAR' : 'JOGAR ▶', `${Math.round(40 * k)}px Graduate`, 0, 0, PAL.yellow, PAL.ink, -.02, 26, 8); ctx.restore();
-  if (!isTouch) chip('ou aperta ESPAÇO', '14px Graduate', cx, H * .57 + 58, PAL.ink, PAL.paper, 0, 8, 0);
+  chip('35 ANOS DE DROP DEAD', `${Math.round(20 * k)}px Graduate`, cx, H * .425, PAL.blue, PAL.paper, .03);
+  button(isTouch ? 'TOCA PRA JOGAR' : 'JOGAR  ▶', cx, H * .55, Math.round(40 * k), 'start');
+  if (BEST > 0) chip(`MELHOR LINHA · ${BEST}`, '15px Graduate', cx, H * .55 + 66, PAL.ink, PAL.yellow, -.02, 8, 0);
+  else if (!isTouch) chip('ou aperta ESPAÇO', '14px Graduate', cx, H * .55 + 66, PAL.ink, PAL.paper, 0, 8, 0);
   // cartão de controles
-  const cw = portrait ? W - 40 : 330, ch = 190, cx2 = portrait ? 20 : cx - cw / 2, cy2 = H - ch - 28;
-  ctx.save(); ctx.translate(cx2 + cw / 2, cy2 + ch / 2); ctx.rotate(.025); ctx.translate(-cw / 2, -ch / 2);
-  ctx.fillStyle = PAL.ink; ctx.fillRect(6, 6, cw, ch); ctx.fillStyle = PAL.paper; ctx.fillRect(0, 0, cw, ch);
-  ctx.fillStyle = PAL.red; ctx.font = '20px "Permanent Marker"'; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText('COMO ANDAR', 18, 12);
-  const rows = isTouch ? [['ARRASTA ↔', 'troca de faixa'], ['TOCA', 'pula'], ['ARRASTA NO AR', 'manobra'], ['SEGURA NO AR', 'grab']]
-                       : [['← →', 'troca de faixa'], ['ESPAÇO', 'pula / segura = grab'], ['NO AR ← → ↑ ↓', 'manobras'], ['↓ NO CORRIMÃO', 'boardslide']];
-  rows.forEach(([a, b], i) => { const y = 48 + i * 34; const kw = Math.max(46, a.length * 11 + 18); keycap(18, y, kw, a);
-    ctx.fillStyle = PAL.ink; ctx.font = '15px Graduate'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(b, 30 + kw, y + 18); });
-  ctx.restore(); tape(cx2 + cw / 2, cy2 - 4, 90, .06);
-  chip(muted ? '♪ SOM DESLIGADO · M' : '♪ SOM LIGADO · M', '13px Graduate', 96, 24, PAL.ink, PAL.paper, 0, 8, 0);
+  const cw = portrait ? W - 40 : 340, ch = 214, x0 = portrait ? 20 : cx - cw / 2, y0 = H - ch - 22;
+  ctx.save(); ctx.translate(x0 + cw / 2, y0 + ch / 2); ctx.rotate(.02); ctx.translate(-cw / 2, -ch / 2);
+  ctx.fillStyle = PAL.ink; ctx.fillRect(7, 7, cw, ch); ctx.fillStyle = PAL.paper; ctx.fillRect(0, 0, cw, ch); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 3; ctx.strokeRect(0, 0, cw, ch);
+  const rows = isTouch ? [['↔', 'ARRASTA: troca de faixa'], ['●', 'TOCA: pula'], ['✦', 'ARRASTA NO AR: manobra'], ['✋', 'SEGURA NO AR: grab']]
+                       : [['← →', 'troca de faixa'], ['ESPAÇO', 'pula · segura = grab'], ['← → ↑ ↓', 'no ar: manobras'], ['↓', 'no corrimão: boardslide']];
+  rows.forEach(([a, b], i) => { const y = 40 + i * 40, kw = Math.max(46, a.length * 11 + 22); keycap(18, y, kw, a);
+    ctx.fillStyle = PAL.ink; ctx.font = '14px Graduate'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(b.toUpperCase(), 32 + kw, y + 16); });
+  ctx.fillStyle = PAL.blue; ctx.font = '13px Graduate'; ctx.textAlign = 'center'; ctx.fillText(isTouch ? 'PEGA OS 4 PRODUTOS = DROP MODE' : 'F = TELA CHEIA  ·  M = SOM', cw / 2, ch - 14);
+  ctx.restore();
+  // título do cartão em fita vermelha
+  ctx.save(); ctx.translate(x0 + 92, y0 + 4); ctx.rotate(-.05); ctx.fillStyle = PAL.ink; ctx.fillRect(-72, -14, 150, 30); ctx.fillStyle = PAL.red; ctx.fillRect(-76, -18, 150, 30);
+  ctx.fillStyle = PAL.paper; ctx.font = '18px "Permanent Marker"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('COMO ANDAR', -1, -2); ctx.restore();
+  tape(x0 + cw - 30, y0 + 6, 70, .5);
+  // som (clicável)
+  const hovM = HOVER === 'mute'; const m = chip(muted ? '♪ SOM: OFF' : '♪ SOM: ON', '14px Graduate', 70, 26, hovM ? PAL.yellow : PAL.ink, hovM ? PAL.ink : PAL.paper, 0, 9, hovM ? 3 : 0);
+  hit(70, 26, m.w, m.h, 'mute');
 }
 function drawEnd() {
   const img = UI.keyart || UI.capa; if (img) cover(img); ctx.fillStyle = 'rgba(17,17,17,.55)'; ctx.fillRect(0, 0, W, H);
@@ -804,14 +829,14 @@ function drawEnd() {
     else { ctx.setLineDash([5, 5]); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2; ctx.strokeRect(x, y, sz, sz); ctx.setLineDash([]); } });
   ctx.font = '15px Graduate'; ctx.fillStyle = PAL.ink; ctx.fillText(`${Object.keys(P.prods).length}/4 PRODUTOS DA COLLAB`, W / 2, y0 + 470);
   ctx.restore();
-  const pulse = 1 + Math.sin(clock * 5) * .04; ctx.save(); ctx.translate(W / 2, y0 + ch - 50); ctx.scale(pulse, pulse);
-  chip(isTouch ? 'TOCA PRA IR DE NOVO' : 'DE NOVO ▶', '30px Graduate', 0, 0, PAL.yellow, PAL.ink, .02, 22, 7); ctx.restore();
+  button(isTouch ? 'TOCA PRA IR DE NOVO' : 'DE NOVO  ▶', W / 2, y0 + ch - 50, 30, 'start');
+  if (P.score >= BEST && P.score > 0) chip('NOVO RECORDE!', '16px Graduate', W / 2 + cw * .32, y0 + 128, PAL.red, PAL.paper, .15, 8, 4);
 }
 function nota(s) { let n = NOTAS[0][1]; for (const [v, t] of NOTAS) if (s >= v) n = t; return n; }
 
 function render() {
   if (!SUN || !NOISE) { ctx.fillStyle = PAL.yellow; ctx.fillRect(0, 0, W, H); ctx.fillStyle = PAL.ink; ctx.font = '28px Graduate'; ctx.textAlign = 'center'; ctx.fillText('CARREGANDO...', W / 2, H / 2); return; }
-  frameNo++;
+  frameNo++; HIT = [];
   ctx.save();
   if (shake && state === 'play') ctx.translate((Math.random() - .5) * shake * .5, (Math.random() - .5) * shake * .5);
   drawSky();
