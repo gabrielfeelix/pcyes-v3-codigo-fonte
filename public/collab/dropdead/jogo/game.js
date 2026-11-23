@@ -854,6 +854,17 @@ function frame(now) {
 }
 document.addEventListener('visibilitychange', () => { last = performance.now(); music(!document.hidden && state === 'play'); });
 
+// ---------- tela cheia ----------
+const fsBtn = document.getElementById('fs');
+function toggleFS() { const d = document, el = d.documentElement;
+  if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+  else (el.requestFullscreen || el.webkitRequestFullscreen).call(el); }
+if (fsBtn) { fsBtn.addEventListener('click', e => { e.stopPropagation(); toggleFS(); fsBtn.blur(); });
+  if (!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen)) fsBtn.style.display = 'none'; }
+['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => {
+  if (fsBtn) fsBtn.textContent = (document.fullscreenElement || document.webkitFullscreenElement) ? '✕ SAIR' : '⛶ TELA CHEIA'; resize(); }));
+addEventListener('keydown', e => { if (e.key === 'f' || e.key === 'F') toggleFS(); });
+
 (async function boot() {
   resize(); addEventListener('resize', resize);
   requestAnimationFrame(frame);
