@@ -34,7 +34,7 @@ export function DropDeadCollabPage() {
 
   return (
     <section ref={ref} aria-label="DROP LINE — jogo da collab PCYES × Drop Dead"
-      style={{ background: "#F3EEE2", width: "100%", paddingTop: box.pad }}>
+      style={{ background: "#111", width: "100%", paddingTop: box.pad }}>
       <div style={{ height: box.h }}>
       <iframe
         src="/collab/dropdead/jogo/index.html"
