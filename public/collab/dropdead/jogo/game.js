@@ -841,20 +841,22 @@ function drawLoading() {
   const cx = W / 2, cy = H * .4;
   ctx.fillStyle = PAL.red; // sol de retícula
   for (let y = -180; y <= 180; y += 12) for (let x = -180; x <= 180; x += 12) { const d = Math.hypot(x, y); if (d < 180) { ctx.beginPath(); ctx.arc(cx + x, cy + y, 4.6 * (1 - d / 250), 0, 7); ctx.fill(); } }
-  // shape dando kickflip, em degraus a 12 fps
-  const t = Math.floor(clock * 12) / 12, cyc = (t % 1.15) / 1.15, inAir = cyc < .72, k = inAir ? cyc / .72 : 0;
-  const air = inAir ? Math.sin(k * Math.PI) : 0, flip = inAir ? k * Math.PI * 2 : 0, bw = Math.min(280, W * .55);
-  const by = cy + 50 - air * 120, bh = 30 * Math.abs(Math.cos(flip)) + 7, bottom = Math.cos(flip) < 0;
-  ctx.fillStyle = 'rgba(17,17,17,.3)'; ctx.beginPath(); ctx.ellipse(cx, cy + 105, bw * .45 * (1 - air * .5), 10, 0, 0, 7); ctx.fill();
-  ctx.save(); ctx.translate(cx, by); ctx.rotate(-air * .12);
-  const wy = (bottom ? -1 : 1) * (bh / 2 + 12);
-  for (const sx of [-1, 1]) { ctx.fillStyle = '#BDBDBD'; ctx.fillRect(sx * bw * .3 - 22, wy * .55 - 4, 44, 8); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2.5; ctx.strokeRect(sx * bw * .3 - 22, wy * .55 - 4, 44, 8);
-    for (const dx of [-16, 16]) { ctx.fillStyle = PAL.red; ctx.beginPath(); ctx.arc(sx * bw * .3 + dx, wy, 12, 0, 7); ctx.fill(); ctx.stroke(); } }
-  ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.roundRect(-bw / 2 + 4, -bh / 2 + 4, bw, bh, bh / 2); ctx.fill();
-  ctx.fillStyle = bottom ? PAL.blue : PAL.ink; ctx.beginPath(); ctx.roundRect(-bw / 2, -bh / 2, bw, bh, bh / 2); ctx.fill();
-  ctx.strokeStyle = PAL.yellow; ctx.lineWidth = 4; ctx.stroke();
-  if (bottom && bh > 16) { ctx.fillStyle = PAL.yellow; ctx.beginPath(); ctx.ellipse(0, 0, bw * .14, bh * .32, 0, 0, 7); ctx.fill(); }
-  ctx.restore();
+  // shape ilustrado (sprites do GPT) dando kickflip, em degraus a 12 fps
+  const t = Math.floor(clock * 12) / 12, cyc = (t % 1.2) / 1.2, inAir = cyc < .74, k = inAir ? cyc / .74 : 0;
+  const air = inAir ? Math.sin(k * Math.PI) : 0, flip = inAir ? k * Math.PI * 2 : 0, bw = Math.min(330, W * .62);
+  const by = cy + 40 - air * 130, Lv = SPR.skate.lateral, Bv = SPR.skate['fundo-plano'];
+  ctx.fillStyle = 'rgba(17,17,17,.3)'; ctx.beginPath(); ctx.ellipse(cx, cy + 112, bw * .42 * (1 - air * .5), 10, 0, 0, 7); ctx.fill();
+  if (Lv && Bv) {
+    const c = Math.cos(flip), sn = Math.sin(flip);
+    ctx.save(); ctx.translate(cx, by); ctx.rotate(-air * .18 + (inAir ? 0 : Math.sin(clock * 3) * .02));
+    if (Math.abs(c) >= Math.abs(sn) * .8) { // de perfil (rodas pra baixo ou pra cima)
+      const im = Lv[boilF], h = bw * im.height / im.width; ctx.scale(1, c >= 0 ? 1 : -1); ctx.drawImage(im, -bw / 2, -h / 2, bw, h);
+    } else { // de frente: o fundo com o monstro aparece achatado
+      const im = Bv[boilF], h = bw * im.width / im.height * Math.max(.25, Math.abs(sn));
+      ctx.rotate(-Math.PI / 2); ctx.scale(1, sn > 0 ? 1 : -1); ctx.drawImage(im, -h / 2, -bw / 2, h, bw);
+    }
+    ctx.restore();
+  }
   // CARREGANDO em letras recortadas, pulando em onda
   const word = 'CARREGANDO', size = 34; let x = cx - word.length * size * .43;
   [...word].forEach((ch, i) => { const [bg, fg] = CHIPS[(i * 3 + Math.floor(clock * 2)) % CHIPS.length], f = FONTS[i % 4], dy = -Math.abs(Math.sin(clock * 6 - i * .55)) * 12;
@@ -931,7 +933,8 @@ addEventListener('keydown', e => { if (e.key === 'f' || e.key === 'F') toggleFS(
   requestAnimationFrame(frame);
   await Promise.all(['40px Graduate', '40px "Permanent Marker"', '40px "Rubik Spray Paint"', '40px "Sedgwick Ave Display"'].map(f => document.fonts.load(f).catch(() => {})));
   buildProcedural(); buildSkyline();
-  await Promise.all([loadSet('robo', SPR.robo), loadSet('skate', SPR.skate), loadSet('obj', SPR.obj),
+  await loadSet('skate', SPR.skate); // primeiro: a tela de carregamento usa o shape
+  await Promise.all([loadSet('robo', SPR.robo), loadSet('obj', SPR.obj),
     ...['capa', 'pcyes', 'dropdead', 'keyart'].map(async n => { const i = await load(`sprites/ui/${n}.webp`); if (i) UI[n] = i; })]);
   buildMurals();
   reset(); state = 'title';
