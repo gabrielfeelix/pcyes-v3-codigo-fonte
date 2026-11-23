@@ -6,7 +6,7 @@
 // ---------- constantes ----------
 const PAL = { blue:'#3558A8', blue2:'#2B4889', yellow:'#F6BE27', red:'#E5141B', ink:'#111111',
   paper:'#F3EEE2', paper2:'#E4DAC4', paper3:'#D6CBB2' };
-const C = { segL:200, roadW:700, rumble:3, camH:1000, fov:100, draw:240, lanes:[-0.62, 0, 0.62],
+const C = { segL:200, roadW:700, rumble:3, camH:800, fov:100, draw:240, lanes:[-0.62, 0, 0.62],
   g:4600, jumpV:1750, kickV:2700, railH:170, maxSpeed:7200, minSpeed:3600 };
 C.camD = 1 / Math.tan((C.fov / 2) * Math.PI / 180);
 C.playerZ = C.camH * C.camD;
@@ -249,12 +249,13 @@ function buildTrack() {
   const lane = () => Math.floor(R() * 3);
   const obs = (i, k, l, h) => segs[i].obs.push({ k, l, h, x: C.lanes[l] });
   const coinRow = (i, l, n, z = 0) => { for (let k = 0; k < n; k++) segs[i + k * 3].items.push({ k: 'coin', l, x: C.lanes[l], z, got: false }); };
-  const coinArc = (i, l) => { for (let k = 0; k < 7; k++) { const t = k / 6; segs[i + k * 2].items.push({ k: 'coin', l, x: C.lanes[l], z: 4 * 300 * t * (1 - t) + 40, got: false }); } };
+  // arco de moedas ACIMA do obstáculo (sem as moedas baixas das pontas, que escondiam o obstáculo)
+  const coinArc = (i, l, base = 0) => { for (let k = 1; k < 6; k++) { const t = k / 6; segs[i + k * 2].items.push({ k: 'coin', l, x: C.lanes[l], z: base + 4 * 240 * t * (1 - t) + 60, got: false }); } };
 
-  coinRow(30, 1, 6); coinRow(70, 0, 5); obs(85, 'cone', 1, 200); coinArc(80, 1);
+  coinRow(30, 1, 6); coinRow(70, 0, 5); obs(85, 'cone', 1, 200); coinArc(79, 1, 200);
   for (let i = 140; i < ACTS[4].from - 30; i += 26 + Math.floor(R() * 18)) {
     const l = lane(), r = R();
-    if (r < .45) { const k = ['cone', 'cavalete', 'carrinho', 'caixotes'][Math.floor(R() * 4)]; obs(i, k, l, { cone: 200, cavalete: 230, carrinho: 260, caixotes: 280 }[k]); coinArc(i - 6, l); }
+    if (r < .45) { const k = ['cone', 'cavalete', 'carrinho', 'caixotes'][Math.floor(R() * 4)]; const oh = { cone: 200, cavalete: 230, carrinho: 260, caixotes: 280 }[k]; obs(i, k, l, oh); coinArc(i - 6, l, oh); }
     else if (r < .6) { obs(i, 'buraco', l, 1); coinRow(i - 9, (l + 1) % 3, 5); }
     else if (r < .75) { obs(i, 'rampa', l, -1); coinArc(i + 1, l); }
     else coinRow(i, l, 6);
@@ -554,7 +555,7 @@ function drawSegment(s, n) {
   if (s.via === 'front') drawViaduct(s, a);
   if (s.rail) drawRail(s, a, b);
   for (const p of s.spr) drawSprite(SPR.obj[p.k], a, p.x, p.hw, 0, p.flip, p);
-  for (const o of s.obs) if (!(o.k === 'rampa' && false)) drawSprite(SPR.obj[o.k], a, o.x, { cone: 230, cavalete: 270, carrinho: 320, caixotes: 340, rampa: 300, buraco: 130 }[o.k], 0);
+  for (const o of s.obs) if (!(o.k === 'rampa' && false)) drawSprite(SPR.obj[o.k], a, o.x, { cone: 290, cavalete: 340, carrinho: 400, caixotes: 420, rampa: 360, buraco: 170 }[o.k], 0);
   for (const it of s.items) if (!it.got) {
     const bob = Math.sin(clock * 5 + s.i) * 18;
     if (it.prod) { const h = 460 * a.sc * F, sx = a.x + a.sc * it.x * C.roadW * F, sy = a.y - (it.z + bob) * a.sc * F - h / 2;
@@ -668,7 +669,7 @@ function drawPlayer() {
   const feetY = HOR + C.camH * pk * F - 6;  // onde a rua encontra o jogador
   const px = W / 2 + (P.x - P.x * .6) * C.roadW * pk * F;
   const name = roboFrame(), v = SPR.robo[name] || SPR.robo.rolando2; if (!v) return;
-  const img = v[boilF], RH = H * .34 * (img.height - 8) / 300, RW = RH * img.width / img.height;
+  const img = v[boilF], RH = H * .30 * (img.height - 8) / 300, RW = RH * img.width / img.height;
   const lift = P.air * pk * F;
   const sh = shake ? [(Math.random() - .5) * shake, (Math.random() - .5) * shake] : [0, 0];
   ctx.save(); ctx.translate(sh[0], sh[1]);
