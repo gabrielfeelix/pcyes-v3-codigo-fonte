@@ -43,7 +43,8 @@ const easeInOut = (a, b, t) => a + (b - a) * ((-Math.cos(t * Math.PI) / 2) + 0.5
 function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
   t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function mk(w, h, fn) { const c = document.createElement('canvas'); c.width = w; c.height = h; fn(c.getContext('2d'), w, h); return c; }
-function load(src) { return new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; }); }
+const LOADP = { n: 0, d: 0 };
+function load(src) { LOADP.n++; return new Promise(r => { const i = new Image(); const ok = v => { LOADP.d++; r(v); }; i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src; }); }
 
 // ---------- assets ----------
 const VER = Date.now(); // evita cache de sprites antigos durante o desenvolvimento
@@ -833,8 +834,44 @@ function drawEnd() {
 }
 function nota(s) { let n = NOTAS[0][1]; for (const [v, t] of NOTAS) if (s >= v) n = t; return n; }
 
+const FRASES = ['APERTANDO OS TRUCKS', 'LIXANDO O SHAPE', 'PASSANDO PARAFINA NO CORRIMÃO', 'PICHANDO O VIADUTO',
+  'ACORDANDO O ROBÔ', 'TROCANDO OS ROLAMENTOS', 'COLANDO OS LAMBE-LAMBES', 'CHAMANDO A DROP DEAD'];
+function drawLoading() {
+  ctx.fillStyle = PAL.yellow; ctx.fillRect(0, 0, W, H);
+  const cx = W / 2, cy = H * .4;
+  ctx.fillStyle = PAL.red; // sol de retícula
+  for (let y = -180; y <= 180; y += 12) for (let x = -180; x <= 180; x += 12) { const d = Math.hypot(x, y); if (d < 180) { ctx.beginPath(); ctx.arc(cx + x, cy + y, 4.6 * (1 - d / 250), 0, 7); ctx.fill(); } }
+  // shape dando kickflip, em degraus a 12 fps
+  const t = Math.floor(clock * 12) / 12, cyc = (t % 1.15) / 1.15, inAir = cyc < .72, k = inAir ? cyc / .72 : 0;
+  const air = inAir ? Math.sin(k * Math.PI) : 0, flip = inAir ? k * Math.PI * 2 : 0, bw = Math.min(280, W * .55);
+  const by = cy + 50 - air * 120, bh = 30 * Math.abs(Math.cos(flip)) + 7, bottom = Math.cos(flip) < 0;
+  ctx.fillStyle = 'rgba(17,17,17,.3)'; ctx.beginPath(); ctx.ellipse(cx, cy + 105, bw * .45 * (1 - air * .5), 10, 0, 0, 7); ctx.fill();
+  ctx.save(); ctx.translate(cx, by); ctx.rotate(-air * .12);
+  const wy = (bottom ? -1 : 1) * (bh / 2 + 12);
+  for (const sx of [-1, 1]) { ctx.fillStyle = '#BDBDBD'; ctx.fillRect(sx * bw * .3 - 22, wy * .55 - 4, 44, 8); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2.5; ctx.strokeRect(sx * bw * .3 - 22, wy * .55 - 4, 44, 8);
+    for (const dx of [-16, 16]) { ctx.fillStyle = PAL.red; ctx.beginPath(); ctx.arc(sx * bw * .3 + dx, wy, 12, 0, 7); ctx.fill(); ctx.stroke(); } }
+  ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.roundRect(-bw / 2 + 4, -bh / 2 + 4, bw, bh, bh / 2); ctx.fill();
+  ctx.fillStyle = bottom ? PAL.blue : PAL.ink; ctx.beginPath(); ctx.roundRect(-bw / 2, -bh / 2, bw, bh, bh / 2); ctx.fill();
+  ctx.strokeStyle = PAL.yellow; ctx.lineWidth = 4; ctx.stroke();
+  if (bottom && bh > 16) { ctx.fillStyle = PAL.yellow; ctx.beginPath(); ctx.ellipse(0, 0, bw * .14, bh * .32, 0, 0, 7); ctx.fill(); }
+  ctx.restore();
+  // CARREGANDO em letras recortadas, pulando em onda
+  const word = 'CARREGANDO', size = 34; let x = cx - word.length * size * .43;
+  [...word].forEach((ch, i) => { const [bg, fg] = CHIPS[(i * 3 + Math.floor(clock * 2)) % CHIPS.length], f = FONTS[i % 4], dy = -Math.abs(Math.sin(clock * 6 - i * .55)) * 12;
+    ctx.save(); ctx.translate(x, H * .66 + dy); ctx.rotate(((i * 37) % 11 - 5) * .025); ctx.font = `${size}px ${f}`;
+    ctx.fillStyle = PAL.ink; ctx.fillRect(-size * .38 + 3, -size * .62 + 3, size * .76, size * 1.15); ctx.fillStyle = bg; ctx.fillRect(-size * .38, -size * .62, size * .76, size * 1.15);
+    ctx.fillStyle = fg; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(ch, 0, 2); ctx.restore(); x += size * .86; });
+  // barra de progresso = lixa de shape
+  const p = LOADP.n ? LOADP.d / LOADP.n : 0, bw2 = Math.min(440, W - 60), bx = cx - bw2 / 2, byy = H * .76;
+  ctx.fillStyle = PAL.ink; ctx.fillRect(bx + 5, byy + 5, bw2, 30); ctx.fillStyle = PAL.paper; ctx.fillRect(bx, byy, bw2, 30);
+  ctx.fillStyle = PAL.ink; ctx.fillRect(bx, byy, bw2 * p, 30);
+  const r = rng(7); ctx.fillStyle = 'rgba(243,238,226,.55)'; for (let i = 0; i < bw2 * p / 2; i++) ctx.fillRect(bx + r() * bw2 * p, byy + r() * 30, 1.5, 1.5);
+  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 3; ctx.strokeRect(bx, byy, bw2, 30);
+  ctx.fillStyle = PAL.ink; ctx.font = '16px Graduate'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText(`${FRASES[Math.floor(clock / 1.3) % FRASES.length]}…  ${Math.round(p * 100)}%`, cx, byy + 44);
+}
 function render() {
-  if (!SUN || !NOISE) { ctx.fillStyle = PAL.yellow; ctx.fillRect(0, 0, W, H); ctx.fillStyle = PAL.ink; ctx.font = '28px Graduate'; ctx.textAlign = 'center'; ctx.fillText('CARREGANDO...', W / 2, H / 2); return; }
+  if (!SUN || !NOISE || state === 'load') { drawLoading(); return; }
   frameNo++; HIT = [];
   ctx.save();
   if (shake && state === 'play') ctx.translate((Math.random() - .5) * shake * .5, (Math.random() - .5) * shake * .5);
