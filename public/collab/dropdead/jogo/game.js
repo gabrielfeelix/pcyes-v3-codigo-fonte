@@ -790,7 +790,6 @@ function drawTitle() {
   chip('35 ANOS DE DROP DEAD', `${Math.round(20 * k)}px Graduate`, cx, H * .425, PAL.blue, PAL.paper, .03);
   button(isTouch ? 'TOCA PRA JOGAR' : 'JOGAR  ▶', cx, H * .55, Math.round(40 * k), 'start');
   if (BEST > 0) chip(`MELHOR LINHA · ${BEST}`, '15px Graduate', cx, H * .55 + 66, PAL.ink, PAL.yellow, -.02, 8, 0);
-  else if (!isTouch) chip('ou aperta ESPAÇO', '14px Graduate', cx, H * .55 + 66, PAL.ink, PAL.paper, 0, 8, 0);
   // cartão de controles
   const cw = portrait ? W - 40 : 340, ch = 214, x0 = portrait ? 20 : cx - cw / 2, y0 = H - ch - 22;
   ctx.save(); ctx.translate(x0 + cw / 2, y0 + ch / 2); ctx.rotate(.02); ctx.translate(-cw / 2, -ch / 2);
