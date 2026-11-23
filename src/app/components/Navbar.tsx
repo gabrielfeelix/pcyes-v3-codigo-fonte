@@ -301,6 +301,16 @@ const megaMenus: Record<string, MegaMenu> = {
         accent: "#F6BE27",
         status: "ativa",
       },
+      {
+        title: "Drop Dead × PCYES · v2",
+        eyebrow: "Jogo 2 · DROP SESSION",
+        tagline: "Half-pipe, 60 segundos, manobra até a plateia gritar.",
+        image: "/collab/dropdead/banner2.webp",
+        href: "/drop-session",
+        cta: "Jogar DROP SESSION",
+        accent: "#E5141B",
+        status: "ativa",
+      },
     ],
     subItems: [
       {
@@ -321,6 +331,16 @@ const megaMenus: Record<string, MegaMenu> = {
           name: "Drop Dead × PCYES",
           desc: "35 anos de Drop Dead. Shape, meia, teclado e mouse da collab — e o jogo DROP LINE.",
           href: "/drop-dead"
+        }
+      },
+      {
+        label: "Drop Dead × PCYES · v2", href: "/drop-session",
+        right: {
+          type: "featured", title: "Jogo 2",
+          image: "/collab/dropdead/banner2.webp",
+          name: "DROP SESSION",
+          desc: "Half-pipe na porta da loja Drop Dead: bombeia, voa e emenda manobras em 60 segundos.",
+          href: "/drop-session"
         }
       },
     ]

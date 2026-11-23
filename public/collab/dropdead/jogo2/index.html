@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>DROP SESSION — PCYES × Drop Dead</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Graduate&family=Permanent+Marker&family=Rubik+Spray+Paint&family=Sedgwick+Ave+Display&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;height:100%;background:#111;overflow:hidden;touch-action:none;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  body{display:flex;align-items:center;justify-content:center;
+    background-color:#111;
+    background-image:radial-gradient(#F3EEE214 1px,transparent 1.4px);background-size:7px 7px}
+  #game{display:block;image-rendering:auto;box-shadow:0 0 0 3px #F3EEE2, 8px 8px 0 3px #F6BE27}
+  #game.drop{filter:invert(1) hue-rotate(180deg) contrast(1.15)}
+  #fs{position:fixed;right:14px;bottom:14px;z-index:5;font:15px Graduate,system-ui,sans-serif;letter-spacing:.04em;
+    background:#F6BE27;color:#111;border:3px solid #111;box-shadow:4px 4px 0 #111;padding:8px 14px;cursor:pointer;transform:rotate(-2deg)}
+  #fs:hover{background:#fff}
+  #fs:active{transform:translate(2px,2px) rotate(-2deg);box-shadow:2px 2px 0 #111}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<button id="fs" type="button" aria-label="Tela cheia">⛶ TELA CHEIA</button>
+
+<!-- filtros do traço "tremendo" (aplicados aos sprites uma vez, no carregamento) -->
+<svg width="0" height="0" style="position:absolute">
+  <filter id="boil0"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="1"/><feDisplacementMap in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <filter id="boil1"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <filter id="boil2"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="13"/><feDisplacementMap in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>
+</svg>
+
+<script>document.write('<script src="game.js?v=' + Date.now() + '"><\/script>')</script>
+</body>
+</html>

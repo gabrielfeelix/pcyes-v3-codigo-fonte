@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
  * rode projetos/collab-dropdead/jogo-1/tools/publicar_v3.sh.
  * O jogo tem botão próprio de tela cheia (e tecla F).
  */
-export function DropDeadCollabPage() {
+export function DropDeadCollabPage({ src = "/collab/dropdead/jogo/index.html", title = "DROP LINE — PCYES × Drop Dead" }: { src?: string; title?: string } = {}) {
   const ref = useRef<HTMLElement>(null);
   const [box, setBox] = useState({ pad: 0, h: 640 });
 
@@ -33,12 +33,12 @@ export function DropDeadCollabPage() {
   }, []);
 
   return (
-    <section ref={ref} aria-label="DROP LINE — jogo da collab PCYES × Drop Dead"
+    <section ref={ref} aria-label={title}
       style={{ background: "#111", width: "100%", paddingTop: box.pad }}>
       <div style={{ height: box.h }}>
       <iframe
-        src="/collab/dropdead/jogo/index.html"
-        title="DROP LINE — PCYES × Drop Dead"
+        src={src}
+        title={title}
         allow="autoplay; fullscreen"
         allowFullScreen
         style={{ border: 0, width: "100%", height: "100%", display: "block" }}
@@ -46,4 +46,9 @@ export function DropDeadCollabPage() {
       </div>
     </section>
   );
+}
+
+/** Jogo 2 — DROP SESSION (half-pipe). Fonte: projetos/collab-dropdead/jogo-2 (tools/publicar_v3.sh). */
+export function DropSessionCollabPage() {
+  return <DropDeadCollabPage src="/collab/dropdead/jogo2/index.html" title="DROP SESSION — PCYES × Drop Dead" />;
 }

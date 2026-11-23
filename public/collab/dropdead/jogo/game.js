@@ -922,7 +922,7 @@ function render() {
 // ---------- loop ----------
 let last = performance.now();
 function frame(now) {
-  const dt = Math.min(1 / 30, (now - last) / 1000); last = now;
+  const dt = Math.max(0, Math.min(1 / 30, (now - last) / 1000)); last = now;
   requestAnimationFrame(frame);
   try { update(dt); render(); } catch (e) { if (!frame.err) { frame.err = 1; console.error(e); } }
 }
