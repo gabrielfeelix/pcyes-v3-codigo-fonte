@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useReducedMotion, AnimatePresence } from "motion/react";
 import { Truck, CreditCard, ShieldCheck, RefreshCcw, type LucideIcon } from "lucide-react";
 
-type Feature = { icon: LucideIcon; title: string; desc: string };
+type Feature = { icon: LucideIcon; title: string; desc: string; note?: string };
 
 const features: Feature[] = [
-  { icon: Truck,        title: "Frete grátis",       desc: "Acima de R$ 299 pra todo Brasil" },
+  { icon: Truck,        title: "Frete grátis",       desc: "Acima de R$ 299", note: "Exceto cadeiras" },
   { icon: CreditCard,   title: "Até 10x sem juros",  desc: "Em todos os cartões" },
   { icon: ShieldCheck,  title: "Compra 100% segura", desc: "Pagamento criptografado" },
   { icon: RefreshCcw,   title: "Troca grátis",       desc: "7 dias para devolver" },
@@ -47,6 +47,19 @@ function FeatureCard({ f }: { f: Feature }) {
         >
           {f.desc}
         </p>
+        {/* Exceção da oferta: fica visível também no celular, colada no título (CDC art. 31). */}
+        {f.note && (
+          <p
+            className="mt-0.5 text-ink-subtle"
+            style={{
+              fontFamily: "var(--font-family-inter)",
+              fontSize: "var(--text-micro)",
+              lineHeight: 1.3,
+            }}
+          >
+            {f.note}
+          </p>
+        )}
       </div>
     </div>
   );
