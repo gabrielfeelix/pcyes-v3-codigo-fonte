@@ -61,6 +61,7 @@ const ResellerPage = lazyRoute(() => import("./components/pages/ResellerPage").t
 const ContactPage = lazyRoute(() => import("./components/pages/ContactPage").then(m => ({ default: m.ContactPage })));
 const StoreLocatorPage = lazyRoute(() => import("./components/pages/StoreLocatorPage").then(m => ({ default: m.StoreLocatorPage })));
 const MaringaFCCollabPage = lazyRoute(() => import("./components/pages/MaringaFCCollabPage").then(m => ({ default: m.MaringaFCCollabPage })));
+const DropDeadCollabPage = lazyRoute(() => import("./components/pages/DropDeadCollabPage").then(m => ({ default: m.DropDeadCollabPage })));
 const MonteSeuPcPage = lazyRoute(() => import("./pages/MonteSeuPcPage").then(m => ({ default: m.MonteSeuPcPage })));
 const DriversManuaisPage = lazyRoute(() => import("./pages/DriversManuaisPage").then(m => ({ default: m.DriversManuaisPage })));
 const DriverDetailPage = lazyRoute(() => import("./pages/DriverDetailPage").then(m => ({ default: m.DriverDetailPage })));
@@ -106,6 +107,7 @@ export const router = createBrowserRouter([
       { path: "fale-conosco", Component: ContactPage },
       { path: "onde-encontrar", Component: StoreLocatorPage },
       { path: "maringa-fc", Component: MaringaFCCollabPage },
+      { path: "drop-dead", Component: DropDeadCollabPage },
       { path: "monte-seu-pc", Component: MonteSeuPcPage },
       { path: "novidades", element: <Navigate to="/produtos?novidades=1" replace /> },
       { path: "drivers-e-manuais", Component: DriversManuaisPage },

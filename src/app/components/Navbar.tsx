@@ -292,13 +292,14 @@ const megaMenus: Record<string, MegaMenu> = {
         status: "ativa",
       },
       {
-        title: "Sua marca aqui",
-        eyebrow: "Parcerias",
-        tagline: "Leve sua marca para o setup de quem joga.",
-        image: "https://pcyes-cdn.oderco.com.br/Produtos/Cadeira-Gamer/Maringafc/1.png",
-        href: "/fale-conosco?assunto=collab",
-        cta: "Falar com a gente",
-        status: "em-breve",
+        title: "Drop Dead × PCYES",
+        eyebrow: "35 anos de Drop Dead",
+        tagline: "Desce a ladeira com o robô e pega a collab.",
+        image: "/collab/dropdead/banner.webp",
+        href: "/drop-dead",
+        cta: "Jogar DROP LINE",
+        accent: "#F6BE27",
+        status: "ativa",
       },
     ],
     subItems: [
@@ -310,6 +311,16 @@ const megaMenus: Record<string, MegaMenu> = {
           name: "Maringá FC × PCYES",
           desc: "Produtos exclusivos da parceria oficial entre PCYES e o Maringá Futebol Clube. Represente seu time.",
           href: "/maringa-fc"
+        }
+      },
+      {
+        label: "Drop Dead × PCYES", href: "/drop-dead",
+        right: {
+          type: "featured", title: "Collab Oficial",
+          image: "/collab/dropdead/keyart.webp",
+          name: "Drop Dead × PCYES",
+          desc: "35 anos de Drop Dead. Shape, meia, teclado e mouse da collab — e o jogo DROP LINE.",
+          href: "/drop-dead"
         }
       },
     ]
