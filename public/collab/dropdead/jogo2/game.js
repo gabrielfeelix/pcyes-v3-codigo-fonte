@@ -12,7 +12,7 @@ const PAL = { blue:'#3558A8', blue2:'#2B4889', yellow:'#F6BE27', red:'#E5141B', 
 const G = { F0:240, R:330, V:46, B:34, DECK:170, RAIL:86 };
 G.T = G.R * Math.PI / 2; G.S2 = G.F0 + G.T; G.SMAX = G.S2 + G.V;
 G.YC = G.B + G.R + G.V; G.XC = G.F0 + G.R; G.XE = G.XC + G.DECK;
-const PH = { g:1900, mu:26, k:.000034, pump:1250, pumpBad:420, vmax:2500, airMin:110, push:300 };
+const PH = { g:2500, mu:26, k:.000034, pump:1600, pumpBad:420, vmax:2700, airMin:110, push:300, drop:820 };
 const ROBO_H = 250, BOARD_L = 140, SESSION = 60, METER_FULL = 5000;
 
 const FLIPS = { L:{ n:'KICKFLIP', p:400, d:.38, roll:1, yaw:0 }, R:{ n:'HEELFLIP', p:400, d:.38, roll:-1, yaw:0 },
@@ -20,11 +20,11 @@ const FLIPS = { L:{ n:'KICKFLIP', p:400, d:.38, roll:1, yaw:0 }, R:{ n:'HEELFLIP
 FLIPS.N = FLIPS.L;
 const GRABS = { L:{ n:'INDY', k:'indy' }, R:{ n:'MELON', k:'melon' }, U:{ n:'METHOD', k:'method' }, D:{ n:'STALEFISH', k:'stalefish' } };
 GRABS.N = GRABS.L;
-const SPINS = [null, ['180', 200], ['360', 500], ['540', 1000], ['720', 1600], ['900', 2500], ['1080', 3600]];
+const SPINS = [null, ['540', 1000], ['900', 2500], ['1260', 4500]]; // giro extra de 360 em 360 (o aéreo normal já é um 180)
 const NOTAS = [[0, 'POSER'], [4000, 'AMADOR'], [12000, 'CABULOSO'], [25000, 'LENDA'], [45000, 'DROP DEAD']];
 const MISSOES = [
   { k:'m540', t:'FAÇA UM 540' },
-  { k:'mdrop', t:'PEGUE AS LETRAS D-R-O-P' },
+  { k:'mdrop', t:'PEGUE OS 4 PRODUTOS' },
   { k:'mgrab', t:'3 GRABS SEGUIDOS' },
 ];
 const CUPOM = 'DROPDEAD35'; // PLACEHOLDER: código provisório — trocar pelo cupom real antes de publicar
@@ -34,7 +34,7 @@ const cv = document.getElementById('game'), ctx = cv.getContext('2d');
 const QS = new URLSearchParams(location.search);
 const isTouch = matchMedia('(pointer:coarse)').matches || QS.has('touch');
 let W = 1180, H = 720, DPR = 1, GY = 620, Z0 = .72;
-const cam = { x:0, z:.72, ready:false };
+const cam = { x:0, y:0, z:.72, ready:false }; let gy = 620; // gy = linha do chão na tela (desce quando a câmera sobe)
 function resize() {
   const a = innerWidth / innerHeight;
   H = 720; W = Math.round(Math.min(1180, Math.max(400, H * a)));
@@ -43,8 +43,8 @@ function resize() {
   const s = Math.min(innerWidth / W, innerHeight / H) * (a > 1.2 ? .94 : 1);
   cv.style.width = W * s + 'px'; cv.style.height = H * s + 'px';
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  GY = Math.round(H * (isTouch ? .76 : .87));
-  Z0 = clamp(Math.min(W / 1580, (GY - 80) / (G.YC + G.RAIL + 240)), .44, .8);
+  GY = Math.round(H * (isTouch ? .76 : .87)); gy = GY + cam.y * cam.z;
+  Z0 = clamp(Math.min(W / 1320, (GY - 60) / (G.YC + G.RAIL + 110)), .44, .8);
   if (!cam.ready) cam.z = Z0;
 }
 
@@ -98,12 +98,12 @@ function boilVariants(img) { // 3 versões levemente distorcidas → traço "tre
 // ---------- sprites ----------
 // jogo 2 (arte final, se já fatiada) e jogo 1 (placeholder)
 const S2 = { robo:{}, skate:{}, cenario:{}, ui:{}, adesivos:{} }, M2 = {};
-const S1 = { robo:{}, skate:{} }, UI = {};
+const S1 = { robo:{}, skate:{}, obj:{} }, UI = {}, RAW = {};
 async function loadSet(base, dir, target, man, only) {
   const m = await fetch(`${base}/${dir}/manifest.json?v=${VER}`, { cache:'no-store' }).then(r => r.ok ? r.json() : {}).catch(() => ({}));
   if (man) man[dir] = m;
   const names = Object.keys(m).filter(n => !only || only.includes(n));
-  await Promise.all(names.map(async n => { const i = await load(`${base}/${dir}/${n}.webp?v=${VER}`); if (i) target[n] = boilVariants(i); }));
+  await Promise.all(names.map(async n => { const i = await load(`${base}/${dir}/${n}.webp?v=${VER}`); if (i) { RAW[dir + '/' + n] = i; target[n] = boilVariants(i); } }));
 }
 const J1_ROBO = ['lado1', 'lado2', 'lado-agachado', 'lado-aterrissa', 'lado-curva', 'lado-remada', 'ollie3', 'ollie4', 'ollie5', 'grab',
   'tombo1', 'tombo2', 'tombo3', 'tombo4', 'tombo5', 'tombo6'];
@@ -178,7 +178,11 @@ function buildStickers() {
   };
   for (const k of STICK_KINDS) STICK[k] = boilVariants(mk(96, 100, (c) => P(c, k)));
 }
-const LETRAS = [ // flutuam a alturas diferentes acima das bordas — pega no ar
+const PRODS = [ // produtos da collab (mesmos do jogo 1): aparece um por vez, cada um mais alto — o último só com muito embalo
+  { k:'p-meia', n:'MEIA', side:1, h:200 }, { k:'p-mouse', n:'MOUSE', side:-1, h:450 },
+  { k:'p-shape', n:'SHAPE', side:1, h:700 }, { k:'p-teclado', n:'TECLADO', side:-1, h:980 }];
+const prodXY = it => [it.side * (G.XC + 10), G.YC + it.h];
+const LETRAS = [ // (antigo) letras D-R-O-P — trocadas pelos produtos
   { c:'D', side:-1, h:210, col:PAL.yellow }, { c:'R', side:1, h:390, col:PAL.red },
   { c:'O', side:-1, h:590, col:PAL.blue }, { c:'P', side:1, h:820, col:PAL.yellow }];
 function buildLetters() {
@@ -324,8 +328,38 @@ function crowdRow(w, h, seed, n, frame, scale = 1) {
 }
 
 // ---- half-pipe ----
+// perfil da arte: a superfície onde a roda encosta é o traço de cima da madeira (alfa da halfpipe.webp).
+// HPK = unidades de mundo por pixel da arte; a arte é desenhada na proporção original.
+const HPK = .8; let PROF = null, HPIMG = null;
+function buildProfile(img) {
+  const w = img.width, h = img.height, d = mk(w, h, c => c.drawImage(img, 0, 0)).getContext('2d').getImageData(0, 0, w, h).data;
+  const A = (x, y) => d[(y * w + x) * 4 + 3] > 128, cx = w >> 1;
+  let fy = 0; while (fy < h - 1 && !A(cx, fy)) fy++; // fundo plano no meio
+  const scan = (y, sg) => { let x = cx; while (x > 0 && x < w - 1 && !A(x, y)) x += sg; return x; };
+  const pts = []; let prev = null;
+  for (let y = fy - 2; y > 0; y -= 2) { const xl = scan(y, -1), xr = scan(y, 1), dx = (xr - xl) / 2;
+    if (prev != null && dx - prev > 14) break; // passou da borda (pulou pro corrimão)
+    pts.push([dx, y]); prev = dx; }
+  // fundo plano: do meio até onde a curva começa
+  const f0 = pts[0][0]; const raw = [[0, fy]]; for (let x = 4; x < f0; x += 4) raw.push([x, fy]); raw.push(...pts);
+  // suaviza (média móvel) e passa pra mundo: x a partir do centro, y a partir da base da arte
+  const sm = raw.map((p, i) => { let sx = 0, sy = 0, n = 0; for (let j = Math.max(0, i - 3); j <= Math.min(raw.length - 1, i + 3); j++) { sx += raw[j][0]; sy += raw[j][1]; n++; } return i === 0 ? p : [sx / n, sy / n]; });
+  const X = [], Y = [], S = [], Aa = []; let acc = 0;
+  sm.forEach(([px, py], i) => { const x = px * HPK, y = (h - py) * HPK; if (i) acc += Math.hypot(x - X[i - 1], y - Y[i - 1]); X.push(x); Y.push(y); S.push(acc); });
+  for (let i = 0; i < X.length; i++) { const a = Math.max(0, i - 2), b = Math.min(X.length - 1, i + 2); Aa.push(clamp(Math.atan2(Y[b] - Y[a], X[b] - X[a]), 0, Math.PI / 2)); }
+  Aa[0] = 0;
+  PROF = { X, Y, S, A:Aa };
+  G.B = Y[0]; G.F0 = f0 * HPK; G.SMAX = acc; G.S2 = acc; G.YC = Y[Y.length - 1]; G.XC = X[X.length - 1];
+  G.XE = w / 2 * HPK - 30; G.DECK = G.XE - G.XC; G.RAIL = h * HPK - G.YC; // corrimão já vem na arte
+  HPIMG = { w:w * HPK, h:h * HPK };
+}
 function geo(s) { // ponto na pista pelo comprimento de arco s (0 = meio); a = ângulo da tangente (sentido +s)
   const sg = s < 0 ? -1 : 1, u = Math.abs(s); let x, y, a;
+  if (PROF) { const S = PROF.S; let lo = 0, hi = S.length - 1; const q = Math.min(u, S[hi]);
+    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (S[m] <= q) lo = m; else hi = m; }
+    const t = S[hi] > S[lo] ? (q - S[lo]) / (S[hi] - S[lo]) : 0;
+    x = lerp(PROF.X[lo], PROF.X[hi], t); y = lerp(PROF.Y[lo], PROF.Y[hi], t); a = lerp(PROF.A[lo], PROF.A[hi], t);
+    return { x:sg * x, y, a:sg * a }; }
   if (u <= G.F0) { x = u; y = G.B; a = 0; }
   else if (u <= G.S2) { const th = (u - G.F0) / G.R; x = G.F0 + G.R * Math.sin(th); y = G.B + G.R - G.R * Math.cos(th); a = th; }
   else { x = G.XC; y = G.B + G.R + (u - G.S2); a = Math.PI / 2; }
@@ -410,11 +444,11 @@ let MISS = {}; try { MISS = JSON.parse(localStorage.getItem('dropsession-missoes
 let BEST = 0; try { BEST = +localStorage.getItem('dropsession-best') || 0; } catch (e) {}
 const T0 = +QS.get('t') || SESSION;
 function reset() {
-  P = { mode:'ride', s:-G.SMAX + 1, v:70, nose:1, time:T0, score:0, line:[], pending:0, crouch:false, landT:0, pushT:0, dropinT:.4,
-    descT:0, pumpT:0, wasTrans:true, pumps:0, grabStreak:0, airGrab:false, letters:{}, bails:0, best540:false, tut:0, airs:0, lastTick:SESSION + 1,
+  P = { mode:'ride', s:-G.SMAX + 1, v:PH.drop, nose:1, time:T0, score:0, line:[], pending:0, crouch:false, landT:0, pushT:0, dropinT:.4,
+    descT:0, pumpT:0, wasTrans:true, pumps:0, grabStreak:0, airGrab:false, letters:{}, prod:0, prodT:0, bails:0, best540:false, tut:0, airs:0, lastTick:SESSION + 1,
     x:0, y:0, vy:0, t:0, T:1, side:1, nose0:1, spin:0, spinV:0, flip:null, grab:null, rf:null, buf:null, glowT:0, bailT:0, angD:0, angTick:-1, newMiss:{} };
   popups = []; parts = []; rain = []; tags = []; dropT = 0; cheerT = 0; meter = QS.has('meter') ? 1 : 0; endT = 0;
-  cam.x = -G.XC * .3;
+  cam.x = -G.XC * .3; cam.y = 0;
 }
 
 // ---------- entrada (teclado + botões de toque, multi-toque) ----------
@@ -454,7 +488,8 @@ cv.addEventListener('touchmove', e => { e.preventDefault(); if (state !== 'play'
 const tEnd = e => { e.preventDefault(); for (const t of e.changedTouches) { tUp(touchOf[t.identifier]); delete touchOf[t.identifier]; } };
 cv.addEventListener('touchend', tEnd, { passive:false }); cv.addEventListener('touchcancel', tEnd, { passive:false });
 
-function dirHeld() { return held('U') ? 'U' : held('D') ? 'D' : held('L') ? 'L' : held('R') ? 'R' : 'N'; }
+let lastDir = { b:'N', t:0 }; // seta apertada há pouco também vale (tolerância de 200 ms)
+function dirHeld() { const h = held('U') ? 'U' : held('D') ? 'D' : held('L') ? 'L' : held('R') ? 'R' : 'N'; return h !== 'N' ? h : clock - lastDir.t < .2 ? lastDir.b : 'N'; }
 function press(b) {
   if (state !== 'play' || !P) return;
   if (b === 'A' || b === 'B') {
@@ -462,6 +497,7 @@ function press(b) {
     if (!P.buf) P.buf = { A:false, B:false, t:.09 };
     P.buf[b] = true; return;
   }
+  if ('UDLR'.includes(b)) lastDir = { b, t:clock };
   if (b === 'U') tryLip();
   if ((b === 'L' || b === 'R') && P.mode === 'ride' && Math.abs(P.s) < G.F0 + 30 && Math.abs(P.v) < 380 && P.pushT <= 0) { // remada no plano
     const d = b === 'L' ? -1 : 1; P.v += d * PH.push; P.pushT = .35; SFX.pop(); }
@@ -511,13 +547,14 @@ function update(dt) {
   clock += dt; boilF = Math.floor(clock * 8) % 3;
   if (state === 'end') endT += dt;
   if (state !== 'play') return;
+  if (window.__pause) { updCam(dt); return; } // só debug (?dbg)
   if (hitstop > 0) { hitstop -= dt; return; }
   P.time -= dt;
   if (P.time <= 10 && P.time > 0 && Math.ceil(P.time) < P.lastTick) { P.lastTick = Math.ceil(P.time); SFX.tick(); }
   if (dropT > 0) { dropT -= dt; if (Math.random() < dt * 22) spawnSticker(); if (dropT <= 0) rate(1); }
   if (cheerT > 0) cheerT -= dt;
   if (P.landT > 0) P.landT -= dt; if (P.pushT > 0) P.pushT -= dt; if (P.dropinT > 0) P.dropinT -= dt; if (P.glowT > 0) P.glowT -= dt;
-  P.tut += dt;
+  P.tut += dt; P.prodT += dt;
 
   // buffer A/B (dá 90 ms pra apertar os dois juntos ou a direção)
   if (P.buf) { P.buf.t -= dt; if (P.buf.t <= 0 || (P.buf.A && P.buf.B)) { const b = P.buf; P.buf = null; resolveAB(b); } }
@@ -547,11 +584,13 @@ function ground(dt) {
   if (!onTrans && P.wasTrans && P.descT > .1) { if (P.pumpT / P.descT > .55) goodPump(); P.descT = 0; P.pumpT = 0; }
   P.wasTrans = onTrans;
   P.v = clamp(P.v + acc * dt, -PH.vmax, PH.vmax);
+  if (Math.abs(P.v) > 25 && Math.sign(P.v) !== P.nose) P.nose = Math.sign(P.v); // kickturn: sempre de frente
   P.s += P.v * dt;
   if (Math.abs(P.s) >= G.SMAX) { const sg = Math.sign(P.s);
     if (P.v * sg > PH.airMin) launch(sg); else { P.s = sg * G.SMAX; P.v = 0; } }
-  if (Math.abs(P.s) > G.SMAX - 90 && Math.abs(P.v) < 420) P.lipWin = .25; else P.lipWin = Math.max(0, (P.lipWin || 0) - dt);
+  if (Math.abs(P.s) > G.SMAX - 90 && Math.abs(P.v) < 520) P.lipWin = .25; else P.lipWin = Math.max(0, (P.lipWin || 0) - dt);
   if (Math.abs(P.v) < 1 && Math.abs(P.s) < G.F0) P.v = 0;
+  if (held('U') && P.dropinT <= 0) tryLip(); // ↑ segurado também vale (não precisa acertar o instante)
 }
 function goodPump() {
   P.pumps++; SFX.pump(); const g = geo(P.s);
@@ -570,18 +609,20 @@ function air(dt) {
   // giro (← → segurado), com ajuda pra fechar em múltiplos de 180
   const d = (held('R') ? 1 : 0) - (held('L') ? 1 : 0);
   if (d && !P.rf) P.spinV = clamp(P.spinV + d * 3400 * dt, -800, 800);
-  else { const tgt = Math.round((P.spin + P.spinV * .12) / 180) * 180, e = tgt - P.spin;
+  else { const tgt = Math.round((P.spin + P.spinV * .12) / 360) * 360, e = tgt - P.spin;
     P.spinV = Math.abs(e) < 3 ? 0 : Math.sign(e) * Math.min(Math.abs(e) * 9, 620); }
   P.spin += P.spinV * dt;
   if (P.flip) { P.flip.t += dt; if (P.flip.t >= P.flip.d) { addTrick(P.flip.n, P.flip.p); P.flip = null; P.flips++; } }
   if (P.grab) { P.grab.t += dt; if (P.grab.t > .15) { P.pending += 320 * dt; if (!P.grab.named) { P.grab.named = true; addTrick(P.grab.n, 150); P.airGrab = true; } } }
   if (P.rf) { P.rf.t += dt; P.glowT = .3; if (P.rf.t >= P.rf.d) { addTrick('ROBÔ FLIP', 3000); P.rf = null; celebrate(36); flash = .2; shake = 10; } }
-  // letras D-R-O-P
-  const c = bodyPoint();
-  for (const L of LETRAS) { if (P.letters[L.c]) continue; const lx = L.side * (G.XC + 30), ly = G.YC + L.h;
-    if (Math.hypot(c[0] - lx, c[1] - ly) < 95) { P.letters[L.c] = true; SFX.coin(); P.score += 250; celebrate(14, true, lx, ly); pop(L.c + '!', '+250', 0, false);
-      if (LETRAS.every(q => P.letters[q.c])) missao('mdrop'); } }
-  if (P.vy < 0 && P.y <= G.YC) land();
+  // produtos (um por vez)
+  const c = bodyPoint(), it = PRODS[P.prod];
+  if (it && P.prodT > .35) { const [lx, ly] = prodXY(it);
+    if (Math.hypot(c[0] - lx, c[1] - ly) < 100) { P.prod++; P.prodT = 0; const pts = 400 * P.prod; P.score += pts; meter = Math.min(1, meter + .12);
+      SFX.prod(); flash = .12; celebrate(26, false, lx, ly); pop(it.n + '!', `+${pts}  ${P.prod}/4`, 0, true, H * .36);
+      if (P.prod === PRODS.length) { missao('mdrop'); meter = 1; } } }
+  if (held('U') && !held('B')) tryLip();
+  if (P.mode === 'air' && P.vy < 0 && P.y <= G.YC) land();
 }
 function bodyPoint() { const a = airAngle(), nx = -Math.sin(a), ny = Math.cos(a); return [P.x + nx * ROBO_H * .55, P.y + ny * ROBO_H * .55]; }
 function airAngle() { const k = Math.sin(Math.PI * clamp(P.t / P.T, 0, 1)); let a = P.side * Math.PI / 2 * (1 - .62 * k); if (P.rf) a += -P.side * Math.PI * 2 * sstep(P.rf.t / P.rf.d); return a; }
@@ -609,19 +650,16 @@ function land() {
   P.y = G.YC; let sujo = false, why = null;
   if (P.flip) { const pr = P.flip.t / P.flip.d; if (pr < .5) why = 'CAIU NO ' + P.flip.n; else { sujo = true; addTrick(P.flip.n, Math.round(P.flip.p * .5)); P.flip = null; } }
   if (P.rf) { const pr = P.rf.t / P.rf.d; if (pr < .8) why = 'ROBÔ FLIP PELA METADE'; else { sujo = true; addTrick('ROBÔ FLIP', 1500); P.rf = null; } }
-  const rem = ((P.spin % 180) + 180) % 180, off = Math.min(rem, 180 - rem);
-  if (off > 62) why = why || 'GIRO TORTO';
-  else if (off > 34) sujo = true;
+  const rem = ((P.spin % 360) + 360) % 360, off = Math.min(rem, 360 - rem);
+  if (off > 110) why = why || 'GIRO TORTO';
+  else if (off > 55) sujo = true;
   if (why) { bail(why); return; }
-  const half = Math.round(Math.abs(P.spin) / 180);
-  if (half >= 1) { const sp = SPINS[Math.min(half, SPINS.length - 1)]; addTrick(sp[0], sp[1]); }
-  if (half >= 3) missao('m540');
+  const turns = Math.round(Math.abs(P.spin) / 360);
+  if (turns >= 1) { const sp = SPINS[Math.min(turns, SPINS.length - 1)]; addTrick(sp[0], sp[1]); missao('m540'); }
   P.grab = null;
-  P.nose = P.nose0 * (half % 2 === 0 ? -1 : 1);
   P.mode = 'ride'; P.s = P.side * (G.SMAX - 1); P.v = -P.side * Math.min(PH.vmax, Math.abs(P.vy) * .97);
+  P.nose = -P.side; // volta sempre de frente pra rampa
   P.landT = .2; shake = Math.max(shake, 4); SFX.land();
-  const fakie = P.nose !== Math.sign(P.v);
-  if (P.line.length && fakie) { P.pending += 100; pop('FAKIE', '+100', 0); }
   if (P.line.length) { hitstop = .04; bank(sujo); }
   if (P.airGrab) { P.grabStreak++; if (P.grabStreak >= 3) missao('mgrab'); } else P.grabStreak = 0;
   for (let i = 0; i < 8; i++) parts.push({ x:P.x, y:P.y, vx:(Math.random() - .5) * 300, vy:Math.random() * 200 - 100, t:0, life:.35, c:PAL.ink });
@@ -647,7 +685,7 @@ function lip(dt) {
   if (Math.abs(P.needle) > 1) bail('CAIU DA BORDA');
 }
 function dropIn() {
-  P.mode = 'ride'; P.s = P.side * (G.SMAX - 2); P.v = -P.side * 160; P.nose = -P.side; P.dropinT = .3; P.landT = .1;
+  P.mode = 'ride'; P.s = P.side * (G.SMAX - 2); P.v = -P.side * PH.drop * .7; P.nose = -P.side; P.dropinT = .3; P.landT = .1;
   bank(false); SFX.pop();
 }
 function bail(why) {
@@ -664,70 +702,81 @@ function bailUpd(dt) {
   P.bailT += dt;
   const g = geo(P.s); P.v += (-PH.g * Math.sin(g.a) - Math.sign(P.v) * 900) * dt; P.s = clamp(P.s + P.v * dt, -G.SMAX, G.SMAX);
   if (P.bailT > 1.5) { // volta pro deck mais perto e dropa de novo
-    const side = P.s < 0 ? -1 : 1; P.side = side; P.mode = 'ride'; P.s = side * (G.SMAX - 1); P.v = -side * 90; P.nose = -side; P.dropinT = .4; flash = .12; }
+    const side = P.s < 0 ? -1 : 1; P.side = side; P.mode = 'ride'; P.s = side * (G.SMAX - 1); P.v = -side * PH.drop; P.nose = -side; P.dropinT = .4; flash = .12; }
 }
 function celebrate(n, small, x, y) { const cols = [PAL.yellow, PAL.blue, PAL.red, PAL.paper]; const [cx, cy] = x != null ? [x, y] : bodyPoint();
   for (let i = 0; i < n; i++) { const ang = Math.random() * Math.PI * 2, v = (small ? 160 : 380) + Math.random() * 300;
     parts.push({ x:cx, y:cy, vx:Math.cos(ang) * v, vy:Math.sin(ang) * v + 200, t:0, life:small ? .45 : .9, c:cols[i % 4], conf:true, rot:Math.random() * 6 }); } }
 function end() { if (state !== 'play') return; bank(false); if (P.score > BEST) { BEST = P.score; P.record = true; try { localStorage.setItem('dropsession-best', BEST); } catch (e) {} }
   state = 'end'; endT = 0; rate(1); dropT = 0; rain = []; }
-if (QS.has('god')) { window.__P = () => P; window.__S = () => ({ state, cam, meter, MISS, dropT }); }
+if (QS.has('god') || QS.has('dbg')) { window.__P = () => P; window.__S = () => ({ state, cam, meter, MISS, dropT }); window.__G = () => G; window.__PH = PH; }
 function start() { ac(); reset(); state = 'play'; MUS.currentTime = 0; rate(1); music(true); for (const b in touchH) touchH[b] = 0; }
 
 // ---------- câmera ----------
 function robotXY() { if (P.mode === 'air') return [P.x, P.y]; if (P.mode === 'lip') return [P.side * G.XC, G.YC]; const g = geo(P.s); return [g.x, g.y]; }
 function updCam(dt) {
   const [rx, ry] = robotXY(), top = ry + ROBO_H * 1.25;
-  const zt = clamp(Math.min(Z0, (GY - 96) / Math.max(1, top)), .2, Z0);
+  // abre até um limite (robô nunca vira um pontinho) e daí em diante sobe junto
+  const zt = clamp(Math.min(Z0, (GY - 96) / Math.max(1, top)), Z0 * .8, Z0);
   cam.z += (zt - cam.z) * clamp(dt * (zt < cam.z ? 5 : 2.2), 0, 1);
+  const yt = Math.max(0, top - (GY - 96) / cam.z);
+  cam.y += (yt - cam.y) * clamp(dt * 9, 0, 1);
+  gy = GY + cam.y * cam.z;
   const lim = Math.max(0, G.XE + 40 - (W / 2) / cam.z);
   const tx = clamp(rx * (lim > 200 ? .85 : .4), -lim, lim);
   cam.x += (tx - cam.x) * clamp(dt * 3, 0, 1);
 }
-const SX = x => W / 2 + (x - cam.x) * cam.z, SY = y => GY - y * cam.z;
+const SX = x => W / 2 + (x - cam.x) * cam.z, SY = y => gy - y * cam.z;
 const layerS = d => Z0 * Math.pow(cam.z / Z0, 1 - d);
 
 // ---------- render ----------
 function drawSky() {
-  const s = layerS(.86);
+  const s = layerS(.86), gy = GY + cam.y * cam.z * .3; // céu sobe devagar (paralaxe), sem mostrar a emenda
   ctx.fillStyle = PAL.night; ctx.fillRect(0, 0, W, H);
-  if (S2.cenario['ceu-alto']) { const im = S2.cenario['ceu-alto'][boilF], w = 1500 * s * 1.6, h = w * im.height / im.width; ctx.drawImage(im, W / 2 - cam.x * .1 * s - w / 2, GY - h * .98, w, h); }
+  if (S2.cenario['ceu-alto']) { const im = S2.cenario['ceu-alto'][boilF], w = 1500 * s * 1.6, h = w * im.height / im.width; ctx.drawImage(im, W / 2 - cam.x * .1 * s - w / 2, gy - h * .98, w, h); }
   else {
-    for (const [Y, col] of [[900, PAL.night2], [1900, PAL.night3]]) { const y = GY - Y * s, bh = 70 * s * 2;
+    for (const [Y, col] of [[900, PAL.night2], [1900, PAL.night3]]) { const y = gy - Y * s, bh = 70 * s * 2;
       if (y < 0) { ctx.fillStyle = col; ctx.fillRect(0, 0, W, Math.max(0, y)); }
       else { ctx.fillStyle = col; ctx.fillRect(0, 0, W, y); for (let x = 0; x < W; x += 512 * s * 1.2) ctx.drawImage(BAND, x, y, 512 * s * 1.2 + 1, bh); } }
     // estrelas: cruzinhas de nanquim/papel
-    for (const st of STARS) { const x = W / 2 + (st.x - cam.x * .12) * s, y = GY - st.y * s; if (x < -10 || x > W + 10 || y < -10 || y > GY - 120 * s) continue;
+    for (const st of STARS) { const x = W / 2 + (st.x - cam.x * .12) * s, y = gy - st.y * s; if (x < -10 || x > W + 10 || y < -10 || y > gy - 120 * s) continue;
       const tw = (boilF + st.ph) % 3 === 0 ? 1.35 : 1, r = st.s * tw * Math.max(.7, s * 1.1);
       ctx.strokeStyle = st.k ? PAL.yellow : PAL.paper; ctx.lineWidth = st.k ? 2 : 1.6; ctx.beginPath(); ctx.moveTo(x - r, y); ctx.lineTo(x + r, y); ctx.moveTo(x, y - r); ctx.lineTo(x, y + r); ctx.stroke();
       if (st.k) { ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(x - r * .5, y - r * .5); ctx.lineTo(x + r * .5, y + r * .5); ctx.moveTo(x + r * .5, y - r * .5); ctx.lineTo(x - r * .5, y + r * .5); ctx.stroke(); } }
-    const mr = 300 * s, mx = W / 2 + (520 - cam.x * .1) * s, my = GY - 760 * s; ctx.drawImage(MOON, mx - mr / 2, my - mr / 2, mr, mr);
+    const mr = 300 * s, mx = W / 2 + (520 - cam.x * .1) * s, my = gy - 760 * s; ctx.drawImage(MOON, mx - mr / 2, my - mr / 2, mr, mr);
   }
 }
 function drawLayer(L, frame) {
   const s = layerS(L.d), img = (frame != null ? L.img[frame] : L.img)[boilF], w = L.w * s, h = L.h * s;
-  const x = W / 2 + (0 - cam.x * (1 - L.d)) * s - w / 2; ctx.drawImage(img, x, GY - h + 4 * s, w + 8 * s * (img.width - L.w) / L.w, h + 8 * s);
+  const x = W / 2 + (0 - cam.x * (1 - L.d)) * s - w / 2; ctx.drawImage(img, x, gy - h + 4 * s, w + 8 * s * (img.width - L.w) / L.w, h + 8 * s);
 }
 function drawScene() {
   drawSky();
   if (S2.cenario['fundo-loja']) { const im = S2.cenario['fundo-loja'][boilF], s = layerS(.4), w = 2400 * s, h = w * im.height / im.width;
-    ctx.drawImage(im, W / 2 - cam.x * .6 * s - w / 2, GY - h * .96, w, h); }
+    ctx.drawImage(im, W / 2 - cam.x * .6 * s - w / 2, gy - h * .96, w, h); }
   else { drawLayer(LAYERS.city); drawLayer(LAYERS.via); drawLayer(LAYERS.shop); }
   // rua
-  ctx.fillStyle = PAL.street; ctx.fillRect(0, GY - 2, W, H - GY + 2);
-  ctx.fillStyle = 'rgba(243,238,226,.08)'; for (let x = ((-cam.x * cam.z) % 40 + 40) % 40 - 40; x < W; x += 40) ctx.fillRect(x, GY + 10 * cam.z + 6, 20, 3);
+  ctx.fillStyle = PAL.street; ctx.fillRect(0, gy - 2, W, H - gy + 2);
+  ctx.fillStyle = 'rgba(243,238,226,.08)'; for (let x = ((-cam.x * cam.z) % 40 + 40) % 40 - 40; x < W; x += 40) ctx.fillRect(x, gy + 10 * cam.z + 6, 20, 3);
   const cf = cheerT > 0 ? Math.floor(clock * 8) % 2 : 0;
   if (!S2.cenario.plateia1) drawLayer(LAYERS.crowd, cf);
   // half-pipe
   const z = cam.z;
-  if (S2.cenario.halfpipe) { const im = S2.cenario.halfpipe[boilF]; ctx.drawImage(im, SX(-G.XE - 20), SY(G.YC + G.RAIL + 10), (G.XE + 20) * 2 * z, (G.YC + G.RAIL + 10) * z); }
+  if (S2.cenario.halfpipe && HPIMG) { const im = S2.cenario.halfpipe[boilF], pad = 4 * HPK; ctx.drawImage(im, SX(-HPIMG.w / 2 - pad), SY(HPIMG.h + pad), (HPIMG.w + pad * 2) * z, (HPIMG.h + pad * 2) * z); }
   else { const im = HP[boilF]; ctx.drawImage(im, SX(HP_X0) - 4 * z / HP_RES, SY(HP_H) - 4 * z / HP_RES, im.width / HP_RES * z, im.height / HP_RES * z); }
   // plateia nos decks
   for (const [i, sg] of [[0, -1], [1, 1]]) { const im = DECKCROWD[cf][i][boilF], w = 170 * z, h = 190 * z; ctx.drawImage(im, SX(sg * (G.XE - 95)) - w / 2, SY(G.YC + 8) - h, w, h); }
-  // letras D-R-O-P
-  for (const L of LETRAS) { if (P && P.letters[L.c]) continue; const v = (S2.ui['letra-' + L.c.toLowerCase()] || LETTER[L.c])[boilF];
-    const bob = Math.sin(clock * 3 + L.h) * 10, x = SX(L.side * (G.XC + 30)), y = SY(G.YC + L.h + bob), sz = 110 * z;
-    ctx.save(); ctx.translate(x, y); ctx.rotate(Math.sin(clock * 2 + L.h) * .12); ctx.drawImage(v, -sz / 2, -sz / 2, sz, sz * v.height / v.width); ctx.restore(); }
+  // produto da vez: explosão de zine atrás, facho de luz e quique
+  const it = P && state === 'play' && PRODS[P.prod];
+  if (it && S1.obj[it.k]) { const [wx, wy] = prodXY(it), ap = clamp(P.prodT / .35, 0, 1), sc = sstep(ap) * (1 + .25 * Math.sin(ap * Math.PI));
+    const bob = Math.sin(clock * 3) * 12, x = SX(wx), y = SY(wy + bob), r = 95 * z * sc;
+    ctx.save(); ctx.globalAlpha = .22 * ap; ctx.fillStyle = PAL.yellow; ctx.beginPath(); ctx.moveTo(x - r * .35, y); ctx.lineTo(x + r * .35, y); ctx.lineTo(x + r * 1.1, SY(G.YC)); ctx.lineTo(x - r * 1.1, SY(G.YC)); ctx.closePath(); ctx.fill(); ctx.restore();
+    const rot = clock * .6, st = (rr, n, ro, col) => { ctx.fillStyle = col; star(ctx, x, y, rr, n, ro, .55); ctx.fill(); };
+    st(r * 1.02, 12, rot, PAL.ink); st(r * .96, 12, rot, Math.floor(clock * 8) % 2 ? PAL.yellow : '#FFE27A'); st(r * .55, 8, -rot * 1.5, PAL.paper);
+    const im = S1.obj[it.k][boilF], m = r * 1.5 / Math.max(im.width, im.height);
+    ctx.save(); ctx.translate(x, y); ctx.rotate(Math.sin(clock * 2) * .12); ctx.drawImage(im, -im.width * m / 2, -im.height * m / 2, im.width * m, im.height * m); ctx.restore();
+    if (y < 70) { const ax = clamp(x, 40, W - 40); chip('▲ ' + it.n, '15px Graduate', ax, 86, PAL.yellow, PAL.ink, Math.sin(clock * 6) * .05, 8, 4); } // tá lá em cima
+  }
 }
 
 // ---- robô + shape ----
@@ -850,11 +899,9 @@ function missionCard(x, y, w, compact, rot = .025, inGame = true) {
     ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2; ctx.strokeRect(10, yy - 7, 14, 14);
     ctx.fillStyle = PAL.ink; ctx.font = `${fs}px Graduate`; ctx.textAlign = 'left';
     let label = m.t; if (m.k === 'mgrab' && !done && inGame && P) label += ` (${Math.min(3, P.grabStreak)}/3)`;
-    if (m.k === 'mdrop' && inGame && P) { // letras pegas aparecem em vermelho
-      ctx.fillText('PEGUE AS LETRAS ', 32, yy + 1); let lx = 32 + ctx.measureText('PEGUE AS LETRAS ').width;
-      LETRAS.forEach((L, j) => { ctx.fillStyle = P.letters[L.c] || done ? PAL.red : 'rgba(17,17,17,.35)'; ctx.fillText(L.c, lx, yy + 1); lx += ctx.measureText(L.c).width; if (j < 3) { ctx.fillStyle = PAL.ink; ctx.fillText('-', lx, yy + 1); lx += ctx.measureText('-').width; } });
-    } else ctx.fillText(label, 32, yy + 1);
-    if (done) { const tw = ctx.measureText(label).width; if (S2.ui.risco) ctx.drawImage(S2.ui.risco[boilF], 28, yy - 10, Math.min(w - 36, tw + 30), 20); else scribble(28, yy, Math.min(w - 10, 40 + tw + (m.k === 'mdrop' ? 60 : 0)), i * 9 + 3);
+    if (m.k === 'mdrop' && !done && inGame && P) label += ` (${P.prod}/4)`;
+    ctx.fillText(label, 32, yy + 1);
+    if (done) { const tw = ctx.measureText(label).width; if (S2.ui.risco) ctx.drawImage(S2.ui.risco[boilF], 28, yy - 10, Math.min(w - 36, tw + 30), 20); else scribble(28, yy, Math.min(w - 10, 40 + tw + 0), i * 9 + 3);
       if (S2.ui.check) ctx.drawImage(S2.ui.check[boilF], 6, yy - 14, 26, 26); else checkmark(17, yy, 16); } });
   ctx.restore(); tape(x + w - 26, y + 2, 56, .45);
   return h;
@@ -998,7 +1045,7 @@ function drawTitle() {
     ctx.fillStyle = PAL.ink; ctx.font = `${portrait ? 12 : 13}px Graduate`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(b.toUpperCase(), 28 + kw, y + 15); });
   ctx.fillStyle = PAL.red; ctx.font = `${portrait ? 11 : 13}px Graduate`; ctx.textAlign = 'center';
   ctx.fillText(isTouch ? 'MEDIDOR CHEIO: A+B ▲ ROBÔ FLIP · A+B ▼ DROP 35' : 'MEDIDOR CHEIO: Z+X ↑ ROBÔ FLIP · Z+X ↓ DROP 35', cw / 2, ch - 30);
-  ctx.fillStyle = PAL.blue; ctx.fillText(isTouch ? 'PEGUE AS LETRAS D-R-O-P NO AR' : 'F = TELA CHEIA  ·  M = SOM', cw / 2, ch - 12);
+  ctx.fillStyle = PAL.blue; ctx.fillText(isTouch ? 'PEGUE OS 4 PRODUTOS NO AR' : 'F = TELA CHEIA  ·  M = SOM', cw / 2, ch - 12);
   ctx.restore();
   ctx.save(); ctx.translate(x0 + 92, y0 + 4); ctx.rotate(-.05); ctx.fillStyle = PAL.ink; ctx.fillRect(-72, -14, 150, 30); ctx.fillStyle = PAL.red; ctx.fillRect(-76, -18, 150, 30);
   ctx.fillStyle = PAL.paper; ctx.font = '18px "Permanent Marker"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('COMO ANDAR', -1, -2); ctx.restore();
@@ -1109,9 +1156,12 @@ if (fsBtn) { fsBtn.addEventListener('click', e => { e.stopPropagation(); toggleF
   await loadSet('sprites/j1', 'skate', S1.skate, null, ['lateral', 'fundo-plano']); // a tela de carregamento usa o shape
   await Promise.all([
     loadSet('sprites/j1', 'robo', S1.robo, null, J1_ROBO),
+    loadSet('sprites/j1', 'obj', S1.obj, null),
     ...Object.keys(S2).map(d => loadSet('sprites', d, S2[d], M2)),
-    ...['pcyes', 'dropdead', 'keyart'].map(async n => { const i = await load(`sprites/j1/ui/${n}.webp?v=${VER}`); if (i) UI[n] = i; }),
+    ...['pcyes', 'dropdead'].map(async n => { const i = await load(`sprites/j1/ui/${n}.webp?v=${VER}`); if (i) UI[n] = i; }),
   ]);
+  if (!S2.ui.keyart2) UI.keyart = await load(`sprites/j1/ui/keyart.webp?v=${VER}`); // só se a capa do jogo 2 faltar
+  if (RAW['cenario/halfpipe']) { buildProfile(RAW['cenario/halfpipe']); resize(); }
   buildProcedural();
   await new Promise(r => setTimeout(r, 0));
   buildLayers();
