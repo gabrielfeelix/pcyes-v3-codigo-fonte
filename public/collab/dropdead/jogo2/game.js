@@ -56,7 +56,14 @@ function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let
   t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function mk(w, h, fn) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); fn(c.getContext('2d'), c.width, c.height); return c; }
 const LOADP = { n:0, d:0 };
-function load(src) { LOADP.n++; return new Promise(r => { const i = new Image(); const ok = v => { LOADP.d++; r(v); }; i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src; }); }
+function load(src, tries = 2) { // nunca trava: 8 s por tentativa, tenta de novo 1 vez, depois segue sem a imagem
+  LOADP.n++;
+  return new Promise(r => { let done = false; const ok = v => { if (done) return; done = true; LOADP.d++; r(v); };
+    const go = k => { const i = new Image(); let t = setTimeout(() => fail(), 8000);
+      const fail = () => { clearTimeout(t); i.onload = i.onerror = null; if (k > 1) go(k - 1); else ok(null); };
+      i.onload = () => { clearTimeout(t); ok(i); };
+      i.onerror = fail; i.src = src + (k < tries ? (src.includes('?') ? '&' : '?') + 'r=' + k : ''); };
+    go(tries); }); }
 const VER = Date.now(); // evita cache de sprites antigos durante o desenvolvimento
 
 // ---------- áudio ----------
@@ -92,7 +99,9 @@ function rate(r, ms) { MUS.playbackRate = r; if (ms) setTimeout(() => { MUS.play
 const canFilter = typeof ctx.filter === 'string';
 function boilVariants(img) { // 3 versões levemente distorcidas → traço "tremendo" (trocadas a 8 fps)
   if (!canFilter) return [img, img, img];
+  try {
   return [0, 1, 2].map(k => mk(img.width + 8, img.height + 8, (c) => { c.filter = `url(#boil${k})`; c.drawImage(img, 4, 4); }));
+  } catch (e) { return [img, img, img]; }
 }
 
 // ---------- sprites ----------
@@ -100,7 +109,7 @@ function boilVariants(img) { // 3 versões levemente distorcidas → traço "tre
 const S2 = { robo:{}, skate:{}, cenario:{}, ui:{}, adesivos:{} }, M2 = {};
 const S1 = { robo:{}, skate:{}, obj:{} }, UI = {}, RAW = {};
 async function loadSet(base, dir, target, man, only) {
-  const m = await fetch(`${base}/${dir}/manifest.json?v=${VER}`, { cache:'no-store' }).then(r => r.ok ? r.json() : {}).catch(() => ({}));
+  const m = await fetch(`${base}/${dir}/manifest.json?v=${VER}`, { cache:'no-store', signal:AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined }).then(r => r.ok ? r.json() : {}).catch(() => ({}));
   if (man) man[dir] = m;
   const names = Object.keys(m).filter(n => !only || only.includes(n));
   await Promise.all(names.map(async n => { const i = await load(`${base}/${dir}/${n}.webp?v=${VER}`); if (i) { RAW[dir + '/' + n] = i; target[n] = boilVariants(i); } }));
