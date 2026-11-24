@@ -12,10 +12,10 @@ C.camD = 1 / Math.tan((C.fov / 2) * Math.PI / 180);
 C.playerZ = C.camH * C.camD;
 
 const TRICKS = {
-  left:  { n:'KICKFLIP', p:300, d:0.34, roll: 1, yaw:0 },
-  right: { n:'HEELFLIP', p:300, d:0.34, roll:-1, yaw:0 },
-  down:  { n:'SHOVE-IT', p:200, d:0.26, roll: 0, yaw:1 },
-  up:    { n:'360 FLIP', p:800, d:0.50, roll: 1, yaw:2 },
+  left:  { n:'KICKFLIP', p:300, d:0.24, roll: 1, yaw:0 },
+  right: { n:'HEELFLIP', p:300, d:0.24, roll:-1, yaw:0 },
+  down:  { n:'SHOVE-IT', p:200, d:0.18, roll: 0, yaw:1 },
+  up:    { n:'360 FLIP', p:800, d:0.34, roll: 1, yaw:2 },
 };
 const NOTAS = [[0,'POSER'],[8000,'AMADOR'],[20000,'CABULOSO'],[40000,'LENDA'],[65000,'DROP DEAD']];
 
@@ -131,7 +131,7 @@ function buildMurals() {
     drips(c, w, h, PAL.red, 9, 3); });
   MURAL.dd35 = mk(760, 280, (c, w, h) => { c.font = '150px "Sedgwick Ave Display"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round';
     c.lineWidth = 34; c.strokeStyle = PAL.ink; c.strokeText('DROP DEAD', w / 2 + 8, 118); c.lineWidth = 22; c.strokeStyle = PAL.yellow; c.strokeText('DROP DEAD', w / 2, 110);
-    c.fillStyle = PAL.blue; c.fillText('DROP DEAD', w / 2, 110); c.font = '80px "Permanent Marker"'; c.fillStyle = PAL.red; c.fillText('35 ANOS', w * .66, 220); drips(c, w, h, PAL.blue, 7, 9); });
+    c.fillStyle = PAL.blue; c.fillText('DROP DEAD', w / 2, 110); c.font = '80px "Permanent Marker"'; c.fillStyle = PAL.red; c.fillText('× PCYES', w * .66, 220); drips(c, w, h, PAL.blue, 7, 9); });
   MURAL.dropdead = mk(520, 340, (c, w, h) => {
     if (UI.dropdead) { const lw = w * .9, lh = lw * UI.dropdead.height / UI.dropdead.width; c.drawImage(UI.dropdead, (w - lw) / 2, (h - lh) / 2 - 20, lw, lh); }
     else { c.fillStyle = PAL.blue; c.beginPath(); c.ellipse(w / 2, h / 2 - 20, w * .46, h * .38, 0, 0, 7); c.fill(); c.fillStyle = PAL.yellow; c.beginPath(); c.ellipse(w / 2, h / 2 - 20, w * .42, h * .33, 0, 0, 7); c.fill();
@@ -266,12 +266,14 @@ function buildTrack() {
   // arco de moedas ACIMA do obstáculo (sem as moedas baixas das pontas, que escondiam o obstáculo)
   const coinArc = (i, l, base = 0) => { for (let k = 1; k < 6; k++) { const t = k / 6; segs[i + k * 2].items.push({ k: 'coin', l, x: C.lanes[l], z: base + 4 * 240 * t * (1 - t) + 60, got: false }); } };
 
+  // velocidade esperada no segmento i (mesma conta do update) → arco de moedas cabe no pulo da rampa
+  const expSpeed = i => lerp(C.minSpeed, C.maxSpeed, clamp(i * C.segL / trackLen * 1.6, 0, 1)) - (segs[i].p2.y - segs[i].p1.y) / C.segL * 2600;
   coinRow(30, 1, 6); coinRow(70, 0, 5); obs(85, 'cone', 1, 200); coinArc(79, 1, 200);
   for (let i = 140; i < ACTS[4].from - 30; i += 26 + Math.floor(R() * 18)) {
     const l = lane(), r = R();
     if (r < .45) { const k = ['cone', 'cavalete', 'carrinho', 'caixotes'][Math.floor(R() * 4)]; const oh = { cone: 200, cavalete: 230, carrinho: 260, caixotes: 280 }[k]; obs(i, k, l, oh); coinArc(i - 6, l, oh); }
     else if (r < .6) { obs(i, 'buraco', l, 1); coinRow(i - 9, (l + 1) % 3, 5); }
-    else if (r < .75) { obs(i, 'rampa', l, -1); coinArc(i + 1, l); }
+    else if (r < .75) { obs(i, 'rampa', l, -1); rampCoins(segs[i].obs[segs[i].obs.length - 1], i, l, expSpeed(i)); }
     else coinRow(i, l, 6);
   }
   // corrimão de tutorial (largada)
@@ -287,6 +289,15 @@ function buildTrack() {
   [['p-shape', ACTS[1].from - 20], ['p-meia', ACTS[2].from + 30], ['p-teclado', ACTS[3].from + 10], ['p-mouse', ACTS[4].from + 20]]
     .forEach(([k, i], n) => { for (let q = i - 14; q <= i + 8; q++) if (segs[q]) { segs[q].items = segs[q].items.filter(it => it.prod); segs[q].obs = []; segs[q].rail = null; }
       segs[i].items.push({ k, l: n % 3, x: C.lanes[n % 3], z: 90, got: false, prod: true }); });
+}
+// moedas no arco do pulo da rampa: na montagem usa a velocidade esperada; ao chutar, reposiciona com a real
+const RAMPN = 9;
+function rampCoins(o, i, l, v) {
+  if (!o.coins) o.coins = Array.from({ length: RAMPN }, () => ({ k: 'coin', l, x: C.lanes[l], z: 0, got: false }));
+  const T = 2 * C.kickV / C.g, z0 = (i + .5) * C.segL;
+  o.coins.forEach((c, k) => { if (c.got) return; if (c.seg) c.seg.items = c.seg.items.filter(x => x !== c);
+    const t = (k + 1) / (RAMPN + 1) * T, s = segs[Math.min(segs.length - 1, Math.floor((z0 + v * t) / C.segL))];
+    c.z = Math.max(60, C.kickV * t - C.g * t * t / 2); c.seg = s; s.items.push(c); });
 }
 const segAt = z => segs[clamp(Math.floor(z / C.segL), 0, segs.length - 1)];
 
@@ -339,7 +350,7 @@ function input(a) {
     else if (a === 'up' || a === 'jump') ollie(C.jumpV);
   } else if (P.mode === 'air') {
     if (a === 'jump') { P.grab = true; return; }
-    if (TRICKS[a] && !P.trick && !(P.takeoff > 0)) { P.trick = { ...TRICKS[a], t: 0 }; SFX.whoosh(); }
+    if (TRICKS[a]) { if (!P.trick && !(P.takeoff > 0)) startTrick(a); else P.next = a; }
   } else if (P.mode === 'grind') {
     if (a === 'jump' || a === 'up') { P.mode = 'air'; P.vz = C.jumpV * .8; bank(false, true); }
     else if (a === 'down') { P.slide = !P.slide; }
@@ -347,11 +358,14 @@ function input(a) {
     else if (a === 'right' && P.lane < 2) { P.lane++; P.mode = 'air'; P.vz = 600; }
   }
 }
-function ollie(v) { SFX.pop(); P.mode = 'air'; P.vz = v; P.air = Math.max(P.air, 1); P.trick = null; P.grab = false; P.takeoff = .12; }
+function ollie(v) { SFX.pop(); P.mode = 'air'; P.vz = v; P.air = Math.max(P.air, 1); P.trick = null; P.next = null; P.airN = 0; P.grab = false; P.takeoff = .1; }
+function startTrick(a) { P.trick = { ...TRICKS[a], t: 0 }; P.next = null; SFX.whoosh(); }
+const timeToLand = () => (P.vz + Math.sqrt(Math.max(0, P.vz * P.vz + 2 * C.g * P.air))) / C.g;
 
 // ---------- pontos ----------
-function addLine(name, pts) { SFX.trick(); P.mult++; P.pending += pts; P.lastTrickName = name;
-  popups.push(makePopup(name, '+' + pts, P.mult)); }
+function addLine(name, pts, tag = '') { SFX.trick(); P.mult++; P.pending += pts; P.lastTrickName = name;
+  popups.forEach(q => { if (!q.big) q.y -= 64; }); // combo: o novo entra embaixo, os anteriores sobem
+  popups.push(makePopup(name, (tag ? tag + '  ' : '') + '+' + pts, P.mult)); }
 function bank(clean, keepLine) {
   if (!P.pending) return;
   if (keepLine) return; // linha continua (grind → pulo)
@@ -376,7 +390,7 @@ function makePopup(word, sub, mult, big) {
     c.font = `${size * .8}px "Sedgwick Ave Display"`; c.fillStyle = PAL.red; c.textBaseline = 'top';
     c.fillText(sub + (mult > 1 ? `  ×${mult}` : ''), 14, size * 1.5);
   });
-  return { can, t: 0, life: big ? 1.6 : 1.1, x: W / 2 + (r() - .5) * W * .25, y: H * (big ? .30 : .38) };
+  return { can, t: 0, big, life: big ? 1.6 : 1.1, x: W / 2 + (r() - .5) * W * (big ? .25 : .08), y: H * (big ? .22 : .42) };
 }
 
 // ---------- atualização ----------
@@ -406,7 +420,10 @@ function update(dt) {
   if (P.mode === 'air') {
     const prevAir = P.air;
     P.vz -= C.g * dt; P.air += P.vz * dt;
-    if (P.trick) { P.trick.t += dt; if (P.trick.t >= P.trick.d) { addLine(P.trick.n, P.trick.p); P.trickEnd = clock; P.trick = null; } }
+    if (P.trick) { P.trick.t += dt; if (P.trick.t >= P.trick.d) { P.airN = (P.airN || 0) + 1;
+        const n = P.airN, pts = Math.round(P.trick.p * (1 + (n - 1) * .5)); // 2ª manobra no mesmo ar vale 1,5×, 3ª 2×...
+        addLine(P.trick.n, pts, n > 1 ? `COMBO ${n}` : ''); P.trickEnd = clock; P.trick = null; } }
+    if (!P.trick && P.next && !(P.takeoff > 0)) { if (timeToLand() > TRICKS[P.next].d * .55) startTrick(P.next); else P.next = null; } // fila: só começa se dá tempo
     else if (P.grab) { P.pending += dt * 260; P.grabT = (P.grabT || 0) + dt; if (P.grabT > .5 && !P.grabShown) { P.grabShown = true; addLine('GRAB', 100); } }
     if (seg.rail && Math.abs(P.x - seg.rail.x) < .22 && P.vz < 0 && prevAir >= C.railH - 10 && P.air < C.railH) {
       P.mode = 'grind'; P.air = C.railH; P.vz = 0; P.slide = false; P.trick && (P.trick = null); addLine('50-50', 150); shake = 4; }
@@ -427,7 +444,7 @@ function update(dt) {
     for (const o of s.obs) {
       if (o.done || Math.abs(P.x - o.x) > .3) continue;
       o.done = true;
-      if (o.k === 'rampa') { if (P.mode === 'ride') { ollie(C.kickV); shake = 6; } continue; }
+      if (o.k === 'rampa') { if (P.mode === 'ride') { ollie(C.kickV); shake = 6; if (o.coins) rampCoins(o, z, o.l, P.speed); } continue; }
       if (o.k === 'buraco') { if (P.mode === 'ride') bail('BURACO!'); continue; }
       if (P.mode !== 'grind' && P.air < o.h) bail('BATEU!');
     }
@@ -455,7 +472,7 @@ function celebrate(n, small) { const cols = [PAL.yellow, PAL.blue, PAL.red, PAL.
     parts.push({ x: 0, y: -ROBO.h * .55, vx: Math.cos(ang) * v, vy: Math.sin(ang) * v - 200, t: 0, life: small ? .4 : .9, c: cols[i % 4], conf: true, rot: Math.random() * 6 }); }
   if (!small) parts.push({ ring: true, t: 0, life: .45, x: 0, y: -ROBO.h * .55, vx: 0, vy: 0, c: PAL.yellow }); }
 function land() {
-  P.air = 0; P.vz = 0; P.grab = false; P.grabT = 0; P.grabShown = false;
+  P.next = null; P.air = 0; P.vz = 0; P.grab = false; P.grabT = 0; P.grabShown = false;
   if (P.trick) {
     const pr = P.trick.t / P.trick.d;
     if (pr >= .5) { addLine(P.trick.n + ' SUJO', Math.round(P.trick.p * .5)); P.trick = null; } // quase completou: passa
@@ -476,7 +493,7 @@ function bail(why) {
 }
 function end(ok) { if (state !== 'play') return; bank(false); if (P.score > BEST) { BEST = P.score; try { localStorage.setItem('dropline-best', BEST); } catch (e) {} } state = ok ? 'end' : 'over'; cv.classList.remove('drop'); }
 const QS = new URLSearchParams(location.search);
-if (QS.has('god')) window.__P = () => P;
+if (QS.has('god')) { window.__P = () => P; window.__segs = () => segs; }
 function start() { ac(); reset(); state = 'play'; if (QS.has('z')) { P.pos = +QS.get('z') * C.segL; P.pushT = 0; P.speed = 5000; } MUS.currentTime = 0; rate(1); music(true); }
 
 // ---------- render ----------
@@ -610,11 +627,33 @@ function drawSprite(v, a, x, hw, z, flip, meta, shadow) {
   }
 }
 function drawRail(s, a, b) {
-  const xa = a.x + a.sc * s.rail.x * C.roadW * F, xb = b.x + b.sc * s.rail.x * C.roadW * F;
-  const ya = a.y - C.railH * a.sc * F, yb = b.y - C.railH * b.sc * F;
-  ctx.strokeStyle = PAL.ink; ctx.lineWidth = Math.max(2, a.sc * F * 50); ctx.beginPath(); ctx.moveTo(xa, ya); ctx.lineTo(xb, yb); ctx.stroke();
-  ctx.strokeStyle = PAL.paper; ctx.lineWidth = Math.max(1, a.sc * F * 18); ctx.beginPath(); ctx.moveTo(xa, ya - a.sc * F * 12); ctx.lineTo(xb, yb - b.sc * F * 12); ctx.stroke();
-  if (s.i % 4 === 0 || s.rail.first || s.rail.last) { ctx.strokeStyle = PAL.ink; ctx.lineWidth = Math.max(1.5, a.sc * F * 34); ctx.beginPath(); ctx.moveTo(xa, ya); ctx.lineTo(xa, a.y); ctx.stroke(); }
+  // corrimão de praça: tubo vermelho com contorno de nanquim, brilho, postes com sapata e sombra no chão.
+  // Na ponta de entrada o tubo desce até o chão (dobra) — lê como corrimão, não como faixa da rua.
+  if (a.sc > 2.2 / C.camH) return;            // rente à câmera: não desenha (vira tubo gigante)
+  const R = s.rail, k = F * C.roadW;
+  const xa = a.x + a.sc * R.x * k, xb = b.x + b.sc * R.x * k;
+  const ha = C.railH * a.sc * F, hb = C.railH * b.sc * F;
+  let ya = a.y - ha, yb = b.y - hb;
+  if (R.first) ya = a.y - ha * .15;           // dobra de entrada
+  const t = a.sc * F;
+  // sombra na pista, deslocada pro lado
+  const sh = a.sc * k * .07, shb = b.sc * k * .07;
+  ctx.fillStyle = 'rgba(17,17,17,.30)'; poly('rgba(17,17,17,.30)', xa + sh * .4, a.y, xa + sh * 1.6, a.y, xb + shb * 1.6, b.y, xb + shb * .4, b.y);
+  // postes (a cada 2 segmentos e nas pontas)
+  const post = (x, y0, y1, sc) => { const w = Math.max(2, sc * F * 30);
+    ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.ellipse(x, y0, w * 1.6, w * .5, 0, 0, 7); ctx.fill();
+    ctx.strokeStyle = PAL.ink; ctx.lineWidth = w; ctx.lineCap = 'butt'; ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1); ctx.stroke();
+    ctx.strokeStyle = PAL.paper2; ctx.lineWidth = w * .35; ctx.beginPath(); ctx.moveTo(x - w * .15, y0 - w * .4); ctx.lineTo(x - w * .15, y1 + w * .4); ctx.stroke(); };
+  if (s.i % 2 === 0 || R.last) post(xa, a.y, a.y - ha, a.sc);
+  // tubo
+  const tube = (w, c, off) => { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(xa, ya - off * t); ctx.lineTo(xb, yb - off * b.sc * F); ctx.stroke(); };
+  tube(Math.max(4, t * 64), PAL.ink, 0);
+  tube(Math.max(2.5, t * 40), PAL.red, 0);
+  tube(Math.max(1, t * 12), '#FFD9D0', 9);
+  // faixa de atenção amarela/preta na dobra de entrada
+  if (R.first && t * 40 > 3) { ctx.save(); ctx.lineCap = 'butt'; ctx.setLineDash([t * 30, t * 30]); ctx.strokeStyle = PAL.yellow; ctx.lineWidth = t * 40;
+    ctx.beginPath(); ctx.moveTo(xa, ya); ctx.lineTo(xb, yb); ctx.stroke(); ctx.restore(); }
+  ctx.lineCap = 'butt';
 }
 function drawViaduct(s, a) {
   const k = a.sc * F, xl = a.x - a.w * 1.62, xr = a.x + a.w * 1.62;
