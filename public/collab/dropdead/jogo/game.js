@@ -17,7 +17,7 @@ const TRICKS = {
   down:  { n:'SHOVE-IT', p:200, d:0.18, roll: 0, yaw:1 },
   up:    { n:'360 FLIP', p:800, d:0.34, roll: 1, yaw:2 },
 };
-const NOTAS = [[0,'POSER'],[8000,'AMADOR'],[20000,'CABULOSO'],[40000,'LENDA'],[65000,'DROP DEAD']];
+const NOTAS = [[0,'POSER'],[15000,'AMADOR'],[45000,'CABULOSO'],[90000,'LENDA'],[150000,'DROP DEAD']];
 
 // ---------- canvas ----------
 const cv = document.getElementById('game');
@@ -73,7 +73,7 @@ const SFX = {
   coin() { tone(988, 0, .07, 'square', .06); tone(1319, .06, .2, 'square', .06); },
   prod() { tone(110, 0, .25, 'sine', .4, 55); [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, i * .05, .2, 'square', .11)); tone(2093, .3, .35, 'triangle', .08);
     noise(0, .14, .35, 500, 2600, 3); noise(.14, .14, .3, 2600, 500, 3); }, // scratch de disco
-  trick() { tone(784, 0, .08, 'square', .1); tone(1175, .07, .16, 'square', .1); tone(1568, .07, .16, 'triangle', .08); noise(0, .1, .3, 900, 3000, 2.5); },
+  trick(m = 0) { const k = 1 + Math.min(m, 10) * .06; tone(784 * k, 0, .08, 'square', .1); tone(1175 * k, .07, .16, 'square', .1); tone(1568 * k, .07, .16, 'triangle', .08); noise(0, .1, .3, 900, 3000, 2.5); },
   whoosh() { noise(0, .22, .35, 400, 2400, 1.2); },
   pop() { noise(0, .05, .4, 1800, 900, .8); },
   land() { noise(0, .09, .5, 220, 120, .7); tone(90, 0, .1, 'sine', .25, 50); },
@@ -121,10 +121,64 @@ function buildProcedural() {
 
 // murais (logos pichados nas paredes)
 const MURAIS = ['pcyes', 'dd35', 'dropdead', 'pcyes-pixo'];
+// letreiros de loja (procedurais): [texto, fundo, letra, fonte, subtítulo]
+const SIGNS = [
+  ['SKATE SHOP', PAL.red, PAL.yellow, 'Graduate', 'SHAPE · RODA · LIXA'],
+  ['PCYES', PAL.ink, PAL.red, 'logo:pcyes', 'GAMER STORE'],
+  ['PADARIA', PAL.paper, PAL.red, '"Sedgwick Ave Display"', 'PÃO QUENTE TODA HORA'],
+  ['LAN HOUSE', PAL.blue, PAL.yellow, 'Graduate', 'CS · FIFA · IMPRESSÃO'],
+  ['DROP DEAD', PAL.yellow, PAL.blue, 'logo:dropdead', 'SKATESHOP DESDE 1990'],
+  ['BORRACHARIA', PAL.yellow, PAL.ink, 'Graduate', '24 HORAS'],
+  ['FLIPERAMA', PAL.red, PAL.paper, '"Rubik Spray Paint"', 'FICHA R$ 1'],
+  ['XEROX', PAL.paper, PAL.ink, 'Graduate', 'ENCADERNAÇÃO · PLASTIFICAÇÃO'],
+  ['CHAVEIRO', PAL.blue, PAL.paper, 'Graduate', 'CÓPIA NA HORA'],
+];
+const LAMBES = ['DROP DEAD', 'PCYES', 'SK8 OU NADA', 'A RUA É NOSSA', 'SESSÃO SÁBADO', 'NÃO PARA', 'PC POINTS', 'DROP LINE'];
 let MURAL = {}, frameNo = 0;
 function drips(c, w, h, col, n, seed) { const r = rng(seed); c.strokeStyle = col; c.lineCap = 'round';
   for (let i = 0; i < n; i++) { const x = r() * w, y = h * (.55 + r() * .3); c.lineWidth = 2 + r() * 4; c.beginPath(); c.moveTo(x, y); c.lineTo(x, y + 20 + r() * 70); c.stroke(); } }
-function buildMurals() {
+function fitFont(c, t, max, font, w) { let s = max; c.font = `${s}px ${font}`; while (s > 10 && c.measureText(t).width > w) { s -= 2; c.font = `${s}px ${font}`; } return s; }
+function buildCity() {
+  SIGNS.forEach(([t, bg, fg, font, sub], i) => { MURAL['sign' + i] = mk(1000, 200, (c, w, h) => { const r = rng(40 + i);
+    c.fillStyle = PAL.ink; c.fillRect(8, 8, w - 8, h - 8);                 // sombra
+    c.fillStyle = bg; c.fillRect(0, 0, w - 12, h - 12);
+    c.strokeStyle = PAL.ink; c.lineWidth = 8; c.strokeRect(4, 4, w - 20, h - 20);
+    c.lineWidth = 3; c.strokeRect(18, 18, w - 48, h - 48);
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    const logo = font.startsWith('logo:') && UI[font.slice(5)];
+    if (logo) { const lh = h * .5, lw = Math.min(w * .6, lh * logo.width / logo.height); c.drawImage(logo, w / 2 - 6 - lw / 2, h * .4 - lh / 2, lw, lw * logo.height / logo.width); }
+    else { fitFont(c, t, 110, font.startsWith('logo:') ? 'Graduate' : font, w * .8); c.fillStyle = PAL.ink; c.fillText(t, w / 2 - 2, h * .42 + 5); c.fillStyle = fg; c.fillText(t, w / 2 - 6, h * .42); }
+    fitFont(c, sub, 26, 'Graduate', w * .7); c.fillStyle = fg === PAL.paper || bg === PAL.ink ? PAL.paper : PAL.ink; c.fillText(sub, w / 2 - 6, h * .78);
+    // parafusos, ferrugem e tag por cima
+    c.fillStyle = PAL.ink; for (const [x, y] of [[30, 30], [w - 42, 30], [30, h - 42], [w - 42, h - 42]]) { c.beginPath(); c.arc(x, y, 5, 0, 7); c.fill(); }
+    drips(c, w - 12, h - 12, 'rgba(120,60,20,.55)', 4, 50 + i);
+    if (r() < .6) { c.strokeStyle = r() < .5 ? PAL.ink : PAL.red; c.lineWidth = 5; c.lineCap = 'round'; c.beginPath(); let x = w * (.55 + r() * .3);
+      for (let q = 0; q < 5; q++) { c.moveTo(x, h * .7); c.lineTo(x + 6, h * .32); c.lineTo(x + 18, h * .6); x += 26; } c.stroke(); } }); });
+  // lambe-lambe: grade de cartazes rasgados com fita
+  for (let v = 0; v < 3; v++) MURAL['lambe' + v] = mk(900, 520, (c, w, h) => { const r = rng(90 + v), cols = [[PAL.yellow, PAL.ink], [PAL.paper, PAL.red], [PAL.red, PAL.paper], [PAL.blue, PAL.yellow], ['#fff', PAL.blue], [PAL.ink, PAL.yellow]];
+    for (let gy = 0; gy < 2; gy++) for (let gx = 0; gx < 4; gx++) { const x = gx * 222 + 6 + r() * 10, y = gy * 255 + 6 + r() * 10, pw = 204, ph = 236, [bg, fg] = cols[Math.floor(r() * cols.length)];
+      c.save(); c.translate(x + pw / 2, y + ph / 2); c.rotate((r() - .5) * .08);
+      c.fillStyle = bg; c.beginPath(); c.moveTo(-pw / 2, -ph / 2); for (let k = 0; k <= 8; k++) c.lineTo(-pw / 2 + pw * k / 8, -ph / 2 + r() * 8);
+      for (let k = 0; k <= 8; k++) c.lineTo(pw / 2 - r() * 6, -ph / 2 + ph * k / 8); for (let k = 0; k <= 8; k++) c.lineTo(pw / 2 - pw * k / 8, ph / 2 - r() * 14); c.closePath(); c.fill();
+      c.strokeStyle = PAL.ink; c.lineWidth = 3; c.stroke();
+      const t = LAMBES[Math.floor(r() * LAMBES.length)].split(' '); c.fillStyle = fg; c.textAlign = 'center'; c.textBaseline = 'middle';
+      const fs = fitFont(c, t.reduce((a, b) => a.length > b.length ? a : b), 64, r() < .5 ? 'Graduate' : '"Rubik Spray Paint"', pw * .84);
+      t.forEach((wd, k) => c.fillText(wd, 0, (k - (t.length - 1) / 2) * fs * 1.05 - 10));
+      c.fillStyle = fg; c.fillRect(-pw * .3, ph / 2 - 40, pw * .6, 5);
+      c.fillStyle = 'rgba(236,226,196,.85)'; c.fillRect(-26, -ph / 2 - 8, 52, 18); c.restore(); } });
+  // pixo reto no topo do prédio: runas altas e angulosas, uma linha só
+  for (let v = 0; v < 4; v++) MURAL['topo' + v] = mk(1000, 240, (c, w, h) => { const r = rng(200 + v);
+    c.strokeStyle = v === 2 ? PAL.red : PAL.ink; c.lineWidth = 11; c.lineCap = 'square'; c.lineJoin = 'miter'; let x = 24;
+    while (x < w - 60) { const gw = 36 + r() * 34, top = 20 + r() * 20, bot = h - 20, k = Math.floor(r() * 5); c.beginPath();
+      if (k === 0) { c.moveTo(x, bot); c.lineTo(x, top); c.lineTo(x + gw, top + 30); c.lineTo(x + gw, bot); }            // tipo "A" reto
+      else if (k === 1) { c.moveTo(x + gw, top); c.lineTo(x, top); c.lineTo(x, bot); c.lineTo(x + gw, bot); c.moveTo(x, (top + bot) / 2); c.lineTo(x + gw * .7, (top + bot) / 2); }
+      else if (k === 2) { c.moveTo(x, bot); c.lineTo(x, top); c.lineTo(x + gw * .5, top + 50); c.lineTo(x + gw, top); c.lineTo(x + gw, bot); }
+      else if (k === 3) { c.moveTo(x, top); c.lineTo(x, bot); c.moveTo(x - 8, top + 14); c.lineTo(x + gw * .6, top - 6); }
+      else { c.moveTo(x, top); c.lineTo(x + gw, bot); c.moveTo(x + gw, top); c.lineTo(x, bot); }
+      c.stroke(); x += gw + 18 + r() * 14; }
+    c.lineWidth = 6; c.beginPath(); c.moveTo(20, h - 6); c.lineTo(x - 10, h - 10); c.stroke(); });
+}
+function buildMurals() { buildCity();
   MURAL.pcyes = mk(640, 260, (c, w, h) => { const r = rng(5);
     c.fillStyle = '#fff'; c.beginPath(); c.moveTo(12, 20); for (let x = 12; x < w - 12; x += 30) c.lineTo(x, 14 + r() * 12); c.lineTo(w - 10, h * .8); for (let x = w - 10; x > 12; x -= 30) c.lineTo(x, h * .8 - r() * 12); c.closePath(); c.fill();
     if (UI.pcyes) { const lw = w * .82, lh = lw * UI.pcyes.height / UI.pcyes.width; c.drawImage(UI.pcyes, (w - lw) / 2, h * .42 - lh / 2, lw, lh); }
@@ -141,12 +195,25 @@ function buildMurals() {
     c.fillStyle = PAL.ink; c.fillText('PCYES', w / 2 + 7, 112); c.fillStyle = PAL.red; c.fillText('PCYES', w / 2, 105);
     c.font = '54px "Permanent Marker"'; c.fillStyle = PAL.ink; c.fillText('× DROP DEAD', w * .62, 215); drips(c, w, h, PAL.red, 8, 11); });
 }
+// coloca uma arte numa faixa da parede: v0/vh em unidades de altura do mundo, largura até `um` do comprimento do prédio
+function placeT(s, side, w, key, v0w, vhw, um = .9) {
+  const b = w.b, ck = b.pc || (b.pc = {}), cc = ck[key]; if (cc && cc.f === frameNo) return cc.t; const out = ck[key] = { f: frameNo, t: null };
+  const s0 = segs[s.i - w.k], last = s0 && segs[s0.i + w.len - 1], img = MURAL[key];
+  if (!img || !s0 || !last || s0.f !== frameNo || last.f !== frameNo || s0.p1.s.Z <= C.camD) return null;
+  const sg = side === 'wallL' ? -1 : 1, lenW = w.len * C.segL;
+  let mh = vhw, mw = mh * img.width / img.height; if (mw > lenW * um) { mw = lenW * um; mh = mw * img.height / img.width; }
+  const ur = mw / lenW / 2, u0 = .5 - ur, u1 = .5 + ur, v0 = v0w / b.h, vr = mh / b.h;
+  const Q = (u, v) => { const f = u * w.len, j = Math.min(w.len - 1, Math.floor(f)), t = f - j, sj = segs[s0.i + j], A = sj.p1.s, B = sj.p2.s;
+    return [lerp(A.x + sg * A.w * 1.62, B.x + sg * B.w * 1.62, t), lerp(A.y, B.y, t) - b.h * v * lerp(A.sc, B.sc, t) * F]; };
+  const [o, xe, ye] = sg < 0 ? [Q(u0, v0 + vr), Q(u1, v0 + vr), Q(u0, v0)] : [Q(u1, v0 + vr), Q(u0, v0 + vr), Q(u1, v0)];
+  return (out.t = [(xe[0] - o[0]) / img.width, (xe[1] - o[1]) / img.width, (ye[0] - o[0]) / img.height, (ye[1] - o[1]) / img.height, o[0], o[1]]);
+}
 function muralT(s, side, w) {
   const b = w.b; if (b.mf === frameNo) return b.mt; b.mf = frameNo; b.mt = null;
   const s0 = segs[s.i - w.k], last = s0 && segs[s0.i + w.len - 1], img = MURAL[b.mural];
   if (!img || !s0 || !last || s0.f !== frameNo || last.f !== frameNo || s0.p1.s.Z <= C.camD) return null;
   const sg = side === 'wallL' ? -1 : 1, lenW = w.len * C.segL;
-  let u0 = .1, u1 = .9, mw = (u1 - u0) * lenW, mh = mw * img.height / img.width; const v0 = 1250 / b.h; let vr = mh / b.h;
+  let u0 = .1, u1 = .9, mw = (u1 - u0) * lenW, mh = mw * img.height / img.width; const v0 = (b.sign ? 1480 : 1250) / b.h; let vr = mh / b.h;
   if (v0 + vr > .9) { vr = .9 - v0; mh = vr * b.h; mw = mh * img.width / img.height; const ur = mw / lenW / 2; u0 = .5 - ur; u1 = .5 + ur; }
   if (vr < .06) return null;
   const Q = (u, v) => { const f = u * w.len, j = Math.min(w.len - 1, Math.floor(f)), t = f - j, sj = segs[s0.i + j], A = sj.p1.s, B = sj.p2.s;
@@ -218,7 +285,7 @@ function buildTrack() {
 
   // prédios: blocos contínuos de cada lado, com becos
   segs.forEach(s => { let e = 'rua'; for (const a of ACTS) if (s.i >= a.from) e = a.env; s.env = e; });
-  let muralN = 0;
+  let muralN = 0, signN = 0; const RD = rng(77);
   for (const side of ['wallL', 'wallR']) {
     let i = 0;
     while (i < segs.length) {
@@ -229,6 +296,10 @@ function buildTrack() {
       len = n;
       const b = { h: 1600 + R() * 4200, blue: R() < .38, shutter: R() < .5, id: i, tags: [],
         mural: len >= 8 && R() < .6 ? MURAIS[(muralN++) % MURAIS.length] : null };
+      // decoração com rng próprio (não mexe no sorteio da pista)
+      if (b.shutter && RD() < .75) b.sign = 'sign' + (signN++ % SIGNS.length);
+      else if (!b.shutter && RD() < .6) b.lambe = 'lambe' + Math.floor(RD() * 3);
+      if (b.h > 2600 && (!b.mural || b.h > 4200) && RD() < .55) b.topo = 'topo' + Math.floor(RD() * 4);
       for (let k = 0; k < len && i + k < segs.length; k++) {
         const t = []; const nTag = R() < .8 ? 1 + Math.floor(R() * 2) : 0;
         for (let q = 0; q < nTag; q++) t.push({ u: R() * .7, v: .55 + R() * .38, w: .2 + R() * .3, hh: .12 + R() * .14, red: R() < .18, seed: Math.floor(R() * 1e6) });
@@ -308,10 +379,27 @@ function reset() {
   buildTrack();
   P = { pos: 0, speed: 0, x: 0, lane: 1, air: 0, vz: 0, mode: 'ride', trick: null, trickEnd: -9, grab: false,
     pending: 0, mult: 0, groundT: 0, score: 0, coins: 0, bails: 0, prods: {}, curvaT: 0, curvaDir: 0, landT: 0,
-    bailT: 0, pushT: 1.6, slide: false, lastTrickName: '', shown: {}, slotT: {}, glowT: 0 };
+    bailT: 0, pushT: 1.6, slide: false, lastTrickName: '', shown: {}, slotT: {}, glowT: 0,
+    lineT: 0, manual: false, manT: 0, grT: 0, st: { air: 0, mult: 0, grind: 0, man: 0, rasp: 0 }, des: pickDesafios() };
   flyers = [];
   popups = []; parts = []; dropT = 0; cv.classList.remove('drop');
 }
+
+// ---------- desafios da partida ----------
+const MULTMAX = 8;
+const LINEW = 1.25; // segundos no chão até a linha fechar
+const DESAFIOS = [
+  ['3 MANOBRAS NUM PULO', P => P.st.air >= 3],
+  ['LINHA ×8', P => P.st.mult >= 8],
+  ['GRIND DE 2 SEGUNDOS', P => P.st.grind >= 2],
+  ['40 PC POINTS', P => P.coins >= 40],
+  ['MANUAL DE 1,5 S', P => P.st.man >= 1.5],
+  ['2 RASPÕES', P => P.st.rasp >= 2],
+  ['2 PRODUTOS DA COLLAB', P => Object.keys(P.prods).length >= 2],
+];
+function pickDesafios() { const a = DESAFIOS.map((d, i) => i).sort(() => Math.random() - .5).slice(0, 3); return a.map(i => ({ i, ok: false })); }
+function checkDesafios() { for (const d of P.des) if (!d.ok && DESAFIOS[d.i][1](P)) { d.ok = true; d.t = clock; P.score += 1000; SFX.prod(); celebrate(24);
+  popups.push(makePopup('DESAFIO!', DESAFIOS[d.i][0] + '  +1000', 0, true)); } }
 
 // ---------- entrada ----------
 const keys = {};
@@ -326,7 +414,9 @@ addEventListener('keydown', e => {
   else if (k === 'ArrowDown' || k === 's' || k === 'S') input('down');
   else if (k === ' ') input('jump');
 });
-addEventListener('keyup', e => { keys[e.key] = false; if (e.key === ' ' && P) P.grab = false; });
+addEventListener('keyup', e => { keys[e.key] = false; if (e.key === ' ' && P) P.grab = false;
+  if (P && P.manual && ['ArrowDown', 's', 'S'].includes(e.key)) endManual(); });
+function endManual() { P.manual = false; P.lineT = LINEW * .7; }
 let tStart = null;
 function hitAt(e) { const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * H;
   return state === 'play' ? null : HIT.find(q => x >= q.x && x <= q.x + q.w && y >= q.y && y <= q.y + q.h); }
@@ -347,7 +437,8 @@ function input(a) {
   if (P.mode === 'ride') {
     if (a === 'left' && P.lane > 0) { P.lane--; P.curvaT = .28; P.curvaDir = -1; }
     else if (a === 'right' && P.lane < 2) { P.lane++; P.curvaT = .28; P.curvaDir = 1; }
-    else if (a === 'up' || a === 'jump') ollie(C.jumpV);
+    else if (a === 'up' || a === 'jump') { P.manual = false; ollie(C.jumpV); }
+    else if (a === 'down' && !P.manual) { P.manual = true; P.manT = 0; P.manHeld = !isTouch; addLine('MANUAL', 100); }
   } else if (P.mode === 'air') {
     if (a === 'jump') { P.grab = true; return; }
     if (TRICKS[a]) { if (!P.trick && !(P.takeoff > 0)) startTrick(a); else P.next = a; }
@@ -363,13 +454,13 @@ function startTrick(a) { P.trick = { ...TRICKS[a], t: 0 }; P.next = null; SFX.wh
 const timeToLand = () => (P.vz + Math.sqrt(Math.max(0, P.vz * P.vz + 2 * C.g * P.air))) / C.g;
 
 // ---------- pontos ----------
-function addLine(name, pts, tag = '') { SFX.trick(); P.mult++; P.pending += pts; P.lastTrickName = name;
+function addLine(name, pts, tag = '') { SFX.trick(P.mult); P.mult++; P.st.mult = Math.max(P.st.mult, P.mult); P.pending += pts; P.lastTrickName = name;
   popups.forEach(q => { if (!q.big) q.y -= 64; }); // combo: o novo entra embaixo, os anteriores sobem
   popups.push(makePopup(name, (tag ? tag + '  ' : '') + '+' + pts, P.mult)); }
 function bank(clean, keepLine) {
   if (!P.pending) return;
   if (keepLine) return; // linha continua (grind → pulo)
-  const total = Math.round(P.pending * Math.max(1, P.mult) * (clean ? 1.5 : 1));
+  const total = Math.round(P.pending * clamp(P.mult, 1, MULTMAX) * (clean ? 1.5 : 1)); // multiplicador para em ×8: linha longa vale, mas não explode
   P.score += total;
   if (P.mult > 1 || clean) popups.push(makePopup(clean ? 'LIMPO!' : 'LINHA', `${total}`, P.mult, true));
   P.pending = 0; P.mult = 0;
@@ -420,20 +511,23 @@ function update(dt) {
   if (P.mode === 'air') {
     const prevAir = P.air;
     P.vz -= C.g * dt; P.air += P.vz * dt;
-    if (P.trick) { P.trick.t += dt; if (P.trick.t >= P.trick.d) { P.airN = (P.airN || 0) + 1;
+    if (P.trick) { P.trick.t += dt; if (P.trick.t >= P.trick.d) { P.airN = (P.airN || 0) + 1; P.st.air = Math.max(P.st.air, P.airN);
         const n = P.airN, pts = Math.round(P.trick.p * (1 + (n - 1) * .5)); // 2ª manobra no mesmo ar vale 1,5×, 3ª 2×...
         addLine(P.trick.n, pts, n > 1 ? `COMBO ${n}` : ''); P.trickEnd = clock; P.trick = null; } }
     if (!P.trick && P.next && !(P.takeoff > 0)) { if (timeToLand() > TRICKS[P.next].d * .55) startTrick(P.next); else P.next = null; } // fila: só começa se dá tempo
     else if (P.grab) { P.pending += dt * 260; P.grabT = (P.grabT || 0) + dt; if (P.grabT > .5 && !P.grabShown) { P.grabShown = true; addLine('GRAB', 100); } }
     if (seg.rail && Math.abs(P.x - seg.rail.x) < .22 && P.vz < 0 && prevAir >= C.railH - 10 && P.air < C.railH) {
-      P.mode = 'grind'; P.air = C.railH; P.vz = 0; P.slide = false; P.trick && (P.trick = null); addLine('50-50', 150); shake = 4; }
+      P.mode = 'grind'; P.grT = 0; P.air = C.railH; P.vz = 0; P.slide = false; P.trick && (P.trick = null); addLine('50-50', 150); shake = 4; }
     else if (P.air <= 0) land();
   } else if (P.mode === 'grind') {
-    P.pending += dt * (P.slide ? 520 : 260);
+    P.pending += dt * (P.slide ? 520 : 260); P.grT += dt; P.st.grind = Math.max(P.st.grind, P.grT); P.lineT = LINEW;
     if (Math.floor(clock * 20) % 2) parts.push({ x: 0, y: 0, vx: (Math.random() - .5) * 260, vy: -Math.random() * 200, t: 0, life: .35, c: Math.random() < .5 ? PAL.yellow : PAL.red, spark: true });
     if (!seg.rail || Math.abs(P.x - seg.rail.x) > .22) { P.mode = 'air'; P.vz = 200; if (P.slide) addLine('BOARDSLIDE', 250); }
   } else if (P.mode === 'ride') {
-    P.groundT += dt; if (P.groundT > 1.1) bank(false);
+    P.groundT += dt;
+    if (P.manual) { P.manT += dt; P.pending += dt * 180; P.st.man = Math.max(P.st.man, P.manT);
+      if (P.manT > (P.manHeld ? 2.6 : 1.3)) endManual(); }
+    else if (P.mult > 0) { P.lineT -= dt; if (P.lineT <= 0) bank(false); }
   } else if (P.mode === 'bail') {
     P.bailT += dt; if (P.bailT > 1.3) { P.mode = 'ride'; P.pushT = 1.2; if (P.bails >= 3) end(false); }
   }
@@ -447,6 +541,7 @@ function update(dt) {
       if (o.k === 'rampa') { if (P.mode === 'ride') { ollie(C.kickV); shake = 6; if (o.coins) rampCoins(o, z, o.l, P.speed); } continue; }
       if (o.k === 'buraco') { if (P.mode === 'ride') bail('BURACO!'); continue; }
       if (P.mode !== 'grind' && P.air < o.h) bail('BATEU!');
+      else if (P.mode === 'air' && P.air - o.h < 70) { P.st.rasp++; addLine('RASPÃO', 150); shake = Math.max(shake, 3); }
     }
     if (s.rail && s.rail.first && P.mode === 'ride' && Math.abs(P.x - s.rail.x) < .22) bail();
     for (const it of s.items) {
@@ -458,6 +553,7 @@ function update(dt) {
       else { P.coins++; P.score += dropT > 0 ? 100 : 50; SFX.coin(); P.glowT = Math.max(P.glowT, .15); celebrate(6, true); }
     }
   }
+  checkDesafios();
   if (P.pos >= trackLen - C.playerZ - C.segL * 3) end(true);
 
   // efeitos
@@ -479,13 +575,13 @@ function land() {
     else { bail('CAIU NO ' + P.trick.n); return; }
   }
   const clean = P.mult > 0 && clock - P.trickEnd < .16;
-  P.mode = 'ride'; P.landT = .16; P.groundT = 0; shake = Math.max(shake, 5); SFX.land();
-  if (P.mult > 0) { hitstop = .05; bank(clean); }
+  P.mode = 'ride'; P.landT = .16; P.groundT = 0; P.lineT = LINEW; shake = Math.max(shake, 5); SFX.land();
+  if (P.mult > 0) { hitstop = .05; if (clean) addLine('LIMPO', 100); }
   for (let i = 0; i < 8; i++) parts.push({ x: 0, y: 0, vx: (Math.random() - .5) * 420, vy: -Math.random() * 160, t: 0, life: .4, c: PAL.ink });
 }
 function bail(why) {
   if (P.mode === 'bail' || QS.has('god')) return;
-  P.mode = 'bail'; P.bailT = 0; P.bails++; P.trick = null; P.air = 0; P.vz = 0; P.pending = 0; P.mult = 0;
+  P.mode = 'bail'; P.bailT = 0; P.bails++; P.manual = false; P.trick = null; P.air = 0; P.vz = 0; P.pending = 0; P.mult = 0;
   hitstop = .12; shake = 14; flash = .15;
   popups.push(makePopup(why || 'TOMBO', `${3 - P.bails} restando`, 0, true));
   if (navigator.vibrate) navigator.vibrate(180);
@@ -544,6 +640,10 @@ function drawWall(s, side, a, b, near) {
     poly(w.b.blue ? PAL.paper3 : PAL.blue, x1, y1, x2, y2, x3, y3, x4, y4);
     ctx.lineWidth = Math.max(.6, a.sc * F * 5);
     for (let v = .1; v < 1; v += .2) { const [p1x, p1y] = P2(0, v * v1), [p2x, p2y] = P2(1, v * v1); ctx.beginPath(); ctx.moveTo(p1x, p1y); ctx.lineTo(p2x, p2y); ctx.stroke(); } }
+  // letreiro, lambe-lambe e pixo de topo
+  const wallArt = (key, v0, vh, um) => { const t = placeT(s, side, w, key, v0, vh, um); if (!t) return; ctx.save(); ctx.beginPath(); ctx.moveTo(xa, ya); ctx.lineTo(xa, ta); ctx.lineTo(xb, tb); ctx.lineTo(xb, yb); ctx.closePath(); ctx.clip();
+    ctx.transform(...t); ctx.drawImage(MURAL[key], 0, 0); ctx.restore(); };
+  if (w.b.sign) wallArt(w.b.sign, 1120, 280, .92); if (w.b.lambe) wallArt(w.b.lambe, 120, 620, .85); if (w.b.topo) wallArt(w.b.topo, w.b.h - 420, 330, .9);
   // janelas
   ctx.fillStyle = PAL.ink;
   for (let v = 1600 / w.b.h; v < .92; v += 900 / w.b.h) {
@@ -663,8 +763,8 @@ function drawViaduct(s, a) {
     const bt = a.y - h + h * .06, bb = a.y - h + h * .36, fs = (bb - bt) * .7;
     ctx.save(); ctx.translate(a.x, (bt + bb) / 2); ctx.rotate(-.025);
     ctx.font = `${fs}px "Sedgwick Ave Display"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.lineWidth = fs * .12; ctx.strokeStyle = PAL.yellow; ctx.strokeText('DROP DEAD 35', 0, 0);
-    ctx.fillStyle = PAL.ink; ctx.fillText('DROP DEAD 35', 0, 0);
+    ctx.lineWidth = fs * .12; ctx.strokeStyle = PAL.yellow; ctx.strokeText('PCYES × DROP DEAD', 0, 0);
+    ctx.fillStyle = PAL.ink; ctx.fillText('PCYES × DROP DEAD', 0, 0);
     ctx.font = `${fs * .4}px "Permanent Marker"`; ctx.fillStyle = PAL.red; ctx.fillText('× PCYES', w * .3, fs * .5); ctx.restore();
     return;
   }
@@ -677,8 +777,8 @@ function drawViaduct(s, a) {
   for (let x = xl; x < xr; x += 120 * k) { ctx.beginPath(); ctx.moveTo(x, yt); ctx.lineTo(x, yt - 160 * k); ctx.stroke(); }
   const fs = (yb - yt) * .62; ctx.save(); ctx.translate((xl + xr) / 2, (yt + yb) / 2 + fs * .05); ctx.rotate(-.03);
   ctx.font = `${fs}px "Sedgwick Ave Display"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.lineWidth = fs * .12; ctx.strokeStyle = PAL.yellow; ctx.strokeText('DROP DEAD 35', 0, 0);
-  ctx.fillStyle = PAL.ink; ctx.fillText('DROP DEAD 35', 0, 0);
+  ctx.lineWidth = fs * .12; ctx.strokeStyle = PAL.yellow; ctx.strokeText('PCYES × DROP DEAD', 0, 0);
+  ctx.fillStyle = PAL.ink; ctx.fillText('PCYES × DROP DEAD', 0, 0);
   ctx.font = `${fs * .38}px "Permanent Marker"`; ctx.fillStyle = PAL.red; ctx.fillText('× PCYES', (xr - xl) * .3, fs * .55); ctx.restore();
 }
 function drawRoadText(s, a) {
@@ -701,6 +801,7 @@ function roboFrame() {
   }
   const L = SPR.robo.lado1; // postura de lado (v2), se existir
   if (P.landT > 0) return L ? 'lado-aterrissa' : 'ollie6';
+  if (P.manual) return SPR.robo['lado-agachado'] ? 'lado-agachado' : 'agachado';
   if (P.curvaT > 0) return L ? 'lado-curva' : 'curva';
   if (P.pushT > 0) return L ? (f8 % 4 < 2 ? 'lado-remada' : 'lado1') : 'remada' + (1 + f8 % 4);
   if (L) return Math.floor(clock * 4) % 2 ? 'lado2' : 'lado1';
@@ -730,7 +831,7 @@ function drawPlayer() {
   ctx.fillStyle = 'rgba(17,17,17,.28)'; ctx.beginPath(); ctx.ellipse(px, feetY + 4, RW * .42 * (1 - Math.min(.6, lift / 400)), 9, 0, 0, 7); ctx.fill();
   // shape
   if (P.mode !== 'bail' || P.bailT < .15) {
-    let roll = 0, yaw = P.mode === 'grind' && P.slide ? Math.PI / 2 : 0, gap = 0;
+    let roll = P.manual ? -.22 : 0, yaw = P.mode === 'grind' && P.slide ? Math.PI / 2 : 0, gap = 0;
     if (P.trick) { const p = Math.floor(P.trick.t * 12) / Math.max(1, Math.round(P.trick.d * 12)); // degraus a 12 fps
       roll = P.trick.roll * p * Math.PI * 2; yaw = P.trick.yaw * p * Math.PI; gap = Math.sin(p * Math.PI) * RH * .12; }
     const bw = RW * (name.startsWith('slide') ? .5 : .62);
@@ -755,7 +856,7 @@ function drawPlayer() {
 }
 
 function drawSpeedLines() {
-  const k = (P.speed - C.minSpeed) / (C.maxSpeed - C.minSpeed); if (k < .55) return;
+  const k = Math.max((P.speed - C.minSpeed) / (C.maxSpeed - C.minSpeed), P.mult >= 3 ? .6 + Math.min(P.mult, 12) * .03 : 0); if (k < .55) return;
   const r = rng(Math.floor(clock * 12)); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2; ctx.globalAlpha = (k - .55) * 1.2;
   for (let i = 0; i < 10; i++) { const ang = r() * Math.PI * 2, r0 = Math.max(W, H) * (.45 + r() * .1), r1 = r0 + 60 + r() * 120;
     ctx.beginPath(); ctx.moveTo(W / 2 + Math.cos(ang) * r0, HOR + Math.sin(ang) * r0); ctx.lineTo(W / 2 + Math.cos(ang) * r1, HOR + Math.sin(ang) * r1); ctx.stroke(); }
@@ -767,7 +868,14 @@ function drawHUD() {
   chip(`${P.coins} PC POINTS`, '15px Graduate', 84, 86, PAL.yellow, PAL.ink, .02, 8, 3);
   ctx.textBaseline = 'top'; ctx.textAlign = 'left';
   if (P.mult > 0) { ctx.textAlign = 'right'; ctx.font = '30px "Permanent Marker"'; ctx.fillStyle = PAL.red; ctx.strokeStyle = PAL.paper; ctx.lineWidth = 6;
-    const t = `LINHA ×${P.mult}  ${Math.round(P.pending)}`; ctx.strokeText(t, W - 18, 16); ctx.fillText(t, W - 18, 16); }
+    const t = `LINHA ×${Math.min(P.mult, MULTMAX)}${P.mult >= MULTMAX ? ' MAX' : ''}  ${Math.round(P.pending)}`; ctx.strokeText(t, W - 18, 16); ctx.fillText(t, W - 18, 16);
+    if (P.mode === 'ride' && !P.manual) { const bw = 180, f = clamp(P.lineT / LINEW, 0, 1); ctx.fillStyle = PAL.ink; ctx.fillRect(W - 18 - bw, 90, bw, 10);
+      ctx.fillStyle = f < .35 ? PAL.red : PAL.yellow; ctx.fillRect(W - 18 - bw + 2, 92, (bw - 4) * f, 6); } }
+  // desafios da partida
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.font = '13px Graduate';
+  P.des.forEach((d, i) => { const y = 122 + i * 22, txt = (d.ok ? '✓ ' : '□ ') + DESAFIOS[d.i][0], w = ctx.measureText(txt).width + 14, pop = d.ok && clock - d.t < .4 ? 1.25 : 1;
+    ctx.save(); ctx.translate(22, y); ctx.scale(pop, pop); ctx.fillStyle = d.ok ? PAL.yellow : 'rgba(243,238,226,.88)'; ctx.fillRect(0, -9, w, 19);
+    ctx.fillStyle = PAL.ink; ctx.fillText(txt, 7, 1); if (d.ok) { ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(22, 1); ctx.lineTo(w - 6, 1); ctx.stroke(); } ctx.restore(); });
   // tombos
   ctx.textAlign = 'right'; ctx.font = '26px "Rubik Spray Paint"'; ctx.fillStyle = PAL.red; ctx.fillText('✕'.repeat(P.bails) + '○'.repeat(Math.max(0, 3 - P.bails)), W - 18, 54);
   // produtos
@@ -849,15 +957,15 @@ function drawTitle() {
   ctx.font = `${fs}px "Sedgwick Ave Display"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   ctx.lineWidth = fs * .22; ctx.strokeStyle = PAL.ink; ctx.strokeText('DROP LINE', 8, 8);
   ctx.lineWidth = fs * .16; ctx.strokeStyle = PAL.yellow; ctx.strokeText('DROP LINE', 0, 0); ctx.fillStyle = PAL.ink; ctx.fillText('DROP LINE', 0, 0); ctx.restore();
-  chip('35 ANOS DE DROP DEAD', `${Math.round(20 * k)}px Graduate`, cx, H * .425, PAL.blue, PAL.paper, .03);
+  chip('PCYES × DROP DEAD', `${Math.round(20 * k)}px Graduate`, cx, H * .425, PAL.blue, PAL.paper, .03);
   button(isTouch ? 'TOCA PRA JOGAR' : 'JOGAR  ▶', cx, H * .55, Math.round(40 * k), 'start');
   if (BEST > 0) chip(`MELHOR LINHA · ${BEST}`, '15px Graduate', cx, H * .55 + 66, PAL.ink, PAL.yellow, -.02, 8, 0);
   // cartão de controles
-  const cw = portrait ? W - 40 : 340, ch = 214, x0 = portrait ? 20 : cx - cw / 2, y0 = H - ch - 22;
+  const cw = portrait ? W - 40 : 360, ch = isTouch ? 254 : 214, x0 = portrait ? 20 : cx - cw / 2, y0 = H - ch - 22;
   ctx.save(); ctx.translate(x0 + cw / 2, y0 + ch / 2); ctx.rotate(.02); ctx.translate(-cw / 2, -ch / 2);
   ctx.fillStyle = PAL.ink; ctx.fillRect(7, 7, cw, ch); ctx.fillStyle = PAL.paper; ctx.fillRect(0, 0, cw, ch); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 3; ctx.strokeRect(0, 0, cw, ch);
-  const rows = isTouch ? [['↔', 'ARRASTA: troca de faixa'], ['●', 'TOCA: pula'], ['✦', 'ARRASTA NO AR: manobra'], ['✋', 'SEGURA NO AR: grab']]
-                       : [['← →', 'troca de faixa'], ['ESPAÇO', 'pula · segura = grab'], ['← → ↑ ↓', 'no ar: manobras'], ['↓', 'no corrimão: boardslide']];
+  const rows = isTouch ? [['↔', 'ARRASTA: troca de faixa'], ['●', 'TOCA: pula'], ['✦', 'ARRASTA NO AR: manobra'], ['✋', 'SEGURA NO AR: grab'], ['↓', 'ARRASTA ↓ NO CHÃO: manual']]
+                       : [['← →', 'troca de faixa'], ['ESPAÇO', 'pula · segura = grab'], ['← → ↑ ↓', 'no ar: manobras'], ['↓', 'chão: manual · corrimão: slide']];
   rows.forEach(([a, b], i) => { const y = 40 + i * 40, kw = Math.max(46, a.length * 11 + 22); keycap(18, y, kw, a);
     ctx.fillStyle = PAL.ink; ctx.font = '14px Graduate'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(b.toUpperCase(), 32 + kw, y + 16); });
   ctx.fillStyle = PAL.blue; ctx.font = '13px Graduate'; ctx.textAlign = 'center'; ctx.fillText(isTouch ? 'PEGA OS 4 PRODUTOS = DROP MODE' : 'F = TELA CHEIA  ·  M = SOM', cw / 2, ch - 14);
@@ -876,7 +984,7 @@ function drawEnd() {
   ctx.save(); ctx.translate(W / 2, H / 2); ctx.rotate(-.02); ctx.translate(-W / 2, -H / 2);
   ctx.fillStyle = PAL.ink; ctx.fillRect(x0 + 8, y0 + 8, cw, ch); ctx.fillStyle = PAL.paper; ctx.fillRect(x0, y0, cw, ch);
   ctx.fillStyle = PAL.yellow; ctx.fillRect(x0, y0, cw, 92); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 3; ctx.strokeRect(x0, y0, cw, ch);
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = PAL.ink; ctx.font = '22px Graduate'; ctx.fillText(state === 'end' ? 'DROP LINE #35 · CHEGOU NA LOJA' : 'DROP LINE #35 · FIM DA LINHA', W / 2, y0 + 30);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = PAL.ink; ctx.font = '22px Graduate'; ctx.fillText(state === 'end' ? 'DROP LINE · CHEGOU NA LOJA' : 'DROP LINE · FIM DA LINHA', W / 2, y0 + 30);
   ctx.font = '44px "Sedgwick Ave Display"'; ctx.fillText(state === 'end' ? 'SESSÃO FECHADA' : 'TOMBOU FEIO', W / 2, y0 + 66);
   ctx.font = '86px Graduate'; ctx.fillText(String(P.score), W / 2, y0 + 170);
   ctx.font = '18px Graduate'; ctx.fillText(`PONTOS  ·  ${P.coins} PC POINTS`, W / 2, y0 + 222);
@@ -888,7 +996,7 @@ function drawEnd() {
   ks.forEach((k, i) => { const x = gx + i * (sz + 10), y = y0 + 380; const v = SPR.obj[k] || PROD[k];
     if (P.prods[k] && v) { const im = v[0], f = sz / Math.max(im.width, im.height); ctx.drawImage(im, x + (sz - im.width * f) / 2, y + (sz - im.height * f) / 2, im.width * f, im.height * f); }
     else { ctx.setLineDash([5, 5]); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2; ctx.strokeRect(x, y, sz, sz); ctx.setLineDash([]); } });
-  ctx.font = '15px Graduate'; ctx.fillStyle = PAL.ink; ctx.fillText(`${Object.keys(P.prods).length}/4 PRODUTOS DA COLLAB`, W / 2, y0 + 470);
+  ctx.font = '15px Graduate'; ctx.fillStyle = PAL.ink; ctx.fillText(`${Object.keys(P.prods).length}/4 PRODUTOS DA COLLAB  ·  ${P.des.filter(d => d.ok).length}/3 DESAFIOS`, W / 2, y0 + 470);
   ctx.restore();
   button(isTouch ? 'TOCA PRA IR DE NOVO' : 'DE NOVO  ▶', W / 2, y0 + ch - 50, 30, 'start');
   if (P.score >= BEST && P.score > 0) chip('NOVO RECORDE!', '16px Graduate', W / 2 + cw * .32, y0 + 128, PAL.red, PAL.paper, .15, 8, 4);
