@@ -56,15 +56,15 @@ function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let
   t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function mk(w, h, fn) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); fn(c.getContext('2d'), c.width, c.height); return c; }
 const LOADP = { n:0, d:0 };
-function load(src, tries = 2) { // nunca trava: 8 s por tentativa, tenta de novo 1 vez, depois segue sem a imagem
+function load(src, tries = 2) { // nunca trava: até 60 s por tentativa, tenta de novo 1 vez, depois segue sem a imagem
   LOADP.n++;
   return new Promise(r => { let done = false; const ok = v => { if (done) return; done = true; LOADP.d++; r(v); };
-    const go = k => { const i = new Image(); let t = setTimeout(() => fail(), 8000);
+    const go = k => { const i = new Image(); let t = setTimeout(() => fail(), 60000);
       const fail = () => { clearTimeout(t); i.onload = i.onerror = null; if (k > 1) go(k - 1); else ok(null); };
       i.onload = () => { clearTimeout(t); ok(i); };
       i.onerror = fail; i.src = src + (k < tries ? (src.includes('?') ? '&' : '?') + 'r=' + k : ''); };
     go(tries); }); }
-const VER = Date.now(); // evita cache de sprites antigos durante o desenvolvimento
+const VER = window.BUILD || Date.now(); // publicado: carimbo fixo (cache entre visitas); local: sempre novo
 
 // ---------- áudio ----------
 const MUS = new Audio('../musica/jogo.mp3'); MUS.loop = true; MUS.volume = .55;
@@ -97,19 +97,24 @@ function rate(r, ms) { MUS.playbackRate = r; if (ms) setTimeout(() => { MUS.play
 
 // ---------- traço tremendo ----------
 const canFilter = typeof ctx.filter === 'string';
-function boilVariants(img) { // 3 versões levemente distorcidas → traço "tremendo" (trocadas a 8 fps)
-  if (!canFilter) return [img, img, img];
-  try {
-  return [0, 1, 2].map(k => mk(img.width + 8, img.height + 8, (c) => { c.filter = `url(#boil${k})`; c.drawImage(img, 4, 4); }));
-  } catch (e) { return [img, img, img]; }
+const BOILQ = []; let boilOn = false;
+function boilPump() { const t0 = performance.now(); while (BOILQ.length && performance.now() - t0 < 10) BOILQ.shift()();
+  if (BOILQ.length) setTimeout(boilPump, 0); else boilOn = false; }
+function boilVariants(img) { // 3 versões levemente distorcidas → traço "tremendo"; geradas aos poucos, depois de abrir
+  const pad = c => c.drawImage(img, 4, 4), base = mk(img.width + 8, img.height + 8, pad), arr = [base, base, base];
+  if (!canFilter) return arr;
+  [0, 1, 2].forEach(k => BOILQ.push(() => { try { arr[k] = mk(img.width + 8, img.height + 8, (c) => { c.filter = `url(#boil${k})`; pad(c); }); } catch (e) {} }));
+  if (!boilOn) { boilOn = true; setTimeout(boilPump, 0); }
+  return arr;
 }
+
 
 // ---------- sprites ----------
 // jogo 2 (arte final, se já fatiada) e jogo 1 (placeholder)
 const S2 = { robo:{}, skate:{}, cenario:{}, ui:{}, adesivos:{} }, M2 = {};
 const S1 = { robo:{}, skate:{}, obj:{} }, UI = {}, RAW = {};
 async function loadSet(base, dir, target, man, only) {
-  const m = await fetch(`${base}/${dir}/manifest.json?v=${VER}`, { cache:'no-store', signal:AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined }).then(r => r.ok ? r.json() : {}).catch(() => ({}));
+  const m = await fetch(`${base}/${dir}/manifest.json?v=${VER}`, { signal: AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined }).then(r => r.ok ? r.json() : {}).catch(() => ({}));
   if (man) man[dir] = m;
   const names = Object.keys(m).filter(n => !only || only.includes(n));
   await Promise.all(names.map(async n => { const i = await load(`${base}/${dir}/${n}.webp?v=${VER}`); if (i) { RAW[dir + '/' + n] = i; target[n] = boilVariants(i); } }));
@@ -160,7 +165,7 @@ function buildProcedural() {
   const r = rng(77); STARS = [];
   for (let i = 0; i < 190; i++) STARS.push({ x:(r() - .5) * 4200, y:260 + Math.pow(r(), .8) * 3000, s:2 + r() * 5, k:r() < .25, ph:Math.floor(r() * 3) });
   PUMPRING = mk(160, 160, (c) => { c.strokeStyle = PAL.yellow; c.lineWidth = 10; c.beginPath(); c.arc(80, 80, 60, 0, 7); c.stroke(); c.strokeStyle = PAL.ink; c.lineWidth = 3; c.beginPath(); c.arc(80, 80, 68, 0, 7); c.stroke(); });
-  buildStickers(); buildLetters();
+  buildStickers();
 }
 
 // adesivos (chuva do DROP 35) — recortados com borda branca
@@ -439,11 +444,12 @@ function buildDeckCrowd() {
   return [0, 1].map(f => [-1, 1].map(sg => boilVariants(crowdRow(170, 190, sg < 0 ? 701 : 707, 3, f, .82))));
 }
 function buildLayers() {
-  LAYERS.city = { img:boilVariants(buildSkyline()), d:.78, w:4200, h:620 };
-  LAYERS.via = { img:boilVariants(buildOverpass()), d:.55, w:3800, h:470 };
-  LAYERS.shop = { img:boilVariants(buildShop()), d:.3, w:3000, h:640 };
-  LAYERS.crowd = { img:[0, 1].map(f => boilVariants(crowdRow(3400, 230, 404, 0, f, .95))), d:.12, w:3400, h:230 };
-  HP = boilVariants(buildHalfpipe());
+  // cenário desenhado em código só como reserva, se a arte não carregou (é pesado de gerar)
+  if (!S2.cenario['fundo-loja']) { LAYERS.city = { img:boilVariants(buildSkyline()), d:.78, w:4200, h:620 };
+    LAYERS.via = { img:boilVariants(buildOverpass()), d:.55, w:3800, h:470 };
+    LAYERS.shop = { img:boilVariants(buildShop()), d:.3, w:3000, h:640 }; }
+  if (!S2.cenario.plateia1) LAYERS.crowd = { img:[0, 1].map(f => boilVariants(crowdRow(3400, 230, 404, 0, f, .95))), d:.12, w:3400, h:230 };
+  if (!S2.cenario.halfpipe) HP = boilVariants(buildHalfpipe()); else HP = [];
   DECKCROWD = buildDeckCrowd();
 }
 
@@ -1161,7 +1167,7 @@ if (fsBtn) { fsBtn.addEventListener('click', e => { e.stopPropagation(); toggleF
 (async function boot() {
   resize(); addEventListener('resize', resize);
   requestAnimationFrame(frame);
-  await Promise.all(['40px Graduate', '40px "Permanent Marker"', '40px "Rubik Spray Paint"', '40px "Sedgwick Ave Display"'].map(f => document.fonts.load(f).catch(() => {})));
+  await Promise.all(['40px Graduate', '40px "Permanent Marker"', '40px "Rubik Spray Paint"', '40px "Sedgwick Ave Display"'].map(f => Promise.race([document.fonts.load(f).catch(() => {}), new Promise(r => setTimeout(r, 2500))])));
   await loadSet('sprites/j1', 'skate', S1.skate, null, ['lateral', 'fundo-plano']); // a tela de carregamento usa o shape
   await Promise.all([
     loadSet('sprites/j1', 'robo', S1.robo, null, J1_ROBO),
