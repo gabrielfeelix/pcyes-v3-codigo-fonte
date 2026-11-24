@@ -1090,8 +1090,13 @@ function drawEnd() {
     ctx.fillStyle = PAL.ink; star(ctx, 5, 5, 74, 16, 0, .86); ctx.fill(); ctx.fillStyle = '#fff'; star(ctx, 0, 0, 74, 16, 0, .86); ctx.fill();
     ctx.fillStyle = PAL.yellow; ctx.beginPath(); ctx.arc(0, 0, 58, 0, 7); ctx.fill(); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 3; ctx.stroke();
     ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.arc(0, 0, 50, 0, 7); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle = PAL.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '13px Graduate'; ctx.fillText('CUPOM LIBERADO', 0, -22);
-    ctx.font = '17px Graduate'; ctx.fillStyle = PAL.red; ctx.fillText(CUPOM, 0, 2); ctx.font = '11px Graduate'; ctx.fillStyle = PAL.ink; ctx.fillText('NA DROP DEAD', 0, 24);
+    // cada linha encolhe até caber na largura do círculo tracejado naquela altura (com folga)
+    const fit = (t, y, max, font) => { const r = 42, w = 2 * Math.sqrt(Math.max(0, r * r - y * y)); let s = max;
+      ctx.font = `${s}px ${font}`; while (s > 7 && ctx.measureText(t).width > w) { s -= .5; ctx.font = `${s}px ${font}`; } };
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    fit('CUPOM', -21, 12, 'Graduate'); ctx.fillStyle = PAL.ink; ctx.fillText('CUPOM', 0, -21);
+    fit(CUPOM, 0, 18, 'Graduate'); ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.strokeStyle = '#fff'; ctx.strokeText(CUPOM, 0, 1); ctx.fillStyle = PAL.red; ctx.fillText(CUPOM, 0, 1);
+    fit('LIBERADO', 21, 12, 'Graduate'); ctx.fillStyle = PAL.ink; ctx.fillText('LIBERADO', 0, 21);
     ctx.restore();
     ctx.fillStyle = PAL.ink; ctx.font = '15px "Permanent Marker"'; ctx.textAlign = 'left'; ctx.fillText('CARTELA', x0 + 28, y0 + 452); ctx.fillText('COMPLETA!', x0 + 28, y0 + 474);
   } else { const f = MISSOES.filter(m => !MISS[m.k]).length; ctx.fillStyle = PAL.ink; ctx.font = '15px Graduate'; ctx.textAlign = 'center';
