@@ -48,7 +48,7 @@ const BANNER_IMAGEM: {
 };
 
 /**
- * Faixa da collab PCYES × Drop Dead (35 anos), feita em código e não em imagem:
+ * Faixa da collab PCYES × Drop Dead, feita em código e não em imagem:
  * fica nítida em qualquer tela e o cupom é um ingresso de verdade que copia no
  * clique. Cores e fontes do zine dos jogos (azul Drop Dead, amarelo, nanquim).
  * Para voltar à faixa BEMVINDO10, troque FAIXA para "imagem".
@@ -342,7 +342,7 @@ function FaixaCollab({ celular, altura, copiado, copiar, fechar }: {
   return (
     <div
       role="region"
-      aria-label="Collab PCYES × Drop Dead"
+      aria-label="PCYES × Drop Dead"
       className="announce-bar faixa-collab fixed inset-x-0 top-0 z-[60] w-full overflow-hidden"
       style={{
         height: altura,
@@ -353,7 +353,7 @@ function FaixaCollab({ celular, altura, copiado, copiar, fechar }: {
         borderBottom: `2px solid ${ZINE.nanquim}`,
       }}
     >
-      {/* fita amarela de 35 anos correndo nas pontas */}
+      {/* fita amarela e preta nas pontas (parada) */}
       <div aria-hidden="true" className="fc-fita pointer-events-none absolute inset-y-0 left-0 hidden w-[22%] lg:block" />
       <div aria-hidden="true" className="fc-fita fc-fita-dir pointer-events-none absolute inset-y-0 right-0 hidden w-[22%] lg:block" />
 
@@ -362,7 +362,7 @@ function FaixaCollab({ celular, altura, copiado, copiar, fechar }: {
           {!celular && (
             <img src="/collab/dropdead/dropdead-logo.webp" alt="" width={44} height={28} className="h-[28px] w-auto flex-shrink-0 -rotate-3" draggable={false} />
           )}
-          <span className="fc-titulo flex-shrink-0">{celular ? "PCYES × DROP DEAD" : "PCYES × DROP DEAD · 35 ANOS"}</span>
+          <span className="fc-titulo flex-shrink-0">{"PCYES × DROP DEAD"}</span>
           {!celular && <span className="fc-texto truncate">{desconto} em toda a collab com o cupom</span>}
         </Link>
 
@@ -412,18 +412,13 @@ function FaixaCollab({ celular, altura, copiado, copiar, fechar }: {
           font-family: Graduate, var(--font-family-inter); font-size: ${celular ? 12 : 13}px; letter-spacing: .06em; white-space: nowrap;
           -webkit-mask: radial-gradient(circle 5px at 100% 50%, transparent 98%, #000); mask: radial-gradient(circle 5px at 100% 50%, transparent 98%, #000); }
         .faixa-collab .fc-copiado .fc-codigo { background: ${ZINE.nanquim}; color: ${ZINE.amarelo}; }
-        .faixa-collab .fc-copiado { animation: fcCarimbo .3s ease; }
         .faixa-collab .fc-jogar { align-items: center; height: 24px; padding: 0 10px; border: 2px solid ${ZINE.nanquim}; background: ${ZINE.papel};
           color: ${ZINE.nanquim}; font-family: "Permanent Marker", var(--font-family-inter); font-size: 13px; transform: rotate(2deg);
           box-shadow: 2px 2px 0 ${ZINE.nanquim}; transition: background .15s ease; }
         .faixa-collab .fc-jogar:hover { background: ${ZINE.amarelo}; }
         .faixa-collab .fc-fita { background: repeating-linear-gradient(-45deg, ${ZINE.amarelo} 0 10px, ${ZINE.nanquim} 10px 20px);
-          opacity: .9; -webkit-mask: linear-gradient(90deg, #000 0%, transparent 100%); mask: linear-gradient(90deg, #000 0%, transparent 100%);
-          animation: fcFita 1.2s steps(8) infinite; }
+          opacity: .9; -webkit-mask: linear-gradient(90deg, #000 0%, transparent 100%); mask: linear-gradient(90deg, #000 0%, transparent 100%); }
         .faixa-collab .fc-fita-dir { -webkit-mask: linear-gradient(270deg, #000 0%, transparent 100%); mask: linear-gradient(270deg, #000 0%, transparent 100%); }
-        @keyframes fcFita { to { background-position: 28.28px 0; } }
-        @keyframes fcCarimbo { 0% { transform: rotate(-2deg) scale(1.18); } 100% { transform: rotate(-2deg) scale(1); } }
-        @media (prefers-reduced-motion: reduce) { .faixa-collab .fc-fita, .faixa-collab .fc-copiado { animation: none; } }
       `}</style>
     </div>
   );
