@@ -454,3 +454,19 @@
 .op-a3 .v-vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; filter: brightness(.55) saturate(1.1); }
 .op-a3 .v-sec::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(70% 60% at 50% 50%, rgba(0,0,0,.25), rgba(0,0,0,.8)), linear-gradient(0deg, #000 0%, transparent 25%, transparent 80%, #000 100%); }
 .op-a3 .v-sec .p-x { color: var(--claro); }
+/* vídeo v2: texto à esquerda (alinhado à esquerda), vídeo à direita quase inteiro (16:9, pouco corte), some no preto pela esquerda */
+.op-a3 .v-sec { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; text-align: left;
+  min-height: calc(64vw * 9 / 16 + 12vh); padding: 6vh var(--pad); background: #000; }
+.op-a3 .v-sec::before { content: none; }
+.op-a3 .v-vid { position: absolute; inset: auto 0 auto auto; top: 50%; width: 64vw; height: auto; aspect-ratio: 16 / 9; translate: 0 -50%; z-index: -1;
+  object-fit: cover; filter: brightness(.9) saturate(1.05);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 38%), linear-gradient(0deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, transparent 0%, #000 38%), linear-gradient(0deg, transparent 0%, #000 14%, #000 86%, transparent 100%); mask-composite: intersect; }
+.op-a3 .v-sec > :not(video) { max-width: 40vw; }
+.op-a3 .v-sec .p-tit { font-size: clamp(48px, 4.8vw, 96px); max-width: 9em; }
+.op-a3 .v-sec .cta { align-self: flex-start; }
+@media (max-width: 860px) {
+  .op-a3 .v-sec { min-height: 0; padding-top: calc(100vw * 9 / 16 + 24px); }
+  .op-a3 .v-vid { top: 0; translate: none; width: 100%; -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 30%); mask-image: linear-gradient(0deg, transparent 0%, #000 30%); }
+  .op-a3 .v-sec > :not(video) { max-width: none; }
+}
