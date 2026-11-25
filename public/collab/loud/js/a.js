@@ -3,7 +3,7 @@
    Fotos: Flickr oficial valorantesports (Riot Games), ver img/hist/CREDITOS.txt. Versão longa (reprovada): _antiga/a-filme/. */
 (function () {
   const { BASE, LOUD_WORD, LOUD_SIMB, PCYES, SETA, CAPS, HOJE, pad2, montaVitrine } = window.LD;
-  const FOTO = ["c1-a", "c1-c", "c3", "c4"];   // 2019, 2020, 2022, 2026
+  const FOTO = ["h-2019", "c1-c", "c3", "c4"];   // 2019, 2020, 2022, 2026
 
   const hero = () => `
     <section class="sec a-hero">
