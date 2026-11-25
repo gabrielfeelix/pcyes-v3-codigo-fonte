@@ -141,3 +141,4 @@
 .op-b .b-hero-vid { background: #000; }
 .op-b .b-hero-vid img { left: 9%; object-position: 62% 30%; } .op-b .b-h1 { font-size: clamp(60px, 7.6vw, 156px); }
 .op-b .b-h1 .pcyes-completo.so-palavra { aspect-ratio: 2433 / 540; height: .7em; }
+@media (max-width: 760px) { .op-b .b-h1 { font-size: 9.2vw; } .op-b .b-h1 > span { white-space: nowrap; } }

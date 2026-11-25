@@ -484,3 +484,15 @@
   mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.08) 8%, rgba(0,0,0,.25) 16%, rgba(0,0,0,.5) 24%, rgba(0,0,0,.75) 32%, rgba(0,0,0,.92) 40%, #000 48%),
               linear-gradient(0deg, transparent 0%, rgba(0,0,0,.7) 4%, #000 10%); }
 .op-a3 .v-sec { border-top: 0; }
+/* celular: cada linha do título inteira (sem "joga / de" quebrando), tamanho pela largura */
+.op-a .a-titulo .ln > span { white-space: nowrap; }
+@media (max-width: 760px) {
+  .op-a .a-titulo { font-size: 11.6vw; max-width: none; }
+  .op-a .a-titulo .pcyes-completo.so-palavra { height: .68em; }
+}
+@media (max-width: 860px) {
+  .op-a3 .v-sec { min-height: 0; padding: calc(100vw * 9 / 16 + 20px) var(--pad) 48px; }
+  .op-a3 .v-vid { top: 0; width: 100%; translate: none;
+    -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 28%); mask-image: linear-gradient(0deg, transparent 0%, #000 28%); }
+  .op-a3 .v-sec > :not(video) { max-width: none; }
+}

@@ -143,3 +143,4 @@
 .lp-ld .btn-contorno:hover { background: var(--branco); color: var(--preto); }
 
 .lp-ld a.add { display: block; color: inherit; text-decoration: none; }
+@media (max-width: 760px) { .lp-ld .titulo-loud { font-size: 11vw; white-space: nowrap; } }
