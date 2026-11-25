@@ -13,11 +13,13 @@ const G = { F0:240, R:330, V:46, B:34, DECK:170, RAIL:86 };
 G.T = G.R * Math.PI / 2; G.S2 = G.F0 + G.T; G.SMAX = G.S2 + G.V;
 G.YC = G.B + G.R + G.V; G.XC = G.F0 + G.R; G.XE = G.XC + G.DECK;
 const PH = { g:2500, mu:26, k:.000034, pump:1600, pumpBad:420, vmax:2700, airMin:110, push:300, drop:820 };
-const ROBO_H = 250, BOARD_L = 140, SESSION = 60, METER_FULL = 5000;
+const ROBO_H = 300, BOARD_L = 168, SESSION = 60, METER_FULL = 5000;
 
 const FLIPS = { L:{ n:'KICKFLIP', p:400, d:.38, roll:1, yaw:0 }, R:{ n:'HEELFLIP', p:400, d:.38, roll:-1, yaw:0 },
   D:{ n:'VARIAL', p:300, d:.32, roll:0, yaw:1 }, U:{ n:'360 FLIP', p:900, d:.5, roll:1, yaw:2 } };
 FLIPS.N = FLIPS.L;
+if (new URLSearchParams(location.search).has('debug')) window.dbg = () => P; // só pra teste automatizado
+for (const k of ['L', 'R', 'D', 'U']) FLIPS[k].d = +(FLIPS[k].d * 1.25).toFixed(3); // mais tempo de leitura da manobra
 const GRABS = { L:{ n:'INDY', k:'indy' }, R:{ n:'MELON', k:'melon' }, U:{ n:'METHOD', k:'method' }, D:{ n:'STALEFISH', k:'stalefish' } };
 GRABS.N = GRABS.L;
 const SPINS = [null, ['540', 1000], ['900', 2500], ['1260', 4500]]; // giro extra de 360 em 360 (o aéreo normal já é um 180)
@@ -523,7 +525,7 @@ function release(b) { if (b === 'B' && P && P.grab) endGrab(); }
 const FONTS = ['Graduate', '"Permanent Marker"', '"Rubik Spray Paint"', '"Sedgwick Ave Display"', 'Impact', 'Georgia'];
 const CHIPS = [[PAL.paper, PAL.ink], [PAL.yellow, PAL.ink], [PAL.blue, PAL.paper], [PAL.ink, PAL.yellow], [PAL.red, PAL.paper], ['#fff', PAL.blue]];
 function makePopup(word, sub, mult, big, y) { // bilhete de sequestro: cada letra recortada de um lugar
-  const r = rng(word.length * 77 + Math.floor(clock * 10)), size = big ? 46 : 34;
+  const r = rng(word.length * 77 + Math.floor(clock * 10)), size = big ? 54 : 40;
   const can = mk(word.length * size * .95 + 50, size * 2.6, (c) => {
     let x = 10;
     for (const ch of word) { if (ch === ' ') { x += size * .4; continue; }
@@ -627,6 +629,7 @@ function air(dt) {
   else { const tgt = Math.round((P.spin + P.spinV * .12) / 360) * 360, e = tgt - P.spin;
     P.spinV = Math.abs(e) < 3 ? 0 : Math.sign(e) * Math.min(Math.abs(e) * 9, 620); }
   P.spin += P.spinV * dt;
+  if (P.popT > 0) P.popT = Math.max(0, P.popT - dt);
   if (P.flip) { P.flip.t += dt; if (P.flip.t >= P.flip.d) { addTrick(P.flip.n, P.flip.p); P.flip = null; P.flips++; } }
   if (P.grab) { P.grab.t += dt; if (P.grab.t > .15) { P.pending += 320 * dt; if (!P.grab.named) { P.grab.named = true; addTrick(P.grab.n, 150); P.airGrab = true; } } }
   if (P.rf) { P.rf.t += dt; P.glowT = .3; if (P.rf.t >= P.rf.d) { addTrick('ROBÔ FLIP', 3000); P.rf = null; celebrate(36); flash = .2; shake = 10; } }
@@ -645,9 +648,9 @@ function resolveAB(b) {
   const dir = dirHeld();
   if (b.A && b.B) { special(dir); return; }
   if (P.mode !== 'air' || P.rf) return;
-  if (b.A && !P.flip && !P.grab) { const f = FLIPS[dir]; P.flip = { ...f, t:0 }; SFX.whoosh(); }
-  else if (b.B && !P.grab && !P.flip && held('B')) { const g = GRABS[dir]; P.grab = { ...g, t:0 }; }
-  else if (b.B && !P.grab && !P.flip) { const g = GRABS[dir]; P.grab = { ...g, t:0, tap:true }; } // toque rápido: grab curtinho
+  if (b.A && !P.flip && !P.grab) { const f = FLIPS[dir]; P.flip = { ...f, t:0 }; SFX.whoosh(); P.popT = .2; }
+  else if (b.B && !P.grab && !P.flip && held('B')) { const g = GRABS[dir]; P.grab = { ...g, t:0 }; P.popT = .2; }
+  else if (b.B && !P.grab && !P.flip) { const g = GRABS[dir]; P.grab = { ...g, t:0, tap:true }; P.popT = .2; } // toque rápido: grab curtinho
 }
 function endGrab() { if (!P.grab) return; if (P.grab.tap && P.grab.t < .3) return; P.grab = null; }
 function special(dir) {
@@ -803,7 +806,7 @@ function riderPose() {
     let frame = 'ar-neutro', roll = 0, byaw = 0, gap = 0;
     if (P.rf) frame = 'rf' + clamp(1 + Math.floor(P.rf.t / P.rf.d * 6), 1, 6);
     else if (P.grab) frame = 'grab-' + P.grab.k;
-    else if (P.flip) { frame = 'ar-flip'; const pr = Math.floor(P.flip.t * 12) / Math.max(1, Math.round(P.flip.d * 12)); roll = P.flip.roll * pr * Math.PI * 2; byaw = P.flip.yaw * pr * Math.PI; gap = Math.sin(pr * Math.PI) * 26; }
+    else if (P.flip) { frame = 'ar-flip'; const pr = sstep(P.flip.t / P.flip.d); roll = P.flip.roll * pr * Math.PI * 2; byaw = P.flip.yaw * pr * Math.PI; gap = Math.sin(pr * Math.PI) * 44; }
     else if (P.t < .12) frame = 'ar-ollie';
     else if (P.vy < -200 && P.t / P.T > .75 && P.line.length) frame = 'ar-comemora';
     return { x:P.x, y:P.y, ang:airAngle(), nose:P.nose0, yaw, frame, roll, byaw, gap };
@@ -839,14 +842,19 @@ function drawRider() {
   const p = riderPose(), z = cam.z;
   // ângulo exibido em degraus de 12 fps
   const tick = Math.floor(clock * 12); if (tick !== P.angTick) { P.angTick = tick; P.angD = p.ang; }
-  const ang = Math.abs(P.angD - p.ang) > 1.2 ? p.ang : P.angD;
+  const ang = P.mode === 'air' || Math.abs(P.angD - p.ang) > 1.2 ? p.ang : P.angD;
   const cy = Math.cos(p.yaw), syw = Math.sin(p.yaw), sideOn = Math.abs(cy) < .42 && P.mode === 'air' && !P.grab && !P.rf;
   const face = p.nose * (cy >= 0 ? 1 : -1);
   let frame = p.frame; if (sideOn) frame = syw * p.nose > 0 ? 'ar-giro-costas' : 'ar-giro-frente';
   const F = frameOf(frame), v = F.v;
   const bl = BOARD_L, bh = 21, feet = bh * .78;
-  ctx.save(); ctx.translate(SX(p.x), SY(p.y)); ctx.scale(z, z); ctx.rotate(-ang);
+  const pk = P.popT > 0 ? 1 + Math.sin((1 - P.popT / .2) * Math.PI) * .14 : 1; // pop no começo da manobra
+  ctx.save(); ctx.translate(SX(p.x), SY(p.y)); ctx.scale(z * pk, z * pk); ctx.rotate(-ang);
+  ctx.filter = 'drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 3px 3px rgba(0,0,0,.45))'; // contorno de adesivo: separa o robô do cenário carregado
   // sombra/rodas: faíscas e partículas no mundo, desenhadas fora
+  if (P.flip && P.mode === 'air' && !F.board && !p.noBoard) { // rastro: 2 fantasmas do shape um pouco atrás na volta
+    for (const [dr, al] of [[.5, .16], [.25, .3]]) { ctx.save(); ctx.globalAlpha = al; ctx.translate(0, p.gap * .9);
+      const yk0 = Math.cos(p.byaw - dr * P.flip.yaw) * (Math.abs(cy) < .2 ? .2 * Math.sign(cy || 1) : cy); drawBoard(p.roll - dr * P.flip.roll, p.nose * (Math.abs(yk0) < .15 ? .15 * Math.sign(yk0 || 1) : yk0), bl); ctx.restore(); } ctx.globalAlpha = 1; }
   if (!F.board && !p.noBoard) { ctx.save(); ctx.translate(0, p.gap); const yk = Math.cos(p.byaw) * (Math.abs(cy) < .2 ? .2 * Math.sign(cy || 1) : cy); drawBoard(p.roll, p.nose * (Math.abs(yk) < .15 ? .15 * Math.sign(yk || 1) : yk), bl); ctx.restore(); }
   if (v) {
     const img = v[boilF], RH = ROBO_H * (img.height - 8) / 300, RW = RH * img.width / img.height;
@@ -859,7 +867,7 @@ function drawRider() {
     if (P.glowT > 0 || P.rf) eyes(ox + RW * .5, oy + RH * .1, RH);
     ctx.restore();
   }
-  ctx.restore();
+  ctx.filter = 'none'; ctx.restore();
 }
 function eyes(x, y, rh) { // olhos acesos do ROBÔ FLIP: raios de nanquim vermelho, em degraus
   const r = rh * .07, rot = Math.floor(clock * 12) * .3;
@@ -904,7 +912,7 @@ function checkmark(x, y, s, col = PAL.red) { ctx.strokeStyle = col; ctx.lineWidt
 function missionCard(x, y, w, compact, rot = .025, inGame = true) {
   const lh = compact ? 22 : 30, h = 34 + lh * 3 + 8, fs = compact ? 12 : 14;
   ctx.save(); ctx.translate(x + w / 2, y + h / 2); ctx.rotate(rot); ctx.translate(-w / 2, -h / 2);
-  const ui = S2.ui.cartela;
+  const ui = null; // a arte pronta da cartela tem quadradinhos próprios que brigavam com os checkboxes
   if (ui) ctx.drawImage(ui[boilF], -6, -6, w + 12, h + 12);
   else { ctx.fillStyle = PAL.ink; ctx.fillRect(5, 5, w, h); ctx.fillStyle = PAL.paper; ctx.beginPath(); ctx.moveTo(0, 0); for (let i = 0; i <= 10; i++) ctx.lineTo(w * i / 10, (i % 2) * 3); ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath(); ctx.fill();
     ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2.5; ctx.stroke();
@@ -1035,6 +1043,17 @@ function lockup(cx, y, scale) { // PCYES × DROP DEAD numa tira de papel com fit
   ctx.restore(); tape(cx - tw / 2 + 20, y - lh * 1.1, 70 * scale, -.5); tape(cx + tw / 2 - 20, y + lh * 1.0, 70 * scale, -.4);
 }
 function titleArt() { return (S2.ui.keyart2 && S2.ui.keyart2[0]) || UI.keyart; }
+// controles da tela inicial em uma linha de keycaps (quebra em 2 se não couber), presa no rodapé
+function linhaControles(items, cx, yBase, maxW) {
+  ctx.font = '13px Graduate'; const kwOf = a => Math.max(40, a.length * 10 + 18);
+  const ws = items.map(([a, b]) => kwOf(a) + 8 + ctx.measureText(b.toUpperCase()).width), gap = 22, linhas = [[]]; let w = 0;
+  items.forEach((it, i) => { if (w && w + gap + ws[i] > maxW) { linhas.push([]); w = 0; } linhas[linhas.length - 1].push(i); w += (w ? gap : 0) + ws[i]; });
+  const lh = 40, h = linhas.length * lh + 14, bw = Math.min(maxW + 28, Math.max(...linhas.map(l => l.reduce((s, i, j) => s + ws[i] + (j ? gap : 0), 0))) + 28);
+  ctx.fillStyle = 'rgba(17,17,17,.78)'; ctx.fillRect(cx - bw / 2, yBase - h, bw, h);
+  linhas.forEach((l, li) => { const lw = l.reduce((s, i, j) => s + ws[i] + (j ? gap : 0), 0); let x = cx - lw / 2; const y = yBase - h + 7 + li * lh + 4;
+    l.forEach(i => { const [a, b] = items[i], kw = kwOf(a); keycap(x, y, kw, a); ctx.fillStyle = PAL.paper; ctx.font = '13px Graduate'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(b.toUpperCase(), x + kw + 8, y + 15); x += ws[i] + gap; }); });
+}
 function drawTitle() {
   const img = titleArt(); if (img) cover(img); else { ctx.fillStyle = PAL.night; ctx.fillRect(0, 0, W, H); }
   ctx.fillStyle = 'rgba(22,30,71,.35)'; ctx.fillRect(0, 0, W, H);
@@ -1046,25 +1065,11 @@ function drawTitle() {
     ctx.lineWidth = fs * .22; ctx.strokeStyle = PAL.ink; ctx.strokeText(t, 8, dy + 8);
     ctx.lineWidth = fs * .16; ctx.strokeStyle = PAL.yellow; ctx.strokeText(t, 0, dy); ctx.fillStyle = PAL.ink; ctx.fillText(t, 0, dy); }
   ctx.restore();
-  chip('JOGO 2 · HALF-PIPE · 60 SEGUNDOS', `${Math.round(17 * k)}px Graduate`, cx, H * .405, PAL.blue, PAL.paper, .03);
-  button(isTouch ? 'TOCA PRA DROPAR' : 'DROPAR  ▶', cx, H * .52, Math.round(38 * k), 'start');
-  if (BEST > 0) chip(`MELHOR SESSÃO · ${BEST}`, '14px Graduate', cx, H * .52 + 62, PAL.ink, PAL.yellow, -.02, 8, 0);
-  // cartão de controles
-  const cw = portrait ? W - 36 : 372, rows = isTouch
-    ? [['▼', 'segura na descida: bombeia'], ['A + SETA', 'no ar: flips'], ['B + SETA', 'no ar: grabs'], ['◄ ►', 'segura no ar: gira'], ['▲', 'devagar na borda: stall']]
-    : [['↓ / S', 'segura na descida: bombeia'], ['Z + SETA', 'no ar: flips (ou J)'], ['X + SETA', 'no ar: grabs (ou K)'], ['← →', 'segura no ar: gira 180/360/540'], ['↑', 'devagar na borda: stall']];
-  const rh = portrait ? 32 : 36, ch = 44 + rows.length * rh + 40, x0 = portrait ? 18 : cx - cw / 2, y0 = H - ch - (portrait ? 16 : 20);
-  ctx.save(); ctx.translate(x0 + cw / 2, y0 + ch / 2); ctx.rotate(.018); ctx.translate(-cw / 2, -ch / 2);
-  ctx.fillStyle = PAL.ink; ctx.fillRect(7, 7, cw, ch); ctx.fillStyle = PAL.paper; ctx.fillRect(0, 0, cw, ch); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 3; ctx.strokeRect(0, 0, cw, ch);
-  rows.forEach(([a, b], i) => { const y = 30 + i * rh, kw = Math.max(46, a.length * 10 + 20); keycap(16, y, kw, a);
-    ctx.fillStyle = PAL.ink; ctx.font = `${portrait ? 12 : 13}px Graduate`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(b.toUpperCase(), 28 + kw, y + 15); });
-  ctx.fillStyle = PAL.red; ctx.font = `${portrait ? 11 : 13}px Graduate`; ctx.textAlign = 'center';
-  ctx.fillText(isTouch ? 'MEDIDOR CHEIO: A+B ▲ ROBÔ FLIP · A+B ▼ DROP 35' : 'MEDIDOR CHEIO: Z+X ↑ ROBÔ FLIP · Z+X ↓ DROP 35', cw / 2, ch - 30);
-  ctx.fillStyle = PAL.blue; ctx.fillText(isTouch ? 'PEGUE OS 4 PRODUTOS NO AR' : 'F = TELA CHEIA  ·  M = SOM', cw / 2, ch - 12);
-  ctx.restore();
-  ctx.save(); ctx.translate(x0 + 92, y0 + 4); ctx.rotate(-.05); ctx.fillStyle = PAL.ink; ctx.fillRect(-72, -14, 150, 30); ctx.fillStyle = PAL.red; ctx.fillRect(-76, -18, 150, 30);
-  ctx.fillStyle = PAL.paper; ctx.font = '18px "Permanent Marker"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('COMO ANDAR', -1, -2); ctx.restore();
-  tape(x0 + cw - 30, y0 + 6, 70, .5);
+  button(isTouch ? 'TOCA PRA DROPAR' : 'DROPAR  ▶', cx, H * .5, Math.round(42 * k), 'start');
+  ctx.fillStyle = PAL.paper; ctx.font = '15px Graduate'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(BEST > 0 ? `60 SEGUNDOS  ·  SEU RECORDE ${BEST}` : '60 SEGUNDOS DE HALF-PIPE', cx, H * .5 + 58);
+  linhaControles(isTouch ? [['▼', 'bombeia'], ['A', 'flip'], ['B', 'grab'], ['◄ ►', 'gira']]
+                         : [['↓', 'bombeia'], ['Z', 'flip'], ['X', 'grab'], ['← →', 'gira']], cx, H - 18, portrait ? W - 40 : Math.min(520, W * .44));
   if (!portrait) missionCard(W - 352, H - 190, 320, false, -.03, false);
   const hovM = HOVER === 'mute'; const m = chip(muted ? '♪ SOM: OFF' : '♪ SOM: ON', '14px Graduate', portrait ? W - 70 : 70, portrait ? H * .19 : 26, hovM ? PAL.yellow : PAL.ink, hovM ? PAL.ink : PAL.paper, 0, 9, hovM ? 3 : 0);
   hit(portrait ? W - 70 : 70, portrait ? H * .19 : 26, m.w, m.h, 'mute');
