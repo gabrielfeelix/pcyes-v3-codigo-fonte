@@ -293,22 +293,12 @@ const megaMenus: Record<string, MegaMenu> = {
       },
       {
         title: "Drop Dead × PCYES",
-        eyebrow: "35 anos de Drop Dead",
-        tagline: "Desce a ladeira com o robô e pega a collab.",
+        eyebrow: "Da pista pro setup",
+        tagline: "A linha da collab, a história e os dois jogos.",
         image: "/collab/dropdead/banner.webp",
         href: "/drop-dead",
-        cta: "Jogar DROP LINE",
+        cta: "Ver a collab",
         accent: "#F6BE27",
-        status: "ativa",
-      },
-      {
-        title: "Drop Dead × PCYES · v2",
-        eyebrow: "Jogo 2 · DROP SESSION",
-        tagline: "Half-pipe, 60 segundos, manobra até a plateia gritar.",
-        image: "/collab/dropdead/banner2.webp",
-        href: "/drop-session",
-        cta: "Jogar DROP SESSION",
-        accent: "#E5141B",
         status: "ativa",
       },
     ],
@@ -329,18 +319,8 @@ const megaMenus: Record<string, MegaMenu> = {
           type: "featured", title: "Collab Oficial",
           image: "/collab/dropdead/keyart.webp",
           name: "Drop Dead × PCYES",
-          desc: "35 anos de Drop Dead. Shape, meia, teclado e mouse da collab — e o jogo DROP LINE.",
+          desc: "Teclado, mouse, mousepad, headset, shape, camiseta e meia. Mais a história das duas marcas e os jogos DROP LINE e DROP SESSION.",
           href: "/drop-dead"
-        }
-      },
-      {
-        label: "Drop Dead × PCYES · v2", href: "/drop-session",
-        right: {
-          type: "featured", title: "Jogo 2",
-          image: "/collab/dropdead/banner2.webp",
-          name: "DROP SESSION",
-          desc: "Half-pipe na porta da loja Drop Dead: bombeia, voa e emenda manobras em 60 segundos.",
-          href: "/drop-session"
         }
       },
     ]
@@ -435,7 +415,7 @@ const navItems: NavItem[] = [
   { label: "Cadeiras", mega: "cadeiras", href: getCatalogHref({ category: "Cadeiras" }) },
   { label: "Computadores", mega: "computadores", href: getCatalogHref({ category: "Computadores" }) },
   { label: "PC Gamer", mega: "pcgamer", href: setupsHref({ showcase: "pc-gamer" }) },
-  { label: "Collab", mega: "collab", href: "/maringa-fc" },
+  { label: "Collab", mega: "collab", href: "/drop-dead" },
   { label: "Monte seu PC", mega: "montar", href: "/monte-seu-pc", emphasis: "build" },
 ];
 

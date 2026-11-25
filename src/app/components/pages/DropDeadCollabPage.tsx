@@ -8,7 +8,18 @@ import { useEffect, useRef, useState } from "react";
  * rode projetos/collab-dropdead/jogo-1/tools/publicar_v3.sh.
  * O jogo tem botão próprio de tela cheia (e tecla F).
  */
-export function DropDeadCollabPage({ src = "/collab/dropdead/jogo/index.html", title = "DROP LINE — PCYES × Drop Dead" }: { src?: string; title?: string } = {}) {
+/**
+ * /drop-dead abre a página da collab (estática, em public/collab/dropdead/lp/).
+ * Fonte: ux/empresas/pcyes/collab-dropdead-lp — publicar com projetos/collab-dropdead/lp/publicar_v3.sh.
+ * A página é estática (scroll, sticky e animações próprias), então a navegação é de página inteira.
+ */
+export function DropDeadCollabPage() {
+  useEffect(() => { window.location.replace("/collab/dropdead/lp/"); }, []);
+  return <section aria-label="PCYES × Drop Dead" style={{ minHeight: "70vh", background: "#F3EEE2" }} />;
+}
+
+/** Jogo em tela cheia dentro da loja (usado por /drop-session). */
+export function JogoCollabPage({ src = "/collab/dropdead/jogo/index.html", title = "DROP LINE — PCYES × Drop Dead" }: { src?: string; title?: string } = {}) {
   const ref = useRef<HTMLElement>(null);
   const [box, setBox] = useState({ pad: 0, h: 640 });
 
@@ -50,5 +61,5 @@ export function DropDeadCollabPage({ src = "/collab/dropdead/jogo/index.html", t
 
 /** Jogo 2 — DROP SESSION (half-pipe). Fonte: projetos/collab-dropdead/jogo-2 (tools/publicar_v3.sh). */
 export function DropSessionCollabPage() {
-  return <DropDeadCollabPage src="/collab/dropdead/jogo2/index.html" title="DROP SESSION — PCYES × Drop Dead" />;
+  return <JogoCollabPage src="/collab/dropdead/jogo2/index.html" title="DROP SESSION — PCYES × Drop Dead" />;
 }
