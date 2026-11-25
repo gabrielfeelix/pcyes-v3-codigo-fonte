@@ -43,7 +43,8 @@
     </section>`;
 
   const parceria = () => `
-    <section class="p-sec">
+    <section class="p-sec v-sec">
+      <video class="v-vid" src="${BASE}video/b-taca.mp4" muted loop playsinline preload="metadata" aria-hidden="true"></video>
       <div class="p-lock" aria-hidden="true"><span class="p-loud">${LOUD_SIMB}</span><span class="p-x">×</span><img src="${BASE}img/loud/pcyes-robo.png" alt=""></div>
       <h2 class="p-tit">${HOJE.tit} <em>PCYES.</em></h2>
       <p class="corpo">${HOJE.txt}</p>
@@ -68,11 +69,15 @@
     // entrada suave das seções, uma vez
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("vis"); io.unobserve(e.target); } }), { threshold: .25 });
     raiz.querySelectorAll(".h-sec, .p-sec").forEach((el) => io.observe(el));
+    // vídeo: toca só enquanto está na tela
+    const vid = raiz.querySelector(".v-vid");
+    const iov = new IntersectionObserver(([e]) => { if (e.isIntersecting) vid.play().catch(() => {}); else vid.pause(); }, { threshold: .3 });
+    iov.observe(vid);
 
     raiz.querySelectorAll('a[href="#aprovados"]').forEach((a) => on(a, "click", (e) => {
       const v = raiz.querySelector("#aprovados"); if (!v) return; e.preventDefault(); v.scrollIntoView({ behavior: "smooth" });
     }));
     montaVitrine(raiz.querySelector(".vit-slot"), on);
-    return () => { ac.abort(); io.disconnect(); raiz.innerHTML = ""; };
+    return () => { ac.abort(); io.disconnect(); iov.disconnect(); raiz.innerHTML = ""; };
   };
 })();
