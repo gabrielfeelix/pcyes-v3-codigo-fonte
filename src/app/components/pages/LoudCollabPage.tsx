@@ -13,8 +13,8 @@ const BASE = "/collab/loud/";
 const OPCOES = [
   {
     letra: "A",
-    nome: "Cinema",
-    texto: "A história contada no scroll: abertura, quatro capítulos com movimento próprio, a virada \"E agora, joga de PCYES\" e o vídeo em tela cheia.",
+    nome: "Direta",
+    texto: "Curta, em 4 dobras: a hero da taça, a história numa tela só (escolha o ano), a parceria e a vitrine Aprovado pela LOUD.",
     capa: `${BASE}capa-a.webp`,
     href: `${BASE}a.html`,
   },

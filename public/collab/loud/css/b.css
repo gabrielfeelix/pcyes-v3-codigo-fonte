@@ -140,3 +140,4 @@
 .op-b .b-hero-vid img { position: relative; left: 16%; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 26%); mask-image: linear-gradient(90deg, transparent 0%, #000 26%); }
 .op-b .b-hero-vid { background: #000; }
 .op-b .b-hero-vid img { left: 9%; object-position: 62% 30%; } .op-b .b-h1 { font-size: clamp(60px, 7.6vw, 156px); }
+.op-b .b-h1 .pcyes-completo.so-palavra { aspect-ratio: 2433 / 540; height: .7em; }

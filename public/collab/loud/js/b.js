@@ -6,7 +6,7 @@
 (function () {
   const { BASE, LOUD_WORD, LOUD_SIMB, PCYES, SETA, CAPS, HOJE, pad2, clamp01, montaVitrine, laco } = window.LD;
   const H = (n) => `${BASE}img/hist/${n}.jpg?v=3`;
-  const logoCompleto = () => `<span class="pcyes-completo" role="img" aria-label="PCYES" style="--src:url('${BASE}img/loud/pcyes-vermelho.png')"></span>`;
+  const logoCompleto = () => `<span class="pcyes-completo so-palavra" role="img" aria-label="PCYES" style="--src:url('${BASE}img/loud/pcyes-palavra-vermelho.png')"></span>`;
   const foto = (n, cls = "") => `<figure class="b-f ${cls}"><div class="b-f-in"><img src="${H(n)}" alt="" loading="lazy"></div></figure>`;
   const [c1, c2, c3, c4] = CAPS;
 
