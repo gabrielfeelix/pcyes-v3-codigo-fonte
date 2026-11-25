@@ -1,21 +1,72 @@
 import { useEffect, useRef, useState } from "react";
+import { useCart } from "../CartContext";
 
 /**
- * Collab Drop Dead × PCYES — o jogo DROP LINE ocupa a página.
+ * Collab Drop Dead × PCYES — página da collab DENTRO da loja (faixa, Navbar e Footer reais).
  *
- * O jogo é estático (Canvas 2D) e mora em public/collab/dropdead/jogo/.
- * A fonte de verdade fica em projetos/collab-dropdead/jogo-1; para atualizar,
- * rode projetos/collab-dropdead/jogo-1/tools/publicar_v3.sh.
- * O jogo tem botão próprio de tela cheia (e tecla F).
+ * O conteúdo (hero, história, vídeo, A LINHA, monte o kit, jogos, muro) é estático e mora em
+ * public/collab/dropdead/lp/ (fonte: ux/empresas/pcyes/collab-dropdead-lp; publicar com
+ * projetos/collab-dropdead/lp/publicar_v3.sh, que também gera o CSS escopado em .lp-dd).
+ * Aqui a gente só carrega CSS + script, monta em <div class="lp-dd"> e entrega o carrinho da loja.
  */
-/**
- * /drop-dead abre a página da collab (estática, em public/collab/dropdead/lp/).
- * Fonte: ux/empresas/pcyes/collab-dropdead-lp — publicar com projetos/collab-dropdead/lp/publicar_v3.sh.
- * A página é estática (scroll, sticky e animações próprias), então a navegação é de página inteira.
- */
+const BASE = "/collab/dropdead/lp/";
+const LP_VERSAO = "1795620989";
+const FONTES = "https://fonts.googleapis.com/css2?family=Anton&family=Graduate&family=Inter+Tight:wght@400;500;700;800&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap";
+
+declare global {
+  interface Window {
+    montaLP?: (raiz: HTMLElement, opt: { secoes: string[]; site?: boolean }) => () => void;
+    pcyesCarrinho?: (itens: { id: number; name: string; price: string; image: string }[]) => void;
+  }
+}
+
+function anexa<T extends HTMLElement>(id: string, cria: () => T): T {
+  const ja = document.getElementById(id) as T | null;
+  if (ja) return ja;
+  const el = cria(); el.id = id; document.head.appendChild(el); return el;
+}
+
 export function DropDeadCollabPage() {
-  useEffect(() => { window.location.replace("/collab/dropdead/lp/"); }, []);
-  return <section aria-label="PCYES × Drop Dead" style={{ minHeight: "70vh", background: "#F3EEE2" }} />;
+  const raiz = useRef<HTMLDivElement>(null);
+  const { addItem } = useCart();
+  const [topo, setTopo] = useState(0);
+
+  // o carrinho da loja fica disponível pra página (levar o kit / comprar)
+  useEffect(() => {
+    window.pcyesCarrinho = (itens) => itens.forEach((i) => addItem(i));
+    return () => { delete window.pcyesCarrinho; };
+  }, [addItem]);
+
+  // o cabeçalho da loja é fixo: mede a base dele pra os trechos "sticky" da página não ficarem por baixo
+  useEffect(() => {
+    const mede = () => {
+      let base = 0;
+      for (let y = 4; y < 260; y += 24) {
+        let el = document.elementFromPoint(window.innerWidth / 2, y) as HTMLElement | null;
+        while (el && el !== document.body && !["fixed", "sticky"].includes(getComputedStyle(el).position)) el = el.parentElement;
+        if (el && el !== document.body) base = Math.max(base, el.getBoundingClientRect().bottom);
+      }
+      setTopo(Math.round(base));
+    };
+    mede(); const t = setTimeout(mede, 400);
+    window.addEventListener("resize", mede);
+    return () => { clearTimeout(t); window.removeEventListener("resize", mede); };
+  }, []);
+
+  useEffect(() => {
+    anexa("lp-dd-fontes", () => Object.assign(document.createElement("link"), { rel: "stylesheet", href: FONTES }));
+    anexa("lp-dd-css", () => Object.assign(document.createElement("link"), { rel: "stylesheet", href: `${BASE}css/lp.scoped.css?v=${LP_VERSAO}` }));
+    let desmonta: (() => void) | undefined, vivo = true;
+    const monta = () => { if (vivo && raiz.current && window.montaLP) desmonta = window.montaLP(raiz.current, { site: true, secoes: ["hero", "historia", "parede", "kit", "jogos", "muro"] }); };
+    if (window.montaLP) monta();
+    else {
+      const sc = anexa("lp-dd-js", () => Object.assign(document.createElement("script"), { src: `${BASE}js/lp.js?v=${LP_VERSAO}` }));
+      sc.addEventListener("load", monta, { once: true });
+    }
+    return () => { vivo = false; desmonta?.(); };
+  }, []);
+
+  return <div ref={raiz} className="lp-dd site" style={{ ["--hdr" as string]: `${topo}px`, paddingTop: topo }} />;
 }
 
 /** Jogo em tela cheia dentro da loja (usado por /drop-session). */

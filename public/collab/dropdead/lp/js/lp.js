@@ -1,3 +1,8 @@
+(function(){
+"use strict";
+const LISTEN=[], IVS=[]; let ROOT=document.body;
+function ON(t,e,f,o){ t.addEventListener(e,f,o); LISTEN.push([t,e,f,o]); }
+function setIntervalT(f,ms){ const id=setInterval(f,ms); IVS.push(id); return id; }
 /* PCYES × Drop Dead — LP da collab (protótipo estático, sem build).
  * Cada página (a.html, b.html, ab.html) declara as seções em <main data-secoes="...">.
  * Fotos: v2/v3 do GPT (recebidos/ em produtos-collab-v2), recortadas com rembg; foto inteira em assets/produtos/foto/.
@@ -25,7 +30,7 @@ const CUPOM = "DROPDEAD35";                                               // PRO
 const JOGOS_IFRAME = { linha:"https://pcyes-v3-codigo-fonte.vercel.app/collab/dropdead/jogo/index.html", sessao:"https://pcyes-v3-codigo-fonte.vercel.app/collab/dropdead/jogo2/index.html" };
 const JOGOS = { linha:"https://pcyes-v3-codigo-fonte.vercel.app/drop-dead", sessao:"https://pcyes-v3-codigo-fonte.vercel.app/drop-session" };
 
-const A = "assets/";
+const A = new URL("../assets/", document.currentScript.src).href;
 const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const brl = v => v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const $ = (s,r=document) => r.querySelector(s), $$ = (s,r=document) => [...r.querySelectorAll(s)];
@@ -165,7 +170,7 @@ function initExpande(){
   const toca=on=>{ if(on===tocando) return; tocando=on;
     if(yt){ ytCmd(on?"playVideo":"pauseVideo"); }
     else if(v){ on? v.play().catch(()=>{}) : v.pause(); }
-    else if(on){ timer=setInterval(()=>{ imgs[slide].classList.remove("on"); slide=(slide+1)%imgs.length; imgs[slide].classList.add("on"); },2400); }
+    else if(on){ timer=setIntervalT(()=>{ imgs[slide].classList.remove("on"); slide=(slide+1)%imgs.length; imgs[slide].classList.add("on"); },2400); }
     else clearInterval(timer);
     m.classList.toggle("tocando",on); };
   if(som) som.onclick=()=>{ mudo=!mudo; if(v) v.muted=mudo; if(yt) ytCmd(mudo?"mute":"unMute"); som.textContent=mudo?"som off":"som on"; };
@@ -230,7 +235,7 @@ function initHistoria(){
     tq.innerHTML=segs.filter(g=>g.nome).map(g=>{ const mx=(g.x0+g.x1)/2, my=g.tipo==="parede"?(g.y0+g.y1)/2:Math.min(g.y0,g.y1)-(g.tipo==="salto"?64:46);
       return `<span class="truque${g.tipo==="parede"?" vert":""}" style="left:${g.tipo==="parede"?g.x0+(g.x0>W/2?-46:46):mx}px;top:${my}px">${g.nome} <i>↷</i></span>`; }).join("");
   }
-  traca(); addEventListener("resize",traca); addEventListener("load",traca); $$(".print img",s).forEach(i=>i.addEventListener("load",traca));
+  traca(); ON(window,"resize",traca); ON(window,"load",traca); $$(".print img",s).forEach(i=>i.addEventListener("load",traca));
   onScroll(()=>{ if(!len||!amostras.length) return;
     const r=s.getBoundingClientRect(), kt=innerHeight*.58-r.top;
     let lo=0,hi=amostras.length-1; while(lo<hi){ const mi=(lo+hi)>>1; if(amostras[mi].k<kt) lo=mi+1; else hi=mi; }
@@ -253,7 +258,7 @@ function initHistoria(){
   if(reduz){ els.forEach(e=>e.classList.add("vis")); return; }
   const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add("vis")),{threshold:.2});
   els.forEach(el=>io.observe(el));
-  const tc=$("#tc"); if(tc){ let f=0; setInterval(()=>{ f++; const ss=Math.floor(f/25); tc.textContent=`00:${String(Math.floor(ss/60)).padStart(2,"0")}:${String(ss%60).padStart(2,"0")}`; },40); }
+  const tc=$("#tc"); if(tc){ let f=0; setIntervalT(()=>{ f++; const ss=Math.floor(f/25); tc.textContent=`00:${String(Math.floor(ss/60)).padStart(2,"0")}:${String(ss%60).padStart(2,"0")}`; },40); }
 }
 
 /* ------------------------------------------------------------------ zine (A) */
@@ -329,7 +334,7 @@ function initLinha(){
     tinta.setAttribute("d",d); sombra.setAttribute("d",d); len=tinta.getTotalLength();
     [tinta,sombra].forEach(p=>{p.style.strokeDasharray=len; p.style.strokeDashoffset=reduz?0:len;});
   }
-  traca(); addEventListener("resize",traca); $$(".obst img",s).forEach(i=>i.addEventListener("load",traca));
+  traca(); ON(window,"resize",traca); $$(".obst img",s).forEach(i=>i.addEventListener("load",traca));
   if(reduz){ mini.remove(); return; }
   let lastX=0;
   onScroll(()=>{ const r=s.getBoundingClientRect(); const p=Math.min(1,Math.max(0,(innerHeight*.6-r.top)/r.height));
@@ -363,7 +368,7 @@ function parede(comTitulo){
   <div class="ficha" aria-hidden="true"><div class="box" role="dialog" aria-modal="true">
     <button class="fechar" aria-label="Fechar">×</button><div class="img"><img alt=""><span class="data">'26 11 25</span></div>
     <div class="txt"><h3></h3><ul></ul>
-      <div class="preco"></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-kit="">+ kit</button><button class="btn no-kit" onclick="toast('protótipo: aqui vai pro carrinho da loja')">comprar</button></div></div>
+      <div class="preco"></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-kit="">+ kit</button><button class="btn no-kit" onclick="lpComprar(this)">comprar</button></div></div>
   </div></div>`;
 }
 function initParede(){
@@ -373,7 +378,7 @@ function initParede(){
     let cw=w,ch=h; if(w/h>r) cw=h*r; else ch=w/r;
     const it=im.parentElement; it.style.setProperty("--tt",((h-ch)/2)+"px"); it.style.setProperty("--tx",((w-cw)/2)+"px"); };
   $$(".colagem .item img",s).forEach(im=>{ im.complete?cola(im):im.addEventListener("load",()=>cola(im)); });
-  addEventListener("resize",()=>$$(".colagem .item img",s).forEach(cola));
+  ON(window,"resize",()=>$$(".colagem .item img",s).forEach(cola));
   const f=$(".ficha"), fi=$(".img img",f);
   let origem=null;
   function abre(el){
@@ -385,7 +390,7 @@ function initParede(){
     if(reduz) return;
     // o produto sai voando da parede até a ficha
     const a=src.getBoundingClientRect(); const v=src.cloneNode(); v.className="voando";
-    Object.assign(v.style,{left:a.left+"px",top:a.top+"px",width:a.width+"px",height:a.height+"px"}); document.body.appendChild(v);
+    Object.assign(v.style,{left:a.left+"px",top:a.top+"px",width:a.width+"px",height:a.height+"px"}); ROOT.appendChild(v);
     fi.style.opacity=0; src.style.opacity=0;
     // pousa exatamente onde o produto está dentro da foto (BB medido com rembg), depois crossfade
     Promise.all([fi.decode().catch(()=>{}), new Promise(r=>setTimeout(r,380))]).then(()=>{
@@ -399,7 +404,7 @@ function initParede(){
   function fecha(){ f.classList.remove("on"); f.setAttribute("aria-hidden","true"); if(origem) origem.style.opacity=1; }
   $$(".item",s).forEach(el=>{ el.addEventListener("click",()=>abre(el)); el.addEventListener("keydown",e=>{ if(e.key==="Enter") abre(el); }); });
   $(".fechar",f).onclick=fecha; f.addEventListener("click",e=>{ if(e.target===f) fecha(); });
-  addEventListener("keydown",e=>{ if(e.key==="Escape") fecha(); });
+  ON(window,"keydown",e=>{ if(e.key==="Escape") fecha(); });
 }
 
 /* ------------------------------------------------------------------ adesivos */
@@ -462,7 +467,7 @@ function kitSec(){
           <div><small id="kitQtd">nenhuma peça</small><s id="kitDe"></s></div>
           <span class="gun-lg" id="kitTotal">${brl(0)}</span>
         </div>
-        <button class="btn levar" onclick="toast(kit.size?'protótipo: aqui o kit vai pro carrinho':'cola pelo menos uma peça no shape')">levar o kit</button>
+        <button class="btn levar" onclick="lpLevarKit()">levar o kit</button>
       </div>
     </div></div></section>`;
 }
@@ -471,7 +476,7 @@ function voa(de, para, ida){
   if(reduz || !de || !para) return;
   const a=de.getBoundingClientRect(), b=para.getBoundingClientRect(); if(!a.width||!b.width) return;
   const v=(de.tagName==="IMG"?de:de.querySelector("img")).cloneNode(); v.className="voando";
-  Object.assign(v.style,{left:a.left+"px",top:a.top+"px",width:a.width+"px",height:a.height+"px"}); document.body.appendChild(v);
+  Object.assign(v.style,{left:a.left+"px",top:a.top+"px",width:a.width+"px",height:a.height+"px"}); ROOT.appendChild(v);
   para.style.visibility="hidden";
   requestAnimationFrame(()=>Object.assign(v.style,{left:b.left+"px",top:b.top+"px",width:b.width+"px",height:b.height+"px",transform:`rotate(${ida?getComputedStyle(para).getPropertyValue("--r"):"0deg"})`}));
   setTimeout(()=>{ para.style.visibility=""; if(ida) para.classList.add("bate"); v.remove(); setTimeout(()=>para.classList.remove("bate"),400); },470);
@@ -500,11 +505,11 @@ function syncKitBtns(){
   $$("[data-kit]").forEach(b=>{ const on=kit.has(b.dataset.kit); b.classList.toggle("on",on);
     if(b.classList.contains("btn")) b.textContent= on?"✓ no kit":"+ kit"; });
 }
-document.addEventListener("click",e=>{
+function initKitClick(){ ON(document,"click",e=>{
   const b=e.target.closest("[data-kit]"); if(!b||!b.dataset.kit||b.dataset.arrastou) return; e.stopPropagation();
   const id=b.dataset.kit; kit.has(id)?kit.delete(id):kit.add(id); atualizaKit();
   if(kit.has(id)) toast(`${PRODUTOS.find(p=>p.id===id).nome} no kit`);
-});
+}); }
 
 function initKitDrag(){
   const sk=$("#shapeKit"); if(!sk) return;
@@ -512,14 +517,14 @@ function initKitDrag(){
     c.addEventListener("pointerdown",e=>{
       if(kit.has(c.dataset.kit)) return;
       const x0=e.clientX,y0=e.clientY, im=$("img",c); let g=null;
-      const move=ev=>{ if(!g&&Math.hypot(ev.clientX-x0,ev.clientY-y0)>8){ g=im.cloneNode(); g.className="arrastando"; document.body.appendChild(g); c.classList.add("descolando"); }
+      const move=ev=>{ if(!g&&Math.hypot(ev.clientX-x0,ev.clientY-y0)>8){ g=im.cloneNode(); g.className="arrastando"; ROOT.appendChild(g); c.classList.add("descolando"); }
         if(g){ g.style.left=ev.clientX+"px"; g.style.top=ev.clientY+"px"; const r=sk.getBoundingClientRect();
           sk.classList.toggle("alvo",ev.clientX>r.left&&ev.clientX<r.right&&ev.clientY>r.top&&ev.clientY<r.bottom); } };
       const up=ev=>{ removeEventListener("pointermove",move); removeEventListener("pointerup",up);
         if(g){ const dentro=sk.classList.contains("alvo"); g.remove(); c.classList.remove("descolando"); sk.classList.remove("alvo");
           c.dataset.arrastou="1"; setTimeout(()=>delete c.dataset.arrastou,0);
           if(dentro){ kit.add(c.dataset.kit); antes.add(c.dataset.kit); atualizaKit(); const no=$(`.no-shape[data-kit="${c.dataset.kit}"]`); no.classList.add("bate"); setTimeout(()=>no.classList.remove("bate"),400); toast(`${PRODUTOS.find(p=>p.id===c.dataset.kit).nome} no shape`); } } };
-      addEventListener("pointermove",move); addEventListener("pointerup",up);
+      ON(window,"pointermove",move); ON(window,"pointerup",up);
     });
   });
 }
@@ -550,7 +555,7 @@ function initJogos(){
   const fecha=()=>{ m.classList.remove("on"); m.setAttribute("aria-hidden","true"); document.documentElement.style.overflow=""; setTimeout(()=>f.src="about:blank",250); };
   $$("[data-jogo]").forEach(b=>b.addEventListener("click",()=>abre(b.dataset.jogo)));
   $(".fechar-jogo",m).onclick=fecha;
-  addEventListener("keydown",e=>{ if(e.key==="Escape"&&m.classList.contains("on")) fecha(); });
+  ON(window,"keydown",e=>{ if(e.key==="Escape"&&m.classList.contains("on")) fecha(); });
 }
 
 /* ------------------------------------------------------------------ muro de lambe-lambe */
@@ -591,15 +596,33 @@ function initMuro(){
 const scrolls=[];
 function onScroll(fn){ scrolls.push(fn); fn(); }
 let tick=false;
-addEventListener("scroll",()=>{ if(tick) return; tick=true; requestAnimationFrame(()=>{ scrolls.forEach(f=>f()); tick=false; }); },{passive:true});
-addEventListener("resize",()=>scrolls.forEach(f=>f()));
-let tt; function toast(t){ let el=$(".toast"); if(!el){ el=document.createElement("div"); el.className="toast"; document.body.appendChild(el); }
+function initBase(){ ON(window,"scroll",()=>{ if(tick) return; tick=true; requestAnimationFrame(()=>{ scrolls.forEach(f=>f()); tick=false; }); },{passive:true}); ON(window,"resize",()=>scrolls.forEach(f=>f())); }
+let tt; function toast(t){ let el=$(".toast"); if(!el){ el=document.createElement("div"); el.className="toast"; ROOT.appendChild(el); }
   el.textContent=t; el.classList.add("on"); clearTimeout(tt); tt=setTimeout(()=>el.classList.remove("on"),1800); }
 window.toast=toast; window.kit=kit;
+/* carrinho de verdade: dentro da v3 a página recebe window.pcyesCarrinho(itens) (CartContext.addItem + abre o sidecart).
+ * IDs 990001+ são provisórios até os produtos da collab existirem no catálogo. */
+const paraCarrinho=(p,off=0)=>({ id:990001+PRODUTOS.indexOf(p), name:`${p.nome} · PCYES × Drop Dead${off?` (kit −${off}%)`:""}`,
+  price:brl(p.preco*(1-off/100)), image:`${A}produtos/${p.img}.webp` });
+window.lpLevarKit=()=>{ const itens=PRODUTOS.filter(p=>kit.has(p.id)); if(!itens.length) return toast("cola pelo menos uma peça no shape");
+  const off=[...FAIXAS].reverse().find(f=>itens.length>=f.n)?.off||0;
+  if(window.pcyesCarrinho) window.pcyesCarrinho(itens.map(p=>paraCarrinho(p,off))); else toast("protótipo: no site, o kit vai pro carrinho"); };
+window.lpComprar=b=>{ const id=b.closest(".ficha").querySelector("[data-kit]").dataset.kit, p=PRODUTOS.find(x=>x.id===id);
+  if(window.pcyesCarrinho){ window.pcyesCarrinho([paraCarrinho(p)]); b.closest(".ficha").querySelector(".fechar").click(); } else toast("protótipo: no site, vai pro carrinho"); };
 
-/* ------------------------------------------------------------------ monta */
+/* ------------------------------------------------------------------ monta
+ * window.montaLP(raiz, {secoes, site}) monta a página em `raiz` e devolve a função de desmontar.
+ * site:true = dentro da v3 (sem o header/rodapé de protótipo). No protótipo monta sozinho em <main data-secoes>. */
 const SECOES = { hero, historia, zine, linha, parede:()=>parede(false), "parede-titulo":()=>parede(true), kit:kitSec, jogos, muro };
-const main=$("main");
-main.innerHTML = topo() + main.dataset.secoes.split(",").map(s=>SECOES[s.trim()]()).join("");
-initHero(); initHistoria(); initExpande(); initJogos(); initKitDrag(); initLinha(); initParede(); atualizaKit();
-addEventListener("load",()=>{ initAdesivos(); initMuro(); scrolls.forEach(f=>f()); });
+window.montaLP = function(raiz, opt={}){
+  ROOT=raiz; scrolls.length=0; kit.clear(); antes=new Set();
+  raiz.innerHTML = (opt.site?"":topo()) + opt.secoes.map(x=>SECOES[x]()).join("");
+  if(opt.site) raiz.querySelectorAll(".site-foot,.versoes").forEach(e=>e.remove());
+  initBase(); initKitClick(); initHero(); initHistoria(); initExpande(); initJogos(); initKitDrag(); initLinha(); initParede(); atualizaKit();
+  const depois=()=>{ initAdesivos(); initMuro(); scrolls.forEach(f=>f()); };
+  if(document.readyState==="complete") setTimeout(depois,250); else ON(window,"load",depois);
+  return ()=>{ LISTEN.splice(0).forEach(([t,e,f,o])=>t.removeEventListener(e,f,o)); IVS.splice(0).forEach(clearInterval); document.documentElement.style.overflow=""; raiz.innerHTML=""; };
+};
+const auto=document.querySelector("main[data-secoes]");
+if(auto) window.montaLP(auto,{secoes:auto.dataset.secoes.split(",").map(x=>x.trim())});
+})();
