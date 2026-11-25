@@ -229,13 +229,16 @@ function initHistoria(){
     // chave de scroll: trecho plano ganha janela de 300px em volta do seu y; trecho que desce acompanha o y real
     let kAnt=-1e9; segs.forEach(g=>{ const plano=Math.abs(g.y1-g.y0)<.5*Math.abs(g.x1-g.x0), ym=(g.y0+g.y1)/2;
       let k0=plano?ym-150:Math.min(g.y0,g.y1), k1=plano?ym+150:Math.max(g.y0,g.y1); k0=Math.max(k0,kAnt); if(k1<k0+40) k1=k0+40; g.k0=k0; g.k1=k1; kAnt=k1; });
-    amostras=[]; for(let l=0;l<=len;l+=4){ const pt=m.getPointAtLength(l), g=segs.find(g=>l>=g.L0&&l<=g.L1)||segs[segs.length-1], f=Math.min(1,Math.max(0,(l-g.L0)/Math.max(1,g.L1-g.L0)));
+    amostras=[]; let gi=0; for(let l=0;l<=len;l+=12){ while(gi<segs.length-1&&l>segs[gi].L1) gi++; const g=segs[gi], pt=m.getPointAtLength(l), f=Math.min(1,Math.max(0,(l-g.L0)/Math.max(1,g.L1-g.L0)));
       amostras.push({l,x:pt.x,y:pt.y,g,f,k:g.k0+(g.k1-g.k0)*f}); }
     m.style.strokeDasharray=len;
     tq.innerHTML=segs.filter(g=>g.nome).map(g=>{ const mx=(g.x0+g.x1)/2, my=g.tipo==="parede"?(g.y0+g.y1)/2:Math.min(g.y0,g.y1)-(g.tipo==="salto"?64:46);
       return `<span class="truque${g.tipo==="parede"?" vert":""}" style="left:${g.tipo==="parede"?g.x0+(g.x0>W/2?-46:46):mx}px;top:${my}px">${g.nome} <i>↷</i></span>`; }).join("");
   }
-  traca(); ON(window,"resize",traca); ON(window,"load",traca); $$(".print img",s).forEach(i=>i.addEventListener("load",traca));
+  let agendado=0, perto=false;
+  const agenda=()=>{ if(!perto) return; clearTimeout(agendado); agendado=setTimeout(traca,150); };
+  new IntersectionObserver(es=>{ if(es[0].isIntersecting&&!perto){ perto=true; traca(); } },{rootMargin:"600px 0px"}).observe(s);
+  ON(window,"resize",agenda); ON(window,"load",agenda); $$(".print img",s).forEach(i=>i.addEventListener("load",agenda));
   onScroll(()=>{ if(!len||!amostras.length) return;
     const r=s.getBoundingClientRect(), kt=innerHeight*.58-r.top;
     let lo=0,hi=amostras.length-1; while(lo<hi){ const mi=(lo+hi)>>1; if(amostras[mi].k<kt) lo=mi+1; else hi=mi; }

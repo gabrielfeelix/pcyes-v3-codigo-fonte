@@ -10,8 +10,8 @@ import { useCart } from "../CartContext";
  * Aqui a gente só carrega CSS + script, monta em <div class="lp-dd"> e entrega o carrinho da loja.
  */
 const BASE = "/collab/dropdead/lp/";
-const LP_VERSAO = "1795620989";
-const FONTES = "https://fonts.googleapis.com/css2?family=Anton&family=Graduate&family=Inter+Tight:wght@400;500;700;800&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap";
+const LP_VERSAO = "1795621515";
+const FONTES = "https://fonts.googleapis.com/css2?family=Anton&family=Sedgwick+Ave+Display&family=Graduate&family=Inter+Tight:wght@400;500;700;800&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap";
 
 declare global {
   interface Window {
@@ -30,6 +30,8 @@ export function DropDeadCollabPage() {
   const raiz = useRef<HTMLDivElement>(null);
   const { addItem } = useCart();
   const [topo, setTopo] = useState(0);
+  const [pad, setPad] = useState(0);
+  const [pronto, setPronto] = useState(false);
 
   // o carrinho da loja fica disponível pra página (levar o kit / comprar)
   useEffect(() => {
@@ -43,21 +45,33 @@ export function DropDeadCollabPage() {
       let base = 0;
       for (let y = 4; y < 260; y += 24) {
         let el = document.elementFromPoint(window.innerWidth / 2, y) as HTMLElement | null;
+        if (el && raiz.current?.contains(el)) continue;
         while (el && el !== document.body && !["fixed", "sticky"].includes(getComputedStyle(el).position)) el = el.parentElement;
         if (el && el !== document.body) base = Math.max(base, el.getBoundingClientRect().bottom);
       }
+      const r = raiz.current?.getBoundingClientRect();
       setTopo(Math.round(base));
+      setPad(Math.max(0, Math.round(base - (r ? r.top + window.scrollY - window.scrollY : 0))));
     };
     mede(); const t = setTimeout(mede, 400);
     window.addEventListener("resize", mede);
     return () => { clearTimeout(t); window.removeEventListener("resize", mede); };
-  }, []);
+  }, [pronto]);
 
   useEffect(() => {
     anexa("lp-dd-fontes", () => Object.assign(document.createElement("link"), { rel: "stylesheet", href: FONTES }));
+    anexa("lp-dd-pre", () => Object.assign(document.createElement("link"), { rel: "preload", as: "script", href: `${BASE}js/lp.js?v=${LP_VERSAO}` }));
     anexa("lp-dd-css", () => Object.assign(document.createElement("link"), { rel: "stylesheet", href: `${BASE}css/lp.scoped.css?v=${LP_VERSAO}` }));
     let desmonta: (() => void) | undefined, vivo = true;
-    const monta = () => { if (vivo && raiz.current && window.montaLP) desmonta = window.montaLP(raiz.current, { site: true, secoes: ["hero", "historia", "parede", "kit", "jogos", "muro"] }); };
+    const monta = () => {
+      if (!vivo || !raiz.current || !window.montaLP) return;
+      desmonta = window.montaLP(raiz.current, { site: true, secoes: ["hero", "historia", "parede", "kit", "jogos", "muro"] });
+      // só mostra quando as imagens do hero estão decodificadas (tela de carregamento até lá, no máximo 2 s)
+      const imgs = Array.from(raiz.current.querySelectorAll<HTMLImageElement>(".hero img"));
+      const carregou = (i: HTMLImageElement) => new Promise<void>((r) => { if (i.complete) r(); else { i.addEventListener("load", () => r(), { once: true }); i.addEventListener("error", () => r(), { once: true }); } });
+      Promise.race([Promise.all(imgs.map(carregou)), new Promise((r) => setTimeout(r, 2000))])
+        .then(() => vivo && setPronto(true));
+    };
     if (window.montaLP) monta();
     else {
       const sc = anexa("lp-dd-js", () => Object.assign(document.createElement("script"), { src: `${BASE}js/lp.js?v=${LP_VERSAO}` }));
@@ -66,7 +80,18 @@ export function DropDeadCollabPage() {
     return () => { vivo = false; desmonta?.(); };
   }, []);
 
-  return <div ref={raiz} className="lp-dd site" style={{ ["--hdr" as string]: `${topo}px`, paddingTop: topo }} />;
+  return (
+    <>
+      {!pronto && (
+        <div aria-live="polite" style={{ minHeight: "calc(100vh - 120px)", background: "#F0C018", display: "grid", placeItems: "center", alignContent: "center", gap: 14 }}>
+          <img src={`${BASE}assets/robo/remada1.webp`} alt="" width={110} style={{ animation: "lpRema .5s steps(2) infinite alternate" }} />
+          <p style={{ font: "700 13px ui-monospace, monospace", letterSpacing: ".16em", color: "#111" }}>DROPANDO A COLLAB…</p>
+          <style>{"@keyframes lpRema{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-8px) rotate(3deg)}}"}</style>
+        </div>
+      )}
+      <div ref={raiz} className="lp-dd site" style={{ ["--hdr" as string]: `${topo}px`, paddingTop: pad, ...(pronto ? {} : { position: "absolute", visibility: "hidden", width: "100%" }) }} />
+    </>
+  );
 }
 
 /** Jogo em tela cheia dentro da loja (usado por /drop-session). */
