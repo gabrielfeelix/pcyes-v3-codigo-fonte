@@ -63,6 +63,7 @@ const StoreLocatorPage = lazyRoute(() => import("./components/pages/StoreLocator
 const MaringaFCCollabPage = lazyRoute(() => import("./components/pages/MaringaFCCollabPage").then(m => ({ default: m.MaringaFCCollabPage })));
 const DropDeadCollabPage = lazyRoute(() => import("./components/pages/DropDeadCollabPage").then(m => ({ default: m.DropDeadCollabPage })));
 const DropSessionCollabPage = lazyRoute(() => import("./components/pages/DropDeadCollabPage").then(m => ({ default: m.DropSessionCollabPage })));
+const LoudCollabPage = lazyRoute(() => import("./components/pages/LoudCollabPage").then(m => ({ default: m.LoudCollabPage })));
 const MonteSeuPcPage = lazyRoute(() => import("./pages/MonteSeuPcPage").then(m => ({ default: m.MonteSeuPcPage })));
 const DriversManuaisPage = lazyRoute(() => import("./pages/DriversManuaisPage").then(m => ({ default: m.DriversManuaisPage })));
 const DriverDetailPage = lazyRoute(() => import("./pages/DriverDetailPage").then(m => ({ default: m.DriverDetailPage })));
@@ -108,6 +109,7 @@ export const router = createBrowserRouter([
       { path: "fale-conosco", Component: ContactPage },
       { path: "onde-encontrar", Component: StoreLocatorPage },
       { path: "maringa-fc", Component: MaringaFCCollabPage },
+      { path: "loud", Component: LoudCollabPage },
       { path: "drop-dead", Component: DropDeadCollabPage },
       { path: "drop-session", Component: DropSessionCollabPage },
       { path: "monte-seu-pc", Component: MonteSeuPcPage },

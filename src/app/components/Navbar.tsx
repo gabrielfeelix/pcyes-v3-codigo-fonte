@@ -282,6 +282,16 @@ const megaMenus: Record<string, MegaMenu> = {
        basta acrescentar um item aqui — nenhum outro arquivo muda. */
     banners: [
       {
+        title: "LOUD × PCYES",
+        eyebrow: "Nova parceria",
+        tagline: "A casa dos campeões agora joga de PCYES.",
+        image: "/collab/loud/banner.webp",
+        href: "/loud",
+        cta: "Ver a parceria",
+        accent: "#00ff3b",
+        status: "ativa",
+      },
+      {
         title: "Maringá FC × PCYES",
         eyebrow: "Coleção oficial",
         tagline: "Vista o manto no seu setup.",
@@ -303,6 +313,16 @@ const megaMenus: Record<string, MegaMenu> = {
       },
     ],
     subItems: [
+      {
+        label: "LOUD × PCYES", href: "/loud",
+        right: {
+          type: "featured", title: "Nova parceria",
+          image: "/collab/loud/banner.webp",
+          name: "LOUD × PCYES",
+          desc: "A casa dos campeões agora joga de PCYES. A história da LOUD e o setup aprovado por ela.",
+          href: "/loud"
+        }
+      },
       {
         label: "Maringá FC × PCYES", href: "/maringa-fc",
         right: {
