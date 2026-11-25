@@ -127,7 +127,7 @@ const SIGNS = [
   ['PCYES', PAL.ink, PAL.red, 'logo:pcyes', 'GAMER STORE'],
   ['PADARIA', PAL.paper, PAL.red, '"Sedgwick Ave Display"', 'PÃO QUENTE TODA HORA'],
   ['LAN HOUSE', PAL.blue, PAL.yellow, 'Graduate', 'CS · FIFA · IMPRESSÃO'],
-  ['DROP DEAD', PAL.yellow, PAL.blue, 'logo:dropdead', 'SKATESHOP DESDE 1990'],
+  ['DROP DEAD', PAL.yellow, PAL.blue, 'logo:dropdead', 'SKATESHOP · CURITIBA'],
   ['BORRACHARIA', PAL.yellow, PAL.ink, 'Graduate', '24 HORAS'],
   ['FLIPERAMA', PAL.red, PAL.paper, '"Rubik Spray Paint"', 'FICHA R$ 1'],
   ['XEROX', PAL.paper, PAL.ink, 'Graduate', 'ENCADERNAÇÃO · PLASTIFICAÇÃO'],
