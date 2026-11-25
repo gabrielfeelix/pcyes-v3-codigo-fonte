@@ -2,7 +2,7 @@
    1 hero (aprovada) · 2 história numa tela só (escolhe o ano, troca foto e texto) · 3 parceria LOUD × PCYES · 4 vitrine (aprovada).
    Fotos: Flickr oficial valorantesports (Riot Games), ver img/hist/CREDITOS.txt. Versão longa (reprovada): _antiga/a-filme/. */
 (function () {
-  const { BASE, LOUD_WORD, LOUD_SIMB, PCYES, SETA, CAPS, HOJE, pad2, montaVitrine } = window.LD;
+  const { BASE, LOUD_WORD, LOUD_SIMB, PCYES, SETA, CAPS, HOJE, pad2, montaVitrine, faixa } = window.LD;
   const FOTO = ["h-2019", "c1-c", "c3", "c4"];   // 2019, 2020, 2022, 2026
 
   const hero = () => `
@@ -54,7 +54,7 @@
   window.montaLP = function (raiz) {
     const ac = new AbortController(), on = (el, ev, fn, o = {}) => el.addEventListener(ev, fn, { ...o, signal: ac.signal });
     raiz.className = "lp-ld op-a op-a3";
-    raiz.innerHTML = hero() + historia() + parceria() + `<div class="vit-slot"></div>`;
+    raiz.innerHTML = hero() + historia() + faixa() + parceria() + `<div class="vit-slot"></div>`;
     requestAnimationFrame(() => raiz.querySelector(".a-hero").classList.add("entra"));
 
     // história: passar o mouse, focar ou clicar num ano troca foto e texto (sem rolar)
@@ -77,7 +77,8 @@
     raiz.querySelectorAll('a[href="#aprovados"]').forEach((a) => on(a, "click", (e) => {
       const v = raiz.querySelector("#aprovados"); if (!v) return; e.preventDefault(); v.scrollIntoView({ behavior: "smooth" });
     }));
-    montaVitrine(raiz.querySelector(".vit-slot"), on);
+    // a faixa dos bordões fica entre a história e o vídeo; a que a vitrine traz embaixo sai
+    montaVitrine(raiz.querySelector(".vit-slot"), on).then(() => { const fs = raiz.querySelectorAll(".faixa"); if (fs.length > 1) fs[fs.length - 1].remove(); });
     return () => { ac.abort(); io.disconnect(); iov.disconnect(); raiz.innerHTML = ""; };
   };
 })();
