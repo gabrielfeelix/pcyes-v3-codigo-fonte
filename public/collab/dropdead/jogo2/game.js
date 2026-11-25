@@ -25,8 +25,8 @@ GRABS.N = GRABS.L;
 const SPINS = [null, ['540', 1000], ['900', 2500], ['1260', 4500]]; // giro extra de 360 em 360 (o aéreo normal já é um 180)
 const NOTAS = [[0, 'POSER'], [4000, 'AMADOR'], [12000, 'CABULOSO'], [25000, 'LENDA'], [45000, 'DROP DEAD']];
 const MISSOES = [
-  { k:'m540', t:'FAÇA UM 540' },
-  { k:'mdrop', t:'PEGUE OS 4 PRODUTOS' },
+  { k:'m540', t:'MANDA UM 540' },
+  { k:'mdrop', t:'PEGA OS 4 PRODUTOS' },
   { k:'mgrab', t:'3 GRABS SEGUIDOS' },
 ];
 const CUPOM = 'DROPDEAD35'; // PLACEHOLDER: código provisório — trocar pelo cupom real antes de publicar
@@ -985,7 +985,7 @@ function drawHUD() {
   // equilíbrio na borda
   if (P.mode === 'lip') balanceBar();
   // tutorial
-  const tip = P.tut < 9 && P.pumps < 2 ? (isTouch ? 'SEGURA ▼ NA DESCIDA = BOMBA' : 'SEGURA ↓ NA DESCIDA = BOMBA')
+  const tip = P.tut < 9 && P.pumps < 2 ? (isTouch ? 'SEGURA ▼ NA DESCIDA = BOMBEIA' : 'SEGURA ↓ NA DESCIDA = BOMBEIA')
     : P.airs > 0 && P.airs < 4 && P.score < 600 ? (isTouch ? 'NO AR: A + SETA = FLIP · B + SETA = GRAB' : 'NO AR: Z + SETA = FLIP · X + SETA = GRAB · ← → GIRA') : null;
   if (tip) chip(tip, `${portrait ? 12 : 15}px Graduate`, W / 2, isTouch ? GY + 22 : H - 30, PAL.yellow, PAL.ink, -.015, 8, 4);
   // pop-ups

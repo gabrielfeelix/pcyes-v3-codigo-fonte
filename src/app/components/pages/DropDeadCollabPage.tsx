@@ -11,7 +11,7 @@ import { Footer } from "../Footer";
  * Aqui a gente só carrega CSS + script, monta em <div class="lp-dd"> e entrega o carrinho da loja.
  */
 const BASE = "/collab/dropdead/lp/";
-const LP_VERSAO = "1795627248";
+const LP_VERSAO = "1795631243";
 const FONTES = "https://fonts.googleapis.com/css2?family=Anton&family=Sedgwick+Ave+Display&family=Graduate&family=Inter+Tight:wght@400;500;700;800&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap";
 
 declare global {
