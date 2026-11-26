@@ -6,18 +6,18 @@ import { Footer } from "../Footer";
  * Regra do repo (marcas/pcyes/CLAUDE.md): collab é página montada dentro do layout, nunca redirect
  * pra .html solto.
  *
- * O conteúdo (hero, vitrine Aprovado pela LOUD, história, faixa, vídeo + parceria) é estático e mora em
- * public/collab/loud/ (fonte: ux/empresas/pcyes/collab-loud-lp, versão A aprovada em 26/11/2026).
+ * O conteúdo (hero, vitrine + faixa, história, parceria + vídeo, assinatura da parceria) é estático e mora em
+ * public/collab/loud/ (fonte: ux/empresas/pcyes/collab-loud-lp; a versão B virou a oficial em 27/11/2026).
  * Aqui a gente só carrega CSS + scripts e monta em <div class="lp-ld">, logo abaixo do header.
  * O CSS da página já é escopado (.lp-ld / .op-a), então não vaza pro resto da loja.
  */
 const BASE = "/collab/loud/";
-const LP_VERSAO = "1795697999";
+const LP_VERSAO = "1795698602";
 const FONTES = "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Big+Shoulders+Display:wght@900&family=JetBrains+Mono:wght@400;600&display=swap";
 
 declare global {
   interface Window {
-    montaLoud?: (raiz: HTMLElement, opts?: { variante?: "A" | "B" }) => () => void;
+    montaLoud?: (raiz: HTMLElement) => () => void;
     LD?: unknown;
   }
 }
@@ -28,8 +28,7 @@ function anexa<T extends HTMLElement>(id: string, cria: () => T): T {
   const el = cria(); el.id = id; document.head.appendChild(el); return el;
 }
 
-/** variante "B" (rota /loud/b, sem link no menu): A + fechamento institucional (assinatura da parceria LOUD × PCYES). */
-export function LoudCollabPage({ variante = "A" }: { variante?: "A" | "B" } = {}) {
+export function LoudCollabPage() {
   const raiz = useRef<HTMLDivElement>(null);
   const [pronto, setPronto] = useState(false);
 
@@ -40,7 +39,7 @@ export function LoudCollabPage({ variante = "A" }: { variante?: "A" | "B" } = {}
     anexa("lp-loud-css-a", () => Object.assign(document.createElement("link"), { rel: "stylesheet", href: `${BASE}css/a.css?v=${LP_VERSAO}` }));
     const monta = () => {
       if (!vivo || !raiz.current || !window.montaLoud) return;
-      desmonta = window.montaLoud(raiz.current, { variante });
+      desmonta = window.montaLoud(raiz.current);
       setPronto(true);
     };
     // comum.js (logos, fatos, vitrine) antes de a.js (a página)
@@ -53,7 +52,7 @@ export function LoudCollabPage({ variante = "A" }: { variante?: "A" | "B" } = {}
     else anexa("lp-loud-js-comum", () => Object.assign(document.createElement("script"), { src: `${BASE}js/comum.js?v=${LP_VERSAO}` }))
       .addEventListener("load", carregaA, { once: true });
     return () => { vivo = false; desmonta?.(); };
-  }, [variante]);
+  }, []);
 
   return (
     <div style={{ background: "#000", paddingTop: "var(--header-h, 156px)", minHeight: "100vh" }}>

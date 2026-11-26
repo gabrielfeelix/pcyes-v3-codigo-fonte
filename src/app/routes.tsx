@@ -64,7 +64,6 @@ const MaringaFCCollabPage = lazyRoute(() => import("./components/pages/MaringaFC
 const DropDeadCollabPage = lazyRoute(() => import("./components/pages/DropDeadCollabPage").then(m => ({ default: m.DropDeadCollabPage })));
 const DropSessionCollabPage = lazyRoute(() => import("./components/pages/DropDeadCollabPage").then(m => ({ default: m.DropSessionCollabPage })));
 const LoudCollabPage = lazyRoute(() => import("./components/pages/LoudCollabPage").then(m => ({ default: m.LoudCollabPage })));
-const LoudCollabPageB = lazyRoute(() => import("./components/pages/LoudCollabPage").then(m => ({ default: () => <m.LoudCollabPage variante="B" /> })));
 const CollabsPage = lazyRoute(() => import("./components/pages/CollabsPage").then(m => ({ default: m.CollabsPage })));
 const MonteSeuPcPage = lazyRoute(() => import("./pages/MonteSeuPcPage").then(m => ({ default: m.MonteSeuPcPage })));
 const DriversManuaisPage = lazyRoute(() => import("./pages/DriversManuaisPage").then(m => ({ default: m.DriversManuaisPage })));
@@ -113,7 +112,7 @@ export const router = createBrowserRouter([
       { path: "maringa-fc", Component: MaringaFCCollabPage },
       { path: "collabs", Component: CollabsPage },
       { path: "loud", Component: LoudCollabPage },
-      { path: "loud/b", Component: LoudCollabPageB },
+      { path: "loud/b", element: <Navigate to="/loud" replace /> },
       { path: "drop-dead", Component: DropDeadCollabPage },
       { path: "drop-session", Component: DropSessionCollabPage },
       { path: "monte-seu-pc", Component: MonteSeuPcPage },
