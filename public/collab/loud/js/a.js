@@ -74,8 +74,8 @@
       <p class="as-assina">Parceria oficial</p>
     </section>`;
 
-  // nome próprio pra morar dentro da v3 sem brigar com o montaLP da Drop Dead (mesma SPA)
-  window.montaLoud = window.montaLP = function (raiz) {
+  // só montaLoud: window.montaLP é da Drop Dead (mesma SPA). Ocupar esse nome fazia /drop-dead abrir a LOUD (bug 27/11)
+  window.montaLoud = function (raiz) {
     const ac = new AbortController(), on = (el, ev, fn, o = {}) => el.addEventListener(ev, fn, { ...o, signal: ac.signal });
     raiz.className = "lp-ld op-a op-a3 op-b4";
     raiz.innerHTML = hero() + `<div class="vit-slot"></div>` + historia() + parceria() + assinatura();
