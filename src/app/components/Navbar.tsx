@@ -74,7 +74,7 @@ interface MegaSubItem {
  * nenhum aninhamento, nada calculado. O mínimo obrigatório é `title`, `image`
  * e `href` — o resto é opcional e some sozinho quando vazio.
  */
-interface CollabBanner {
+export interface CollabBanner {
   /** Nome da campanha, ex.: "Maringá FC × PCYES". */
   title: string;
   /** Arte do banner. Proporção recomendada 4:3; o card recorta pelo centro. */
@@ -419,6 +419,9 @@ const megaMenus: Record<string, MegaMenu> = {
   },
 };
 
+/* A página /collabs lista as mesmas collabs do mega menu (uma fonte só). */
+export const collabBanners: CollabBanner[] = megaMenus.collab.banners ?? [];
+
 // ─── Nav Items ───────────────────────────────────────────────────────────────
 
 interface NavItem { label: string; href?: string; mega?: string; emphasis?: "green" | "build" }
@@ -435,7 +438,7 @@ const navItems: NavItem[] = [
   { label: "Cadeiras", mega: "cadeiras", href: getCatalogHref({ category: "Cadeiras" }) },
   { label: "Computadores", mega: "computadores", href: getCatalogHref({ category: "Computadores" }) },
   { label: "PC Gamer", mega: "pcgamer", href: setupsHref({ showcase: "pc-gamer" }) },
-  { label: "Collab", mega: "collab", href: "/drop-dead" },
+  { label: "Collab", mega: "collab", href: "/collabs" },
   { label: "Monte seu PC", mega: "montar", href: "/monte-seu-pc", emphasis: "build" },
 ];
 
