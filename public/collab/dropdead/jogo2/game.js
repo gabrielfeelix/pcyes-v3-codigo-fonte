@@ -850,7 +850,7 @@ function drawRider() {
   const bl = BOARD_L, bh = 21, feet = bh * .78;
   const pk = P.popT > 0 ? 1 + Math.sin((1 - P.popT / .2) * Math.PI) * .14 : 1; // pop no começo da manobra
   ctx.save(); ctx.translate(SX(p.x), SY(p.y)); ctx.scale(z * pk, z * pk); ctx.rotate(-ang);
-  ctx.filter = 'drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 3px 3px rgba(0,0,0,.45))'; // contorno de adesivo: separa o robô do cenário carregado
+  // contorno de adesivo agora vem pré-desenhado (outlined): ctx.filter por quadro derrubava pra ~4 fps em parte das máquinas (27/11)
   // sombra/rodas: faíscas e partículas no mundo, desenhadas fora
   if (P.flip && P.mode === 'air' && !F.board && !p.noBoard) { // rastro: 2 fantasmas do shape um pouco atrás na volta
     for (const [dr, al] of [[.5, .16], [.25, .3]]) { ctx.save(); ctx.globalAlpha = al; ctx.translate(0, p.gap * .9);
@@ -862,12 +862,20 @@ function drawRider() {
     let ox = -RW / 2, oy = -RH - (F.board ? 0 : feet);
     if (F.man && F.man.length >= 4) { const k = RH / (img.height - 8); ox = -(F.man[2] + 4) * k; oy = -(F.man[3] + 4) * k; }
     if (/^tombo/.test(frame) && !F.man) oy = -RH * .92;
-    ctx.drawImage(img, ox, oy, RW, RH);
+    { const o = outlined(img), k = RW / img.width; ctx.drawImage(o, ox - o.pad * k, oy - o.pad * k, o.width * k, o.height * k); }
     if (P.glowT > 0 || dropT > 0) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = P.glowT > 0 ? .55 : .2; ctx.drawImage(img, ox, oy, RW, RH); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; }
     if (P.glowT > 0 || P.rf) eyes(ox + RW * .5, oy + RH * .1, RH);
     ctx.restore();
   }
-  ctx.filter = 'none'; ctx.restore();
+  ctx.restore();
+}
+// contorno branco + sombra do robô, feito 1 vez por imagem (cache) em vez de ctx.filter a cada quadro
+const OUTL = new WeakMap();
+function outlined(img) {
+  let c = OUTL.get(img); if (c) return c;
+  const pad = 10; c = document.createElement('canvas'); c.width = img.width + pad * 2; c.height = img.height + pad * 2; c.pad = pad;
+  const x = c.getContext('2d'); x.filter = 'drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 4px 4px rgba(0,0,0,.45))'; x.drawImage(img, pad, pad);
+  OUTL.set(img, c); return c;
 }
 function eyes(x, y, rh) { // olhos acesos do ROBÔ FLIP: raios de nanquim vermelho, em degraus
   const r = rh * .07, rot = Math.floor(clock * 12) * .3;
