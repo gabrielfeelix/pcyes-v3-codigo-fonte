@@ -85,7 +85,7 @@
         ${DEST.map(([id, nome, cat], i) => `
         <a class="b-b b-b${i}" href="#aprovados">
           <span class="b-b-cat">${cat}</span>
-          <img src="${BASE}img/produtos/${id}.png" alt="${nome}" loading="lazy">
+          <img src="${BASE}img/produtos/${id}.webp" alt="${nome}" loading="lazy">
           <span class="b-b-nome">${nome} ${SETA}</span>
         </a>`).join("")}
       </div>

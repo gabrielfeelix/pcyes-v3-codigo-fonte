@@ -2,7 +2,9 @@
    1 hero (aprovada) · 2 história numa tela só (escolhe o ano, troca foto e texto) · 3 parceria LOUD × PCYES · 4 vitrine (aprovada).
    Fotos: Flickr oficial valorantesports (Riot Games), ver img/hist/CREDITOS.txt. Versão longa (reprovada): _antiga/a-filme/. */
 (function () {
-  const { BASE, LOUD_WORD, LOUD_SIMB, PCYES, SETA, CAPS, HOJE, pad2, montaVitrine, faixa } = window.LD;
+  const { BASE, LOUD_WORD, LOUD_SIMB, PCYES, SETA, CAPS, HOJE, pad2, montaVitrine, faixa, progresso, laco, clamp01 } = window.LD;
+  // A: vídeo à direita da frase da parceria. B: frase centrada sem vídeo; o vídeo vem na dobra de baixo e cresce até a tela cheia.
+  const B = window.LP_VARIANTE === "B";
   const FOTO = ["h-2019", "c1-c", "c3", "c4"];   // 2019, 2020, 2022, 2026
 
   const hero = () => `
@@ -43,8 +45,8 @@
     </section>`;
 
   const parceria = () => `
-    <section class="p-sec v-sec">
-      <video class="v-vid" src="${BASE}video/b-taca.mp4" muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    <section class="p-sec ${B ? "p-centro" : "v-sec"}">
+      ${B ? "" : `<video class="v-vid" src="${BASE}video/b-taca.mp4" muted loop playsinline preload="metadata" aria-hidden="true"></video>`}
       <div class="p-lock" aria-hidden="true"><span class="p-loud">${LOUD_SIMB}</span><span class="p-x">×</span><img src="${BASE}img/loud/pcyes-robo.png" alt=""></div>
       <h2 class="p-tit">${HOJE.tit} <em>PCYES.</em></h2>
       <p class="corpo">${HOJE.txt}</p>
@@ -53,8 +55,14 @@
 
   window.montaLP = function (raiz) {
     const ac = new AbortController(), on = (el, ev, fn, o = {}) => el.addEventListener(ev, fn, { ...o, signal: ac.signal });
-    raiz.className = "lp-ld op-a op-a3";
-    raiz.innerHTML = hero() + historia() + faixa() + parceria() + `<div class="vit-slot"></div>`;
+    raiz.className = "lp-ld op-a op-a3" + (B ? " op-b3" : "");
+    const cresce = () => `
+    <section class="g-sec" aria-hidden="true">
+      <div class="g-palco"><div class="g-tela"><video class="v-vid" src="${BASE}video/b-taca.mp4" muted loop playsinline preload="metadata"></video></div></div>
+    </section>`;
+    raiz.innerHTML = hero() + historia() + faixa() + parceria() + (B ? cresce() : "") + `<div class="vit-slot"></div>`;
+    // B: a tela do vídeo cresce do centro até ocupar a viewport conforme o scroll (scrub, sem espera)
+    if (B) { const g = raiz.querySelector(".g-sec"); laco(() => { const k = clamp01(progresso(g) / .7); g.style.setProperty("--g", (k * k * (3 - 2 * k)).toFixed(4)); }, on); }
     requestAnimationFrame(() => raiz.querySelector(".a-hero").classList.add("entra"));
 
     // história: passar o mouse, focar ou clicar num ano troca foto e texto (sem rolar)
@@ -70,7 +78,7 @@
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("vis"); io.unobserve(e.target); } }), { threshold: .25 });
     raiz.querySelectorAll(".h-sec, .p-sec").forEach((el) => io.observe(el));
     // vídeo: toca só enquanto está na tela
-    const vid = raiz.querySelector(".v-vid");
+    const vid = raiz.querySelector(".v-vid");   // A: o da parceria · B: o que cresce
     const iov = new IntersectionObserver(([e]) => { if (e.isIntersecting) vid.play().catch(() => {}); else vid.pause(); }, { threshold: .3 });
     iov.observe(vid);
 

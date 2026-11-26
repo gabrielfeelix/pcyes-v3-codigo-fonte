@@ -496,3 +496,16 @@
     -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 28%); mask-image: linear-gradient(0deg, transparent 0%, #000 28%); }
   .op-a3 .v-sec > :not(video) { max-width: none; }
 }
+
+/* ===== versão B (mesma página, outra dobra de parceria + vídeo que cresce) ===== */
+.op-b3 .p-centro { min-height: 82svh; justify-content: center; }
+.op-b3 .p-centro .p-tit { font-size: clamp(56px, 6.6vw, 132px); }
+.op-b3 .g-sec { --g: 0; position: relative; height: 260svh; background: #000; }
+.op-b3 .g-palco { position: sticky; top: 0; height: 100svh; display: grid; place-items: center; overflow: hidden; }
+.op-b3 .g-tela { width: calc(46vw + var(--g) * 54vw); height: calc(26vw + var(--g) * (100svh - 26vw)); border-radius: calc((1 - var(--g)) * 14px); overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0, 255, 59, calc((1 - var(--g)) * .12)); }
+.op-b3 .g-tela .v-vid { position: static; width: 100%; height: 100%; object-fit: cover; translate: none; -webkit-mask-image: none; mask-image: none; filter: brightness(calc(.7 + var(--g) * .2)); }
+@media (max-width: 860px) {
+  .op-b3 .g-sec { height: 180svh; }
+  .op-b3 .g-tela { width: calc(86vw + var(--g) * 14vw); height: calc(48vw + var(--g) * (100svh - 48vw)); }
+}

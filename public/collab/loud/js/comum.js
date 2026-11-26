@@ -18,7 +18,7 @@
     { ano: "2022", tit: "Campeã do mundo.", txt: "Istambul, 2022: o primeiro título mundial. No mesmo ano, a LOUD foi eleita o melhor time de esports do mundo.", n: "1º", nl: "título mundial", lugar: "Istambul" },
     { ano: "2026", tit: "De volta ao topo.", txt: "18 de outubro de 2026, Xangai. Final 3×1 e o segundo título mundial: a primeira organização bicampeã do torneio.", n: "2×", nl: "campeã mundial", lugar: "Xangai" },
   ];
-  const HOJE = { tit: "O próximo capítulo tem", txt: "A LOUD agora joga com PCYES. O setup que vai pra mesa dos campeões é o mesmo que você leva pra casa." };
+  const HOJE = { tit: "O barulho agora é", txt: "A LOUD agora joga com PCYES. O setup que vai pra mesa dos campeões é o mesmo que você leva pra casa." };
   // vídeo oficial do canal @LOUDgg (time, não creator). Trocar pelo vídeo que a LOUD mandar.
   const VIDEO = { id: "fOZBh22mbuA", titulo: "LOUD: a nova era chegou" };
 
@@ -95,6 +95,9 @@
     return fetch(`${BASE}js/produtos.json`).then((r) => r.json()).then((prods) => {
       slot.outerHTML = vitrineHTML(prods);
       const raiz = document.getElementById("aprovados"), trilho = raiz.querySelector(".trilho");
+      // fotos dos produtos: baixam todas um pouco antes da vitrine chegar (as abas trocam sem esperar)
+      const pre = new IntersectionObserver(([e]) => { if (!e.isIntersecting) return; raiz.querySelectorAll(".card img").forEach((i) => { i.loading = "eager"; }); pre.disconnect(); }, { rootMargin: "900px 0px" });
+      pre.observe(raiz);
       const prev = raiz.querySelector(".prev"), next = raiz.querySelector(".next");
       const atualiza = () => { prev.disabled = trilho.scrollLeft < 4; next.disabled = trilho.scrollLeft + trilho.clientWidth >= trilho.scrollWidth - 4; };
       raiz.querySelectorAll(".abas button").forEach((b) => on(b, "click", () => {
