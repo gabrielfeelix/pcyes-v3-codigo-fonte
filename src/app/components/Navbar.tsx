@@ -285,7 +285,7 @@ const megaMenus: Record<string, MegaMenu> = {
         title: "LOUD × PCYES",
         eyebrow: "Nova parceria",
         tagline: "A casa dos campeões agora joga de PCYES.",
-        image: "/collab/loud/banner.webp",
+        image: "/collab/loud/banner.webp?v=2",
         href: "/loud",
         cta: "Ver a parceria",
         accent: "#00ff3b",
@@ -317,7 +317,7 @@ const megaMenus: Record<string, MegaMenu> = {
         label: "LOUD × PCYES", href: "/loud",
         right: {
           type: "featured", title: "Nova parceria",
-          image: "/collab/loud/banner.webp",
+          image: "/collab/loud/banner.webp?v=2",
           name: "LOUD × PCYES",
           desc: "A casa dos campeões agora joga de PCYES. A história da LOUD e o setup aprovado por ela.",
           href: "/loud"
