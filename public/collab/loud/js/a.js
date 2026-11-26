@@ -90,7 +90,20 @@
     raiz.querySelectorAll(".h-sec, .p-sec").forEach((el) => io.observe(el));
     // vídeo: toca só enquanto está na tela
     const vid = raiz.querySelector(".v-vid");   // A: o da parceria · B: o que cresce
-    const iov = new IntersectionObserver(([e]) => { if (e.isIntersecting) { if (!vid.dataset.pausou) vid.play().catch(() => {}); } else vid.pause(); }, { threshold: .3 });
+    // B: som ligado por padrão. O navegador só libera som depois de um clique/toque na página;
+    // sem isso toca mudo e o som liga no primeiro clique/toque. Ao chegar na seção, começa do início.
+    let chegou = false;
+    const tocar = () => {
+      if (!B) { vid.play().catch(() => {}); return; }
+      if (!chegou) { chegou = true; vid.currentTime = 0; }
+      if (!vid.dataset.mutou) vid.muted = false;
+      vid.play().catch(() => { vid.muted = true; vid.play().catch(() => {}); });
+    };
+    if (B) {
+      const libera = (e) => { if (e && e.target === vid) return; if (!vid.dataset.mutou && vid.muted && !vid.paused) vid.muted = false; };
+      on(document, "pointerdown", libera); on(document, "keydown", libera);
+    }
+    const iov = new IntersectionObserver(([e]) => { if (e.isIntersecting) { if (!vid.dataset.pausou) tocar(); } else vid.pause(); }, { threshold: .3 });
     iov.observe(vid);
     // B: controles do vídeo (play/pausa e som). Pausa do usuário vale: sair e voltar não retoma sozinho.
     if (B) {
@@ -98,8 +111,10 @@
       const syncP = () => { const t = !vid.paused; bp.dataset.on = t ? "1" : "0"; bp.setAttribute("aria-label", t ? "Pausar o vídeo" : "Tocar o vídeo"); };
       const syncS = () => { const t = !vid.muted; bs.dataset.on = t ? "1" : "0"; bs.setAttribute("aria-label", t ? "Desligar o som" : "Ligar o som"); };
       const alterna = () => { if (vid.paused) { vid.dataset.pausou = ""; vid.play().catch(() => {}); } else { vid.dataset.pausou = "1"; vid.pause(); } };
-      on(bp, "click", alterna); on(vid, "click", alterna);
-      on(bs, "click", () => { vid.muted = !vid.muted; if (!vid.muted && vid.paused) { vid.dataset.pausou = ""; vid.play().catch(() => {}); } syncS(); });
+      on(bp, "click", alterna);
+      // clique no vídeo mudo pelo navegador = ligar o som (não pausar)
+      on(vid, "click", () => { if (vid.muted && !vid.dataset.mutou && !vid.paused) { vid.muted = false; return; } alterna(); });
+      on(bs, "click", (ev) => { ev.stopPropagation(); vid.muted = !vid.muted; vid.dataset.mutou = vid.muted ? "1" : ""; if (!vid.muted && vid.paused) { vid.dataset.pausou = ""; vid.play().catch(() => {}); } syncS(); });
       ["play", "pause"].forEach((ev) => on(vid, ev, syncP)); on(vid, "volumechange", syncS);
     }
 
