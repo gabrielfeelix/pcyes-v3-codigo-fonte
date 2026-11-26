@@ -747,7 +747,7 @@
       ]
     },
     {
-      "source": "/collab/(.*)\\.(webp|png|jpg|jpeg|mp3|mp4|woff2)",
+      "source": "/collab/(.*)\\.(webp|png|jpg|jpeg|mp3|mp4|woff2|js|css)",
       "headers": [
         {
           "key": "Cache-Control",
