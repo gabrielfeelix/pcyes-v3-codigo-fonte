@@ -69,18 +69,6 @@
       #pcyes-maringa-collab .mc-container { padding: 0 40px; }
     }
 
-    /* Scroll Progress Bar */
-    #mc-scroll-progress {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #00A859 0%, #00D46A 100%);
-      transform-origin: left;
-      transform: scaleX(0);
-      z-index: 9999;
-      transition: transform 0.1s ease-out;
-    }
-
     /* Buttons */
     #pcyes-maringa-collab .mc-btn {
       display: inline-flex;
@@ -748,7 +736,6 @@
 <div id="pcyes-maringa-collab">
     
     <!-- Scroll Progress -->
-    <div id="mc-scroll-progress"></div>
 
     <div class="landing-root">
       <!-- HERO SECTION -->
@@ -980,15 +967,6 @@
         
         spanWrapper.appendChild(spanInner);
         revealContainer.appendChild(spanWrapper);
-      });
-
-      // 3. SCROLL PROGRESS
-      const progressBar = document.getElementById('mc-scroll-progress');
-      window.addEventListener('scroll', () => {
-        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const scrolled = winScroll / height;
-        progressBar.style.transform = `scaleX(${scrolled})`;
       });
 
       // 4. ANIMATED COUNTERS & FADE UPS (Intersection Observer)
