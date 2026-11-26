@@ -44,21 +44,9 @@
       </div>
     </section>`;
 
-  const parceria = () => `
-    <section class="p-sec ${B ? "p-centro" : "v-sec"}">
-      ${B ? "" : `<video class="v-vid" src="${BASE}video/b-taca.mp4" muted loop playsinline preload="metadata" aria-hidden="true"></video>`}
-      <div class="p-lock" aria-hidden="true"><span class="p-loud">${LOUD_SIMB}</span><span class="p-x">×</span><img src="${BASE}img/loud/pcyes-robo.png" alt=""></div>
-      <h2 class="p-tit">${HOJE.tit} <em>${HOJE.dest}</em></h2>
-      <p class="corpo">${HOJE.txt}</p>
-      <a class="cta" href="#aprovados">Ver os aprovados ${SETA}</a>
-    </section>`;
-
-  window.montaLP = function (raiz) {
-    const ac = new AbortController(), on = (el, ev, fn, o = {}) => el.addEventListener(ev, fn, { ...o, signal: ac.signal });
-    raiz.className = "lp-ld op-a op-a3" + (B ? " op-b3" : "");
-    const cresce = () => `
-    <section class="g-sec" aria-label="Vídeo da LOUD">
-      <div class="g-palco"><div class="g-tela"><video class="v-vid" src="${BASE}video/b-taca.mp4" muted loop playsinline preload="metadata"></video>
+  // player do vídeo (A e B): play/pausa e som; começa do início com som ao chegar na seção
+  const player = () => `
+    <div class="g-tela"><video class="v-vid" src="${BASE}video/b-taca.mp4" muted loop playsinline preload="metadata"></video>
         <div class="g-ctrl">
           <button class="g-b g-play" type="button" aria-label="Pausar o vídeo" data-on="1">
             <svg viewBox="0 0 24 24" class="i-pausa" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
@@ -69,7 +57,32 @@
             <svg viewBox="0 0 24 24" class="i-som" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/></svg>
             <span class="g-som-txt">Som</span>
           </button>
-        </div></div></div>
+        </div>
+    </div>`;
+
+  const parceria = () => B ? `
+    <section class="p-sec p-centro">
+      <div class="p-lock" aria-hidden="true"><span class="p-loud">${LOUD_SIMB}</span><span class="p-x">×</span><img src="${BASE}img/loud/pcyes-robo.png" alt=""></div>
+      <h2 class="p-tit">${HOJE.tit} <em>${HOJE.dest}</em></h2>
+      <p class="corpo">${HOJE.txt}</p>
+      <a class="cta" href="#aprovados">Ver os aprovados ${SETA}</a>
+    </section>` : `
+    <section class="p-sec p-lado">
+      <div class="p-txt">
+        <div class="p-lock" aria-hidden="true"><span class="p-loud">${LOUD_SIMB}</span><span class="p-x">×</span><img src="${BASE}img/loud/pcyes-robo.png" alt=""></div>
+        <h2 class="p-tit">${HOJE.tit.replace(" do mundo", "<br>do mundo")} <em>${HOJE.dest}</em></h2>
+        <p class="corpo">${HOJE.txt}</p>
+        <a class="cta" href="#aprovados">Ver os aprovados ${SETA}</a>
+      </div>
+      ${player()}
+    </section>`;
+
+  window.montaLP = function (raiz) {
+    const ac = new AbortController(), on = (el, ev, fn, o = {}) => el.addEventListener(ev, fn, { ...o, signal: ac.signal });
+    raiz.className = "lp-ld op-a op-a3" + (B ? " op-b3" : "");
+    const cresce = () => `
+    <section class="g-sec" aria-label="Vídeo da LOUD">
+      <div class="g-palco">${player()}</div>
     </section>`;
     raiz.innerHTML = hero() + historia() + faixa() + parceria() + (B ? cresce() : "") + `<div class="vit-slot"></div>`;
     // B: a tela do vídeo cresce do centro até ocupar a viewport conforme o scroll (scrub, sem espera)
@@ -89,24 +102,23 @@
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("vis"); io.unobserve(e.target); } }), { threshold: .25 });
     raiz.querySelectorAll(".h-sec, .p-sec").forEach((el) => io.observe(el));
     // vídeo: toca só enquanto está na tela
-    const vid = raiz.querySelector(".v-vid");   // A: o da parceria · B: o que cresce
-    // B: som ligado por padrão. O navegador só libera som depois de um clique/toque na página;
+    const vid = raiz.querySelector(".v-vid");
+    // som ligado por padrão. O navegador só libera som depois de um clique/toque na página;
     // sem isso toca mudo e o som liga no primeiro clique/toque. Ao chegar na seção, começa do início.
     let chegou = false;
     const tocar = () => {
-      if (!B) { vid.play().catch(() => {}); return; }
       if (!chegou) { chegou = true; vid.currentTime = 0; }
       if (!vid.dataset.mutou) vid.muted = false;
       vid.play().catch(() => { vid.muted = true; vid.play().catch(() => {}); });
     };
-    if (B) {
+    {
       const libera = (e) => { if (e && e.target === vid) return; if (!vid.dataset.mutou && vid.muted && !vid.paused) vid.muted = false; };
       on(document, "pointerdown", libera); on(document, "keydown", libera);
     }
     const iov = new IntersectionObserver(([e]) => { if (e.isIntersecting) { if (!vid.dataset.pausou) tocar(); } else vid.pause(); }, { threshold: .3 });
     iov.observe(vid);
-    // B: controles do vídeo (play/pausa e som). Pausa do usuário vale: sair e voltar não retoma sozinho.
-    if (B) {
+    // controles do vídeo (play/pausa e som). Pausa do usuário vale: sair e voltar não retoma sozinho.
+    {
       const bp = raiz.querySelector(".g-play"), bs = raiz.querySelector(".g-som");
       const syncP = () => { const t = !vid.paused; bp.dataset.on = t ? "1" : "0"; bp.setAttribute("aria-label", t ? "Pausar o vídeo" : "Tocar o vídeo"); };
       const syncS = () => { const t = !vid.muted; bs.dataset.on = t ? "1" : "0"; bs.setAttribute("aria-label", t ? "Desligar o som" : "Ligar o som"); };
