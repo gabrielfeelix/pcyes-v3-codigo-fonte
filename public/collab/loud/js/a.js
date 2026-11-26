@@ -2,9 +2,9 @@
    1 hero (aprovada) · 2 história numa tela só (escolhe o ano, troca foto e texto) · 3 parceria LOUD × PCYES · 4 vitrine (aprovada).
    Fotos: Flickr oficial valorantesports (Riot Games), ver img/hist/CREDITOS.txt. Versão longa (reprovada): _antiga/a-filme/. */
 (function () {
-  const { BASE, LOUD_WORD, LOUD_SIMB, PCYES, SETA, CAPS, HOJE, pad2, montaVitrine, faixa, progresso, laco, clamp01 } = window.LD;
-  // A: vídeo à direita da frase da parceria. B: frase centrada sem vídeo; o vídeo vem na dobra de baixo e cresce até a tela cheia.
-  const B = window.LP_VARIANTE === "B";
+  const { BASE, LOUD_WORD, LOUD_SIMB, PCYES, SETA, CAPS, HOJE, brl, selo, pad2, montaVitrine, faixa } = window.LD;
+  // A: aprovada (termina na parceria + vídeo). B (27/11): igual à A + fechamento "Da casa dos campeões pra sua" com o setup.
+  let B = window.LP_VARIANTE === "B";   // a v3 passa { variante } no montaLoud (mesma SPA serve /loud e /loud/b)
   const FOTO = ["h-2019", "c1-c", "c3", "c4"];   // 2019, 2020, 2022, 2026
 
   const hero = () => `
@@ -60,34 +60,61 @@
         </div>
     </div>`;
 
-  const parceria = () => B ? `
-    <section class="p-sec p-centro">
-      <div class="p-lock" aria-hidden="true"><span class="p-loud">${LOUD_SIMB}</span><span class="p-x">×</span><img src="${BASE}img/loud/pcyes-robo.png" alt=""></div>
-      <h2 class="p-tit">${HOJE.tit} <em>${HOJE.dest}</em></h2>
-      <p class="corpo">${HOJE.txt}</p>
-      <a class="cta" href="#aprovados">Ver os aprovados ${SETA}</a>
-    </section>` : `
+  // B (27/11): o CTA da parceria desce pro fechamento "setup"; A mantém o que sobe pra vitrine
+  const parceria = () => `
     <section class="p-sec p-lado">
       <div class="p-txt">
         <div class="p-lock" aria-hidden="true"><span class="p-loud">${LOUD_SIMB}</span><span class="p-x">×</span><img src="${BASE}img/loud/pcyes-robo.png" alt=""></div>
         <h2 class="p-tit">${HOJE.tit.replace(" do mundo", "<br>do mundo")} <em>${HOJE.dest}</em></h2>
         <p class="corpo">${HOJE.txt}</p>
-        <a class="cta" href="#aprovados">Ver os aprovados ${SETA}</a>
+        ${B ? `<a class="cta cta-desce" href="#setup">Montar o setup ${SETA}</a>` : `<a class="cta" href="#aprovados">Ver os aprovados ${SETA}</a>`}
       </div>
       ${player()}
     </section>`;
 
-  // nome próprio pra morar dentro da v3 sem brigar com o montaLP da Drop Dead (mesma SPA)
-  window.montaLoud = window.montaLP = function (raiz) {
-    const ac = new AbortController(), on = (el, ev, fn, o = {}) => el.addEventListener(ev, fn, { ...o, signal: ac.signal });
-    raiz.className = "lp-ld op-a op-a3" + (B ? " op-b3" : "");
-    const cresce = () => `
-    <section class="g-sec" aria-label="Vídeo da LOUD">
-      <div class="g-palco">${player()}</div>
+  // B: fechamento. Ecoa a hero ("a casa dos campeões") e entrega a promessa da parceria ("o mesmo que você leva pra casa").
+  // Um produto por categoria, linha Black Vulcan + mousepad Red Magma (vermelho PCYES).
+  const SETUP = [["317930", "Teclado"], ["328632", "Mouse"], ["307806", "Headset"], ["268161", "Mousepad"]];
+  const setupHTML = (prods) => {
+    const itens = SETUP.map(([sku, cat]) => ({ ...prods.find((p) => p.sku === sku), cat })).filter((p) => p.url);
+    const total = itens.reduce((t, p) => t + p.preco, 0);
+    return `
+    <section class="s-sec" id="setup" aria-labelledby="s-tit" data-total="${total}">
+      <header class="s-topo">
+        <div class="s-tit-wrap">
+          <h2 class="s-tit" id="s-tit"><span>Da casa dos campeões</span> <em>pra sua.</em></h2>
+          ${selo("s-selo")}
+        </div>
+        <div class="s-lado">
+          <p class="corpo">Teclado, mouse, headset e mousepad aprovados pela LOUD. Leve o setup inteiro ou só a peça que falta na sua mesa.</p>
+          <p class="s-total"><span>Setup completo<br>${itens.length} peças</span><b class="estreita s-soma">${brl(total)}</b></p>
+        </div>
+      </header>
+      <div class="s-bancada">
+        <ol class="s-lista">${itens.map((p, i) => `
+          <li class="s-item" style="--i:${i}" data-preco="${p.preco}">
+            <a class="s-link" href="${p.url}" target="_blank" rel="noopener" aria-label="Comprar ${p.nomeCompleto}">
+              <span class="estreita s-cat" aria-hidden="true">${p.cat}</span>
+              <img src="${BASE}${p.img}" alt="" loading="lazy">
+              <span class="s-info">
+                <span class="s-nome">${p.nome}</span>
+                <span class="s-linha">${p.linha}</span>
+                <span class="s-preco">${p.de > p.preco ? `<s>${brl(p.de)}</s>` : ""}<b>${brl(p.preco)}</b></span>
+              </span>
+              <span class="s-comprar">Comprar ${SETA}</span>
+            </a>
+          </li>`).join("")}
+        </ol>
+      </div>
     </section>`;
-    raiz.innerHTML = hero() + `<div class="vit-slot"></div>` + historia() + faixa() + parceria() + (B ? cresce() : "");
-    // B: a tela do vídeo cresce do centro até ocupar a viewport conforme o scroll (scrub, sem espera)
-    if (B) { const g = raiz.querySelector(".g-sec"); laco(() => { const k = clamp01(progresso(g) / .7); g.style.setProperty("--g", (k * k * (3 - 2 * k)).toFixed(4)); }, on); }
+  };
+
+  // nome próprio pra morar dentro da v3 sem brigar com o montaLP da Drop Dead (mesma SPA)
+  window.montaLoud = window.montaLP = function (raiz, opts) {
+    B = opts && opts.variante ? opts.variante === "B" : window.LP_VARIANTE === "B";
+    const ac = new AbortController(), on = (el, ev, fn, o = {}) => el.addEventListener(ev, fn, { ...o, signal: ac.signal });
+    raiz.className = "lp-ld op-a op-a3" + (B ? " op-b4" : "");
+    raiz.innerHTML = hero() + `<div class="vit-slot"></div>` + historia() + faixa() + parceria() + (B ? `<div class="setup-slot"></div>` : "");
     requestAnimationFrame(() => raiz.querySelector(".a-hero").classList.add("entra"));
 
     // história: passar o mouse, focar ou clicar num ano troca foto e texto (sem rolar)
@@ -131,11 +158,28 @@
       ["play", "pause"].forEach((ev) => on(vid, ev, syncP)); on(vid, "volumechange", syncS);
     }
 
-    raiz.querySelectorAll('a[href="#aprovados"]').forEach((a) => on(a, "click", (e) => {
-      const v = raiz.querySelector("#aprovados"); if (!v) return; e.preventDefault(); v.scrollIntoView({ behavior: "smooth" });
-    }));
+    raiz.addEventListener("click", (e) => {
+      const a = e.target.closest('a[href="#aprovados"], a[href="#setup"]'); if (!a) return;
+      const v = raiz.querySelector(a.getAttribute("href")); if (!v) return; e.preventDefault(); v.scrollIntoView({ behavior: "smooth" });
+    }, { signal: ac.signal });
+    // B: fechamento com o setup. Ao entrar na tela, as 4 peças chegam em sequência e o total soma junto (uma vez, ~1 s, sem prender o scroll).
+    let ios = null;
+    if (B) fetch(`${BASE}js/produtos.json`).then((r) => r.json()).then((prods) => {
+      const slot = raiz.querySelector(".setup-slot"); if (!slot) return;
+      slot.outerHTML = setupHTML(prods);
+      const sec = raiz.querySelector("#setup"), soma = sec.querySelector(".s-soma"), alvo = +sec.dataset.total;
+      const parado = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      ios = new IntersectionObserver(([e]) => {
+        if (!e.isIntersecting) return; ios.disconnect(); sec.classList.add("vis");
+        if (parado) return;
+        const t0 = performance.now(), dur = 1100;
+        const passo = (t) => { const k = Math.min(1, (t - t0) / dur), ease = 1 - Math.pow(1 - k, 3); soma.textContent = brl(Math.round(alvo * ease * 100) / 100); if (k < 1) requestAnimationFrame(passo); };
+        requestAnimationFrame(passo);
+      }, { threshold: .35 });
+      ios.observe(sec);
+    });
     // vitrine logo depois da hero (aprovado 26/11); a faixa dos bordões fica entre a história e o vídeo; a que a vitrine traz sai
     montaVitrine(raiz.querySelector(".vit-slot"), on).then(() => { const f = raiz.querySelector("#aprovados + .faixa"); if (f) f.remove(); });
-    return () => { ac.abort(); io.disconnect(); iov.disconnect(); raiz.innerHTML = ""; };
+    return () => { ac.abort(); io.disconnect(); iov.disconnect(); if (ios) ios.disconnect(); raiz.innerHTML = ""; };
   };
 })();

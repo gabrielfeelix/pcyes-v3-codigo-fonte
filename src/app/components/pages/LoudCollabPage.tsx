@@ -12,12 +12,12 @@ import { Footer } from "../Footer";
  * O CSS da página já é escopado (.lp-ld / .op-a), então não vaza pro resto da loja.
  */
 const BASE = "/collab/loud/";
-const LP_VERSAO = "1795700000";
+const LP_VERSAO = "1795696934";
 const FONTES = "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Big+Shoulders+Display:wght@900&family=JetBrains+Mono:wght@400;600&display=swap";
 
 declare global {
   interface Window {
-    montaLoud?: (raiz: HTMLElement) => () => void;
+    montaLoud?: (raiz: HTMLElement, opts?: { variante?: "A" | "B" }) => () => void;
     LD?: unknown;
   }
 }
@@ -28,7 +28,8 @@ function anexa<T extends HTMLElement>(id: string, cria: () => T): T {
   const el = cria(); el.id = id; document.head.appendChild(el); return el;
 }
 
-export function LoudCollabPage() {
+/** variante "B" (rota /loud/b, sem link no menu): A + fechamento "Da casa dos campeões pra sua" com o setup. */
+export function LoudCollabPage({ variante = "A" }: { variante?: "A" | "B" } = {}) {
   const raiz = useRef<HTMLDivElement>(null);
   const [pronto, setPronto] = useState(false);
 
@@ -39,7 +40,7 @@ export function LoudCollabPage() {
     anexa("lp-loud-css-a", () => Object.assign(document.createElement("link"), { rel: "stylesheet", href: `${BASE}css/a.css?v=${LP_VERSAO}` }));
     const monta = () => {
       if (!vivo || !raiz.current || !window.montaLoud) return;
-      desmonta = window.montaLoud(raiz.current);
+      desmonta = window.montaLoud(raiz.current, { variante });
       setPronto(true);
     };
     // comum.js (logos, fatos, vitrine) antes de a.js (a página)
@@ -52,7 +53,7 @@ export function LoudCollabPage() {
     else anexa("lp-loud-js-comum", () => Object.assign(document.createElement("script"), { src: `${BASE}js/comum.js?v=${LP_VERSAO}` }))
       .addEventListener("load", carregaA, { once: true });
     return () => { vivo = false; desmonta?.(); };
-  }, []);
+  }, [variante]);
 
   return (
     <div style={{ background: "#000", paddingTop: "var(--header-h, 156px)", minHeight: "100vh" }}>
