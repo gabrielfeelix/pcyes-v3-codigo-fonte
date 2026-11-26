@@ -623,3 +623,6 @@
 }
 .op-b4 .as-foto::before, .op-b4 .as-foto::after { z-index: 1; }
 .op-b4 .as-x { justify-self: center; }
+
+/* vídeo = embed do YouTube (27/11): 16:9, clique pra tocar */
+.op-a3 .g-yt iframe { display: block; width: 100%; height: 100%; border: 0; }

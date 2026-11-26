@@ -44,21 +44,12 @@
       </div>
     </section>`;
 
-  // player do vídeo (A e B): play/pausa e som; começa do início com som ao chegar na seção
+  // vídeo (A e B): embed normal do YouTube, toca só no clique (27/11, a pedido; saiu o player próprio com autoplay).
+  // Placeholder até a LOUD mandar o vídeo final: "LOUD LOL: O caminho até o título" (canal oficial @LOUDgg).
+  const YT = "lL9brQp4y9s";
   const player = () => `
-    <div class="g-tela"><video class="v-vid" src="${BASE}video/b-taca.mp4" muted loop playsinline preload="metadata"></video>
-        <div class="g-ctrl">
-          <button class="g-b g-play" type="button" aria-label="Pausar o vídeo" data-on="1">
-            <svg viewBox="0 0 24 24" class="i-pausa" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
-            <svg viewBox="0 0 24 24" class="i-play" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
-          </button>
-          <button class="g-b g-som" type="button" aria-label="Ligar o som" data-on="0">
-            <svg viewBox="0 0 24 24" class="i-mudo" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
-            <svg viewBox="0 0 24 24" class="i-som" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/></svg>
-            <span class="g-som-txt">Som</span>
-          </button>
-        </div>
-    </div>`;
+    <div class="g-tela g-yt"><iframe src="https://www.youtube-nocookie.com/embed/${YT}?rel=0&modestbranding=1" title="Vídeo da LOUD no YouTube" loading="lazy"
+      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`;
 
   // B (27/11): a parceria não vende (a vitrine já vende lá em cima); A mantém o CTA que sobe pra vitrine
   const parceria = () => `
@@ -106,34 +97,7 @@
     // entrada suave das seções, uma vez
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("vis"); io.unobserve(e.target); } }), { threshold: .25 });
     raiz.querySelectorAll(".h-sec, .p-sec").forEach((el) => io.observe(el));
-    // vídeo: toca só enquanto está na tela
-    const vid = raiz.querySelector(".v-vid");
-    // som ligado por padrão. O navegador só libera som depois de um clique/toque na página;
-    // sem isso toca mudo e o som liga no primeiro clique/toque. Ao chegar na seção, começa do início.
-    let chegou = false;
-    const tocar = () => {
-      if (!chegou) { chegou = true; vid.currentTime = 0; }
-      if (!vid.dataset.mutou) vid.muted = false;
-      vid.play().catch(() => { vid.muted = true; vid.play().catch(() => {}); });
-    };
-    {
-      const libera = (e) => { if (e && e.target === vid) return; if (!vid.dataset.mutou && vid.muted && !vid.paused) vid.muted = false; };
-      on(document, "pointerdown", libera); on(document, "keydown", libera);
-    }
-    const iov = new IntersectionObserver(([e]) => { if (e.isIntersecting) { if (!vid.dataset.pausou) tocar(); } else vid.pause(); }, { threshold: .3 });
-    iov.observe(vid);
-    // controles do vídeo (play/pausa e som). Pausa do usuário vale: sair e voltar não retoma sozinho.
-    {
-      const bp = raiz.querySelector(".g-play"), bs = raiz.querySelector(".g-som");
-      const syncP = () => { const t = !vid.paused; bp.dataset.on = t ? "1" : "0"; bp.setAttribute("aria-label", t ? "Pausar o vídeo" : "Tocar o vídeo"); };
-      const syncS = () => { const t = !vid.muted; bs.dataset.on = t ? "1" : "0"; bs.setAttribute("aria-label", t ? "Desligar o som" : "Ligar o som"); };
-      const alterna = () => { if (vid.paused) { vid.dataset.pausou = ""; vid.play().catch(() => {}); } else { vid.dataset.pausou = "1"; vid.pause(); } };
-      on(bp, "click", alterna);
-      // clique no vídeo mudo pelo navegador = ligar o som (não pausar)
-      on(vid, "click", () => { if (vid.muted && !vid.dataset.mutou && !vid.paused) { vid.muted = false; return; } alterna(); });
-      on(bs, "click", (ev) => { ev.stopPropagation(); vid.muted = !vid.muted; vid.dataset.mutou = vid.muted ? "1" : ""; if (!vid.muted && vid.paused) { vid.dataset.pausou = ""; vid.play().catch(() => {}); } syncS(); });
-      ["play", "pause"].forEach((ev) => on(vid, ev, syncP)); on(vid, "volumechange", syncS);
-    }
+
 
     raiz.addEventListener("click", (e) => {
       const a = e.target.closest('a[href="#aprovados"]'); if (!a) return;
@@ -148,6 +112,6 @@
     }
     // vitrine logo depois da hero (aprovado 26/11); a faixa dos bordões fica entre a história e o vídeo; a que a vitrine traz sai
     montaVitrine(raiz.querySelector(".vit-slot"), on).then(() => { const f = raiz.querySelector("#aprovados + .faixa"); if (f) f.remove(); });
-    return () => { ac.abort(); io.disconnect(); iov.disconnect(); if (ios) ios.disconnect(); raiz.innerHTML = ""; };
+    return () => { ac.abort(); io.disconnect(); if (ios) ios.disconnect(); raiz.innerHTML = ""; };
   };
 })();
