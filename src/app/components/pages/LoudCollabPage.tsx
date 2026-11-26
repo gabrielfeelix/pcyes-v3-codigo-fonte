@@ -12,7 +12,7 @@ import { Footer } from "../Footer";
  * O CSS da página já é escopado (.lp-ld / .op-a), então não vaza pro resto da loja.
  */
 const BASE = "/collab/loud/";
-const LP_VERSAO = "1795696934";
+const LP_VERSAO = "1795697516";
 const FONTES = "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Big+Shoulders+Display:wght@900&family=JetBrains+Mono:wght@400;600&display=swap";
 
 declare global {
@@ -28,7 +28,7 @@ function anexa<T extends HTMLElement>(id: string, cria: () => T): T {
   const el = cria(); el.id = id; document.head.appendChild(el); return el;
 }
 
-/** variante "B" (rota /loud/b, sem link no menu): A + fechamento "Da casa dos campeões pra sua" com o setup. */
+/** variante "B" (rota /loud/b, sem link no menu): A + fechamento institucional (assinatura da parceria LOUD × PCYES). */
 export function LoudCollabPage({ variante = "A" }: { variante?: "A" | "B" } = {}) {
   const raiz = useRef<HTMLDivElement>(null);
   const [pronto, setPronto] = useState(false);
