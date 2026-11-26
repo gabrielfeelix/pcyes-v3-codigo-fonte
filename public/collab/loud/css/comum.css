@@ -4,7 +4,7 @@
   --verde: #00ff3b; --verde-h: #00cc2f; --verde-fundo: #091f11;
   --preto: #000; --grafite: #0c0c0c; --chumbo: #15181b; --linha: #262626;
   --cinza: #9a9a9a; --claro: #dbdbdb; --branco: #fff; --papel: #eeeee8;
-  --pcyes: #ff2b2e;
+  --pcyes: #ff0000;   /* = vermelho da logo PCYES (medido no PNG, 27/11); o #ff2b2e do DS é o de interface e ficava apagado */
   --f: "Archivo", "Inter Tight", system-ui, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, monospace;
   --topo: 0px;
