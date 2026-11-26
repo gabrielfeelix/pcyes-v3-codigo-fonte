@@ -37,7 +37,7 @@
     </div>`;
 
   // bordões da própria LOUD (faixa da home de loud.gg)
-  const BORDOES = ["Follow the noise", "Faz o L", "Casa dos campeões", "#GoLOUD", "Home of Champions", "Make it louder"];
+  const BORDOES = ["Follow the noise", "Casa dos campeões", "#GoLOUD", "Home of Champions", "Make it louder"];
   const faixa = () => `<div class="faixa" aria-hidden="true"><div class="faixa-trilho">${[...BORDOES, ...BORDOES, ...BORDOES, ...BORDOES].map((t) => `<span>${t}</span>${LOUD_SIMB}`).join("")}</div></div>`;
 
   // vídeo: capa própria; o player do YouTube só carrega no clique
