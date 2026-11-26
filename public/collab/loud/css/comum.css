@@ -144,3 +144,14 @@
 
 .lp-ld a.add { display: block; color: inherit; text-decoration: none; }
 @media (max-width: 760px) { .lp-ld .titulo-loud { font-size: 11vw; white-space: nowrap; } }
+
+/* abas da vitrine (27/11): "Extras" quebrava pra 2ª linha. Uma linha só; no mobile vira tira com rolagem lateral */
+.lp-ld .abas { flex-wrap: nowrap; gap: 0; }
+.lp-ld .abas button { padding: 10px clamp(7px, .6vw, 12px); font-variation-settings: "wdth" 108; letter-spacing: .02em; white-space: nowrap; flex: none; }
+@media (max-width: 860px) {
+  .lp-ld .vit-ctrl { width: 100%; min-width: 0; }
+  .lp-ld .abas { width: calc(100% + var(--pad)); overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+  .lp-ld .abas::-webkit-scrollbar { display: none; }
+  .lp-ld .abas button:first-child { padding-left: 0; }
+}
+@media (min-width: 861px) and (max-width: 1240px) { .lp-ld .vit-topo { flex-direction: column; align-items: flex-start; gap: 18px; } .lp-ld .vit-ctrl { align-items: flex-start; } .lp-ld .abas { justify-content: flex-start; } .lp-ld .abas button:first-child { padding-left: 0; } }

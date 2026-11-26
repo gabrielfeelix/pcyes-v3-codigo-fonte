@@ -12,7 +12,7 @@ import { Footer } from "../Footer";
  * O CSS da página já é escopado (.lp-ld / .op-a), então não vaza pro resto da loja.
  */
 const BASE = "/collab/loud/";
-const LP_VERSAO = "1795697830";
+const LP_VERSAO = "1795697999";
 const FONTES = "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Big+Shoulders+Display:wght@900&family=JetBrains+Mono:wght@400;600&display=swap";
 
 declare global {
