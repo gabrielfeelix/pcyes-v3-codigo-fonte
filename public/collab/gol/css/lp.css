@@ -1,0 +1,249 @@
+/* PCYES × GOL — tudo escopado em .lp-gol (vai pra dentro da v3 sem vazar).
+   Paleta tirada do site da GOL: laranja #F96F20, papel quente #F3F0ED, quase-preto quente #100D0A, prata da frota.
+   Tipo: GOL Sans Display/Text (a fonte da GOL) + IBM Plex Mono pros dados de voo. */
+/* Fonte da GOL (GOL Sans, proprietária; arquivos do site da Smiles). OK pra apresentação à própria GOL;
+   pra publicar na loja, pedir a licença/arquivos à GOL quando a parceria fechar. */
+@font-face { font-family: "GOL Sans Display"; src: url("../fontes/GOLSansDisplay-Light.woff2") format("woff2"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "GOL Sans Display"; src: url("../fontes/GOLSansDisplay-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "GOL Sans Display"; src: url("../fontes/GOLSansDisplay-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "GOL Sans Text"; src: url("../fontes/GOLSansText-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "GOL Sans Text"; src: url("../fontes/GOLSansText-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+.lp-gol {
+  --laranja: #f96f20;
+  --tinta: #100d0a;
+  --papel: #f3f0ed;
+  --prata: #b9bcc0;
+  --pcyes: #ff0000;                  /* vermelho medido no PNG da logo (igual à collab LOUD) */
+  --cinza: #6f6a64;
+  --linha: rgba(16, 13, 10, .14);
+  --fundo: var(--papel);
+  --topo: 0px;                       /* na v3 vira a altura do header */
+  --margem: max(28px, 4.2vw);
+  --sans: "GOL Sans Text", "Instrument Sans", system-ui, sans-serif;
+  --display: "GOL Sans Display", "Instrument Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  background: var(--fundo);
+  color: var(--tinta);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: color .5s;
+}
+.lp-gol *, .lp-gol *::before, .lp-gol *::after { box-sizing: border-box; }
+.lp-gol h1, .lp-gol h2, .lp-gol h3, .lp-gol p, .lp-gol dl, .lp-gol dd { margin: 0; }
+
+/* ---------- logos ---------- */
+.lp-gol .logo-gol { display: block; height: 1em; width: auto; color: var(--prata); }
+.lp-gol .logo-pcyes {
+  display: block; height: 1em; aspect-ratio: 2433 / 540; background: var(--pcyes);
+  -webkit-mask: var(--src) center / contain no-repeat; mask: var(--src) center / contain no-repeat;
+}
+
+/* ---------- tipografia base ---------- */
+.lp-gol .kicker, .lp-gol .num, .lp-gol .spec, .lp-gol .dica, .lp-gol .as-rodape {
+  font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--cinza);
+}
+.lp-gol .num b { color: var(--laranja); font-weight: 500; }
+.lp-gol .tit {
+  font-size: clamp(38px, 4.1vw, 72px); font-weight: 400; line-height: 1.02; letter-spacing: -.032em;
+  text-wrap: balance;
+}
+.lp-gol .corpo { font-size: clamp(16px, 1.12vw, 19px); line-height: 1.5; color: var(--cinza); max-width: 34ch; text-wrap: pretty; }
+
+/* ---------- palco: canvas preso, blocos rolando por cima ---------- */
+/* canvas e blocos na mesma célula do grid: o sticky fica preso dentro do palco e não vaza pra seção seguinte */
+.lp-gol .palco { position: relative; display: grid; }
+.lp-gol .palco > * { grid-area: 1 / 1; }
+.lp-gol .palco-cena {
+  position: sticky; top: var(--topo); height: calc(100svh - var(--topo)); align-self: start;
+  pointer-events: none; z-index: 0;
+}
+.lp-gol .palco-blocos { position: relative; z-index: 1; }
+.lp-gol .palco-cena canvas { display: block; width: 100%; height: 100%; }
+.lp-gol .bloco {
+  position: relative; z-index: 1; height: calc(100svh - var(--topo));
+  display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 1.4vw; align-items: center;
+  padding: 0 var(--margem);
+}
+.lp-gol .bloco .txt { display: grid; gap: 22px; align-content: center; }
+.lp-gol .bloco[data-lado="esq"] .txt { grid-column: 2 / span 4; }
+.lp-gol .bloco[data-lado="dir"] .txt { grid-column: 8 / span 4; }
+.lp-gol .bloco-peca .txt { gap: 18px; }
+.lp-gol .bloco-peca .num { margin-bottom: 6px; }
+.lp-gol .spec { padding-top: 16px; border-top: 1px solid var(--linha); max-width: 34ch; color: var(--tinta); }
+
+/* hero: começa DENTRO da cabine, à noite. Título grande centrado embaixo, entra linha a linha e para seco */
+.lp-gol .bloco-hero { align-items: end; padding-bottom: clamp(56px, 11vh, 130px); color: var(--papel); }
+.lp-gol .bloco-hero .txt { grid-column: 1 / -1 !important; justify-items: center; text-align: center; gap: 22px; }
+.lp-gol .bloco-hero .kicker { color: rgba(243, 240, 237, .6); }
+.lp-gol .lockup {
+  position: absolute; top: clamp(28px, 5vh, 56px); left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 16px; font-size: 24px; color: var(--papel);
+}
+.lp-gol .lockup .x { font-size: 15px; color: rgba(243, 240, 237, .5); font-weight: 300; }
+.lp-gol .tit-hero {
+  font-size: clamp(56px, 7.6vw, 144px); font-weight: 400; line-height: .95; letter-spacing: -.045em;
+}
+.lp-gol .tit-hero .ln { display: block; overflow: hidden; padding-bottom: .06em; }
+.lp-gol .tit-hero .ln > span { display: block; transform: translateY(105%); }
+.lp-gol.entrou .tit-hero .ln > span { transform: none; transition: transform .9s cubic-bezier(.2, .9, .1, 1); }
+.lp-gol.entrou .tit-hero .ln:nth-child(1) > span { transition-delay: .5s; }
+.lp-gol.entrou .tit-hero .ln:nth-child(2) > span { transition-delay: .68s; }
+.lp-gol .bloco-hero .kicker, .lp-gol .lockup, .lp-gol .bloco-hero .dica { opacity: 0; transition: opacity 1.2s ease 1.2s; }
+.lp-gol.entrou .bloco-hero .kicker, .lp-gol.entrou .lockup, .lp-gol.entrou .bloco-hero .dica { opacity: 1; }
+.lp-gol .palco-cena canvas { opacity: 0; transition: opacity 1.6s ease .1s; }
+.lp-gol.entrou .palco-cena canvas { opacity: 1; }
+.lp-gol .dica {
+  position: absolute; right: var(--margem); bottom: clamp(48px, 9vh, 110px);
+  display: flex; align-items: center; gap: 12px;
+}
+.lp-gol .dica::before { content: ""; width: 48px; height: 1px; background: currentColor; opacity: .5; }
+
+/* dentro da cabine: frase grande centrada embaixo, sobre a noite */
+.lp-gol .bloco-pov { align-items: end; padding-bottom: clamp(56px, 11vh, 130px); }
+.lp-gol .bloco-pov .txt { grid-column: 1 / -1; justify-items: center; text-align: center; gap: 18px; }
+.lp-gol .tit-pov { font-size: clamp(56px, 7.5vw, 140px); font-weight: 400; letter-spacing: -.045em; line-height: .95; color: var(--papel); }
+.lp-gol .bloco-pov .corpo { color: rgba(243, 240, 237, .62); max-width: none; }
+
+
+/* ---------- modelos: dois cartões de embarque sobre a noite ---------- */
+.lp-gol .modelos {
+  background: var(--tinta); color: var(--papel);
+  padding: clamp(120px, 20vh, 220px) var(--margem) clamp(110px, 18vh, 200px);
+  display: grid; justify-items: center; gap: clamp(56px, 9vh, 96px);
+}
+.lp-gol .mod-cab { text-align: center; display: grid; gap: 20px; }
+.lp-gol .modelos .kicker { color: rgba(243, 240, 237, .5); }
+.lp-gol .cartoes { display: grid; grid-template-columns: repeat(2, minmax(0, 520px)); gap: clamp(20px, 2.4vw, 40px); }
+.lp-gol .cartao {
+  display: grid; grid-template-columns: 1fr 112px; background: var(--papel); color: var(--tinta);
+  border-radius: 14px; position: relative;
+  /* picote entre o corpo e o canhoto */
+  -webkit-mask: radial-gradient(circle 11px at calc(100% - 112px) 0, transparent 98%, #000) top / 100% 51% no-repeat,
+                radial-gradient(circle 11px at calc(100% - 112px) 100%, transparent 98%, #000) bottom / 100% 51% no-repeat;
+          mask: radial-gradient(circle 11px at calc(100% - 112px) 0, transparent 98%, #000) top / 100% 51% no-repeat,
+                radial-gradient(circle 11px at calc(100% - 112px) 100%, transparent 98%, #000) bottom / 100% 51% no-repeat;
+}
+.lp-gol .c-corpo { padding: 28px 30px 30px; display: grid; gap: 26px; }
+.lp-gol .c-topo { display: flex; align-items: center; justify-content: space-between; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza); }
+.lp-gol .c-topo .logo-gol { font-size: 18px; color: var(--prata); }
+.lp-gol .c-tit { font-size: clamp(26px, 2.1vw, 36px); font-weight: 400; letter-spacing: -.025em; line-height: 1.05; }
+.lp-gol .c-rota { display: flex; align-items: end; gap: 18px; padding: 18px 0; border-block: 1px solid var(--linha); }
+.lp-gol .c-rota small { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza); margin-bottom: 4px; }
+.lp-gol .c-rota b { font-family: var(--mono); font-size: clamp(22px, 1.9vw, 30px); font-weight: 500; letter-spacing: .02em; }
+.lp-gol .c-aviao { flex: 1; text-align: center; color: var(--laranja); font-size: 20px; padding-bottom: 4px; }
+.lp-gol .c-campos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.lp-gol .c-campos dt { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza); margin-bottom: 4px; }
+.lp-gol .c-campos dd { font-family: var(--mono); font-size: 14px; font-weight: 500; }
+.lp-gol .c-canhoto { border-left: 1px dashed var(--linha); display: grid; place-items: center; padding: 26px 0; gap: 14px; grid-template-rows: 1fr auto; }
+.lp-gol .c-barras {
+  width: 34px; height: 100%; min-height: 150px;
+  background: repeating-linear-gradient(180deg, var(--tinta) 0 2px, transparent 2px 4px, var(--tinta) 4px 5px, transparent 5px 8px, var(--tinta) 8px 11px, transparent 11px 13px);
+}
+.lp-gol .c-cod { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; writing-mode: vertical-rl; transform: rotate(180deg); color: var(--cinza); }
+.lp-gol .botao {
+  font-family: var(--mono); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; text-decoration: none;
+  color: var(--tinta); background: var(--laranja); padding: 18px 28px; border-radius: 999px;
+  transition: background .25s, transform .25s;
+}
+.lp-gol .botao:hover { background: #ff8a45; }
+
+/* ---------- por que faz sentido: uma frase e dois fatos, muito ar ---------- */
+.lp-gol .sentido, .lp-gol .assinatura { background: var(--papel); color: var(--tinta); }
+.lp-gol .sentido {
+  padding: clamp(140px, 24vh, 260px) var(--margem) clamp(120px, 20vh, 220px);
+  display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 1.4vw; row-gap: 28px;
+}
+.lp-gol .sentido > .kicker { grid-column: 2 / span 4; }
+.lp-gol .tit-sentido {
+  grid-column: 2 / span 9; font-size: clamp(36px, 3.9vw, 68px); font-weight: 400; line-height: 1.06; letter-spacing: -.03em;
+  text-wrap: balance;
+}
+.lp-gol .tit-sentido span { color: var(--cinza); }
+.lp-gol .fatos { grid-column: 7 / span 5; display: grid; grid-template-columns: 1fr 1fr; gap: 3vw; margin-top: clamp(80px, 14vh, 160px); }
+.lp-gol .fatos b { display: block; font-size: clamp(44px, 4vw, 72px); font-weight: 400; letter-spacing: -.04em; line-height: 1; padding-bottom: 18px; border-bottom: 1px solid var(--linha); margin-bottom: 16px; }
+.lp-gol .fatos p { font-size: 15px; line-height: 1.5; color: var(--cinza); max-width: 26ch; }
+
+/* ---------- assinatura da parceria (fechamento institucional, sem venda) ---------- */
+.lp-gol .assinatura {
+  min-height: calc(100svh - var(--topo)); display: grid; place-content: center; justify-items: center; gap: clamp(48px, 9vh, 96px);
+  padding: 120px var(--margem); border-top: 1px solid var(--linha); position: relative;
+}
+.lp-gol .assinatura::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 1px; height: 64px; background: var(--laranja); }
+.lp-gol .as-palco { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: clamp(36px, 6vw, 110px); }
+.lp-gol .as-lado { display: grid; justify-items: center; gap: 22px; }
+.lp-gol .as-lado:first-child { font-size: clamp(64px, 7.4vw, 132px); }
+.lp-gol .as-lado:last-child { font-size: clamp(42px, 4.6vw, 84px); color: var(--tinta); }
+.lp-gol .as-lado .logo-gol { color: var(--prata); }
+.lp-gol .as-lado p { font-size: 15px; color: var(--cinza); letter-spacing: -.005em; }
+.lp-gol .as-x { font-size: clamp(22px, 2vw, 32px); font-weight: 300; color: var(--cinza); }
+
+/* ---------- atalho fixo pros modelos (obrigatório em LP com história) ---------- */
+.lp-gol .atalho {
+  position: fixed; right: var(--margem); bottom: 28px; z-index: 20;
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; text-decoration: none;
+  color: var(--tinta); background: var(--laranja); padding: 13px 18px 13px 20px; border-radius: 999px;
+  transition: opacity .35s, transform .35s, background .35s, color .35s;
+}
+.lp-gol .atalho svg { width: 14px; height: 14px; }
+.lp-gol .atalho:hover { background: #ff8a45; }
+.lp-gol.sem-atalho .atalho { opacity: 0; transform: translateY(12px); pointer-events: none; }
+.lp-gol .dica { transition: opacity .4s; }
+
+/* ---------- telas menores: cockpit em cima, texto embaixo ---------- */
+@media (max-width: 860px) {
+  .lp-gol .bloco { align-items: end; padding-bottom: 72px; }
+  .lp-gol .bloco .txt, .lp-gol .bloco[data-lado] .txt { grid-column: 1 / -1 !important; }
+  .lp-gol .dica { display: none; }
+  .lp-gol .cartoes { grid-template-columns: 1fr; }
+  .lp-gol .sentido > *, .lp-gol .fatos { grid-column: 1 / -1 !important; }
+  .lp-gol .as-palco { grid-template-columns: 1fr; }
+}
+.lp-gol .bloco-hero .dica { color: rgba(243, 240, 237, .55); }
+/* hero: degradê de cinema embaixo, o título assenta sobre os controles escurecidos */
+.lp-gol .bloco-hero::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1; opacity: var(--noite, 1);
+  background: linear-gradient(to top, rgba(16, 13, 10, .92) 0%, rgba(16, 13, 10, .7) 30%, rgba(16, 13, 10, 0) 58%),
+              linear-gradient(to bottom, rgba(16, 13, 10, .55) 0%, rgba(16, 13, 10, 0) 18%);
+}
+.lp-gol .bloco-hero .txt { position: relative; }
+
+/* fechamento: a cauda do 737 da GOL ao entardecer (GPT, pedido 04); marcas no céu vazio da esquerda */
+.lp-gol .assinatura {
+  background: #0e1a33 url("../img/cauda.jpg") right center / cover no-repeat; color: var(--papel);
+  border-top: 0; place-content: center start; justify-items: start; padding-left: calc(var(--margem) * 2);
+}
+.lp-gol .assinatura::after { display: none; }
+.lp-gol .assinatura .as-lado { justify-items: start; }
+.lp-gol .assinatura .as-lado:last-child { color: var(--papel); }
+.lp-gol .assinatura .as-lado p { color: rgba(243, 240, 237, .72); }
+.lp-gol .assinatura .as-x { color: rgba(243, 240, 237, .5); }
+.lp-gol .assinatura .logo-gol { color: #d9dde3; }
+.lp-gol .assinatura .as-rodape { color: rgba(243, 240, 237, .6); }
+.lp-gol .assinatura .as-palco { gap: clamp(28px, 3.4vw, 64px); }
+
+/* entrada na cabine: luzes apagam, um aviso de bordo, e "V1. Rotate." só quando a câmera chega */
+.lp-gol .bloco-aproxima { align-items: start; padding-top: clamp(80px, 16vh, 180px); }
+.lp-gol .bloco-aproxima .txt { grid-column: 1 / -1 !important; justify-items: center; }
+.lp-gol .aviso { font-family: var(--mono); font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: rgba(243, 240, 237, .78); }
+.lp-gol .aviso::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--laranja); margin-right: 14px; vertical-align: 1px; }
+.lp-gol .bloco-pov::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1;
+  background: linear-gradient(to top, rgba(16, 13, 10, .94) 0%, rgba(16, 13, 10, .72) 32%, rgba(16, 13, 10, 0) 60%);
+  opacity: 0; transition: opacity .8s;
+}
+.lp-gol.na-cabine .bloco-pov::before { opacity: 1; }
+.lp-gol .bloco-pov .txt { position: relative; }
+.lp-gol .tit-pov .ln { display: block; overflow: hidden; padding-bottom: .06em; }
+.lp-gol .tit-pov .ln > span { display: block; transform: translateY(105%); transition: transform .5s ease-in; }
+.lp-gol.na-cabine .tit-pov .ln > span { transform: none; transition: transform 1s cubic-bezier(.2, .9, .1, 1) .25s; }
+.lp-gol .bloco-pov .corpo { opacity: 0; transition: opacity .4s; }
+.lp-gol.na-cabine .bloco-pov .corpo { opacity: 1; transition: opacity 1s ease .9s; }
+
+/* títulos na GOL Sans Display; o tracking negativo era pra Instrument, a GOL Sans pede menos */
+.lp-gol .tit, .lp-gol .tit-hero, .lp-gol .tit-pov, .lp-gol .tit-sentido, .lp-gol .c-tit, .lp-gol .fatos b { font-family: var(--display); }
+.lp-gol .tit { letter-spacing: -.02em; }
+.lp-gol .tit-hero, .lp-gol .tit-pov { letter-spacing: -.03em; font-weight: 400; }
+.lp-gol .tit-sentido, .lp-gol .fatos b { letter-spacing: -.02em; }
+.lp-gol .c-tit { letter-spacing: -.01em; }

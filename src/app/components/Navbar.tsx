@@ -282,6 +282,16 @@ const megaMenus: Record<string, MegaMenu> = {
        basta acrescentar um item aqui — nenhum outro arquivo muda. */
     banners: [
       {
+        title: "GOL × PCYES",
+        eyebrow: "Em breve · protótipo",
+        tagline: "O cockpit do 737. Na sua casa.",
+        image: "/collab/gol/banner.webp",
+        href: "/gol",
+        cta: "Ver o cockpit",
+        accent: "#F96F20",
+        status: "ativa",
+      },
+      {
         title: "LOUD × PCYES",
         eyebrow: "Nova parceria",
         tagline: "A casa dos campeões agora joga de PCYES.",
