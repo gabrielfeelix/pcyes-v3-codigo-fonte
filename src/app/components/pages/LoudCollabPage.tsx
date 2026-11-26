@@ -14,14 +14,14 @@ const OPCOES = [
   {
     letra: "A",
     nome: "Vídeo ao lado",
-    texto: "Hero da taça, a história numa tela só (escolha o ano), a frase da parceria com o vídeo ao lado e a vitrine Aprovado pela LOUD.",
+    texto: "Hero da taça, a história numa tela só (escolha o ano), a frase da parceria com o vídeo ao lado (com play e som) e a vitrine Aprovado pela LOUD.",
     capa: `${BASE}capa-a.webp`,
     href: `${BASE}a.html`,
   },
   {
     letra: "B",
     nome: "Vídeo em tela cheia",
-    texto: "A mesma página, com a frase da parceria centralizada e, logo abaixo, o vídeo da LOUD em tela cheia, antes da vitrine.",
+    texto: "A mesma página, com a frase da parceria centralizada e, logo abaixo, o vídeo da LOUD em tela cheia (com play e som), antes da vitrine.",
     capa: `${BASE}capa-b.webp`,
     href: `${BASE}b.html`,
   },
