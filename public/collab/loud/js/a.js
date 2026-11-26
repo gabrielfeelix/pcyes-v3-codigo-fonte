@@ -82,7 +82,8 @@
     B = opts && opts.variante ? opts.variante === "B" : window.LP_VARIANTE === "B";
     const ac = new AbortController(), on = (el, ev, fn, o = {}) => el.addEventListener(ev, fn, { ...o, signal: ac.signal });
     raiz.className = "lp-ld op-a op-a3" + (B ? " op-b4" : "");
-    raiz.innerHTML = hero() + `<div class="vit-slot"></div>` + historia() + faixa() + parceria() + (B ? assinatura() : "");
+    // B (27/11): a faixa sai de entre história e parceria e fica logo abaixo da vitrine (fecha o bloco de venda, separa da foto da história)
+    raiz.innerHTML = hero() + `<div class="vit-slot"></div>` + historia() + (B ? "" : faixa()) + parceria() + (B ? assinatura() : "");
     requestAnimationFrame(() => raiz.querySelector(".a-hero").classList.add("entra"));
 
     // história: passar o mouse, focar ou clicar num ano troca foto e texto (sem rolar)
@@ -111,7 +112,7 @@
       ios.observe(f);
     }
     // vitrine logo depois da hero (aprovado 26/11); a faixa dos bordões fica entre a história e o vídeo; a que a vitrine traz sai
-    montaVitrine(raiz.querySelector(".vit-slot"), on).then(() => { const f = raiz.querySelector("#aprovados + .faixa"); if (f) f.remove(); });
+    montaVitrine(raiz.querySelector(".vit-slot"), on).then(() => { const f = raiz.querySelector("#aprovados + .faixa"); if (f && !B) f.remove(); });
     return () => { ac.abort(); io.disconnect(); if (ios) ios.disconnect(); raiz.innerHTML = ""; };
   };
 })();
