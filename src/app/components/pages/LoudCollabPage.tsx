@@ -21,7 +21,7 @@ const OPCOES = [
   {
     letra: "B",
     nome: "Vídeo em tela cheia",
-    texto: "A mesma página, com a frase da parceria centralizada e, logo abaixo, o vídeo da LOUD crescendo até ocupar a tela, antes da vitrine.",
+    texto: "A mesma página, com a frase da parceria centralizada e, logo abaixo, o vídeo da LOUD em tela cheia, antes da vitrine.",
     capa: `${BASE}capa-b.webp`,
     href: `${BASE}b.html`,
   },
