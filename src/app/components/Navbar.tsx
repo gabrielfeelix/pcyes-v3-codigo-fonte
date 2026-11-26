@@ -285,7 +285,7 @@ const megaMenus: Record<string, MegaMenu> = {
         title: "GOL × PCYES",
         eyebrow: "Em breve · protótipo",
         tagline: "O cockpit do 737. Na sua casa.",
-        image: "/collab/gol/banner.webp",
+        image: "/collab/gol/banner.webp?v=2",
         href: "/gol",
         cta: "Ver o cockpit",
         accent: "#F96F20",
