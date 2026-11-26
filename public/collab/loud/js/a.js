@@ -48,7 +48,7 @@
     <section class="p-sec ${B ? "p-centro" : "v-sec"}">
       ${B ? "" : `<video class="v-vid" src="${BASE}video/b-taca.mp4" muted loop playsinline preload="metadata" aria-hidden="true"></video>`}
       <div class="p-lock" aria-hidden="true"><span class="p-loud">${LOUD_SIMB}</span><span class="p-x">×</span><img src="${BASE}img/loud/pcyes-robo.png" alt=""></div>
-      <h2 class="p-tit">${HOJE.tit} <em>PCYES.</em></h2>
+      <h2 class="p-tit">${HOJE.tit} <em>${HOJE.dest}</em></h2>
       <p class="corpo">${HOJE.txt}</p>
       <a class="cta" href="#aprovados">Ver os aprovados ${SETA}</a>
     </section>`;

@@ -509,3 +509,4 @@
   .op-b3 .g-sec { height: 180svh; }
   .op-b3 .g-tela { width: calc(86vw + var(--g) * 14vw); height: calc(48vw + var(--g) * (100svh - 48vw)); }
 }
+.op-a3 .p-tit em { display: block; } .op-a3 .p-tit { max-width: none; }
