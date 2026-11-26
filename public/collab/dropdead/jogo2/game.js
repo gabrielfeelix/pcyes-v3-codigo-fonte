@@ -40,7 +40,7 @@ const cam = { x:0, y:0, z:.72, ready:false }; let gy = 620; // gy = linha do ch�
 function resize() {
   const a = innerWidth / innerHeight;
   H = 720; W = Math.round(Math.min(1180, Math.max(400, H * a)));
-  DPR = Math.min(2, devicePixelRatio || 1);
+  DPR = Math.min(1.5, devicePixelRatio || 1); // 2 = canvas de 2360x1440 redesenhado inteiro a cada quadro
   cv.width = W * DPR; cv.height = H * DPR;
   const s = Math.min(innerWidth / W, innerHeight / H) * (a > 1.2 ? .94 : 1);
   cv.style.width = W * s + 'px'; cv.style.height = H * s + 'px';
@@ -69,10 +69,11 @@ function load(src, tries = 2) { // nunca trava: até 60 s por tentativa, tenta d
 const VER = window.BUILD || Date.now(); // publicado: carimbo fixo (cache entre visitas); local: sempre novo
 
 // ---------- áudio ----------
-const MUS = new Audio('../musica/jogo.mp3'); MUS.loop = true; MUS.volume = .55;
+const MUS_SRC = '../musica/jogo.mp3'; // só começa a baixar depois dos sprites (antes disputava banda com o carregamento)
+const MUS = new Audio(); MUS.preload = 'none'; MUS.loop = true; MUS.volume = .55;
 MUS.preservesPitch = false; MUS.mozPreservesPitch = false; MUS.webkitPreservesPitch = false;
 let muted = false;
-function music(on) { if (on && !muted) MUS.play().catch(() => {}); else MUS.pause(); }
+function music(on) { if (on && !muted) { if (!MUS.src) MUS.src = MUS_SRC; MUS.play().catch(() => {}); } else MUS.pause(); }
 let AC = null;
 function ac() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (AC && AC.state === 'suspended') AC.resume(); return AC; }
 function tone(f, t0, dur, type = 'square', vol = .1, f2) { const a = ac(); if (!a || muted) return; const t = a.currentTime + t0, o = a.createOscillator(), g = a.createGain();
@@ -119,7 +120,8 @@ async function loadSet(base, dir, target, man, only) {
   const m = await fetch(`${base}/${dir}/manifest.json?v=${VER}`, { signal: AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined }).then(r => r.ok ? r.json() : {}).catch(() => ({}));
   if (man) man[dir] = m;
   const names = Object.keys(m).filter(n => !only || only.includes(n));
-  await Promise.all(names.map(async n => { const i = await load(`${base}/${dir}/${n}.webp?v=${VER}`); if (i) { RAW[dir + '/' + n] = i; target[n] = boilVariants(i); } }));
+  await Promise.all(names.map(async n => { const i = await load(`${base}/${dir}/${n}.webp?v=${VER}`); if (i) { RAW[dir + '/' + n] = i; const arr = target[n] = boilVariants(i);
+    if (dir === 'robo') [0, 1, 2].forEach(k => BOILQ.push(() => outlined(arr[k]))); } })); // contorno pronto antes de jogar (gerar na 1ª aparição engasgava a manobra)
 }
 const J1_ROBO = ['lado1', 'lado2', 'lado-agachado', 'lado-aterrissa', 'lado-curva', 'lado-remada', 'ollie3', 'ollie4', 'ollie5', 'grab',
   'tombo1', 'tombo2', 'tombo3', 'tombo4', 'tombo5', 'tombo6'];
@@ -1185,13 +1187,14 @@ if (fsBtn) { fsBtn.addEventListener('click', e => { e.stopPropagation(); toggleF
 (async function boot() {
   resize(); addEventListener('resize', resize);
   requestAnimationFrame(frame);
-  await Promise.all(['40px Graduate', '40px "Permanent Marker"', '40px "Rubik Spray Paint"', '40px "Sedgwick Ave Display"'].map(f => Promise.race([document.fonts.load(f).catch(() => {}), new Promise(r => setTimeout(r, 2500))])));
+  const fontsP = Promise.all(['40px Graduate', '40px "Permanent Marker"', '40px "Rubik Spray Paint"', '40px "Sedgwick Ave Display"'].map(f => Promise.race([document.fonts.load(f).catch(() => {}), new Promise(r => setTimeout(r, 2500))]))); // em paralelo com os sprites
   await loadSet('sprites/j1', 'skate', S1.skate, null, ['lateral', 'fundo-plano']); // a tela de carregamento usa o shape
   await Promise.all([
     loadSet('sprites/j1', 'robo', S1.robo, null, J1_ROBO),
     loadSet('sprites/j1', 'obj', S1.obj, null),
     ...Object.keys(S2).map(d => loadSet('sprites', d, S2[d], M2)),
     ...['pcyes', 'dropdead'].map(async n => { const i = await load(`sprites/j1/ui/${n}.webp?v=${VER}`); if (i) UI[n] = i; }),
+    fontsP,
   ]);
   if (!S2.ui.keyart2) UI.keyart = await load(`sprites/j1/ui/keyart.webp?v=${VER}`); // só se a capa do jogo 2 faltar
   if (RAW['cenario/halfpipe']) { buildProfile(RAW['cenario/halfpipe']); resize(); }
@@ -1199,6 +1202,7 @@ if (fsBtn) { fsBtn.addEventListener('click', e => { e.stopPropagation(); toggleF
   await new Promise(r => setTimeout(r, 0));
   buildLayers();
   reset(); cam.ready = true; state = 'title';
+  if (!MUS.src) { MUS.src = MUS_SRC; MUS.preload = 'auto'; } // agora sim: música baixa enquanto a pessoa lê a capa
   if (QS.has('auto')) start();
 })();
 })();

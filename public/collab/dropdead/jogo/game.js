@@ -27,7 +27,7 @@ function resize() {
   const a = innerWidth / innerHeight;
   H = 720; W = Math.round(Math.min(1180, Math.max(400, H * a)));
   F = H / 2; HOR = Math.round(H * 0.40);
-  DPR = Math.min(2, devicePixelRatio || 1);
+  DPR = Math.min(1.5, devicePixelRatio || 1);
   cv.width = W * DPR; cv.height = H * DPR;
   const s = Math.min(innerWidth / W, innerHeight / H) * (a > 1.2 ? 0.94 : 1);
   cv.style.width = W * s + 'px'; cv.style.height = H * s + 'px';
@@ -56,10 +56,11 @@ function load(src, tries = 2) { // nunca trava: até 60 s por tentativa, tenta d
 // ---------- assets ----------
 const VER = window.BUILD || Date.now(); // publicado: carimbo fixo (cache entre visitas); local: sempre novo
 const SPR = { robo:{}, skate:{}, obj:{} }, UI = {};
-const MUS = new Audio('../musica/jogo.mp3'); MUS.loop = true; MUS.volume = .55;
+const MUS_SRC = '../musica/jogo.mp3'; // só começa a baixar depois dos sprites (antes disputava banda com o carregamento)
+const MUS = new Audio(); MUS.preload = 'none'; MUS.loop = true; MUS.volume = .55;
 MUS.preservesPitch = false; MUS.mozPreservesPitch = false; MUS.webkitPreservesPitch = false;
 let muted = false;
-function music(on) { if (on && !muted) MUS.play().catch(() => {}); else MUS.pause(); }
+function music(on) { if (on && !muted) { if (!MUS.src) MUS.src = MUS_SRC; MUS.play().catch(() => {}); } else MUS.pause(); }
 let AC = null;
 function ac() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (AC && AC.state === 'suspended') AC.resume(); return AC; }
 function tone(f, t0, dur, type = 'square', vol = .1, f2) { const a = ac(); if (!a || muted) return; const t = a.currentTime + t0, o = a.createOscillator(), g = a.createGain();
@@ -1103,12 +1104,13 @@ addEventListener('keydown', e => { if (e.key === 'f' || e.key === 'F') toggleFS(
 (async function boot() {
   resize(); addEventListener('resize', resize);
   requestAnimationFrame(frame);
-  await Promise.all(['40px Graduate', '40px "Permanent Marker"', '40px "Rubik Spray Paint"', '40px "Sedgwick Ave Display"'].map(f => Promise.race([document.fonts.load(f).catch(() => {}), new Promise(r => setTimeout(r, 2500))])));
-  buildProcedural(); buildSkyline();
+  const fontsP = Promise.all(['40px Graduate', '40px "Permanent Marker"', '40px "Rubik Spray Paint"', '40px "Sedgwick Ave Display"'].map(f => Promise.race([document.fonts.load(f).catch(() => {}), new Promise(r => setTimeout(r, 2500))])));
+  buildSkyline();
   await loadSet('skate', SPR.skate); // primeiro: a tela de carregamento usa o shape
   await Promise.all([loadSet('robo', SPR.robo), loadSet('obj', SPR.obj),
-    ...['capa', 'pcyes', 'dropdead', 'keyart'].map(async n => { const i = await load(`sprites/ui/${n}.webp`); if (i) UI[n] = i; })]);
-  buildMurals();
+    ...['capa', 'pcyes', 'dropdead', 'keyart'].map(async n => { const i = await load(`sprites/ui/${n}.webp`); if (i) UI[n] = i; }), fontsP]);
+  buildProcedural(); buildMurals();
   reset(); state = 'title';
+  if (!MUS.src) { MUS.src = MUS_SRC; MUS.preload = 'auto'; }
 })();
 })();
