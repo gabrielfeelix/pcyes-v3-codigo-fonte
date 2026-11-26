@@ -12,7 +12,7 @@ import { SEO } from "../SEO";
  * O CSS é escopado em .lp-gol.
  */
 const BASE = "/collab/gol/";
-const LP_VERSAO = "1795724771";
+const LP_VERSAO = "1795725667";
 const FONTES = "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap";
 
 declare global {
