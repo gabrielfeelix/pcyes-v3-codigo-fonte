@@ -84,7 +84,7 @@
     <section class="g-sec" aria-label="Vídeo da LOUD">
       <div class="g-palco">${player()}</div>
     </section>`;
-    raiz.innerHTML = hero() + historia() + faixa() + parceria() + (B ? cresce() : "") + `<div class="vit-slot"></div>`;
+    raiz.innerHTML = hero() + `<div class="vit-slot"></div>` + historia() + faixa() + parceria() + (B ? cresce() : "");
     // B: a tela do vídeo cresce do centro até ocupar a viewport conforme o scroll (scrub, sem espera)
     if (B) { const g = raiz.querySelector(".g-sec"); laco(() => { const k = clamp01(progresso(g) / .7); g.style.setProperty("--g", (k * k * (3 - 2 * k)).toFixed(4)); }, on); }
     requestAnimationFrame(() => raiz.querySelector(".a-hero").classList.add("entra"));
@@ -133,8 +133,8 @@
     raiz.querySelectorAll('a[href="#aprovados"]').forEach((a) => on(a, "click", (e) => {
       const v = raiz.querySelector("#aprovados"); if (!v) return; e.preventDefault(); v.scrollIntoView({ behavior: "smooth" });
     }));
-    // a faixa dos bordões fica entre a história e o vídeo; a que a vitrine traz embaixo sai
-    montaVitrine(raiz.querySelector(".vit-slot"), on).then(() => { const fs = raiz.querySelectorAll(".faixa"); if (fs.length > 1) fs[fs.length - 1].remove(); });
+    // vitrine logo depois da hero (aprovado 26/11); a faixa dos bordões fica entre a história e o vídeo; a que a vitrine traz sai
+    montaVitrine(raiz.querySelector(".vit-slot"), on).then(() => { const f = raiz.querySelector("#aprovados + .faixa"); if (f) f.remove(); });
     return () => { ac.abort(); io.disconnect(); iov.disconnect(); raiz.innerHTML = ""; };
   };
 })();
