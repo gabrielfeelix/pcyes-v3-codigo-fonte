@@ -57,8 +57,19 @@
     const ac = new AbortController(), on = (el, ev, fn, o = {}) => el.addEventListener(ev, fn, { ...o, signal: ac.signal });
     raiz.className = "lp-ld op-a op-a3" + (B ? " op-b3" : "");
     const cresce = () => `
-    <section class="g-sec" aria-hidden="true">
-      <div class="g-palco"><div class="g-tela"><video class="v-vid" src="${BASE}video/b-taca.mp4" muted loop playsinline preload="metadata"></video></div></div>
+    <section class="g-sec" aria-label="Vídeo da LOUD">
+      <div class="g-palco"><div class="g-tela"><video class="v-vid" src="${BASE}video/b-taca.mp4" muted loop playsinline preload="metadata"></video>
+        <div class="g-ctrl">
+          <button class="g-b g-play" type="button" aria-label="Pausar o vídeo" data-on="1">
+            <svg viewBox="0 0 24 24" class="i-pausa" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
+            <svg viewBox="0 0 24 24" class="i-play" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+          </button>
+          <button class="g-b g-som" type="button" aria-label="Ligar o som" data-on="0">
+            <svg viewBox="0 0 24 24" class="i-mudo" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" class="i-som" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/></svg>
+            <span class="g-som-txt">Som</span>
+          </button>
+        </div></div></div>
     </section>`;
     raiz.innerHTML = hero() + historia() + faixa() + parceria() + (B ? cresce() : "") + `<div class="vit-slot"></div>`;
     // B: a tela do vídeo cresce do centro até ocupar a viewport conforme o scroll (scrub, sem espera)
@@ -79,8 +90,18 @@
     raiz.querySelectorAll(".h-sec, .p-sec").forEach((el) => io.observe(el));
     // vídeo: toca só enquanto está na tela
     const vid = raiz.querySelector(".v-vid");   // A: o da parceria · B: o que cresce
-    const iov = new IntersectionObserver(([e]) => { if (e.isIntersecting) vid.play().catch(() => {}); else vid.pause(); }, { threshold: .3 });
+    const iov = new IntersectionObserver(([e]) => { if (e.isIntersecting) { if (!vid.dataset.pausou) vid.play().catch(() => {}); } else vid.pause(); }, { threshold: .3 });
     iov.observe(vid);
+    // B: controles do vídeo (play/pausa e som). Pausa do usuário vale: sair e voltar não retoma sozinho.
+    if (B) {
+      const bp = raiz.querySelector(".g-play"), bs = raiz.querySelector(".g-som");
+      const syncP = () => { const t = !vid.paused; bp.dataset.on = t ? "1" : "0"; bp.setAttribute("aria-label", t ? "Pausar o vídeo" : "Tocar o vídeo"); };
+      const syncS = () => { const t = !vid.muted; bs.dataset.on = t ? "1" : "0"; bs.setAttribute("aria-label", t ? "Desligar o som" : "Ligar o som"); };
+      const alterna = () => { if (vid.paused) { vid.dataset.pausou = ""; vid.play().catch(() => {}); } else { vid.dataset.pausou = "1"; vid.pause(); } };
+      on(bp, "click", alterna); on(vid, "click", alterna);
+      on(bs, "click", () => { vid.muted = !vid.muted; if (!vid.muted && vid.paused) { vid.dataset.pausou = ""; vid.play().catch(() => {}); } syncS(); });
+      ["play", "pause"].forEach((ev) => on(vid, ev, syncP)); on(vid, "volumechange", syncS);
+    }
 
     raiz.querySelectorAll('a[href="#aprovados"]').forEach((a) => on(a, "click", (e) => {
       const v = raiz.querySelector("#aprovados"); if (!v) return; e.preventDefault(); v.scrollIntoView({ behavior: "smooth" });
