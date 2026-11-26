@@ -77,7 +77,8 @@
       ${player()}
     </section>`;
 
-  window.montaLP = function (raiz) {
+  // nome próprio pra morar dentro da v3 sem brigar com o montaLP da Drop Dead (mesma SPA)
+  window.montaLoud = window.montaLP = function (raiz) {
     const ac = new AbortController(), on = (el, ev, fn, o = {}) => el.addEventListener(ev, fn, { ...o, signal: ac.signal });
     raiz.className = "lp-ld op-a op-a3" + (B ? " op-b3" : "");
     const cresce = () => `
