@@ -1,13 +1,13 @@
 /* PCYES × LOUD — página oficial (/loud na v3). A "B" de 27/11 virou a única versão; a A saiu.
    Ordem: hero → vitrine Aprovado pela LOUD + faixa dos bordões → história numa tela só → parceria + vídeo (embed YouTube)
-   → assinatura da parceria (fechamento institucional, sem venda). Fotos: Flickr oficial valorantesports (Riot), ver img/hist/CREDITOS.txt. */
+   → assinatura da parceria (fechamento institucional, sem venda). Fotos: Flickr oficial valorantesports (Riot), ver img/riot/CREDITOS.txt. */
 (function () {
   const { BASE, LOUD_WORD, LOUD_SIMB, PCYES, SETA, CAPS, HOJE, montaVitrine, faixa } = window.LD;
-  const FOTO = ["h-2019", "c1-c", "c3", "c4"];   // 2019, 2020, 2022, 2026
+  const FOTO = ["2019", "2020", "2022", "2026"];   // fotos liberadas pela LOUD (img/riot/CREDITOS.txt): 2019, 2020, 2022, 2026
 
   const hero = () => `
     <section class="sec a-hero">
-      <div class="a-foto"><img src="${BASE}img/loud/campeoes-taca.jpg?v=2" alt="" fetchpriority="high"></div>
+      <div class="a-foto"><img src="${BASE}img/riot/hero.jpg" alt="" fetchpriority="high"></div>
       <header class="a-creditos">
         <div class="lockup">${PCYES()}<span class="x">×</span>${LOUD_WORD}</div>
       </header>
@@ -26,7 +26,7 @@
   const historia = () => `
     <section class="h-sec" id="historia">
       <div class="h-fotos" aria-hidden="true">
-        ${CAPS.map((c, i) => `<img src="${BASE}img/hist/${FOTO[i]}.jpg?v=3" alt="" class="${i === 0 ? "on" : ""}" data-i="${i}" loading="${i ? "lazy" : "eager"}">`).join("")}
+        ${CAPS.map((c, i) => `<img src="${BASE}img/riot/${FOTO[i]}.jpg" alt="" class="${i === 0 ? "on" : ""}" data-i="${i}" loading="${i ? "lazy" : "eager"}">`).join("")}
         <b class="h-ano-grande">${CAPS[0].ano}</b>
       </div>
       <div class="h-lado">
@@ -44,7 +44,7 @@
 
   // vídeo: embed normal do YouTube, toca só no clique (27/11, a pedido; saiu o player próprio com autoplay).
   // Placeholder até a LOUD mandar o vídeo final: "LOUD LOL: O caminho até o título" (canal oficial @LOUDgg).
-  const YT = "lL9brQp4y9s";
+  const YT = "aYETxDVM9Nw";   // LOUD VALORANT: "E foi assim que nos tornamos campeões do mundo!" (indicado pela LOUD 27/11)
   const player = () => `
     <div class="g-tela g-yt"><iframe src="https://www.youtube-nocookie.com/embed/${YT}?rel=0&modestbranding=1" title="Vídeo da LOUD no YouTube" loading="lazy"
       allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`;
@@ -65,7 +65,7 @@
   // Lemas: "Home of Champions" (rodapé de loud.gg) e "Built for Performance" (assinatura da PCYES no site).
   const assinatura = () => `
     <section class="as-sec" id="parceria-oficial" aria-label="LOUD e PCYES, parceria oficial">
-      <div class="as-foto" aria-hidden="true"><img src="${BASE}img/hist/c3.jpg?v=3" alt="" loading="lazy"><img src="${BASE}img/hist/c3.jpg?v=3" alt="" loading="lazy"></div>
+      <div class="as-foto" aria-hidden="true"><img src="${BASE}img/riot/arena.jpg" alt="" loading="lazy"><img src="${BASE}img/riot/arena.jpg" alt="" loading="lazy"></div>
       <div class="as-palco">
         <div class="as-lado as-loud">${LOUD_WORD}<p class="as-lema">Home of Champions</p></div>
         <span class="as-x" aria-hidden="true">×</span>
